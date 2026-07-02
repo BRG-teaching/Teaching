@@ -1,0 +1,5739 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="5.0" version="5.0.228.0" id="4b0fdb16-06ec-44b6-a8ab-77f8f9bb6906"  xsi:noNamespaceSchemaLocation="http://www.geogebra.org/ggb.xsd" xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+<gui>
+	<window width="1202" height="600" />
+	<perspectives>
+	</perspectives>
+	<labelingStyle  val="2"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<size  width="1200" height="600"/>
+	<coordSystem xZero="292.0080188827522" yZero="137.46517841567533" scale="32.3266013511529" yscale="32.3266013511529"/>
+	<evSettings axes="false" grid="false" gridIsBold="false" pointCapturing="3" rightAngleStyle="1" checkboxSize="13" gridType="0"/>
+	<bgColor r="255" g="255" b="255"/>
+	<axesColor r="0" g="0" b="0"/>
+	<gridColor r="192" g="192" b="192"/>
+	<lineStyle axes="1" grid="10"/>
+	<axis id="0" show="false" label="" unitLabel="" tickStyle="1" showNumbers="true"/>
+	<axis id="1" show="false" label="" unitLabel="" tickStyle="1" showNumbers="true"/>
+</euclidianView>
+<kernel>
+	<continuous val="false"/>
+	<usePathAndRegionParameters val="true"/>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+	<algebraStyle val="0" spreadsheet="0"/>
+	<coordStyle val="0"/>
+	<angleFromInvTrig val="false"/>
+</kernel>
+<scripting language="de" blocked="false" disabled="false"/>
+<construction title="53 Internal forces in a beam - superposition" author="" date="26 February 2014">
+<element type="point" label="UV1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="46" y="0" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="xAxis" a1="yAxis"/>
+	<output a0="A"/>
+</command>
+<element type="point" label="A">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="0" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="L1"/>
+</command>
+<element type="point" label="L1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="2.499440925505228" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="L1" a1="A"/>
+	<output a0="d"/>
+</command>
+<element type="line" label="d">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="2.499440925505228" y="0" z="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="d"/>
+	<output a0="V"/>
+</command>
+<element type="point" label="V">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="1.9555125023234479" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="I"/>
+</command>
+<element type="point" label="I">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<coords x="0" y="-6.938507804591234" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<element type="point" label="G">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.5" y="2.499440925505228" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<element type="point" label="E">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="2.499440925505228" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<element type="numeric" label="divisions">
+	<value val="10"/>
+	<show object="false" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelMode val="1"/>
+	<animation step="1" speed="1" type="0" playing="false"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="FP0"/>
+</command>
+<element type="point" label="FP0">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<coords x="0" y="-4.1445442950068445" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<element type="numeric" label="scaleLoadSymbol">
+	<value val="0.5"/>
+	<show object="true" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelMode val="1"/>
+	<slider min="0.3" max="0.8" width="4" x="30.242826712290622" y="-3.3156519411351697" fixed="false" horizontal="true" showAlgebra="false"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<animation step="0.01" speed="1" type="0" playing="false"/>
+</element>
+<expression label="H_1" exp="(x(G), y(G + (2 * scaleLoadSymbol)))" type="point" />
+<element type="point" label="H_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.5" y="3.499440925505228" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="H_1" a1="G"/>
+	<output a0="loaP2"/>
+</command>
+<element type="line" label="loaP2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="1" y="0" z="-9.499999999999996"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="F" exp="(x(E), y(E) + (2 * scaleLoadSymbol))" type="point" />
+<element type="point" label="F">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="3.499440925505228" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="F" a1="E"/>
+	<output a0="loaP1"/>
+</command>
+<element type="line" label="loaP1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="1" y="0" z="-0.5"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="numeric" label="F_{2}">
+	<value val="0.2"/>
+	<show object="true" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelMode val="1"/>
+	<slider min="0" max="0.6" width="4" x="30.176854731062452" y="3.809322031507725" fixed="false" horizontal="true" showAlgebra="false"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<animation step="0.1" speed="1" type="0" playing="false"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="L1" a1="yAxis"/>
+	<output a0="c"/>
+</command>
+<element type="line" label="c">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="-1" z="2.499440925505228"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="numeric" label="positionF_{2}">
+	<value val="10"/>
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelOffset x="2" y="1"/>
+	<labelMode val="1"/>
+	<slider min="6" max="10" width="4" x="21.076113379566156" y="-13.420310337238691" fixed="true" horizontal="true" showAlgebra="false"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<animation step="1" speed="1" type="0" playing="false"/>
+	<javascript onUpdate="moveLoad2();"/>
+</element>
+<element type="numeric" label="loadP">
+	<value val="0.2"/>
+	<show object="false" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelMode val="1"/>
+	<slider min="0.2" max="5" width="4" x="30.209840721676535" y="-1.963226325957582" fixed="false" horizontal="true" showAlgebra="false"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<animation step="0.1" speed="1" type="0" playing="false"/>
+</element>
+<expression label="UV2" exp="(x(UV1) + 1, y(UV1) - loadP)" type="point" />
+<element type="point" label="UV2">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="47" y="-0.2" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Vector">
+	<input a0="UV1" a1="UV2"/>
+	<output a0="v"/>
+</command>
+<element type="vector" label="v">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1" y="-0.2" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="UV1"/>
+</element>
+<element type="numeric" label="scaleForceDiagram">
+	<value val="0.30000000000000004"/>
+	<show object="true" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelMode val="1"/>
+	<slider min="0.1" max="5" width="4" x="30.209840721676535" y="-4.60210557508458" fixed="false" horizontal="true" showAlgebra="false"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<animation step="0.1" speed="1" type="0" playing="false"/>
+</element>
+<element type="point" label="LL0">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<coords x="18.55892880518911" y="1.2985368632170509" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<element type="numeric" label="positionF_{1}">
+	<value val="1"/>
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelOffset x="5" y="0"/>
+	<labelMode val="1"/>
+	<slider min="1" max="5" width="4" x="21.214527696699175" y="-12.330155058304635" fixed="true" horizontal="true" showAlgebra="false"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<animation step="1" speed="1" type="0" playing="false"/>
+	<javascript onUpdate="moveLoad1();"/>
+</element>
+<element type="numeric" label="F_{1}">
+	<value val="0.2"/>
+	<show object="true" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelMode val="1"/>
+	<slider min="0" max="0.6" width="4" x="30.242826712290626" y="5.029803684228961" fixed="false" horizontal="true" showAlgebra="false"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<animation step="0.1" speed="1" type="0" playing="false"/>
+</element>
+<command name="If">
+	<input a0="(F_{1} ≠ 0) ∧ positionF_{1} ≟ 1" a1="(x(LL0), y(LL0) - (loadP + F_{1}) / scaleForceDiagram)" a2="(x(LL0), y(LL0) - loadP / scaleForceDiagram)"/>
+	<output a0="LL1"/>
+</command>
+<element type="point" label="LL1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="4" y="3"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-0.034796470116282396" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="b"/>
+</element>
+<command name="If">
+	<input a0="(F_{1} ≠ 0) ∧ positionF_{1} ≟ 2" a1="(x(LL0), y(LL1) - (loadP + F_{1}) / scaleForceDiagram)" a2="(x(LL0), y(LL1) - loadP / scaleForceDiagram)"/>
+	<output a0="LL2"/>
+</command>
+<element type="point" label="LL2">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="3" y="-1"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-0.701463136782949" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="c"/>
+</element>
+<command name="If">
+	<input a0="(F_{1} ≠ 0) ∧ positionF_{1} ≟ 3" a1="(x(LL0), y(LL2) - (loadP + F_{1}) / scaleForceDiagram)" a2="(x(LL0), y(LL2) - loadP / scaleForceDiagram)"/>
+	<output a0="LL3"/>
+</command>
+<element type="point" label="LL3">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="2" y="0"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-1.3681298034496157" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="d"/>
+</element>
+<command name="If">
+	<input a0="(F_{1} ≠ 0) ∧ positionF_{1} ≟ 4" a1="(x(LL0), y(LL3) - (loadP + F_{1}) / scaleForceDiagram)" a2="(x(LL0), y(LL3) - loadP / scaleForceDiagram)"/>
+	<output a0="LL4"/>
+</command>
+<element type="point" label="LL4">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="2" y="0"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-2.0347964701162824" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="e"/>
+</element>
+<command name="If">
+	<input a0="(F_{1} ≠ 0) ∧ positionF_{1} ≟ 5" a1="(x(LL0), y(LL4) - (loadP + F_{1}) / scaleForceDiagram)" a2="(x(LL0), y(LL4) - loadP / scaleForceDiagram)"/>
+	<output a0="LL5"/>
+</command>
+<element type="point" label="LL5">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="4" y="-1"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-2.701463136782949" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="f"/>
+</element>
+<command name="If">
+	<input a0="(F_{2} ≠ 0) ∧ positionF_{2} ≟ 6" a1="(x(LL0), y(LL5) - (loadP + F_{2}) / scaleForceDiagram)" a2="(x(LL0), y(LL5) - loadP / scaleForceDiagram)"/>
+	<output a0="LL6"/>
+</command>
+<element type="point" label="LL6">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="2" y="-3"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-3.3681298034496154" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="g"/>
+</element>
+<command name="If">
+	<input a0="(F_{2} ≠ 0) ∧ positionF_{2} ≟ 7" a1="(x(LL0), y(LL6) - (loadP + F_{2}) / scaleForceDiagram)" a2="(x(LL0), y(LL6) - loadP / scaleForceDiagram)"/>
+	<output a0="LL7"/>
+</command>
+<element type="point" label="LL7">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="3" y="-4"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-4.034796470116282" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="h"/>
+</element>
+<command name="If">
+	<input a0="(F_{2} ≠ 0) ∧ positionF_{2} ≟ 8" a1="(x(LL0), y(LL7) - (loadP + F_{2}) / scaleForceDiagram)" a2="(x(LL0), y(LL7) - loadP / scaleForceDiagram)"/>
+	<output a0="LL8"/>
+</command>
+<element type="point" label="LL8">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="3" y="-5"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-4.701463136782949" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="i"/>
+</element>
+<command name="If">
+	<input a0="(F_{2} ≠ 0) ∧ positionF_{2} ≟ 9" a1="(x(LL0), y(LL8) - (loadP + F_{2}) / scaleForceDiagram)" a2="(x(LL0), y(LL8) - loadP / scaleForceDiagram)"/>
+	<output a0="LL9"/>
+</command>
+<element type="point" label="LL9">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="3" y="-5"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-5.368129803449616" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="j"/>
+</element>
+<command name="If">
+	<input a0="(F_{2} ≠ 0) ∧ positionF_{2} ≟ 10" a1="(x(LL0), y(LL9) - (loadP + F_{2}) / scaleForceDiagram)" a2="(x(LL0), y(LL9) - loadP / scaleForceDiagram)"/>
+	<output a0="LL10"/>
+</command>
+<element type="point" label="LL10">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="2" y="-4"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.55892880518911" y="-6.701463136782949" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="k"/>
+</element>
+<command name="Line">
+	<input a0="LL0" a1="LL10"/>
+	<output a0="k"/>
+</command>
+<element type="line" label="k">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="8" y="0" z="-148.4714304415129"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="numeric" label="H">
+	<value val="4"/>
+	<show object="true" label="true"/>
+	<objColor r="255" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelMode val="1"/>
+	<slider min="1" max="5" width="4" x="14.773044631151997" y="-12.292227789011044" fixed="true" horizontal="true" showAlgebra="false"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<animation step="0.1" speed="1" type="0" playing="false"/>
+</element>
+<command name="Circle">
+	<input a0="LL10" a1="H"/>
+	<output a0="t"/>
+</command>
+<element type="conic" label="t">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="373.34344656973894" A3="0" A4="-18.55892880518911" A5="6.701463136782949"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="Point">
+	<input a0="xAxis"/>
+	<output a0="B"/>
+</command>
+<element type="point" label="B">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="125" g="125" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<fixed val="true"/>
+	<selectionAllowed val="false"/>
+	<coords x="10" y="0" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="B" a1="xAxis"/>
+	<output a0="b"/>
+</command>
+<element type="line" label="b">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-1" y="0" z="10"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="b" a1="c"/>
+	<output a0="L2"/>
+</command>
+<element type="point" label="L2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="10" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP19" exp="(x(L1) + (Distance[L1, L2] / divisions * 9.5), y(L1))" type="point" />
+<element type="point" label="LP19">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP29" exp="(x(LP19), y(LP19) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP29">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP19" a1="LP29"/>
+	<output a0="loa9"/>
+</command>
+<element type="line" label="loa9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-4.75"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP18" exp="(x(L1) + (Distance[L1, L2] / divisions * 8.5), y(L1))" type="point" />
+<element type="point" label="LP18">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="8.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP28" exp="(x(LP18), y(LP18) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP28">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="8.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP18" a1="LP28"/>
+	<output a0="loa8"/>
+</command>
+<element type="line" label="loa8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-4.25"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP17" exp="(x(L1) + (Distance[L1, L2] / divisions * 7.5), y(L1))" type="point" />
+<element type="point" label="LP17">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="7.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP27" exp="(x(LP17), y(LP17) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP27">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="7.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP17" a1="LP27"/>
+	<output a0="loa7"/>
+</command>
+<element type="line" label="loa7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-3.75"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP16" exp="(x(L1) + (Distance[L1, L2] / divisions * 6.5), y(L1))" type="point" />
+<element type="point" label="LP16">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="6.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP26" exp="(x(LP16), y(LP16) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP26">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="6.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP16" a1="LP26"/>
+	<output a0="loa6"/>
+</command>
+<element type="line" label="loa6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-3.25"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP15" exp="(x(L1) + (Distance[L1, L2] / divisions * 5.5), y(L1))" type="point" />
+<element type="point" label="LP15">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="5.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP25" exp="(x(LP15), y(LP15) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP25">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="5.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP15" a1="LP25"/>
+	<output a0="loa5"/>
+</command>
+<element type="line" label="loa5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-2.75"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP14" exp="(x(L1) + (Distance[L1, L2] / divisions * 4.5), y(L1))" type="point" />
+<element type="point" label="LP14">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP24" exp="(x(LP14), y(LP14) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP24">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP14" a1="LP24"/>
+	<output a0="loa4"/>
+</command>
+<element type="line" label="loa4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-2.25"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP13" exp="(x(L1) + (Distance[L1, L2] / divisions * 3.5), y(L1))" type="point" />
+<element type="point" label="LP13">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="3.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP23" exp="(x(LP13), y(LP13) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP23">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="3.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP13" a1="LP23"/>
+	<output a0="loa3"/>
+</command>
+<element type="line" label="loa3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-1.7500000000000009"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP12" exp="(x(L1) + (Distance[L1, L2] / divisions * 2.5), y(L1))" type="point" />
+<element type="point" label="LP12">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP22" exp="(x(LP12), y(LP12) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP22">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP12" a1="LP22"/>
+	<output a0="loa2"/>
+</command>
+<element type="line" label="loa2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-1.25"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP11" exp="(x(L1) + (Distance[L1, L2] / divisions * 1.5), y(L1))" type="point" />
+<element type="point" label="LP11">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP21" exp="(x(LP11), y(LP11) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP21">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP11" a1="LP21"/>
+	<output a0="loa1"/>
+</command>
+<element type="line" label="loa1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-0.75"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="LP10" exp="(x(L1) + (Distance[L1, L2] / divisions * 0.5), y(L1))" type="point" />
+<element type="point" label="LP10">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="2.499440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="LP20" exp="(x(LP10), y(LP10) - scaleLoadSymbol)" type="point" />
+<element type="point" label="LP20">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="1.999440925505228" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LP10" a1="LP20"/>
+	<output a0="loa0"/>
+</command>
+<element type="line" label="loa0">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-0.25"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Line">
+	<input a0="L2" a1="B"/>
+	<output a0="e"/>
+</command>
+<element type="line" label="e">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="2.499440925505228" y="0" z="-24.99440925505228"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="B"/>
+	<output a0="beam"/>
+</command>
+<element type="segment" label="beam">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="10" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Line">
+	<input a0="I" a1="beam"/>
+	<output a0="p"/>
+</command>
+<element type="line" label="p">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="10" z="69.38507804591234"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="e" a1="p"/>
+	<output a0="L"/>
+</command>
+<element type="point" label="L">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="249.94409255052278" y="-173.4239036873276" z="24.99440925505228"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="LL10" a1="beam"/>
+	<output a0="s"/>
+</command>
+<element type="line" label="s">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="10" z="67.0146313678295"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="t" a1="s" a2="1"/>
+	<output a0="N"/>
+</command>
+<element type="point" label="N">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.558928805189113" y="-6.70146313678295" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="N" a1="s"/>
+	<output a0="b_1"/>
+</command>
+<element type="line" label="b_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-10" y="0" z="145.58928805189115"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="b_1"/>
+	<output a0="pole"/>
+</command>
+<element type="point" label="pole">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<coords x="14.558928805189113" y="-2.7322643011938474" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="LL10" a1="pole"/>
+	<output a0="seg10"/>
+</command>
+<element type="segment" label="seg10">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-3.9691988355891015" y="-3.9999999999999982" z="46.85822605620587"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL9" a1="pole"/>
+	<output a0="seg9"/>
+</command>
+<element type="segment" label="seg9">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-2.6358655022557684" y="-3.9999999999999982" z="27.446320982620385"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL8" a1="pole"/>
+	<output a0="seg8"/>
+</command>
+<element type="segment" label="seg8">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-1.9691988355891015" y="-3.9999999999999982" z="17.74036844582765"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL7" a1="pole"/>
+	<output a0="seg7"/>
+</command>
+<element type="segment" label="seg7">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-1.3025321689224345" y="-3.9999999999999982" z="8.034415909034898"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL6" a1="pole"/>
+	<output a0="seg6"/>
+</command>
+<element type="segment" label="seg6">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-0.635865502255768" y="-3.9999999999999982" z="-1.6715366277578454"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL5" a1="pole"/>
+	<output a0="seg5"/>
+</command>
+<element type="segment" label="seg5">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.03080116441089853" y="-3.9999999999999982" z="-11.377489164550582"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL4" a1="pole"/>
+	<output a0="seg4"/>
+</command>
+<element type="segment" label="seg4">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.697467831077565" y="-3.9999999999999982" z="-21.08344170134332"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL3" a1="pole"/>
+	<output a0="seg3"/>
+</command>
+<element type="segment" label="seg3">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.3641344977442318" y="-3.9999999999999982" z="-30.789394238136065"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL2" a1="pole"/>
+	<output a0="seg2"/>
+</command>
+<element type="segment" label="seg2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.0308011644108985" y="-3.9999999999999982" z="-40.495346774928805"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL1" a1="pole"/>
+	<output a0="seg1"/>
+</command>
+<element type="segment" label="seg1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.697467831077565" y="-3.9999999999999982" z="-50.20129931172155"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL0" a1="pole"/>
+	<output a0="seg0"/>
+</command>
+<element type="segment" label="seg0">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.0308011644108985" y="-3.9999999999999982" z="-69.61320438530703"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Intersect">
+	<input a0="loa0" a1="Line[FP0, seg0]"/>
+	<output a0="FP1"/>
+</command>
+<element type="point" label="FP1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.9999999999999996" y="-7.281388298910961" z="1.9999999999999991"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa1" a1="Line[FP1, seg1]"/>
+	<output a0="FP2"/>
+</command>
+<element type="point" label="FP2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="5.999999999999995" y="-11.86530876674435" z="3.9999999999999964"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa2" a1="Line[FP2, seg2]"/>
+	<output a0="FP3"/>
+</command>
+<element type="point" label="FP3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="19.99999999999997" y="-19.6690152046669" z="7.999999999999989"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa3" a1="Line[FP3, seg3]"/>
+	<output a0="FP4"/>
+</command>
+<element type="point" label="FP4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="55.99999999999993" y="-33.881492418356856" z="15.999999999999972"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa4" a1="Line[FP4, seg4]"/>
+	<output a0="FP5"/>
+</command>
+<element type="point" label="FP5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="143.9999999999997" y="-62.18324218809319" z="31.99999999999993"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa5" a1="Line[FP5, seg5]"/>
+	<output a0="FP6"/>
+</command>
+<element type="point" label="FP6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="351.9999999999991" y="-123.87366574561194" z="63.99999999999983"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa6" a1="Line[FP6, seg6]"/>
+	<output a0="FP7"/>
+</command>
+<element type="point" label="FP7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="831.9999999999974" y="-268.0950275634083" z="127.9999999999996"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa7" a1="Line[FP7, seg7]"/>
+	<output a0="FP8"/>
+</command>
+<element type="point" label="FP8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1919.9999999999932" y="-619.5521139378519" z="255.9999999999991"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa8" a1="Line[FP8, seg8]"/>
+	<output a0="FP9"/>
+</command>
+<element type="point" label="FP9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4351.999999999983" y="-1491.1616788311076" z="511.99999999999795"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa9" a1="Line[FP9, seg9]"/>
+	<output a0="FP10"/>
+</command>
+<element type="point" label="FP10">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9727.999999999956" y="-3657.1049262396878" z="1023.9999999999955"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="FP10" a1="seg10"/>
+	<output a0="g"/>
+</command>
+<element type="line" label="g">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-4064.4596076432217" y="-4095.99999999998" z="23983.94656765186"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="e" a1="g"/>
+	<output a0="C"/>
+</command>
+<element type="point" label="C">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="102377.10030869364" y="-41642.3092277442" z="10237.710030869364"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="FP0" a1="C"/>
+	<output a0="closingString"/>
+</command>
+<element type="segment" label="closingString">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-0.07700291102724588" y="10" z="41.44544295006845"/>
+	<lineStyle thickness="2" type="15" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Line">
+	<input a0="pole" a1="closingString"/>
+	<output a0="j"/>
+</command>
+<element type="line" label="j">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-0.07700291102724588" y="10" z="28.443722911376458"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="k" a1="j"/>
+	<output a0="D"/>
+</command>
+<element type="point" label="D">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelOffset x="-14" y="-3"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="1484.714304415129" y="-216.11705094263593" z="80"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="l"/>
+</element>
+<expression label="VP1" exp="(x(I), y(I) + (Segment[D, LL0] * scaleForceDiagram))" type="point" />
+<element type="point" label="VP1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-5.738507804591234" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="VP1" a1="v"/>
+	<output a0="VP1&apos;"/>
+</command>
+<element type="point" label="VP1&apos;">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1" y="-5.938507804591234" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="VP1" a1="VP1&apos;"/>
+	<output a0="l_1"/>
+</command>
+<element type="ray" label="l_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.20000000000000018" y="1" z="5.738507804591234"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Intersect">
+	<input a0="l_1" a1="loaP1"/>
+	<output a0="VP2"/>
+</command>
+<element type="point" label="VP2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="-5.838507804591234" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="VP3" exp="(x(VP2), y(VP2) - F_{1})" type="point" />
+<element type="point" label="VP3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="-6.038507804591235" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="VP3" a1="v"/>
+	<output a0="VP3&apos;"/>
+</command>
+<element type="point" label="VP3&apos;">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.5" y="-6.238507804591235" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="VP3" a1="VP3&apos;"/>
+	<output a0="p_1"/>
+</command>
+<element type="ray" label="p_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.20000000000000018" y="1" z="5.938507804591235"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Intersect">
+	<input a0="loaP2" a1="p_1"/>
+	<output a0="VP4"/>
+</command>
+<element type="point" label="VP4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.499999999999996" y="-7.838507804591236" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="VP5" exp="(x(VP4), y(VP4) - F_{2})" type="point" />
+<element type="point" label="VP5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.499999999999996" y="-8.038507804591235" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="t" a1="s" a2="2"/>
+	<output a0="M"/>
+</command>
+<element type="point" label="M">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="22.55892880518911" y="-6.70146313678295" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="M" a1="s"/>
+	<output a0="a_1"/>
+</command>
+<element type="line" label="a_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-10" y="0" z="225.58928805189112"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Vector">
+	<input a0="LP10" a1="LP20"/>
+	<output a0="load0"/>
+</command>
+<element type="vector" label="load0">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP10"/>
+</element>
+<command name="Vector">
+	<input a0="LP11" a1="LP21"/>
+	<output a0="load1"/>
+</command>
+<element type="vector" label="load1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP11"/>
+</element>
+<command name="Vector">
+	<input a0="LP12" a1="LP22"/>
+	<output a0="load2"/>
+</command>
+<element type="vector" label="load2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP12"/>
+</element>
+<command name="Vector">
+	<input a0="LP13" a1="LP23"/>
+	<output a0="load3"/>
+</command>
+<element type="vector" label="load3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP13"/>
+</element>
+<command name="Vector">
+	<input a0="LP14" a1="LP24"/>
+	<output a0="load4"/>
+</command>
+<element type="vector" label="load4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP14"/>
+</element>
+<command name="Vector">
+	<input a0="LP15" a1="LP25"/>
+	<output a0="load5"/>
+</command>
+<element type="vector" label="load5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP15"/>
+</element>
+<command name="Vector">
+	<input a0="LP16" a1="LP26"/>
+	<output a0="load6"/>
+</command>
+<element type="vector" label="load6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP16"/>
+</element>
+<command name="Vector">
+	<input a0="LP17" a1="LP27"/>
+	<output a0="load7"/>
+</command>
+<element type="vector" label="load7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP17"/>
+</element>
+<command name="Vector">
+	<input a0="LP18" a1="LP28"/>
+	<output a0="load8"/>
+</command>
+<element type="vector" label="load8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP18"/>
+</element>
+<command name="Vector">
+	<input a0="LP19" a1="LP29"/>
+	<output a0="load9"/>
+</command>
+<element type="vector" label="load9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP19"/>
+</element>
+<command name="Segment">
+	<input a0="LL0" a1="LL1"/>
+	<output a0="lline0"/>
+</command>
+<element type="segment" label="lline0">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.3333333333333333" y="0" z="-24.745238406918812"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL1" a1="LL2"/>
+	<output a0="lline1"/>
+</command>
+<element type="segment" label="lline1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.6666666666666666" y="0" z="-12.372619203459408"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL2" a1="LL3"/>
+	<output a0="lline2"/>
+</command>
+<element type="segment" label="lline2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.6666666666666666" y="0" z="-12.372619203459408"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL3" a1="LL4"/>
+	<output a0="lline3"/>
+</command>
+<element type="segment" label="lline3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.6666666666666667" y="0" z="-12.372619203459408"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL4" a1="LL5"/>
+	<output a0="lline4"/>
+</command>
+<element type="segment" label="lline4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelOffset x="80" y="6"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.6666666666666665" y="0" z="-12.372619203459408"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL5" a1="LL6"/>
+	<output a0="lline5"/>
+</command>
+<element type="segment" label="lline5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.6666666666666665" y="0" z="-12.3726192034594"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL6" a1="LL7"/>
+	<output a0="lline6"/>
+</command>
+<element type="segment" label="lline6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.6666666666666665" y="0" z="-12.372619203459408"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL7" a1="LL8"/>
+	<output a0="lline7"/>
+</command>
+<element type="segment" label="lline7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.666666666666667" y="0" z="-12.372619203459408"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL8" a1="LL9"/>
+	<output a0="lline8"/>
+</command>
+<element type="segment" label="lline8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.666666666666667" y="0" z="-12.372619203459422"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL9" a1="LL10"/>
+	<output a0="lline9"/>
+</command>
+<element type="segment" label="lline9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.333333333333333" y="0" z="-24.7452384069188"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<expression label="text1" exp="&quot;  o&apos;&quot;"/>
+<element type="text" label="text1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="pole"/>
+	<labelOffset x="-25" y="-2"/>
+</element>
+<command name="Line">
+	<input a0="FP0" a1="seg0"/>
+	<output a0="f"/>
+</command>
+<element type="line" label="f">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="4.0308011644108985" y="-3.9999999999999982" z="-16.57817718002737"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="PolyLine">
+	<input a0="FP0" a1="FP1" a2="FP2" a3="FP3" a4="FP4" a5="FP5" a6="FP6" a7="FP7" a8="FP8" a9="FP9" a10="FP10" a11="C"/>
+	<output a0="h"/>
+</command>
+<element type="polyline" label="h">
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<show object="true" label="false"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="6"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+</element>
+<command name="Vector">
+	<input a0="F" a1="E"/>
+	<output a0="P1"/>
+</command>
+<element type="vector" label="P1">
+	<show object="true" label="true" ev="4"/>
+	<condition showObject="F_{1} ≠ 0"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelOffset x="-20" y="-21"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-1" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="F"/>
+	<caption val="F_{1}"/>
+</element>
+<command name="Vector">
+	<input a0="H_1" a1="G"/>
+	<output a0="u"/>
+</command>
+<element type="vector" label="u">
+	<show object="false" label="true" ev="4"/>
+	<condition showObject="F_{2} ≠ 0"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelOffset x="0" y="-20"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-1" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="H_1"/>
+	<caption val="F_2"/>
+</element>
+<command name="Segment">
+	<input a0="I" a1="L"/>
+	<output a0="r"/>
+</command>
+<element type="segment" label="r">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-8.881784197001252e-16" y="10" z="69.38507804591234"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Line">
+	<input a0="D" a1="beam"/>
+	<output a0="linePole"/>
+</command>
+<element type="line" label="linePole">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="800" z="2161.1705094263593"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="a_1" a1="linePole"/>
+	<output a0="pole2"/>
+</command>
+<element type="point" label="pole2">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="180471.4304415129" y="-21611.705094263594" z="8000"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+	<caption val="o"/>
+</element>
+<command name="Point">
+	<input a0="k"/>
+	<output a0="O"/>
+</command>
+<element type="point" label="O">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<coords x="18.55892880518911" y="-7.395612431701182" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="O" a1="s"/>
+	<output a0="c_1"/>
+</command>
+<element type="line" label="c_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="10" z="73.95612431701183"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="b_1" a1="c_1"/>
+	<output a0="P"/>
+</command>
+<element type="point" label="P">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1455.8928805189114" y="-739.5612431701182" z="100"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="a_1" a1="c_1"/>
+	<output a0="Q"/>
+</command>
+<element type="point" label="Q">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2255.892880518911" y="-739.5612431701182" z="100"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="LL10" a1="O"/>
+	<output a0="d_1"/>
+</command>
+<element type="segment" label="d_1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.6941492949182333" y="0" z="-12.882667344559707"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Q" a1="O"/>
+	<output a0="horizontalForce_1"/>
+</command>
+<element type="segment" label="horizontalForce_1">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelOffset x="-7" y="34"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-4" z="-29.582449726804725"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+	<caption val="H"/>
+</element>
+<command name="Segment">
+	<input a0="O" a1="P"/>
+	<output a0="horizontalForce"/>
+</command>
+<element type="segment" label="horizontalForce">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelOffset x="-9" y="33"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-3.9999999999999982" z="-29.58244972680471"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+	<caption val="H"/>
+</element>
+<command name="Distance">
+	<input a0="LL0" a1="LL1"/>
+	<output a0="distanceLL0LL1"/>
+</command>
+<element type="numeric" label="distanceLL0LL1">
+	<value val="1.3333333333333333"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+</element>
+<command name="Segment">
+	<input a0="pole2" a1="D"/>
+	<output a0="i_1"/>
+</command>
+<element type="segment" label="i_1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-4.440892098500626e-16" y="-4" z="-10.805852547131785"/>
+	<lineStyle thickness="2" type="15" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<expression label="S" exp="(x(L), y(L) - (Segment[LL10, D] * scaleForceDiagram))" type="point" />
+<element type="point" label="S">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="10" y="-8.138507804591233" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="pole" a1="D"/>
+	<output a0="a"/>
+</command>
+<element type="segment" label="a">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-0.03080116441089853" y="3.9999999999999982" z="11.377489164550582"/>
+	<lineStyle thickness="2" type="15" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="K"/>
+</command>
+<element type="point" label="K">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<coords x="0" y="-10" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="K" a1="beam"/>
+	<output a0="i"/>
+</command>
+<element type="line" label="i">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="10" z="100"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="e" a1="i"/>
+	<output a0="R"/>
+</command>
+<element type="point" label="R">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="249.94409255052278" y="-249.94409255052278" z="24.99440925505228"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="K" a1="R"/>
+	<output a0="mLine"/>
+</command>
+<element type="segment" label="mLine">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="10" z="100"/>
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa0"/>
+	<output a0="FG1"/>
+</command>
+<element type="point" label="FG1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.5" y="-20.70347074727741" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa0"/>
+	<output a0="GP1"/>
+</command>
+<element type="point" label="GP1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa1"/>
+	<output a0="FG2"/>
+</command>
+<element type="point" label="FG2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="7.5" y="-20.66496929176379" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa1"/>
+	<output a0="GP2"/>
+</command>
+<element type="point" label="GP2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="7.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa2"/>
+	<output a0="FG3"/>
+</command>
+<element type="point" label="FG3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="12.5" y="-20.626467836250168" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa2"/>
+	<output a0="GP3"/>
+</command>
+<element type="point" label="GP3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="12.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa3"/>
+	<output a0="FG4"/>
+</command>
+<element type="point" label="FG4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="17.500000000000007" y="-20.587966380736543" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa3"/>
+	<output a0="GP4"/>
+</command>
+<element type="point" label="GP4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="17.500000000000007" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa4"/>
+	<output a0="FG5"/>
+</command>
+<element type="point" label="FG5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="22.5" y="-20.54946492522292" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa4"/>
+	<output a0="GP5"/>
+</command>
+<element type="point" label="GP5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="22.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa5"/>
+	<output a0="FG6"/>
+</command>
+<element type="point" label="FG6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="27.5" y="-20.510963469709296" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa5"/>
+	<output a0="GP6"/>
+</command>
+<element type="point" label="GP6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="27.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa6"/>
+	<output a0="FG7"/>
+</command>
+<element type="point" label="FG7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="32.5" y="-20.472462014195674" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa6"/>
+	<output a0="GP7"/>
+</command>
+<element type="point" label="GP7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="32.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa7"/>
+	<output a0="FG8"/>
+</command>
+<element type="point" label="FG8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="37.5" y="-20.433960558682053" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa7"/>
+	<output a0="GP8"/>
+</command>
+<element type="point" label="GP8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="37.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa8"/>
+	<output a0="FG9"/>
+</command>
+<element type="point" label="FG9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="42.5" y="-20.395459103168427" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa8"/>
+	<output a0="GP9"/>
+</command>
+<element type="point" label="GP9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="42.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="closingString" a1="loa9"/>
+	<output a0="FG10"/>
+</command>
+<element type="point" label="FG10">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="47.5" y="-20.356957647654806" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="mLine" a1="loa9"/>
+	<output a0="GP10"/>
+</command>
+<element type="point" label="GP10">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="47.5" y="-50" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP1" a1="Vector[(-Vector[FG1, FP1])]"/>
+	<output a0="GPT1"/>
+</command>
+<element type="point" label="GPT1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.5" y="-52.5" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP1" a1="GPT1"/>
+	<output a0="ray1"/>
+</command>
+<element type="ray" label="ray1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-0.25"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP1" a1="((Segment[FG1, FP1] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle1"/>
+</command>
+<element type="conic" label="circle1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="99.89" A3="0" A4="-0.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP1 ≟ GPT1 ∨ (Radius[circle1]  &lt;  0.01)" a1="GP1" a2="Intersect[circle1, ray1]"/>
+	<output a0="MP1"/>
+</command>
+<element type="point" label="MP1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="-10.6" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP2" a1="Vector[(-Vector[FG2, FP2])]"/>
+	<output a0="GPT2"/>
+</command>
+<element type="point" label="GPT2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="7.5" y="-55.833333333333336" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP2" a1="GPT2"/>
+	<output a0="ray2"/>
+</command>
+<element type="ray" label="ray2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="1.1666666666666679" y="0" z="-1.75"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP2" a1="((Segment[FG2, FP2] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle2"/>
+</command>
+<element type="conic" label="circle2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="100.28999999999999" A3="0" A4="-1.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP2 ≟ GPT2 ∨ (Radius[circle2]  &lt;  0.01)" a1="GP2" a2="Intersect[circle2, ray2]"/>
+	<output a0="MP2"/>
+</command>
+<element type="point" label="MP2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.4999999999999984" y="-11.40000000000001" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP3" a1="Vector[(-Vector[FG3, FP3])]"/>
+	<output a0="GPT3"/>
+</command>
+<element type="point" label="GPT3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="12.500000000000002" y="-58.33333333333334" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP3" a1="GPT3"/>
+	<output a0="ray3"/>
+</command>
+<element type="ray" label="ray3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="1.6666666666666679" y="4.440892098500626e-16" z="-4.166666666666668"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP3" a1="((Segment[FG3, FP3] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle3"/>
+</command>
+<element type="conic" label="circle3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="102.24999999999999" A3="0" A4="-2.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP3 ≟ GPT3 ∨ (Radius[circle3]  &lt;  0.01)" a1="GP3" a2="Intersect[circle3, ray3]"/>
+	<output a0="MP3"/>
+</command>
+<element type="point" label="MP3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.500000000000002" y="-12.000000000000004" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP4" a1="Vector[(-Vector[FG4, FP4])]"/>
+	<output a0="GPT4"/>
+</command>
+<element type="point" label="GPT4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="17.500000000000004" y="-60.00000000000001" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP4" a1="GPT4"/>
+	<output a0="ray4"/>
+</command>
+<element type="ray" label="ray4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="2.0000000000000018" y="-4.440892098500626e-16" z="-7.000000000000014"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP4" a1="((Segment[FG4, FP4] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle4"/>
+</command>
+<element type="conic" label="circle4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="106.49" A3="0" A4="-3.5000000000000013" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP4 ≟ GPT4 ∨ (Radius[circle4]  &lt;  0.01)" a1="GP4" a2="Intersect[circle4, ray4]"/>
+	<output a0="MP4"/>
+</command>
+<element type="point" label="MP4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="3.5000000000000013" y="-12.400000000000002" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP5" a1="Vector[(-Vector[FG5, FP5])]"/>
+	<output a0="GPT5"/>
+</command>
+<element type="point" label="GPT5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="22.5" y="-60.83333333333334" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP5" a1="GPT5"/>
+	<output a0="ray5"/>
+</command>
+<element type="ray" label="ray5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="2.166666666666668" y="0" z="-9.750000000000007"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP5" a1="((Segment[FG5, FP5] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle5"/>
+</command>
+<element type="conic" label="circle5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="113.49" A3="0" A4="-4.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP5 ≟ GPT5 ∨ (Radius[circle5]  &lt;  0.01)" a1="GP5" a2="Intersect[circle5, ray5]"/>
+	<output a0="MP5"/>
+</command>
+<element type="point" label="MP5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.500000000000001" y="-12.599999999999998" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP6" a1="Vector[(-Vector[FG6, FP6])]"/>
+	<output a0="GPT6"/>
+</command>
+<element type="point" label="GPT6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="27.499999999999996" y="-60.833333333333336" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP6" a1="GPT6"/>
+	<output a0="ray6"/>
+</command>
+<element type="ray" label="ray6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="2.166666666666668" y="-8.881784197001252e-16" z="-11.916666666666679"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP6" a1="((Segment[FG6, FP6] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle6"/>
+</command>
+<element type="conic" label="circle6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="123.49" A3="0" A4="-5.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP6 ≟ GPT6 ∨ (Radius[circle6]  &lt;  0.01)" a1="GP6" a2="Intersect[circle6, ray6]"/>
+	<output a0="MP6"/>
+</command>
+<element type="point" label="MP6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="5.499999999999997" y="-12.599999999999998" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP7" a1="Vector[(-Vector[FG7, FP7])]"/>
+	<output a0="GPT7"/>
+</command>
+<element type="point" label="GPT7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="32.5" y="-60.00000000000001" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP7" a1="GPT7"/>
+	<output a0="ray7"/>
+</command>
+<element type="ray" label="ray7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="2.0000000000000018" y="0" z="-13.000000000000014"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP7" a1="((Segment[FG7, FP7] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle7"/>
+</command>
+<element type="conic" label="circle7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="136.48999999999998" A3="0" A4="-6.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP7 ≟ GPT7 ∨ (Radius[circle7]  &lt;  0.01)" a1="GP7" a2="Intersect[circle7, ray7]"/>
+	<output a0="MP7"/>
+</command>
+<element type="point" label="MP7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="6.500000000000001" y="-12.400000000000006" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP8" a1="Vector[(-Vector[FG8, FP8])]"/>
+	<output a0="GPT8"/>
+</command>
+<element type="point" label="GPT8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="37.5" y="-58.33333333333334" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP8" a1="GPT8"/>
+	<output a0="ray8"/>
+</command>
+<element type="ray" label="ray8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="1.6666666666666679" y="0" z="-12.500000000000014"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP8" a1="((Segment[FG8, FP8] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle8"/>
+</command>
+<element type="conic" label="circle8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="152.25" A3="0" A4="-7.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP8 ≟ GPT8 ∨ (Radius[circle8]  &lt;  0.01)" a1="GP8" a2="Intersect[circle8, ray8]"/>
+	<output a0="MP8"/>
+</command>
+<element type="point" label="MP8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="7.5000000000000036" y="-12.000000000000004" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP9" a1="Vector[(-Vector[FG9, FP9])]"/>
+	<output a0="GPT9"/>
+</command>
+<element type="point" label="GPT9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="42.5" y="-55.833333333333336" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP9" a1="GPT9"/>
+	<output a0="ray9"/>
+</command>
+<element type="ray" label="ray9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="1.1666666666666679" y="0" z="-9.916666666666671"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP9" a1="((Segment[FG9, FP9] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle9"/>
+</command>
+<element type="conic" label="circle9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="170.29" A3="0" A4="-8.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP9 ≟ GPT9 ∨ (Radius[circle9]  &lt;  0.01)" a1="GP9" a2="Intersect[circle9, ray9]"/>
+	<output a0="MP9"/>
+</command>
+<element type="point" label="MP9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="8.499999999999995" y="-11.40000000000001" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="GP10" a1="Vector[(-Vector[FG10, FP10])]"/>
+	<output a0="GPT10"/>
+</command>
+<element type="point" label="GPT10">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="47.5" y="-52.5" z="5"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="GP10" a1="GPT10"/>
+	<output a0="ray10"/>
+</command>
+<element type="ray" label="ray10">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.5" y="0" z="-4.75"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Circle">
+	<input a0="GP10" a1="((Segment[FG10, FP10] * scaleForceDiagram) * horizontalForce_1)"/>
+	<output a0="circle10"/>
+</command>
+<element type="conic" label="circle10">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="189.89" A3="0" A4="-9.5" A5="10"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="If">
+	<input a0="GP10 ≟ GPT10 ∨ (Radius[circle10]  &lt;  0.01)" a1="GP10" a2="Intersect[circle10, ray10]"/>
+	<output a0="MP10"/>
+</command>
+<element type="point" label="MP10">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.5" y="-10.600000000000012" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="pole" a1="P"/>
+	<output a0="m"/>
+</command>
+<element type="segment" label="m">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.663348130507335" y="0" z="-67.89335342586804"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="pole2" a1="Q"/>
+	<output a0="n"/>
+</command>
+<element type="segment" label="n">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.694149294918233" y="0" z="-105.89497974498906"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP1" a1="MP1"/>
+	<output a0="segM1"/>
+</command>
+<element type="segment" label="segM1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5999999999999996" y="0" z="-0.2999999999999998"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG1" a1="FP1"/>
+	<output a0="segF1"/>
+</command>
+<element type="segment" label="segF1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-0.5000000000000004" y="0" z="0.2500000000000002"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP2" a1="MP2"/>
+	<output a0="segM2"/>
+</command>
+<element type="segment" label="segM2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.4000000000000092" y="-1.5543122344752192e-15" z="-2.1000000000000316"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG2" a1="FP2"/>
+	<output a0="segF2"/>
+</command>
+<element type="segment" label="segF2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-1.1666666666666674" y="0" z="1.7500000000000009"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP3" a1="MP3"/>
+	<output a0="segM3"/>
+</command>
+<element type="segment" label="segM3">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.0000000000000036" y="2.220446049250313e-15" z="-4.999999999999986"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG3" a1="FP3"/>
+	<output a0="segF3"/>
+</command>
+<element type="segment" label="segF3">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-1.6666666666666683" y="-4.440892098500626e-16" z="4.166666666666669"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP4" a1="MP4"/>
+	<output a0="segM4"/>
+</command>
+<element type="segment" label="segM4">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.400000000000002" y="0" z="-8.400000000000013"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG4" a1="FP4"/>
+	<output a0="segF4"/>
+</command>
+<element type="segment" label="segF4">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-2.0000000000000018" y="4.440892098500626e-16" z="7.0000000000000115"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP5" a1="MP5"/>
+	<output a0="segM5"/>
+</command>
+<element type="segment" label="segM5">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.599999999999998" y="8.881784197001252e-16" z="-11.699999999999982"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG5" a1="FP5"/>
+	<output a0="segF5"/>
+</command>
+<element type="segment" label="segF5">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-2.166666666666668" y="0" z="9.750000000000004"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP6" a1="MP6"/>
+	<output a0="segM6"/>
+</command>
+<element type="segment" label="segM6">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.599999999999998" y="-2.6645352591003757e-15" z="-14.300000000000011"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG6" a1="FP6"/>
+	<output a0="segF6"/>
+</command>
+<element type="segment" label="segF6">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-2.1666666666666674" y="8.881784197001252e-16" z="11.916666666666675"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP7" a1="MP7"/>
+	<output a0="segM7"/>
+</command>
+<element type="segment" label="segM7">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.4000000000000057" y="8.881784197001252e-16" z="-15.600000000000023"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG7" a1="FP7"/>
+	<output a0="segF7"/>
+</command>
+<element type="segment" label="segF7">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-2.0000000000000013" y="0" z="13.000000000000009"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP8" a1="MP8"/>
+	<output a0="segM8"/>
+</command>
+<element type="segment" label="segM8">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.0000000000000036" y="3.552713678800501e-15" z="-15"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG8" a1="FP8"/>
+	<output a0="segF8"/>
+</command>
+<element type="segment" label="segF8">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-1.6666666666666679" y="0" z="12.50000000000001"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP9" a1="MP9"/>
+	<output a0="segM9"/>
+</command>
+<element type="segment" label="segM9">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.4000000000000092" y="-5.329070518200751e-15" z="-11.900000000000134"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG9" a1="FP9"/>
+	<output a0="segF9"/>
+</command>
+<element type="segment" label="segF9">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-1.166666666666667" y="0" z="9.916666666666671"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="GP10" a1="MP10"/>
+	<output a0="segM10"/>
+</command>
+<element type="segment" label="segM10">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.6000000000000121" y="0" z="-5.7000000000001165"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="FG10" a1="FP10"/>
+	<output a0="segF10"/>
+</command>
+<element type="segment" label="segF10">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-0.5000000000000004" y="0" z="4.75"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="PolyLine">
+	<input a0="K" a1="MP1" a2="MP2" a3="MP3" a4="MP4" a5="MP5" a6="MP6" a7="MP7" a8="MP8" a9="MP9" a10="MP10" a11="R"/>
+	<output a0="q"/>
+</command>
+<element type="polyline" label="q">
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<show object="true" label="false"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="6"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+</element>
+<command name="Segment">
+	<input a0="LL0" a1="pole2"/>
+	<output a0="segB0"/>
+</command>
+<element type="segment" label="segB0">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4" y="4" z="-79.42986267362465"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL1" a1="pole2"/>
+	<output a0="segB1"/>
+</command>
+<element type="segment" label="segB1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.666666666666667" y="4" z="-49.35129093337251"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL2" a1="pole2"/>
+	<output a0="segB2"/>
+</command>
+<element type="segment" label="segB2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.0000000000000004" y="4" z="-34.31200506324643"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL3" a1="pole2"/>
+	<output a0="segB3"/>
+</command>
+<element type="segment" label="segB3">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.3333333333333337" y="4" z="-19.27271919312036"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL4" a1="pole2"/>
+	<output a0="segB4"/>
+</command>
+<element type="segment" label="segB4">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.666666666666667" y="4" z="-4.233433322994287"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL5" a1="pole2"/>
+	<output a0="segB5"/>
+</command>
+<element type="segment" label="segB5">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.440892098500626e-16" y="4" z="10.805852547131785"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL6" a1="pole2"/>
+	<output a0="segB6"/>
+</command>
+<element type="segment" label="segB6">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-0.6666666666666661" y="4" z="25.845138417257857"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL7" a1="pole2"/>
+	<output a0="segB7"/>
+</command>
+<element type="segment" label="segB7">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-1.3333333333333326" y="4" z="40.88442428738392"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL8" a1="pole2"/>
+	<output a0="segB8"/>
+</command>
+<element type="segment" label="segB8">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-1.9999999999999996" y="4" z="55.923710157510016"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL9" a1="pole2"/>
+	<output a0="segB9"/>
+</command>
+<element type="segment" label="segB9">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-2.6666666666666665" y="4" z="70.9629960276361"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<expression label="FPB0" exp="(x(K), y(K))" type="point" />
+<element type="point" label="FPB0">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-10" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="LL10" a1="pole2"/>
+	<output a0="segB10"/>
+</command>
+<element type="segment" label="segB10">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-3.9999999999999996" y="4" z="101.04156776788822"/>
+	<lineStyle thickness="1" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Intersect">
+	<input a0="loa0" a1="Line[FPB0, segB0]"/>
+	<output a0="FPB1"/>
+</command>
+<element type="point" label="FPB1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1" y="-21" z="2"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa1" a1="Line[FPB1, segB1]"/>
+	<output a0="FPB2"/>
+</command>
+<element type="point" label="FPB2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="6" y="-44.666666666666664" z="4"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa2" a1="Line[FPB2, segB2]"/>
+	<output a0="FPB3"/>
+</command>
+<element type="point" label="FPB3">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="20" y="-93.33333333333333" z="8"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa3" a1="Line[FPB3, segB3]"/>
+	<output a0="FPB4"/>
+</command>
+<element type="point" label="FPB4">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="56.00000000000003" y="-192" z="16"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa4" a1="Line[FPB4, segB4]"/>
+	<output a0="FPB5"/>
+</command>
+<element type="point" label="FPB5">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="144" y="-389.3333333333333" z="32"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa5" a1="Line[FPB5, segB5]"/>
+	<output a0="FPB6"/>
+</command>
+<element type="point" label="FPB6">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="352" y="-778.6666666666666" z="64"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa6" a1="Line[FPB6, segB6]"/>
+	<output a0="FPB7"/>
+</command>
+<element type="point" label="FPB7">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="832" y="-1536" z="128"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa7" a1="Line[FPB7, segB7]"/>
+	<output a0="FPB8"/>
+</command>
+<element type="point" label="FPB8">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1920" y="-2986.666666666667" z="256"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa8" a1="Line[FPB8, segB8]"/>
+	<output a0="FPB9"/>
+</command>
+<element type="point" label="FPB9">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4352" y="-5717.333333333334" z="512"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loa9" a1="Line[FPB9, segB9]"/>
+	<output a0="FPB10"/>
+</command>
+<element type="point" label="FPB10">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9728" y="-10752.000000000004" z="1024"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="FPB10" a1="segB10"/>
+	<output a0="e_1"/>
+</command>
+<element type="line" label="e_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-4095.9999999999995" y="4096" z="81920"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="e" a1="e_1"/>
+	<output a0="U"/>
+</command>
+<element type="point" label="U">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="102377.10030869413" y="-102377.10030869415" z="10237.710030869413"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="FPB0" a1="U"/>
+	<output a0="f_1"/>
+</command>
+<element type="segment" label="f_1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.7763568394002505e-15" y="10" z="100"/>
+	<lineStyle thickness="2" type="15" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="PolyLine">
+	<input a0="FPB0" a1="FPB1" a2="FPB2" a3="FPB3" a4="FPB4" a5="FPB5" a6="FPB6" a7="FPB7" a8="FPB8" a9="FPB9" a10="FPB10" a11="U"/>
+	<output a0="g_1"/>
+</command>
+<element type="polyline" label="g_1">
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="6"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+</element>
+<command name="Line">
+	<input a0="V" a1="xAxis"/>
+	<output a0="h_1"/>
+</command>
+<element type="line" label="h_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="1" z="-1.9555125023234479"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="e" a1="h_1"/>
+	<output a0="W"/>
+</command>
+<element type="point" label="W">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="24.99440925505228" y="4.8876879786443626" z="2.499440925505228"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Polygon">
+	<input a0="L1" a1="L2" a2="W" a3="V"/>
+	<output a0="poly1" a1="l1" a2="l2" a3="w" a4="v_1"/>
+</command>
+<element type="polygon" label="poly1">
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0.1"/>
+	<layer val="6"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+</element>
+<element type="segment" label="l1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<auxiliary val="false"/>
+	<coords x="0" y="10" z="-24.99440925505228"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<element type="segment" label="l2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<auxiliary val="false"/>
+	<coords x="0.54392842318178" y="0" z="-5.439284231817801"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<element type="segment" label="w">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<auxiliary val="false"/>
+	<coords x="0" y="-10" z="19.555125023234478"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<element type="segment" label="v_1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="5"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<auxiliary val="false"/>
+	<coords x="-0.54392842318178" y="0" z="0"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="S1"/>
+</command>
+<element type="point" label="S1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="125" g="125" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="1.300325029110869" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="S2"/>
+</command>
+<element type="point" label="S2">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="125" g="125" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-13.555013640824177" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="S1" a1="xAxis"/>
+	<output a0="s1"/>
+</command>
+<element type="line" label="s1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="1" z="-1.300325029110869"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Line">
+	<input a0="S2" a1="xAxis"/>
+	<output a0="s2"/>
+</command>
+<element type="line" label="s2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="1" z="13.555013640824177"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa0]" a1="Intersect[s2, loa0]"/>
+	<output a0="loaSeg0"/>
+</command>
+<element type="segment" label="loaSeg0">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-7.427669334967523"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa1]" a1="Intersect[s2, loa1]"/>
+	<output a0="loaSeg1"/>
+</command>
+<element type="segment" label="loaSeg1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-22.283008004902566"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa2]" a1="Intersect[s2, loa2]"/>
+	<output a0="loaSeg2"/>
+</command>
+<element type="segment" label="loaSeg2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-37.138346674837614"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa3]" a1="Intersect[s2, loa3]"/>
+	<output a0="loaSeg3"/>
+</command>
+<element type="segment" label="loaSeg3">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-51.993685344772686"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa4]" a1="Intersect[s2, loa4]"/>
+	<output a0="loaSeg4"/>
+</command>
+<element type="segment" label="loaSeg4">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-66.84902401470771"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa5]" a1="Intersect[s2, loa5]"/>
+	<output a0="loaSeg5"/>
+</command>
+<element type="segment" label="loaSeg5">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-81.70436268464275"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa6]" a1="Intersect[s2, loa6]"/>
+	<output a0="loaSeg6"/>
+</command>
+<element type="segment" label="loaSeg6">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-96.55970135457778"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa7]" a1="Intersect[s2, loa7]"/>
+	<output a0="loaSeg7"/>
+</command>
+<element type="segment" label="loaSeg7">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-111.41504002451285"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa8]" a1="Intersect[s2, loa8]"/>
+	<output a0="loaSeg8"/>
+</command>
+<element type="segment" label="loaSeg8">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-126.27037869444788"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Intersect[s1, loa9]" a1="Intersect[s2, loa9]"/>
+	<output a0="loaSeg9"/>
+</command>
+<element type="segment" label="loaSeg9">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-141.12571736438292"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Intersect">
+	<input a0="e" a1="s1"/>
+	<output a0="T"/>
+</command>
+<element type="point" label="T">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="24.99440925505228" y="3.2500855942184828" z="2.499440925505228"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="e" a1="s2"/>
+	<output a0="Z"/>
+</command>
+<element type="point" label="Z">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="24.99440925505228" y="-33.87995583965757" z="2.499440925505228"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="S1" a1="S2"/>
+	<output a0="j_1"/>
+</command>
+<element type="segment" label="j_1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="0"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="Z" a1="T"/>
+	<output a0="k_1"/>
+</command>
+<element type="segment" label="k_1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-14.855338669935046" y="0" z="148.55338669935045"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<expression label="text3" exp="&quot;q &quot;"/>
+<element type="text" label="text3">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="L1"/>
+	<labelOffset x="-16" y="11"/>
+</element>
+<expression label="text4" exp="&quot;   a&quot;"/>
+<element type="text" label="text4">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="LL0"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="A_1"/>
+</command>
+<element type="point" label="A_1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-1.4546314161785183" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="1"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="A_1" a1="j_1"/>
+	<output a0="m_1"/>
+</command>
+<element type="line" label="m_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="14.855338669935046" z="21.60904232725912"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="m_1" a1="k_1"/>
+	<output a0="B_1"/>
+</command>
+<element type="point" label="B_1">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2206.8108699846753" y="-321.00964210439565" z="220.68108699846755"/>
+	<pointSize val="3"/>
+	<pointStyle val="1"/>
+</element>
+<command name="Segment">
+	<input a0="A_1" a1="B_1"/>
+	<output a0="n_1"/>
+</command>
+<element type="segment" label="n_1">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="5"/>
+	<labelOffset x="-15" y="-20"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="9.999999999999998" z="14.546314161785181"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+	<caption val="l = 10"/>
+</element>
+<command name="Translate">
+	<input a0="VP5" a1="v"/>
+	<output a0="VP5&apos;"/>
+</command>
+<element type="point" label="VP5&apos;">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="10.499999999999996" y="-8.238507804591235" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Ray">
+	<input a0="VP5" a1="VP5&apos;"/>
+	<output a0="q_1"/>
+</command>
+<element type="ray" label="q_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0.1999999999999993" y="1" z="6.138507804591242"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="PolyLine">
+	<input a0="I" a1="VP1" a2="VP2" a3="VP3" a4="VP4" a5="VP5" a6="S" a7="L"/>
+	<output a0="l"/>
+</command>
+<element type="polyline" label="l">
+	<lineStyle thickness="3" type="0" typeHidden="1"/>
+	<show object="true" label="false"/>
+	<objColor r="255" g="0" b="0" alpha="0"/>
+	<layer val="6"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+</element>
+<command name="Intersect">
+	<input a0="loaP1" a1="s1"/>
+	<output a0="J"/>
+</command>
+<element type="point" label="J">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="1.300325029110869" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loaP2" a1="s1"/>
+	<output a0="C_1"/>
+</command>
+<element type="point" label="C_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.499999999999996" y="1.300325029110869" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loaP1" a1="s2"/>
+	<output a0="D_1"/>
+</command>
+<element type="point" label="D_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="-13.555013640824177" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="loaP2" a1="s2"/>
+	<output a0="E_1"/>
+</command>
+<element type="point" label="E_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.499999999999996" y="-13.555013640824177" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="J" a1="D_1"/>
+	<output a0="segLoaP1"/>
+</command>
+<element type="segment" label="segLoaP1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="F_{1} ≠ 0"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-7.427669334967523"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="E_1" a1="C_1"/>
+	<output a0="segLoaP2"/>
+</command>
+<element type="segment" label="segLoaP2">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="F_{2} ≠ 0"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-14.855338669935046" y="0" z="141.1257173643829"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<expression label="text5" exp="&quot;Form Diagram&#10;1 unit :: 1m&quot;"/>
+<element type="text" label="text5">
+	<show object="true" label="false" ev="8"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="-5" y="2.5" z="1"/>
+</element>
+<expression label="text6" exp="&quot;Force Diagram&#10;1 unit :: &quot; + scaleForceDiagram + &quot; kN&quot;" />
+<element type="text" label="text6">
+	<show object="true" label="false" ev="8"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="14" y="2.5" z="1"/>
+</element>
+<expression label="text7" exp="&quot;Trial Funicular &#10;Construction&quot;"/>
+<element type="text" label="text7">
+	<show object="true" label="false" ev="8"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="-5" y="-3.5" z="1"/>
+</element>
+<expression label="text8" exp="&quot;V Diagram&#10;1 unit :: 1 kN&quot;"/>
+<element type="text" label="text8">
+	<show object="true" label="false" ev="8"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="-5" y="-6.5" z="1"/>
+</element>
+<expression label="text9" exp="&quot;M Diagram&#10;1 unit :: 1 kNm&quot;"/>
+<element type="text" label="text9">
+	<show object="true" label="false" ev="8"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="-5" y="-10" z="1"/>
+</element>
+<expression label="text10" exp="&quot;q = &quot; + loadP + &quot; kN / m&quot;" />
+<element type="text" label="text10">
+	<show object="true" label="false" ev="8"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="20" y="2.5" z="1"/>
+</element>
+<expression label="A2" exp="(x(A), y(A) - (2 * scaleLoadSymbol))" type="point" />
+<element type="point" label="A2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-1" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="B2" exp="(x(B), y(B) - (2 * scaleLoadSymbol))" type="point" />
+<element type="point" label="B2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="10" y="-1" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Vector">
+	<input a0="A2" a1="A"/>
+	<output a0="z"/>
+</command>
+<element type="vector" label="z">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelOffset x="13" y="10"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="1" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="A2"/>
+	<caption val="A"/>
+</element>
+<command name="Vector">
+	<input a0="B2" a1="B"/>
+	<output a0="u_1"/>
+</command>
+<element type="vector" label="u_1">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelOffset x="13" y="8"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="1" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="B2"/>
+	<caption val="B"/>
+</element>
+<element type="numeric" label="L10">
+	<value val="0"/>
+	<show object="false" label="false" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="0"/>
+	<labelMode val="1"/>
+	<animation step="1" speed="1" type="0" playing="false"/>
+	<auxiliary val="true"/>
+</element>
+<command name="Text">
+	<input a0="&quot;B&quot;" a1="(x(Midpoint[LP10, LP11]), y(Midpoint[LP10, LP11] + 0.5))"/>
+	<output a0="text12"/>
+</command>
+<element type="text" label="text12">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="1" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;C&quot;" a1="(x(Midpoint[LP11, LP12]), y(Midpoint[LP11, LP12] + 0.5))"/>
+	<output a0="text13"/>
+</command>
+<element type="text" label="text13">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="2" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;D&quot;" a1="(x(Midpoint[LP12, LP13]), y(Midpoint[LP12, LP13] + 0.5))"/>
+	<output a0="text14"/>
+</command>
+<element type="text" label="text14">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="3" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;E&quot;" a1="(x(Midpoint[LP13, LP14]), y(Midpoint[LP13, LP14] + 0.5))"/>
+	<output a0="text15"/>
+</command>
+<element type="text" label="text15">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="4" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;F&quot;" a1="(x(Midpoint[LP14, LP15]), y(Midpoint[LP14, LP15] + 0.5))"/>
+	<output a0="text16"/>
+</command>
+<element type="text" label="text16">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="5" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;G&quot;" a1="(x(Midpoint[LP15, LP16]), y(Midpoint[LP15, LP16] + 0.5))"/>
+	<output a0="text17"/>
+</command>
+<element type="text" label="text17">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="6" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;H&quot;" a1="(x(Midpoint[LP16, LP17]), y(Midpoint[LP16, LP17] + 0.5))"/>
+	<output a0="text18"/>
+</command>
+<element type="text" label="text18">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="7" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;I&quot;" a1="(x(Midpoint[LP17, LP18]), y(Midpoint[LP17, LP18] + 0.5))"/>
+	<output a0="text19"/>
+</command>
+<element type="text" label="text19">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="8" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;J&quot;" a1="(x(Midpoint[LP18, LP19]), y(Midpoint[LP18, LP19] + 0.5))"/>
+	<output a0="text20"/>
+</command>
+<element type="text" label="text20">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="9" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;K&quot;" a1="(x(Midpoint[LP19, L2]), y(Midpoint[LP19, L2] + 0.5))"/>
+	<output a0="text21"/>
+</command>
+<element type="text" label="text21">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="9.75" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;L&quot;" a1="(x(Midpoint[beam]), y(Midpoint[beam]) - 1)"/>
+	<output a0="text22"/>
+</command>
+<element type="text" label="text22">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="5" y="-1" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;A&quot;" a1="(x(Midpoint[L1, LP10]) - 0.2, y(Midpoint[L1, LP10] + 0.5))"/>
+	<output a0="text11"/>
+</command>
+<element type="text" label="text11">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="160" g="160" b="160" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="0.04999999999999999" y="2.999440925505228" z="1"/>
+</element>
+<command name="Text">
+	<input a0="&quot;O&apos;&quot;" a1="Centroid[Polygon[FP0, FP1, FP2, FP3, FP4, FP5, FP6, FP7, FP8, FP9, FP10, C, FP0]]"/>
+	<output a0="text23"/>
+</command>
+<element type="text" label="text23">
+	<show object="true" label="false" ev="8"/>
+	<condition showObject="showBow"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="442.5000000000001" y="-286.21812462848357" z="88.50000000000006"/>
+</element>
+<element type="point" label="frameBL">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="-10.009928440548322" y="-14.796615643960239" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="frameBL" a1="yAxis"/>
+	<output a0="fyl"/>
+</command>
+<element type="line" label="fyl">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-1" y="0" z="-10.009928440548322"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Line">
+	<input a0="frameBL" a1="xAxis"/>
+	<output a0="fxb"/>
+</command>
+<element type="line" label="fxb">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="1" z="14.796615643960239"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="fxb"/>
+	<output a0="fBR"/>
+</command>
+<element type="point" label="fBR">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="255" g="255" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="29.06494618099282" y="-14.796615643960239" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Circle">
+	<input a0="fBR" a1="Distance[frameBL, fBR] / 2"/>
+	<output a0="fCircle"/>
+</command>
+<element type="conic" label="fCircle">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="2"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="681.9994743468079" A3="0" A4="-29.06494618099282" A5="14.796615643960239"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="Line">
+	<input a0="fBR" a1="yAxis"/>
+	<output a0="fyr"/>
+</command>
+<element type="line" label="fyr">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-1" y="0" z="29.06494618099282"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="fCircle" a1="fyr"/>
+	<output a0="I_1" a1="frameTR"/>
+</command>
+<element type="point" label="I_1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="29.06494618099282" y="-34.33405295473081" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<element type="point" label="frameTR">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="29.06494618099282" y="4.740821666810333" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="frameTR" a1="xAxis"/>
+	<output a0="fxt"/>
+</command>
+<element type="line" label="fxt">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="1" z="-4.740821666810333"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="fyl" a1="fxt"/>
+	<output a0="fTL"/>
+</command>
+<element type="point" label="fTL">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="-10.009928440548322" y="4.740821666810333" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="PolyLine">
+	<input a0="frameBL" a1="fTL" a2="frameTR" a3="fBR" a4="frameBL"/>
+	<output a0="frame"/>
+</command>
+<element type="polyline" label="frame">
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="6"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+</element>
+<element type="boolean" label="showBow">
+	<value val="false"/>
+	<show object="true" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelOffset x="1231" y="470"/>
+	<labelMode val="0"/>
+	<checkbox fixed="true"/>
+</element>
+<command name="Point">
+	<input a0="d"/>
+	<output a0="F_1"/>
+</command>
+<element type="point" label="F_1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="125" g="125" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="0.1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="0.6696723488639007" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Vector">
+	<input a0="L1" a1="F_1"/>
+	<output a0="translationVector"/>
+</command>
+<element type="vector" label="translationVector">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-1.8297685766413272" z="0"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="L1"/>
+</element>
+<command name="Translate">
+	<input a0="LP10" a1="translationVector"/>
+	<output a0="LP10&apos;"/>
+</command>
+<element type="point" label="LP10&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP20" a1="translationVector"/>
+	<output a0="LP20&apos;"/>
+</command>
+<element type="point" label="LP20&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP11" a1="translationVector"/>
+	<output a0="LP11&apos;"/>
+</command>
+<element type="point" label="LP11&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP21" a1="translationVector"/>
+	<output a0="LP21&apos;"/>
+</command>
+<element type="point" label="LP21&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP12" a1="translationVector"/>
+	<output a0="LP12&apos;"/>
+</command>
+<element type="point" label="LP12&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP22" a1="translationVector"/>
+	<output a0="LP22&apos;"/>
+</command>
+<element type="point" label="LP22&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="2.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP13" a1="translationVector"/>
+	<output a0="LP13&apos;"/>
+</command>
+<element type="point" label="LP13&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="3.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP23" a1="translationVector"/>
+	<output a0="LP23&apos;"/>
+</command>
+<element type="point" label="LP23&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="3.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP14" a1="translationVector"/>
+	<output a0="LP14&apos;"/>
+</command>
+<element type="point" label="LP14&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP24" a1="translationVector"/>
+	<output a0="LP24&apos;"/>
+</command>
+<element type="point" label="LP24&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP15" a1="translationVector"/>
+	<output a0="LP15&apos;"/>
+</command>
+<element type="point" label="LP15&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="5.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP25" a1="translationVector"/>
+	<output a0="LP25&apos;"/>
+</command>
+<element type="point" label="LP25&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="5.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP16" a1="translationVector"/>
+	<output a0="LP16&apos;"/>
+</command>
+<element type="point" label="LP16&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="6.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP26" a1="translationVector"/>
+	<output a0="LP26&apos;"/>
+</command>
+<element type="point" label="LP26&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="6.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP17" a1="translationVector"/>
+	<output a0="LP17&apos;"/>
+</command>
+<element type="point" label="LP17&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="7.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP27" a1="translationVector"/>
+	<output a0="LP27&apos;"/>
+</command>
+<element type="point" label="LP27&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="7.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP18" a1="translationVector"/>
+	<output a0="LP18&apos;"/>
+</command>
+<element type="point" label="LP18&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="8.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP28" a1="translationVector"/>
+	<output a0="LP28&apos;"/>
+</command>
+<element type="point" label="LP28&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="8.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP19" a1="translationVector"/>
+	<output a0="LP19&apos;"/>
+</command>
+<element type="point" label="LP19&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.5" y="0.6696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Translate">
+	<input a0="LP29" a1="translationVector"/>
+	<output a0="LP29&apos;"/>
+</command>
+<element type="point" label="LP29&apos;">
+	<show object="false" label="true" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="9.5" y="0.1696723488639007" z="1"/>
+	<pointSize val="2"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Vector">
+	<input a0="LP10&apos;" a1="LP20&apos;"/>
+	<output a0="load0&apos;"/>
+</command>
+<element type="vector" label="load0&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP10&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP11&apos;" a1="LP21&apos;"/>
+	<output a0="load1&apos;"/>
+</command>
+<element type="vector" label="load1&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP11&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP12&apos;" a1="LP22&apos;"/>
+	<output a0="load2&apos;"/>
+</command>
+<element type="vector" label="load2&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP12&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP13&apos;" a1="LP23&apos;"/>
+	<output a0="load3&apos;"/>
+</command>
+<element type="vector" label="load3&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP13&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP14&apos;" a1="LP24&apos;"/>
+	<output a0="load4&apos;"/>
+</command>
+<element type="vector" label="load4&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP14&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP15&apos;" a1="LP25&apos;"/>
+	<output a0="load5&apos;"/>
+</command>
+<element type="vector" label="load5&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP15&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP16&apos;" a1="LP26&apos;"/>
+	<output a0="load6&apos;"/>
+</command>
+<element type="vector" label="load6&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP16&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP17&apos;" a1="LP27&apos;"/>
+	<output a0="load7&apos;"/>
+</command>
+<element type="vector" label="load7&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP17&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP18&apos;" a1="LP28&apos;"/>
+	<output a0="load8&apos;"/>
+</command>
+<element type="vector" label="load8&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP18&apos;"/>
+</element>
+<command name="Vector">
+	<input a0="LP19&apos;" a1="LP29&apos;"/>
+	<output a0="load9&apos;"/>
+</command>
+<element type="vector" label="load9&apos;">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showSingleLoads"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.5" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LP19&apos;"/>
+</element>
+<element type="boolean" label="showHandles">
+	<value val="false"/>
+	<show object="true" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelOffset x="1231" y="500"/>
+	<labelMode val="0"/>
+	<checkbox fixed="true"/>
+</element>
+<element type="boolean" label="showSingleLoads">
+	<value val="false"/>
+	<show object="true" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelOffset x="1231" y="438"/>
+	<labelMode val="0"/>
+	<checkbox fixed="true"/>
+	<caption val="show single loads"/>
+</element>
+<element type="numeric" label="scaleOffsetReactionForces">
+	<value val="0.5"/>
+	<show object="true" label="true" ev="1"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<layer val="8"/>
+	<labelMode val="1"/>
+	<slider min="0" max="1" width="4" x="14.84147545367762" y="-13.479123986218852" fixed="true" horizontal="true" showAlgebra="true"/>
+	<lineStyle thickness="10" type="0" typeHidden="1"/>
+	<animation step="0.1" speed="1" type="0" playing="false"/>
+</element>
+<command name="Circle">
+	<input a0="LL0" a1="scaleOffsetReactionForces"/>
+	<output a0="r_1"/>
+</command>
+<element type="conic" label="r_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="345.8700363812117" A3="0" A4="-18.55892880518911" A5="-1.2985368632170509"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="Line">
+	<input a0="LL0" a1="xAxis"/>
+	<output a0="s_1"/>
+</command>
+<element type="line" label="s_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="1" z="-1.2985368632170509"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="r_1" a1="s_1"/>
+	<output a0="G_1" a1="J_1"/>
+</command>
+<element type="point" label="G_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="18.05892880518911" y="1.2985368632170509" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<element type="point" label="J_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="19.05892880518911" y="1.2985368632170509" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Line">
+	<input a0="D" a1="xAxis"/>
+	<output a0="t_1"/>
+</command>
+<element type="line" label="t_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="0" y="80" z="216.11705094263593"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Line">
+	<input a0="J_1" a1="yAxis"/>
+	<output a0="a_2"/>
+</command>
+<element type="line" label="a_2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<coords x="-1" y="0" z="19.05892880518911"/>
+	<lineStyle thickness="2" type="20" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="a_2" a1="linePole"/>
+	<output a0="K_1"/>
+</command>
+<element type="point" label="K_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="15247.14304415129" y="-2161.1705094263593" z="800"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="s" a1="a_2"/>
+	<output a0="L_1"/>
+</command>
+<element type="point" label="L_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="190.58928805189112" y="-67.0146313678295" z="10"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Vector">
+	<input a0="L_1" a1="K_1"/>
+	<output a0="w_1"/>
+</command>
+<element type="vector" label="w_1">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelOffset x="8" y="-6"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="4" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="L_1"/>
+	<caption val="B"/>
+</element>
+<command name="Vector">
+	<input a0="K_1" a1="J_1"/>
+	<output a0="z_1"/>
+</command>
+<element type="vector" label="z_1">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelOffset x="8" y="8"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="4" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="K_1"/>
+	<caption val="A"/>
+</element>
+<command name="Line">
+	<input a0="FP0" a1="seg0"/>
+	<output a0="b_2"/>
+</command>
+<element type="line" label="b_2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<coords x="4.0308011644108985" y="-3.9999999999999982" z="-16.57817718002737"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Line">
+	<input a0="C" a1="seg10"/>
+	<output a0="c_2"/>
+</command>
+<element type="line" label="c_2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<coords x="-40635.506733625545" y="-40950.84012347744" z="239785.83042527875"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="c_2" a1="b_2"/>
+	<output a0="M_1"/>
+</command>
+<element type="point" label="M_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="1638033.6049390975" y="292866.3740572082" z="327606.72098781954"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Point">
+	<input a0="j_1"/>
+	<output a0="N_1"/>
+</command>
+<element type="point" label="N_1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="125" g="125" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<animation step="1" speed="1" type="1" playing="false"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="1.300325029110869" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<expression label="O_1" exp="(x(M_1), y(N_1))" type="point" />
+<element type="point" label="O_1">
+	<show object="true" label="false" ev="4"/>
+	<condition showObject="showHandles"/>
+	<objColor r="125" g="125" b="255" alpha="0"/>
+	<layer val="9"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.999999999999999" y="1.300325029110869" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Circle">
+	<input a0="O_1" a1="(2 * scaleLoadSymbol)"/>
+	<output a0="d_2"/>
+</command>
+<element type="conic" label="d_2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eigenvectors  x0="1" y0="0" z0="1.0" x1="0" y1="1" z1="1.0"/>
+	<matrix A0="1" A1="1" A2="25.690845181332175" A3="0" A4="-4.999999999999999" A5="-1.300325029110869"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="Line">
+	<input a0="O_1" a1="yAxis"/>
+	<output a0="e_2"/>
+</command>
+<element type="line" label="e_2">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<coords x="-1" y="0" z="4.999999999999999"/>
+	<lineStyle thickness="2" type="0" typeHidden="1"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="d_2" a1="e_2"/>
+	<output a0="P_1" a1="Q_1"/>
+</command>
+<element type="point" label="P_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.999999999999999" y="0.3003250291108691" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<element type="point" label="Q_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.999999999999999" y="2.300325029110869" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Vector">
+	<input a0="O_1" a1="P_1"/>
+	<output a0="u_2"/>
+</command>
+<element type="vector" label="u_2">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelOffset x="3" y="-4"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-0.9999999999999999" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="O_1"/>
+	<caption val="R"/>
+</element>
+<command name="Intersect">
+	<input a0="s1" a1="e_2"/>
+	<output a0="R_1"/>
+</command>
+<element type="point" label="R_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.999999999999999" y="1.300325029110869" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Intersect">
+	<input a0="s2" a1="e_2"/>
+	<output a0="S_1"/>
+</command>
+<element type="point" label="S_1">
+	<show object="false" label="false" ev="4"/>
+	<objColor r="68" g="68" b="68" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.999999999999999" y="-13.555013640824177" z="1"/>
+	<pointSize val="3"/>
+	<pointStyle val="0"/>
+</element>
+<command name="Segment">
+	<input a0="R_1" a1="S_1"/>
+	<output a0="f_2"/>
+</command>
+<element type="segment" label="f_2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="14.855338669935046" y="0" z="-74.27669334967521"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL0" a1="J_1"/>
+	<output a0="g_2"/>
+</command>
+<element type="segment" label="g_2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="0.5" z="-0.649268431608526"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="D" a1="K_1"/>
+	<output a0="h_2"/>
+</command>
+<element type="segment" label="h_2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="4.440892098500626e-16" y="0.5" z="1.350731568391467"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<command name="Segment">
+	<input a0="LL10" a1="L_1"/>
+	<output a0="i_2"/>
+</command>
+<element type="segment" label="i_2">
+	<show object="true" label="false" ev="4"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="4"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<coords x="8.881784197001252e-16" y="0.5" z="3.3507315683914527"/>
+	<lineStyle thickness="1" type="20" typeHidden="1"/>
+	<outlyingIntersections val="false"/>
+	<keepTypeOnTransform val="true"/>
+</element>
+<expression label="text24" exp="&quot;q+F_{1}&quot;"/>
+<element type="text" label="text24">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{1} ≟ 2"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline1]"/>
+	<labelOffset x="-35" y="9"/>
+</element>
+<expression label="text25" exp="&quot;q+F_{1}&quot;"/>
+<element type="text" label="text25">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{1} ≟ 1"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline0]"/>
+	<labelOffset x="-36" y="5"/>
+</element>
+<expression label="text26" exp="&quot;q+F_{1}&quot;"/>
+<element type="text" label="text26">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{1} ≟ 4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline3]"/>
+	<labelOffset x="-38" y="1"/>
+</element>
+<expression label="text27" exp="&quot;q+F_{1}&quot;"/>
+<element type="text" label="text27">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{1} ≟ 3"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline2]"/>
+	<labelOffset x="-37" y="5"/>
+</element>
+<expression label="text28" exp="&quot;q+F_{1}&quot;"/>
+<element type="text" label="text28">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{1} ≟ 5"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline4]"/>
+	<labelOffset x="-36" y="0"/>
+</element>
+<expression label="text29" exp="&quot;q+F_{2}&quot;"/>
+<element type="text" label="text29">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{2} ≟ 6"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline5]"/>
+	<labelOffset x="-35" y="-1"/>
+</element>
+<expression label="text30" exp="&quot;q+F_{2}&quot;"/>
+<element type="text" label="text30">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{2} ≟ 7"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline6]"/>
+	<labelOffset x="-36" y="0"/>
+</element>
+<expression label="text31" exp="&quot;q+F_{2}&quot;"/>
+<element type="text" label="text31">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{2} ≟ 8"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline7]"/>
+	<labelOffset x="-36" y="0"/>
+</element>
+<expression label="text32" exp="&quot;q+F_{2}&quot;"/>
+<element type="text" label="text32">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{2} ≟ 9"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline8]"/>
+	<labelOffset x="-37" y="-3"/>
+</element>
+<expression label="text33" exp="&quot;q+F_2&quot;"/>
+<element type="text" label="text33">
+	<show object="true" label="false" ev="40"/>
+	<condition showObject="positionF_{2} ≟ 10"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="8"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint exp="Midpoint[lline9]"/>
+	<labelOffset x="-37" y="-2"/>
+</element>
+<command name="Vector">
+	<input a0="LL0" a1="LL10"/>
+	<output a0="v_2"/>
+</command>
+<element type="vector" label="v_2">
+	<show object="true" label="true" ev="4"/>
+	<objColor r="0" g="153" b="0" alpha="0"/>
+	<layer val="7"/>
+	<labelMode val="3"/>
+	<selectionAllowed val="false"/>
+	<coords x="0" y="-8" z="0"/>
+	<lineStyle thickness="5" type="0" typeHidden="1"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="LL0"/>
+	<caption val="R"/>
+</element>
+<expression label="text2" exp="&quot;q = &quot; + loadP + &quot; kN / m (&quot; + (loadP / scaleForceDiagram) + &quot; units)&#10;L = &quot; + beam + &quot; m (&quot; + beam + &quot; units)&#10;R = q * L = &quot; + ((loadP * beam)) + &quot; kN (&quot; + ((loadP * beam / scaleForceDiagram)) + &quot; units)&quot;" />
+<element type="text" label="text2">
+	<show object="false" label="false" ev="8"/>
+	<objColor r="0" g="0" b="0" alpha="0"/>
+	<layer val="0"/>
+	<labelMode val="0"/>
+	<selectionAllowed val="false"/>
+	<startPoint  x="30.37477067474697" y="-12.81561723799236" z="1"/>
+</element>
+</construction>
+</geogebra>
