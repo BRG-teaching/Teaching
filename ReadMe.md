@@ -4,8 +4,6 @@ Resources for teaching.
 
 ## Schedule
 
-**Assumptions** (edit these to re-derive the numbers below):
-
 - 1 ECTS = 30 h total student workload (ETH standard)
 - Teaching hours ≈ ⅓ of workload (~10 h per ECTS)
 - 1 teaching day = 6 contact hours
