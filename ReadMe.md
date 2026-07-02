@@ -20,4 +20,9 @@ Resources for teaching.
 
 ## Questions
 
-Why math is not explained how the solvers work, as the focus is given to the user interfaces?
+- 2D Graphic Statics is made for teaching
+- Everything else is made for developers
+- Applications of compas_model and compas_ifc are minimal comparing to the content of the form-finding and masonry analysis.
+- FEA resources very minimal.
+- AI materials is absent.
+- Why math is not explained how the solvers work, as the focus is given to the user interfaces?
