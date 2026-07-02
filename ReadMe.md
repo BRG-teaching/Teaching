@@ -17,3 +17,7 @@ Resources for teaching.
 | AI | 2–3 | 60–90 | 20–30 | 3–5 |
 | Case studies | 5 | 150 | 50 | 8 |
 | **Total** | **15–20** | **450–600** | **150–200** | **23–33** |
+
+## Questions
+
+Why math is not explained how the solvers work, as the focus is given to the user interfaces?
