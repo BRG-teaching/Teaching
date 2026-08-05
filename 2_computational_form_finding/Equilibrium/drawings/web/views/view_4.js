@@ -42,6 +42,7 @@ const DEFAULTS = {
   sFD: 2.5,                               // scaleForceDiagram [1, 5] units/kN
   sLS: 7,                                 // scaleLoadSymbol [1, 10]
   n4: true,
+  node: 0,                                // node-equilibrium inspector (0 = off)
 };
 
 const STEPS = [
@@ -199,6 +200,26 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i <= N; i++) ghostNames.push(`ray${i}`);
   dw.ghostable(...ghostNames, 'resArrow');
 
+  // node-equilibrium inspector: this drawing has no members -- its "nodes"
+  // are the funicular string crossings. Node i equilibrates {incoming string
+  // i, applied force i+1, outgoing string i+1} = the pole triangle
+  // {ray O1-P_i, edge P_i-P_i+1, ray P_i+1-O1} of the force diagram.
+  // (The original applet has no node mode; this is its physically-correct
+  // equivalent.) Free-body star in an inset at the top + the same forces
+  // tip-to-tail on the pole triangle.
+  dw.nodeInspector(3, { when: (st) => st.node > 0, w: 0.75, headLen: 2.6, headW: 1.0, r: 0.7 });
+  const nodeAt = [];
+  for (let i = 0; i < N; i++) nodeAt.push(() => d.Fp[i]);
+  const nodePolys = () => nodeAt.map((_, i) => [
+    [d.Pp[i], d.Pp[i + 1]], [d.Pp[i + 1], d.O1], [d.O1, d.Pp[i]],
+  ]);
+
+  function updateNode() {
+    const j = Math.max(0, Math.min(N - 1, Math.round(s.node) - 1));
+    dw.selectDisk(s.node > 0 ? `pt_F${j}` : null);
+    dw.setNodeInspector([55, 8], 9, `string node at force ${j + 1}`, nodePolys()[j]);
+  }
+
   // ------------------------------------------------------------------
   // geometry refresh
   // ------------------------------------------------------------------
@@ -262,6 +283,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     d = compute(s);
     update();
+    updateNode();
     player.apply(d, s);
   }
 
@@ -281,6 +303,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 1, 5, 0.1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 10, 0.5, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
+  const nodeSec = panel.section('Node equilibrium');
+  panel.slider(nodeSec, s, 'node', 'string node (0 = off, k = at force k)', 0, N, 1, refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(s, { ...DEFAULTS, ax: [...DEFAULTS.ax], ay: [...DEFAULTS.ay],
                        th: [...DEFAULTS.th], F: [...DEFAULTS.F] });
@@ -319,6 +343,14 @@ export function create(dw, panel, makePlayer) {
       refresh();
     },
   );
+
+  // click a string node to inspect it (clicking again deselects); the panel
+  // slider stays in sync
+  dw.nodeSelect(nodeAt.map((at) => ({ at })), (i) => {
+    s.node = Math.round(s.node) === i + 1 ? 0 : i + 1;
+    panel.syncAll();
+    refresh();
+  });
 
   refresh();
   return player;

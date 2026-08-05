@@ -24,7 +24,6 @@ export const meta = {
 
 const CLIP_Y = [76.0106, 17.1975];       // guide lines span these two horizontals
 const RESOLVE = 15;
-const ORANGE = 0xe07a26;
 
 const DEFAULTS = {
   px: [13, 21, 39], py: [54, 50, 54],               // load points Z2, A3, B3
@@ -267,12 +266,10 @@ export function create(dw, panel, makePlayer) {
     });
   });
 
-  // node-equilibrium inspector (mode 2): the closed force triangle of the
-  // selected node, orange, at the node (left) and on its polygon (right)
-  for (let i = 0; i < 3; i++) {
-    dw.arrow(`nq${i}`, { color: ORANGE, flash: false, when: (st) => st.node > 0, ...ARROW });
-    dw.arrow(`nf${i}`, { color: ORANGE, flash: false, when: (st) => st.node > 0, ...ARROW });
-  }
+  // node-equilibrium inspector (mode 2): free-body star of the selected node
+  // enlarged in an inset at the top + the same forces tip-to-tail on the
+  // node's sub-polygon of the force diagram (thick black arrows)
+  dw.nodeInspector(3, { when: (st) => st.node > 0, w: 1.5 * W_BAR, headLen: 2.0, headW: 0.75, r: 0.55 });
 
   // dual pairs: hovering a member highlights its counterpart
   for (let i = 0; i < 4; i++) {
@@ -382,7 +379,9 @@ export function create(dw, panel, makePlayer) {
   // node-equilibrium inspector: node k -> its point, its disk, and the sides
   // of its closed sub-polygon in the force diagram (load-line edge, next-member
   // ray, previous-member ray; supports degenerate to member force + reaction;
-  // M1 balances R against the two chord forces = the outer triangle I-L-o)
+  // M1 balances R against the two chord forces = the outer triangle L-o-I).
+  // Each side, as a vector, is one force acting ON the node.
+  const NODE_NAMES = ['E₃', 'I', 'II', 'III', 'G₃', 'M₁'];
   const NODE_DISKS = ['pt_E3', 'pt_H1', 'pt_I1', 'pt_J1', 'pt_G3', 'pt_M1'];
   const nodeAt = [() => d.E3, () => d.H1, () => d.I1, () => d.J1, () => d.G3, () => d.M1];
   const nodePolys = () => [
@@ -396,21 +395,8 @@ export function create(dw, panel, makePlayer) {
 
   function updateNode() {
     const j = Math.max(0, Math.min(NODE_DISKS.length - 1, Math.round(s.node) - 1));
-    const node = nodeAt[j]();
-    const sides = nodePolys()[j];
     dw.selectDisk(s.node > 0 ? NODE_DISKS[j] : null);
-    let tip = node;
-    for (let i = 0; i < 3; i++) {
-      if (i < sides.length) {
-        const v = V.sub(sides[i][1], sides[i][0]);
-        dw.setArrow(`nq${i}`, tip, V.add(tip, v));
-        tip = V.add(tip, v);
-        dw.setArrow(`nf${i}`, sides[i][0], sides[i][1]);
-      } else {
-        dw.setArrow(`nq${i}`, node, node);
-        dw.setArrow(`nf${i}`, node, node);
-      }
-    }
+    dw.setNodeInspector([26, 70.8], 5.8, `node ${NODE_NAMES[j]}`, nodePolys()[j]);
   }
 
   function refresh() {
@@ -437,7 +423,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.4, 0.01, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   const nodeSec = panel.section('Node equilibrium');
-  panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = E₃ … 5 = G₃)', 0, 5, 1, refresh);
+  panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = E₃, 2–4 = I…III, 5 = G₃, 6 = M₁)',
+               0, 6, 1, refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(s, { ...DEFAULTS, px: [...DEFAULTS.px], py: [...DEFAULTS.py],
                        th: [...DEFAULTS.th], F: [...DEFAULTS.F] });
@@ -482,6 +469,14 @@ export function create(dw, panel, makePlayer) {
       refresh();
     },
   );
+
+  // click a node point to inspect it (clicking the selected node deselects);
+  // the panel slider stays in sync via panel.syncAll()
+  dw.nodeSelect(nodeAt.map((at) => ({ at })), (i) => {
+    s.node = Math.round(s.node) === i + 1 ? 0 : i + 1;
+    panel.syncAll();
+    refresh();
+  });
 
   refresh();
   return player;

@@ -31,6 +31,7 @@ const DEFAULTS = {
   o1: false,                               // "show internal forces"
   o2: false,                               // "hide external force in force diagram"
   n4: true,                                // "show points"
+  node: 0,                                 // node-equilibrium inspector (0 = off)
 };
 
 // every construction move happens on BOTH sides at once: what is drawn in the
@@ -175,6 +176,18 @@ export function create(dw, panel, makePlayer) {
     });
   }
 
+  // node-equilibrium inspector: free-body star of node A enlarged in an inset
+  // at the top + the same forces tip-to-tail on the force polygon (the whole
+  // force diagram of this drawing IS node A's polygon F4 -> G -> H -> F4)
+  dw.nodeInspector(3, { when: (st) => st.node > 0, w: 0.6, headLen: 2.0, headW: 0.75, r: 0.55 });
+  const nodeAt = [() => d.A];
+  const nodePolys = () => [[[d.F4, d.G], [d.G, d.H], [d.H, d.F4]]];
+
+  function updateNode() {
+    dw.selectDisk(s.node > 0 ? 'pt_A' : null);
+    dw.setNodeInspector([60, 72], 6, 'node A', nodePolys()[0]);
+  }
+
   // ------------------------------------------------------------------
   // geometry refresh
   // ------------------------------------------------------------------
@@ -222,6 +235,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     d = compute(s);
     update();
+    updateNode();
     player.apply(d, s);
   }
 
@@ -245,6 +259,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'F', 'F (load)', 1, 10, 0.1, refresh);
   panel.slider(par, s, 'radius', 'radius R', 20, 30, 1, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
+  const nodeSec = panel.section('Node equilibrium');
+  panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = A)', 0, 1, 1, refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(s, DEFAULTS);
     panel.syncAll();
@@ -270,6 +286,13 @@ export function create(dw, panel, makePlayer) {
       refresh();
     },
   );
+
+  // click node A to inspect it (clicking again deselects); slider stays in sync
+  dw.nodeSelect(nodeAt.map((at) => ({ at })), (i) => {
+    s.node = Math.round(s.node) === i + 1 ? 0 : i + 1;
+    panel.syncAll();
+    refresh();
+  });
 
   refresh();
   return player;

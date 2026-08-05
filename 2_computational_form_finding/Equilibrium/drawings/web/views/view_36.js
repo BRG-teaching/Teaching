@@ -30,6 +30,7 @@ const DEFAULTS = {
   phi: -72,                       // load direction (degrees, 0 = ->)
   ox: 10.0, oy: 5.0,              // force-diagram pole o (draggable)
   s: 1.0,                         // force-diagram scale
+  node: 0,                        // node-equilibrium inspector (0 = off)
 };
 
 const STEPS = [
@@ -156,6 +157,30 @@ export function create(dw, panel, makePlayer) {
   dw.seg('fCA', { intro: 9, color: memberColor('colCA'), w: 0.045 });
   dw.seg('fCB', { intro: 9, color: memberColor('colCB'), w: 0.045 });
 
+  // node-equilibrium inspector: free-body star of the selected node in an
+  // inset at the top + the same forces tip-to-tail on the node's closed
+  // sub-polygon of the force diagram. C: {load o-p, member CB p-c, member CA
+  // c-o}; A: {reaction R_A q-o, member AC o-c, member AB c-q}; B: {reaction
+  // R_B p-q, member AB q-c, member CB c-p}. The chord force c-q is not drawn
+  // as a segment in the force diagram, but it is the Cremona side of member
+  // A-B (c-q is parallel to A-B), so each node's polygon closes exactly.
+  // (The original applet has no node mode; this is its equivalent.)
+  dw.nodeInspector(3, { when: (t) => t.node > 0, w: 0.07, headLen: 0.4, headW: 0.16, r: 0.06 });
+  const NODE_NAMES = ['A', 'B', 'C'];
+  const NODE_DISKS = ['pt_A', 'pt_B', 'pt_C'];
+  const nodeAt = [() => A, () => B, () => d.C];
+  const nodePolys = () => [
+    [[d.p2, d.O], [d.O, d.c], [d.c, d.p2]],
+    [[d.p1, d.p2], [d.p2, d.c], [d.c, d.p1]],
+    [[d.O, d.p1], [d.p1, d.c], [d.c, d.O]],
+  ];
+
+  function updateNode() {
+    const j = Math.max(0, Math.min(NODE_DISKS.length - 1, Math.round(st.node) - 1));
+    dw.selectDisk(st.node > 0 ? NODE_DISKS[j] : null);
+    dw.setNodeInspector([7.6, 5.35], 1.0, `node ${NODE_NAMES[j]}`, nodePolys()[j]);
+  }
+
   function update() {
     dw.setLabel('form_title', [2.6, 6.1]);
     dw.setLabel('force_title', [11.4, 6.1]);
@@ -219,6 +244,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     d = compute(st);
     update();
+    updateNode();
     player.apply(d, st);
   }
 
@@ -231,6 +257,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, st, 'F', 'F (load)', 0.5, 3, 0.1, refresh);
   panel.slider(par, st, 'phi', 'load angle', -180, 0, 1, refresh);
   panel.slider(par, st, 's', 'scale force diagram', 0.5, 2, 0.1, refresh);
+  const nodeSec = panel.section('Node equilibrium');
+  panel.slider(nodeSec, st, 'node', 'node (0 = off, 1 = A, 2 = B, 3 = C)', 0, 3, 1, refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(st, DEFAULTS);
     panel.syncAll();
@@ -260,6 +288,14 @@ export function create(dw, panel, makePlayer) {
       refresh();
     },
   );
+
+  // click a node point to inspect it (clicking again deselects); the panel
+  // slider stays in sync
+  dw.nodeSelect(nodeAt.map((at) => ({ at })), (i) => {
+    st.node = Math.round(st.node) === i + 1 ? 0 : i + 1;
+    panel.syncAll();
+    refresh();
+  });
 
   refresh();
   return player;

@@ -774,6 +774,43 @@ export class Drawing {
     this._selDisk = name ?? null;
   }
 
+  /** Node-equilibrium inspector elements: `count` paired THICK BLACK arrows.
+      nq* = the selected node's free-body star, enlarged in an inset at the top
+      of the form diagram (every force on the node radiates from one point);
+      nf* = the same forces tip-to-tail on the node's closed sub-polygon in the
+      force diagram. `when` should gate on the selection (e.g. st.node > 0). */
+  nodeInspector(count, { w = 0.5, headLen = 1.6, headW = 0.6, r = w * 1.1, when } = {}) {
+    this._nodeCount = count;
+    for (let i = 0; i < count; i++) {
+      this.arrow(`nq${i}`, { color: PAL.black, flash: false, when, w, headLen, headW, z: Z.arrow + 0.1 });
+      this.arrow(`nf${i}`, { color: PAL.black, flash: false, when, w, headLen, headW, z: Z.arrow + 0.1 });
+    }
+    this.disk('nq_c', { r, when });
+    this.label('nq_lbl', '', { cls: 'num', flash: false, when });
+  }
+
+  /** Position the inspector: the star sits in the inset at `center`, its
+      longest arrow scaled to `radius`; `sides` are the [tail, tip] pairs of
+      the node's force sub-polygon (each side = one force acting on the node),
+      drawn 1:1 on the force diagram by the nf* arrows. */
+  setNodeInspector(center, radius, title, sides) {
+    const vs = sides.map(([a, b]) => [b[0] - a[0], b[1] - a[1]]);
+    const vmax = Math.max(1e-9, ...vs.map((v) => Math.hypot(v[0], v[1])));
+    const k = radius / vmax;
+    for (let i = 0; i < this._nodeCount; i++) {
+      if (i < sides.length) {
+        this.setArrow(`nq${i}`, center, [center[0] + vs[i][0] * k, center[1] + vs[i][1] * k]);
+        this.setArrow(`nf${i}`, sides[i][0], sides[i][1]);
+      } else {
+        this.setArrow(`nq${i}`, center, center);
+        this.setArrow(`nf${i}`, center, center);
+      }
+    }
+    this.setDisk('nq_c', center);
+    this.setLabel('nq_lbl', [center[0], center[1] + radius * 1.3]);
+    this.setText('nq_lbl', title);
+  }
+
   enableDrag(hit, onDrag) {
     const el = this.renderer.domElement;
     let key = null;

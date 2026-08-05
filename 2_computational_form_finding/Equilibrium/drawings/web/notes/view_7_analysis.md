@@ -83,3 +83,15 @@ through N); 19 reactions + resolve (trial retires).
 - frame from euclidianView; sliders: HorF 4.6 [1,5], HorM 17 [1,20],
   loadSymbol 4 [1,5], scaleForceDiagram 1.7 [1,2] (units/kN), F_1..F_4,
   sIF [0,0.1].
+
+
+## Post-implementation corrections (audit, 2026-08-05)
+
+- The chords s / a_1 and pole lines m_5 / n_5 are BLACK dashed (the dynamic
+  color else-branch), NOT red — the static rgb 255,0,0 is overridden.
+- v_2..u_4 (step >= 12) are the REACTION H/V COMPONENTS at E and F (translated
+  polygon components), not generic direction arrows; z_1 = V_2->P_6 and
+  u_2 = P_6->I_1 are the two closing reaction vectors (captions were swapped
+  in the text above).
+- i_7 + m_7 are the GeoGebra export frame, never drawn (not a room outline).
+The implemented view used the correct interpretations.

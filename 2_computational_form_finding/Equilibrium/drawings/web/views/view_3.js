@@ -108,6 +108,7 @@ const DEFAULTS = {
   sIF: 0.06,                                        // scaleInternalForces [0, 0.05]
   o1: true,                                        // "show internal forces"
   n4: true,                                         // "show points"
+  node: 0,                                          // node-equilibrium inspector (0 = off)
 };
 
 // every construction move happens on BOTH sides at once
@@ -328,6 +329,30 @@ export function create(dw, panel, makePlayer) {
     });
   }
 
+  // node-equilibrium inspector (the applets' mode 2): free-body star of the
+  // selected node in an inset at the top + the same forces tip-to-tail on the
+  // node's sub-polygon of the force diagram. Cable nodes C2/D2 close a
+  // triangle {hanger load edge, next cable ray, previous cable ray}; anchors
+  // R1/S1 and load points L1/M1 degenerate to member force + reaction/load.
+  dw.nodeInspector(3, { when: (st) => st.node > 0, w: 0.36, headLen: 1.2, headW: 0.45, r: 0.33 });
+  const NODE_NAMES = ['R₁', 'C₂', 'D₂', 'S₁', 'L₁', 'M₁'];
+  const NODE_DISKS = ['pt_R1', 'pt_C2', 'pt_D2', 'pt_S1', 'pt_L1', 'pt_M1'];
+  const nodeAt = [() => d.R1, () => d.C2, () => d.D2, () => d.S1, () => d.L1, () => d.M1];
+  const nodePolys = () => [
+    [[d.B2, d.Q1], [d.Q1, d.B2]],
+    [[d.P1, d.Q1], [d.Q1, d.B2], [d.B2, d.P1]],
+    [[d.O1, d.P1], [d.P1, d.B2], [d.B2, d.O1]],
+    [[d.O1, d.B2], [d.B2, d.O1]],
+    [[d.P1, d.Q1], [d.Q1, d.P1]],
+    [[d.O1, d.P1], [d.P1, d.O1]],
+  ];
+
+  function updateNode() {
+    const j = Math.max(0, Math.min(NODE_DISKS.length - 1, Math.round(s.node) - 1));
+    dw.selectDisk(s.node > 0 ? NODE_DISKS[j] : null);
+    dw.setNodeInspector([27, 23.2], 3.6, `node ${NODE_NAMES[j]}`, nodePolys()[j]);
+  }
+
   // ------------------------------------------------------------------
   // geometry refresh
   // ------------------------------------------------------------------
@@ -428,6 +453,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     d = compute(s);
     update();
+    updateNode();
     player.apply(d, s);
   }
 
@@ -447,6 +473,8 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
+  const nodeSec = panel.section('Node equilibrium');
+  panel.slider(nodeSec, s, 'node', 'node (0 = off): R₁, C₂, D₂, S₁, L₁, M₁', 0, 6, 1, refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(s, DEFAULTS);
     panel.syncAll();
@@ -482,6 +510,14 @@ export function create(dw, panel, makePlayer) {
       refresh();
     },
   );
+
+  // click a node point to inspect it (clicking again deselects); the panel
+  // slider stays in sync
+  dw.nodeSelect(nodeAt.map((at) => ({ at })), (i) => {
+    s.node = Math.round(s.node) === i + 1 ? 0 : i + 1;
+    panel.syncAll();
+    refresh();
+  });
 
   refresh();
   return player;
