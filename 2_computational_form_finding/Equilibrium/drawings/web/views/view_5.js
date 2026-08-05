@@ -43,6 +43,7 @@ const DEFAULTS = {
   node: 0,                                          // node-equilibrium inspector (0 = off)
   o1: true,
   n4: true,
+  hideRF: false,                                    // applet toggle: hide reaction forces in force diagram
 };
 
 // every construction move happens on BOTH sides at once
@@ -203,9 +204,22 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('chM1a', { intro: 14, color: PAL.black, dash: 0.85 });
   dw.dashLine('chM1b', { intro: 14, dash: 0.85 });
 
-  // step 15 is final: reactions in green, no flash
-  for (const n of ['arrE3', 'arrG3', 'aR1', 'aR4']) {
-    dw.arrow(n, { intro: RESOLVE, flash: false, ...ARROW });
+  // step 15 is final: reactions in green, no flash; the force-diagram pair
+  // obeys the applet's "hide reaction forces in force diagram" toggle
+  dw.arrow('arrE3', { intro: RESOLVE, flash: false, ...ARROW });
+  dw.arrow('arrG3', { intro: RESOLVE, flash: false, ...ARROW });
+  const showRF = (st) => !st.hideRF;
+  dw.arrow('aR1', { intro: RESOLVE, flash: false, when: showRF, ...ARROW });
+  dw.arrow('aR4', { intro: RESOLVE, flash: false, when: showRF, ...ARROW });
+  // reaction captions A / B on both sides (applet w_1/u_2 and v_2/w_2)
+  dw.label('lblAf', 'A', { cls: 'num', intro: RESOLVE, flash: false, color: PAL.green });
+  dw.label('lblBf', 'B', { cls: 'num', intro: RESOLVE, flash: false, color: PAL.green });
+  dw.label('lblAs', 'A', { cls: 'num', intro: RESOLVE, flash: false, when: showRF, color: PAL.green });
+  dw.label('lblBs', 'B', { cls: 'num', intro: RESOLVE, flash: false, when: showRF, color: PAL.green });
+  // load captions F1..F3 on both sides (applet u/v/w and n/m/l, green)
+  for (let i = 0; i < 3; i++) {
+    dw.label(`lfF${i}`, `F${'₁₂₃'[i]}`, { cls: 'num', intro: 1, color: PAL.green });
+    dw.label(`lsF${i}`, `F${'₁₂₃'[i]}`, { cls: 'num', intro: 1, color: PAL.green });
   }
 
   // points
@@ -276,14 +290,14 @@ export function create(dw, panel, makePlayer) {
     dw.link(`seg${i}`, `fr${i}`, `fn${i}`, `sn${i}`);
     dw.link(`tf${i}`, `tr${i}`);
   }
-  dw.link('load0', 'edge0');
-  dw.link('load1', 'edge1');
-  dw.link('load2', 'edge2');
+  dw.link('load0', 'edge0', 'lfF0', 'lsF0');
+  dw.link('load1', 'edge1', 'lfF1', 'lsF1');
+  dw.link('load2', 'edge2', 'lfF2', 'lsF2');
   dw.link('resArrow', 'resFormArrow', 'resGuide');
   dw.link('tclose', 'tpar');
   dw.link('chord', 'polePar');
-  dw.link('arrE3', 'aR1');
-  dw.link('arrG3', 'aR4');
+  dw.link('arrE3', 'aR1', 'lblAf', 'lblAs');
+  dw.link('arrG3', 'aR4', 'lblBf', 'lblBs');
   dw.ghostable('fr0', 'fr1', 'fr2', 'fr3', 'edge0', 'edge1', 'edge2', 'resArrow');
 
   // ------------------------------------------------------------------
@@ -303,6 +317,12 @@ export function create(dw, panel, makePlayer) {
       dw.setArrow(`edge${i}`, edges[i][0], edges[i][1]);
       dw.setDisk(`pt_L${i}`, d.Lp[i]);
       dw.setDisk(`pt_H${i}`, d.Hd[i]);
+      // captions F1..F3 beside the load (left) and its load-line edge (right)
+      dw.setLabel(`lfF${i}`, V.add(V.mid(d.Lp[i], d.Hd[i]), V.mul(V.perp(d.dir[i]), -1.7)));
+      const em = V.mid(edges[i][0], edges[i][1]);
+      const ep = V.perp(V.unit(V.sub(edges[i][1], edges[i][0])));
+      const esgn = V.dot(ep, V.sub(em, d.fcent)) >= 0 ? 1 : -1;
+      dw.setLabel(`lsF${i}`, V.add(em, V.mul(ep, 2.0 * esgn)));
     }
     dw.setDisk('pt_I', d.I);
     dw.setDisk('pt_J', d.J);
@@ -355,6 +375,12 @@ export function create(dw, panel, makePlayer) {
     dw.setArrow('arrG3', d.G3, V.add(d.G3, V.mul(V.unit(V.sub(d.G3, d.J1)), 0.8 * s.sLS)));
     dw.setArrow('aR1', ...beside(d.L, d.G1, d.fcent));
     dw.setArrow('aR4', ...beside(d.G1, d.I, d.fcent));
+    // reaction captions: at the support arrows (left), beside the closing
+    // rays (right, hidden with the hideRF toggle)
+    dw.setLabel('lblAf', V.add(d.E3, V.mul(V.unit(V.sub(d.E3, d.H1)), 0.8 * s.sLS + 1.6)));
+    dw.setLabel('lblBf', V.add(d.G3, V.mul(V.unit(V.sub(d.G3, d.J1)), 0.8 * s.sLS + 1.6)));
+    dw.setLabel('lblAs', V.mid(...beside(d.L, d.G1, d.fcent, 2.4)));
+    dw.setLabel('lblBs', V.mid(...beside(d.G1, d.I, d.fcent, 2.4)));
 
     dw.setDisk('pt_E3', d.E3);
     dw.setDisk('pt_G3', d.G3);
@@ -422,6 +448,7 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.4, 0.01, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
+  panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = E₃, 2–4 = I…III, 5 = G₃, 6 = M₁)',
                0, 6, 1, refresh);
