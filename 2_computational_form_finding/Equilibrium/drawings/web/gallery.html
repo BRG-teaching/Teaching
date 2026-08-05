@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>eQUILIBRIUM</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    font: 15px/1.4 "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: #111;
+    background: #fff;
+  }
+  header {
+    background: #16181d;
+    color: #fff;
+  }
+  header .inner {
+    max-width: 1520px;
+    margin: 0 auto;
+    padding: 36px 40px 30px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  header h1 .q { color: #ce4095; }
+  header .sub {
+    font-size: 14px;
+    color: #8a8f98;
+    margin-top: 6px;
+  }
+  header .count {
+    font: 12px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: #8a8f98;
+  }
+  #grid {
+    max-width: 1520px;
+    margin: 0 auto;
+    padding: 24px 40px 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  .card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid #e5e5e5;
+    border-right: 1px solid #e5e5e5;
+    padding: 18px 18px 20px;
+    transition: background 0.12s;
+  }
+  .card:hover { background: #f7f7f7; }
+  .thumb {
+    aspect-ratio: 5 / 3;
+    background: #fff;
+    display: grid;
+    place-content: center;
+    margin-bottom: 14px;
+  }
+  .thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .placeholder {
+    width: 26px; height: 26px;
+    border: 1px solid #d9d9d9;
+    border-radius: 50%;
+  }
+  .meta { display: flex; gap: 12px; align-items: baseline; }
+  .meta .n {
+    font: 500 12px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: #999;
+    min-width: 20px;
+  }
+  .meta .t {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .card.todo .t { color: #b3b3b3; font-weight: 400; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <div>
+        <h1>e<span class="q">QUILIBRIUM</span></h1>
+        <p class="sub">an interactive environment for graphic statics-based structural design</p>
+      </div>
+      <span class="count" id="count"></span>
+    </div>
+  </header>
+  <div id="grid"></div>
+
+  <script type="module">
+    const grid = document.getElementById('grid');
+
+    // discover the available views from the dev server's directory listing
+    let views = [];
+    try {
+      const html = await (await fetch('./views/')).text();
+      views = [...new Set([...html.matchAll(/view_(\d+)\.js/g)].map((m) => +m[1]))]
+        .sort((a, b) => a - b);
+    } catch { views = Array.from({ length: 54 }, (_, i) => i + 1); }
+    document.getElementById('count').textContent = `${views.length} drawings`;
+
+    // autoplay the construction loops like GIFs; pause the off-screen ones
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) e.target.play().catch(() => {});
+        else e.target.pause();
+      }
+    }, { rootMargin: '120px' });
+
+    for (const n of views) {
+      const card = document.createElement('a');
+      card.className = 'card todo';
+      card.href = `./?view=${n}`;
+      card.innerHTML = `
+        <div class="thumb"><div class="placeholder"></div></div>
+        <div class="meta"><span class="n">${String(n).padStart(2, '0')}</span>
+          <span class="t">View ${n}</span></div>`;
+      grid.appendChild(card);
+
+      // title from the view module's meta (fetched as text, no evaluation)
+      fetch(`./views/view_${n}.js`).then((r) => r.text()).then((src) => {
+        const m = src.match(/title:\s*'([^']+)'/);
+        if (m) {
+          card.querySelector('.t').textContent =
+            m[1].replace(/\\'/g, "'").replace(/^Drawing \d+\s+—\s+/, '');
+        }
+        if (!src.startsWith('// Auto-generated')) card.classList.remove('todo');
+      }).catch(() => {});
+
+      // the construction loops continuously, GIF-style (poster paints first)
+      fetch(`./movies/view_${n}.mp4`, { method: 'HEAD' }).then((r) => {
+        if (!r.ok) return;
+        const v = document.createElement('video');
+        v.muted = true;
+        v.loop = true;
+        v.autoplay = true;
+        v.playsInline = true;
+        v.preload = 'auto';
+        v.poster = `./movies/view_${n}.png`;
+        v.src = `./movies/view_${n}.mp4`;
+        const thumb = card.querySelector('.thumb');
+        thumb.textContent = '';
+        thumb.appendChild(v);
+        io.observe(v);
+      }).catch(() => {});
+    }
+  </script>
+</body>
+</html>

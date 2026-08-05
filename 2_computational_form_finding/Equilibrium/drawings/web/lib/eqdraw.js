@@ -1,0 +1,961 @@
+/**
+ * eqdraw.js -- shared viewer library for the eQUILIBRIUM step-by-step drawings.
+ *
+ * Each drawing lives in views/view_N.js and only declares:
+ *   - its construction math (compute(state) -> derived geometry)
+ *   - its elements (bars, force segments, nodes, arrows, guides, labels)
+ *     with the construction step at which each appears
+ *   - its step captions and side-panel controls (sliders / toggles)
+ *
+ * This library provides everything else:
+ *   - three.js scene: white background, ground grid, perspective camera + orbit
+ *   - primitives drawn in the z=0 plane (quad "thick" segments, disks, arrows,
+ *     dashed circles, fan polygons) + crisp DOM labels projected onto the canvas
+ *   - the color scheme sampled from the reference video (data/6c07...MP4):
+ *       blue = compression, red = tension, green = loads,
+ *       pink = element added in the current step, grey = guides
+ *   - the StepPlayer: step slider, play/pause, speed, captions; elements are
+ *     drawn black until the final step resolves them into blue/red
+ *   - a Panel for sidebar widgets and GeoGebra-style dragging of control points
+ */
+
+import * as THREE from 'three';
+import { OrbitControls } from './vendor/OrbitControls.js';
+
+// palette based on the reference video (blue softened per user preference)
+export const PAL = {
+  blue: 0x2563eb,   // member in compression
+  red: 0xce2121,    // member in tension (really red, slightly dark)
+  green: 0x51923d,  // external loads
+  pink: 0xce4095,   // element(s) being drawn (sampled from the reference video)
+  pinkLight: 0xf0b7d7, // point fill while its step is current
+  ghost: 0x9ed4c9,  // pale blue-green ghost of the final drawing
+  yellow: 0xe8ac00, // hover highlight of dual form <-> force elements
+  yellowLight: 0xf9e08a, // point fill while hover-highlighted
+  grey: 0xa0a0a0,   // guides / construction lines
+  black: 0x111111,
+  white: 0xffffff,
+};
+
+const cssHex = (hex) => `#${hex.toString(16).padStart(6, '0')}`;
+const lerp2 = (a, b, f) => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+const smooth = (f) => f * f * (3 - 2 * f);
+
+// z-layers inside the drawing plane
+const Z = { rect: -0.3, guide: -0.1, seg: 0.0, arrow: 0.15, disk: 0.3 };
+
+const _v3 = new THREE.Vector3();
+const _plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+// ============================================================================
+// Drawing: scene + element registry
+// ============================================================================
+
+export class Drawing {
+  constructor(container, meta) {
+    this.meta = meta;
+    const [bl, tr] = meta.frame;
+    this.center = [(bl[0] + tr[0]) / 2, (bl[1] + tr[1]) / 2];
+    this.halfW = (tr[0] - bl[0]) / 2;
+    this.halfH = (tr[1] - bl[1]) / 2;
+    this.finalStep = Infinity; // set by StepPlayer
+
+    this.container = container;
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(this.renderer.domElement);
+
+    this.overlay = document.createElement('div');
+    this.overlay.className = 'eq-overlay';
+    container.appendChild(this.overlay);
+
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0xffffff);
+
+    // strictly 2D: straight-on orthographic camera, pan + zoom only
+    this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
+    this.camera.position.set(this.center[0], this.center[1], 50);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableRotate = false;
+    this.controls.screenSpacePanning = true;
+    this.controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+    this.controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN };
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.1;
+
+    this.elems = new Map();
+    this.raycaster = new THREE.Raycaster();
+
+    this.animEnabled = true;   // draw-in animation (movies disable it)
+    this.ghostEnabled = true;  // pale preview of the final drawing
+    this._anims = [];          // running draw-in animations
+    this._lastStep = null;
+    this._lastApply = null;
+    this._glide = null;        // camera glide goal {cx, cy, zoom}
+    this.renderer.domElement.addEventListener('pointerdown', () => { this._glide = null; });
+
+    // hover-linking of dual elements: hovering a member highlights its
+    // counterpart in the other diagram (form <-> force)
+    this._links = [];
+    this._linkOf = new Map();
+    this._hover = null;
+    this.renderer.domElement.addEventListener('pointermove', (ev) => {
+      if (!this.controls.enabled || !this._links.length) return;
+      const w = this.worldFromEvent(ev);
+      if (!w) return;
+      let g = null;
+      const tol = this._tolerance();
+      for (const [name, e] of this.elems) {
+        if (!e.visible) continue;
+        const gi = this._linkOf.get(name);
+        if (gi === undefined) continue;
+        if (this._distTo(e, w) < tol) { g = gi; break; }
+      }
+      if (g !== this._hover) {
+        this._hover = g;
+        const la = this._lastApply;
+        if (la) this.applyStep(la.k, la.d, la.state);
+      }
+    });
+    this.renderer.domElement.addEventListener('pointerleave', () => {
+      if (this._hover === null) return;
+      this._hover = null;
+      const la = this._lastApply;
+      if (la) this.applyStep(la.k, la.d, la.state);
+    });
+
+    this._resize();
+    new ResizeObserver(() => this._resize()).observe(container);
+    this.zoomFit(true);
+    this.renderer.setAnimationLoop(() => this._tick());
+  }
+
+  _resize() {
+    const w = this.container.clientWidth || 1;
+    const h = this.container.clientHeight || 1;
+    this.renderer.setSize(w, h, false);
+    this._fitFrustum(w / h);
+  }
+
+  _fitFrustum(aspect) {
+    // fit the drawing frame (with a small margin) into the ortho frustum
+    const needW = this.halfW * 1.06, needH = this.halfH * 1.12;
+    const halfH = Math.max(needH, needW / aspect);
+    this.camera.left = -halfH * aspect;
+    this.camera.right = halfH * aspect;
+    this.camera.top = halfH;
+    this.camera.bottom = -halfH;
+    this.camera.updateProjectionMatrix();
+  }
+
+  zoomFit() {
+    const [cx, cy] = this.center;
+    this.camera.zoom = 1;
+    this.camera.position.set(cx, cy, 50);
+    this.controls.target.set(cx, cy, 0);
+    this._fitFrustum((this.container.clientWidth || 1) / (this.container.clientHeight || 1));
+    this.controls.update();
+  }
+
+  front() {
+    this.zoomFit();
+  }
+
+  _tick() {
+    const now = performance.now();
+
+    // draw-in animations: elements grow from their start point
+    for (let i = this._anims.length - 1; i >= 0; i--) {
+      const a = this._anims[i];
+      let f = (now - a.start) / a.dur;
+      if (f >= 1) {
+        a.e.animF = undefined;
+        this._anims.splice(i, 1);
+      } else {
+        a.e.animF = smooth(Math.max(f, 0));
+      }
+      this._applyGeo(a.e);
+    }
+
+    // camera glide toward the current step's elements
+    if (this._glide) {
+      const g = this._glide, a = 0.09;
+      const c = this.camera, t = this.controls.target;
+      c.position.x += (g.cx - c.position.x) * a;
+      c.position.y += (g.cy - c.position.y) * a;
+      t.x += (g.cx - t.x) * a;
+      t.y += (g.cy - t.y) * a;
+      c.zoom += (g.zoom - c.zoom) * a;
+      c.updateProjectionMatrix();
+      if (Math.abs(g.cx - c.position.x) + Math.abs(g.cy - c.position.y) < 1e-3
+          && Math.abs(g.zoom - c.zoom) < 1e-3) this._glide = null;
+    }
+
+    this.controls.update();
+    this.renderer.render(this.scene, this.camera);
+    const w = this.container.clientWidth, h = this.container.clientHeight;
+    for (const e of this.elems.values()) {
+      if (e.kind !== 'label') continue;
+      if (!e.visible) { e.el.style.display = 'none'; continue; }
+      _v3.set(e.pos[0], e.pos[1], 0).project(this.camera);
+      if (_v3.z > 1) { e.el.style.display = 'none'; continue; }
+      e.el.style.display = '';
+      e.el.style.opacity = e.animF ?? 1;
+      e.el.style.left = `${(_v3.x * 0.5 + 0.5) * w}px`;
+      e.el.style.top = `${(-_v3.y * 0.5 + 0.5) * h}px`;
+    }
+  }
+
+  /** Apply an element's stored geometry, partially revealed while animF < 1. */
+  _applyGeo(e) {
+    const wE0 = e.w, zE0 = e.z, hwE0 = e.headW;
+    const wE = e.ghostNow ? wE0 * 0.7 : wE0;
+    const zE = e.ghostNow ? zE0 - 2 : zE0;
+    const hwE = e.ghostNow ? hwE0 * 0.6 : hwE0;
+    if (!e.geo) return;
+    if (e.ghostTwin) {
+      e.ghostTwin.geo = e.geo;
+      this._applyGeo(e.ghostTwin);
+    }
+    const f = e.animF ?? 1;
+    if (e.kind === 'seg') {
+      const { p0, p1 } = e.geo;
+      const q = lerp2(p0, p1, f);
+      const l = Math.max(dist2(p0, q), 1e-6);
+      e.mesh.position.set((p0[0] + q[0]) / 2, (p0[1] + q[1]) / 2, zE);
+      e.mesh.rotation.z = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+      e.mesh.scale.set(l, wE, 1);
+    } else if (e.kind === 'arrow') {
+      const { tail, tip } = e.geo;
+      const tp = lerp2(tail, tip, Math.max(f, 0.02));
+      const dx = tp[0] - tail[0], dy = tp[1] - tail[1];
+      const l = Math.hypot(dx, dy) || 1e-6;
+      const ux = dx / l, uy = dy / l;
+      const hl = Math.min(e.headLen, 0.5 * l);
+      const bx = tp[0] - ux * hl, by = tp[1] - uy * hl;
+      e.shaft.position.set((tail[0] + bx) / 2, (tail[1] + by) / 2, zE);
+      e.shaft.rotation.z = Math.atan2(dy, dx);
+      e.shaft.scale.set(Math.max(l - hl, 1e-6), wE, 1);
+      const ox = -uy * hwE, oy = ux * hwE;
+      e.head.geometry.attributes.position.array.set([
+        tp[0], tp[1], zE, bx + ox, by + oy, zE, bx - ox, by - oy, zE]);
+      e.head.geometry.attributes.position.needsUpdate = true;
+    } else if (e.kind === 'darrow') {
+      const { tail, tip } = e.geo;
+      const tp = lerp2(tail, tip, Math.max(f, 0.02));
+      const dx = tp[0] - tail[0], dy = tp[1] - tail[1];
+      const l = Math.hypot(dx, dy) || 1e-6;
+      const ux = dx / l, uy = dy / l;
+      const hl = Math.min(e.headLen, 0.5 * l);
+      const shaft = l - hl;
+      // fixed dash length in world units: identical pattern at any arrow length
+      let period = e.dash / 0.62;
+      let n = Math.max(1, Math.ceil(shaft / period));
+      if (n > e.meshes.length) { n = e.meshes.length; period = shaft / n; }
+      const dashLen = period * 0.62;
+      e.meshes.forEach((m, i) => {
+        if (i >= n) { m.scale.set(1e-6, 1e-6, 1); return; }
+        const s0 = i * period;
+        const dl = Math.max(Math.min(dashLen, shaft - s0), 1e-6);
+        const cx = tail[0] + ux * (s0 + dl / 2), cy = tail[1] + uy * (s0 + dl / 2);
+        m.position.set(cx, cy, zE);
+        m.rotation.z = Math.atan2(dy, dx);
+        m.scale.set(dl, wE, 1);
+      });
+      const bx = tp[0] - ux * hl, by = tp[1] - uy * hl;
+      const ox = -uy * hwE, oy = ux * hwE;
+      e.head.geometry.attributes.position.array.set([
+        tp[0], tp[1], zE, bx + ox, by + oy, zE, bx - ox, by - oy, zE]);
+      e.head.geometry.attributes.position.needsUpdate = true;
+    } else if (e.kind === 'strokes') {
+      const pairs = e.geo;
+      const lens = pairs.map(([a, b]) => dist2(a, b));
+      let reveal = f * lens.reduce((s, l) => s + l, 0);
+      pairs.forEach(([a, b], i) => {
+        const ff = lens[i] <= 1e-9 ? 1 : Math.max(0, Math.min(1, reveal / lens[i]));
+        reveal -= lens[i];
+        const q = lerp2(a, b, ff);
+        const m = e.meshes[i];
+        const l = Math.max(dist2(a, q), 1e-6);
+        m.position.set((a[0] + q[0]) / 2, (a[1] + q[1]) / 2, zE);
+        m.rotation.z = Math.atan2(b[1] - a[1], b[0] - a[0]);
+        m.scale.set(l, wE, 1);
+      });
+    } else if (e.kind === 'dline') {
+      const pts = e.geo;
+      let partial = pts;
+      if (f < 1 && pts.length > 1) {
+        const lens = [];
+        let total = 0;
+        for (let i = 0; i < pts.length - 1; i++) { lens.push(dist2(pts[i], pts[i + 1])); total += lens[i]; }
+        let remain = f * total;
+        partial = [pts[0]];
+        for (let i = 0; i < lens.length && remain > 0; i++) {
+          if (remain >= lens[i]) { partial.push(pts[i + 1]); remain -= lens[i]; }
+          else { partial.push(lerp2(pts[i], pts[i + 1], remain / lens[i])); remain = 0; }
+        }
+        if (partial.length < 2) partial.push(partial[0]);
+      }
+      e.line.geometry.setFromPoints(partial.map((p) => new THREE.Vector3(p[0], p[1], zE)));
+      e.line.computeLineDistances();
+    } else if (e.kind === 'circle' || e.kind === 'dcircle') {
+      const { c, r } = e.geo;
+      const m = e.kind === 'circle' ? 96 : 120;
+      const steps = Math.max(2, Math.round(m * f));
+      const span = Math.PI * 2 * f;
+      const pts = [];
+      for (let i = 0; i <= steps; i++) {
+        const a = (i / steps) * span;
+        pts.push(new THREE.Vector3(c[0] + r * Math.cos(a), c[1] + r * Math.sin(a), zE));
+      }
+      e.line.geometry.setFromPoints(pts);
+      e.line.computeLineDistances?.();
+      if (e.kind === 'dcircle') e.line.computeLineDistances();
+    } else if (e.kind === 'poly') {
+      const arr = e.mesh.geometry.attributes.position.array;
+      e.geo.forEach((p, i) => arr.set([p[0], p[1], zE], i * 3));
+      e.mesh.geometry.attributes.position.needsUpdate = true;
+      if (e.mats[0].transparent) e.mats[0].opacity = e.targetOp * f;
+    } else if (e.kind === 'disk') {
+      const p = e.geo;
+      const ff = Math.max(f, 0.001);
+      e.outer.position.set(p[0], p[1], zE);
+      e.inner.position.set(p[0], p[1], zE + 0.02);
+      e.outer.scale.set(e.r * ff, e.r * ff, 1);
+      e.inner.scale.set(e.r * 0.68 * ff, e.r * 0.68 * ff, 1);
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // element creation. Common options:
+  //   intro : construction step at which the element appears (default 0)
+  //   outro : step at which it disappears again (construction-only helpers)
+  //   when  : (state, d) => bool, extra visibility condition
+  //   color : hex, or {pending: hex, final: (d) => hex} resolved by the player
+  //   flash : draw pink while its intro step is the current one (default true)
+  // ------------------------------------------------------------------
+
+  _register(name, entry) {
+    entry.visible = entry.intro === 0 && !entry.when;
+    for (const o of entry.objs || []) {
+      o.visible = entry.visible;
+      this.scene.add(o);
+    }
+    this.elems.set(name, entry);
+    return entry;
+  }
+
+  _mat(color, opacity = 1.0) {
+    const hex = typeof color === 'number' ? color : color.pending;
+    return new THREE.MeshBasicMaterial({
+      color: hex, side: THREE.DoubleSide,
+      transparent: opacity < 1.0, opacity, depthWrite: opacity === 1.0,
+    });
+  }
+
+  /** Thick segment drawn as a rotated unit quad; w is the width in world units. */
+  seg(name, { w = 0.4, z = Z.seg, intro = 0, outro, when, color = PAL.black, flash = true } = {}) {
+    const mat = this._mat(color);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+    return this._register(name, { kind: 'seg', objs: [mesh], mesh, mats: [mat], w, z, intro, outro, when, color, flash });
+  }
+
+  setSeg(name, p0, p1) {
+    const e = this.elems.get(name);
+    e.geo = { p0, p1 };
+    this._applyGeo(e);
+  }
+
+  /** Arrow (shaft quad + solid triangular head), like ggb2compas.arrow_parts. */
+  arrow(name, { w = 0.55, z = Z.arrow, intro = 0, outro, when, color = PAL.green, flash = true,
+                headLen = 1.7, headW = 0.65 } = {}) {
+    const mat = this._mat(color);
+    const shaft = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+    const head = new THREE.Mesh(geo, mat);
+    head.frustumCulled = false;
+    return this._register(name, { kind: 'arrow', objs: [shaft, head], shaft, head, mats: [mat],
+                                  w, z, headLen, headW, intro, outro, when, color, flash });
+  }
+
+  setArrow(name, tail, tip) {
+    const e = this.elems.get(name);
+    e.geo = { tail, tip };
+    this._applyGeo(e);
+  }
+
+  /** Thick DASHED vector: quad dashes along the full shaft + solid head.
+      Used for resultants, which are always drawn dashed start-to-end.
+      `dash` is the dash length in world units -- the pattern looks the same
+      regardless of the arrow's length (a pool of quads covers up to maxDashes). */
+  dashArrow(name, { w = 0.55, z = Z.arrow, intro = 0, outro, when, color = PAL.green,
+                    flash = true, headLen = 1.7, headW = 0.65, dash = 1.1, maxDashes = 40 } = {}) {
+    const mat = this._mat(color);
+    const meshes = [];
+    for (let i = 0; i < maxDashes; i++) meshes.push(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat));
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+    const head = new THREE.Mesh(geo, mat);
+    head.frustumCulled = false;
+    return this._register(name, { kind: 'darrow', objs: [...meshes, head], meshes, head,
+                                  mats: [mat], w, z, headLen, headW, dash,
+                                  intro, outro, when, color, flash });
+  }
+
+  setDashArrow(name, tail, tip) {
+    const e = this.elems.get(name);
+    e.geo = { tail, tip };
+    this._applyGeo(e);
+  }
+
+  /** Group of thick strokes sharing one material (vector arrows, polylines). */
+  strokes(name, count, { w = 0.4, z = Z.seg, intro = 0, outro, when, color = PAL.black, flash = true } = {}) {
+    const mat = this._mat(color);
+    const meshes = [];
+    for (let i = 0; i < count; i++) meshes.push(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat));
+    return this._register(name, { kind: 'strokes', objs: meshes, meshes, mats: [mat],
+                                  w, z, intro, outro, when, color, flash });
+  }
+
+  setStrokes(name, pairs) {
+    const e = this.elems.get(name);
+    e.geo = pairs;
+    this._applyGeo(e);
+  }
+
+  /** Dashed polyline (guides / temporary construction lines are always dashed). */
+  dashLine(name, { color = PAL.grey, z = Z.guide, intro = 0, outro, when, flash = true, dash = 0.9 } = {}) {
+    const mat = new THREE.LineDashedMaterial({ color, dashSize: dash, gapSize: dash * 0.8 });
+    const line = new THREE.Line(new THREE.BufferGeometry(), mat);
+    line.frustumCulled = false;
+    return this._register(name, { kind: 'dline', objs: [line], line, z, mats: [mat],
+                                  intro, outro, when, color, flash });
+  }
+
+  setDashLine(name, pts) {
+    const e = this.elems.get(name);
+    e.geo = pts;
+    this._applyGeo(e);
+  }
+
+  /** Thin solid circle outline (construction / detail circles). */
+  circle(name, { color = PAL.black, z = Z.guide, intro = 0, outro, when, flash = true } = {}) {
+    const mat = new THREE.LineBasicMaterial({ color });
+    const line = new THREE.Line(new THREE.BufferGeometry(), mat);
+    line.frustumCulled = false;
+    return this._register(name, { kind: 'circle', objs: [line], line, mats: [mat],
+                                  z, intro, outro, when, color, flash });
+  }
+
+  setCircle(name, c, r) {
+    const e = this.elems.get(name);
+    e.geo = { c, r };
+    this._applyGeo(e);
+  }
+
+  /** Filled convex polygon with a fixed vertex count (fan triangulated). */
+  poly(name, count, { z = Z.rect, intro = 0, when, color = PAL.grey, flash = true, opacity = 1.0 } = {}) {
+    const mat = this._mat(color, opacity);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
+    const index = [];
+    for (let i = 1; i < count - 1; i++) index.push(0, i, i + 1);
+    geo.setIndex(index);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.frustumCulled = false;
+    return this._register(name, { kind: 'poly', objs: [mesh], mesh, mats: [mat], z, intro, when,
+                                  color, flash, targetOp: opacity });
+  }
+
+  setPoly(name, pts) {
+    const e = this.elems.get(name);
+    e.geo = pts;
+    this._applyGeo(e);
+  }
+
+  /** Point: small circle with a thin outline -- white face, black boundary;
+      light-pink face + pink boundary while its intro step is the current one. */
+  disk(name, { r = 0.65, face = PAL.white, edge = 0x3c3f46, z = Z.disk, intro = 0, outro, when } = {}) {
+    const edgeMat = this._mat(edge);
+    const faceMat = this._mat(face);
+    const outer = new THREE.Mesh(new THREE.CircleGeometry(1, 32), edgeMat);
+    const inner = new THREE.Mesh(new THREE.CircleGeometry(1, 32), faceMat);
+    outer.scale.set(r, r, 1);
+    inner.scale.set(r * 0.68, r * 0.68, 1);
+    return this._register(name, { kind: 'disk', objs: [outer, inner], outer, inner, z, r,
+                                  mats: [faceMat], edgeMat, edgeHex: edge,
+                                  color: face, flash: true, intro, outro, when });
+  }
+
+  setDisk(name, p) {
+    const e = this.elems.get(name);
+    e.geo = p;
+    this._applyGeo(e);
+  }
+
+  /** Dashed circle guide (GeoGebra-style construction circle). */
+  dashedCircle(name, { color = PAL.grey, z = Z.guide, intro = 0, when, dash = 1.2 } = {}) {
+    const mat = new THREE.LineDashedMaterial({ color, dashSize: dash, gapSize: dash });
+    const line = new THREE.Line(new THREE.BufferGeometry(), mat);
+    line.frustumCulled = false;
+    return this._register(name, { kind: 'dcircle', objs: [line], line, z, mats: [mat],
+                                  color, flash: true, intro, when });
+  }
+
+  setDashedCircle(name, c, r) {
+    const e = this.elems.get(name);
+    e.geo = { c, r };
+    this._applyGeo(e);
+  }
+
+  /** Crisp DOM label projected onto the drawing plane. cls: extra css classes;
+      color (hex or {final}) ties the text color to its element's color. */
+  label(name, text, { cls = '', intro = 0, outro, when, flash = true, color } = {}) {
+    const el = document.createElement('div');
+    el.className = `eq-label ${cls}`;
+    el.textContent = text;
+    this.overlay.appendChild(el);
+    return this._register(name, { kind: 'label', objs: [], el, pos: [0, -1e4], intro, outro, when, flash, color });
+  }
+
+  setLabel(name, pos) {
+    this.elems.get(name).pos = pos;
+  }
+
+  setText(name, text) {
+    this.elems.get(name).el.textContent = text;
+  }
+
+  /** Flash an element pink again at extra steps: ties a form-diagram member
+      to the step where its force-diagram counterpart is drawn. */
+  highlight(name, steps) {
+    this.elems.get(name).hi = steps;
+  }
+
+  /** Mark force-diagram elements for the pale ghost preview of the final
+      drawing (the form diagram is never ghosted). Each gets a persistent thin
+      twin far behind the drawing; the real lines cover it once drawn. */
+  ghostable(...names) {
+    for (const n of names) {
+      const e = this.elems.get(n);
+      if (!e || e.ghostTwin) continue;
+      const mat = this._mat(PAL.ghost);
+      let g = null;
+      if (e.kind === 'seg') {
+        const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+        g = { kind: 'seg', mesh, objs: [mesh] };
+      } else if (e.kind === 'arrow' || e.kind === 'darrow') {
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+        const head = new THREE.Mesh(geo, mat);
+        head.frustumCulled = false;
+        if (e.kind === 'arrow') {
+          const shaft = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+          g = { kind: 'arrow', shaft, head, objs: [shaft, head] };
+        } else {
+          const meshes = [];
+          for (let i = 0; i < e.meshes.length; i++) {
+            meshes.push(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat));
+          }
+          g = { kind: 'darrow', meshes, head, objs: [...meshes, head] };
+        }
+      } else {
+        continue;              // ghost twins exist for seg / arrow / darrow only
+      }
+      g.w = e.w; g.z = e.z; g.headLen = e.headLen; g.headW = e.headW;
+      g.dash = e.dash; g.mats = [mat]; g.ghostNow = true;
+      for (const o of g.objs) { o.visible = false; this.scene.add(o); }
+      e.ghostTwin = g;
+    }
+  }
+
+  /** Background/site elements: appear instantly in their own color -- no
+      draw-in animation and no pink flash (they are not construction moves). */
+  instant(...names) {
+    for (const n of names) {
+      const e = this.elems.get(n);
+      e.anim = false;
+      e.flash = false;
+    }
+  }
+
+  /** Declare a group of dual elements (form member + its force counterpart +
+      their labels): hovering any of them highlights the whole group. */
+  link(...names) {
+    const g = this._links.length;
+    this._links.push(names);
+    for (const n of names) this._linkOf.set(n, g);
+  }
+
+  /** Distance from a world point to an element's drawn geometry. */
+  _distTo(e, w) {
+    const g = e.geo;
+    if (!g) return Infinity;
+    const dseg = (a, b) => {
+      const ab = [b[0] - a[0], b[1] - a[1]];
+      const l2 = ab[0] * ab[0] + ab[1] * ab[1];
+      const t = l2 > 1e-12
+        ? Math.max(0, Math.min(1, ((w[0] - a[0]) * ab[0] + (w[1] - a[1]) * ab[1]) / l2)) : 0;
+      return Math.hypot(w[0] - a[0] - ab[0] * t, w[1] - a[1] - ab[1] * t);
+    };
+    if (e.kind === 'seg') return dseg(g.p0, g.p1);
+    if (e.kind === 'arrow' || e.kind === 'darrow') return dseg(g.tail, g.tip);
+    if (e.kind === 'strokes') return Math.min(...g.map(([a, b]) => dseg(a, b)));
+    if (e.kind === 'dline') {
+      let best = Infinity;
+      for (let i = 0; i < g.length - 1; i++) best = Math.min(best, dseg(g[i], g[i + 1]));
+      return best;
+    }
+    return Infinity;
+  }
+
+  // ------------------------------------------------------------------
+  // step + state application (called by the view's refresh via the player)
+  // ------------------------------------------------------------------
+
+  applyStep(k, d, state) {
+    // advancing one step animates that step's elements being drawn
+    const advance = this._lastStep !== null && k === this._lastStep + 1;
+    if (k !== this._lastStep) {
+      for (const a of this._anims) { a.e.animF = undefined; this._applyGeo(a.e); }
+      this._anims = [];
+    }
+    const newly = [];
+    this._lastApply = { k, d, state };
+
+    for (const [name, e] of this.elems) {
+      e.visible = e.intro <= k && k < (e.outro ?? Infinity) && (!e.when || e.when(state, d));
+      for (const o of e.objs) o.visible = e.visible;
+      const current = e.intro === k || (e.hi && e.hi.includes(k));
+      const flashing = !!(e.visible && e.flash && current && k > 0);
+      const hovered = !!(e.visible && this._hover !== null
+                         && this._linkOf.get(name) === this._hover);
+      if (advance && e.visible && e.intro === k) newly.push(e);
+
+      // color: yellow while hover-linked, pink while being drawn,
+      // its proper color otherwise
+      const resolved = e.color === undefined ? undefined
+        : typeof e.color === 'number' ? e.color
+        : e.color.final ? e.color.final(d) : e.color.pending;
+
+      if (e.kind === 'label') {
+        e.el.classList.toggle('hover', hovered);
+        e.el.classList.toggle('flash', !hovered && flashing);
+        e.el.style.color = !hovered && !flashing && resolved !== undefined ? cssHex(resolved) : '';
+        continue;
+      }
+      // ghost: force-diagram elements not yet drawn, but part of the final
+      // drawing, appear as a pale blue-green preview (opt-in via ghostable();
+      // the form diagram is never ghosted)
+      if (e.ghostTwin) {
+        const on = this.ghostEnabled && (!e.when || e.when(state, d));
+        for (const o of e.ghostTwin.objs) o.visible = on;
+      }
+      if (!e.visible || e.color === undefined) continue;
+      if (e.kind === 'disk') {
+        e.mats[0].color.setHex(hovered ? PAL.yellowLight : flashing ? PAL.pinkLight : resolved);
+        e.edgeMat.color.setHex(hovered ? PAL.yellow : flashing ? PAL.pink : e.edgeHex);
+        continue;
+      }
+      for (const m of e.mats) {
+        m.color.setHex(hovered ? PAL.yellow : flashing ? PAL.pink : resolved);
+      }
+    }
+
+    if (advance && this.animEnabled && k > 0 && newly.length) {
+      const per = Math.min(1000, 1800 / newly.length);
+      const t0 = performance.now();
+      newly.forEach((e, i) => {
+        if (e.kind === 'poly' && !e.mats[0].transparent) return;   // opaque fills pop in
+        if (e.anim === false) return;   // background/site elements appear instantly
+        e.animF = 0;
+        this._applyGeo(e);
+        this._anims.push({ e, start: t0 + i * per * 0.8, dur: per });
+      });
+    }
+    this._lastStep = k;
+  }
+
+  // ------------------------------------------------------------------
+  // camera follow ("cam"): glide to frame the current step's elements
+  // ------------------------------------------------------------------
+
+  _elemPoints(e, out) {
+    const g = e.geo;
+    if (e.kind === 'label') { out.push(e.pos); return; }
+    if (!g) return;
+    if (e.kind === 'seg') out.push(g.p0, g.p1);
+    else if (e.kind === 'arrow' || e.kind === 'darrow') out.push(g.tail, g.tip);
+    else if (e.kind === 'strokes') g.forEach(([a, b]) => out.push(a, b));
+    else if (e.kind === 'dline' || e.kind === 'poly') out.push(...g);
+    else if (e.kind === 'circle' || e.kind === 'dcircle') {
+      out.push([g.c[0] - g.r, g.c[1] - g.r], [g.c[0] + g.r, g.c[1] + g.r]);
+    } else if (e.kind === 'disk') out.push(g);
+  }
+
+  glideHome() {
+    this._glide = { cx: this.center[0], cy: this.center[1], zoom: 1 };
+  }
+
+  glideToStep(k) {
+    if (k <= 0 || k >= this.finalStep) { this.glideHome(); return; }
+    const pts = [];
+    for (const e of this.elems.values()) {
+      if (e.intro === k && e.visible) this._elemPoints(e, pts);
+    }
+    if (!pts.length) { this.glideHome(); return; }
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const p of pts) {
+      x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]);
+      x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]);
+    }
+    const needW = (x1 - x0) / 2 * 2.6 + 0.06 * this.halfW;
+    const needH = (y1 - y0) / 2 * 2.6 + 0.06 * this.halfH;
+    const zoom = Math.max(1, Math.min(3.5,
+      Math.min(this.camera.right / Math.max(needW, 1e-6), this.camera.top / Math.max(needH, 1e-6))));
+    this._glide = { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, zoom };
+  }
+
+  // ------------------------------------------------------------------
+  // GeoGebra-style dragging of control points in the z=0 plane
+  // ------------------------------------------------------------------
+
+  worldFromEvent(ev) {
+    const r = this.renderer.domElement.getBoundingClientRect();
+    const x = ((ev.clientX - r.left) / r.width) * 2 - 1;
+    const y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+    this.raycaster.setFromCamera({ x, y }, this.camera);
+    const hit = this.raycaster.ray.intersectPlane(_plane, _v3);
+    return hit ? [hit.x, hit.y] : null;
+  }
+
+  _tolerance() {
+    const h = this.renderer.domElement.clientHeight || 1;
+    return 14 * ((this.camera.top - this.camera.bottom) / this.camera.zoom) / h;
+  }
+
+  enableDrag(hit, onDrag) {
+    const el = this.renderer.domElement;
+    let key = null;
+    el.addEventListener('pointerdown', (ev) => {
+      if (ev.button !== 0) return;
+      const w = this.worldFromEvent(ev);
+      if (!w) return;
+      key = hit(w[0], w[1], this._tolerance());
+      if (key) {
+        this.controls.enabled = false;
+        el.setPointerCapture(ev.pointerId);
+      }
+    });
+    el.addEventListener('pointermove', (ev) => {
+      const w = this.worldFromEvent(ev);
+      if (!w) return;
+      if (key) { onDrag(key, w[0], w[1]); return; }
+      el.style.cursor = hit(w[0], w[1], this._tolerance()) ? 'grab' : 'default';
+    });
+    const release = () => { key = null; this.controls.enabled = true; };
+    el.addEventListener('pointerup', release);
+    el.addEventListener('pointercancel', release);
+  }
+}
+
+function dist2(a, b) {
+  return Math.hypot(b[0] - a[0], b[1] - a[1]);
+}
+
+// ============================================================================
+// sidebar panel widgets
+// ============================================================================
+
+export class Panel {
+  constructor(root, meta) {
+    this.root = root;
+    this._syncs = [];
+    const head = document.createElement('div');
+    head.className = 'panel-head';
+    head.innerHTML = `<h1>${meta.title}</h1>${meta.subtitle ? `<p>${meta.subtitle}</p>` : ''}`;
+    root.appendChild(head);
+  }
+
+  section(title) {
+    const sec = document.createElement('div');
+    sec.className = 'panel-section';
+    sec.innerHTML = `<h2>${title}</h2>`;
+    this.root.appendChild(sec);
+    return sec;
+  }
+
+  slider(sec, obj, key, label, min, max, step, onChange, fmt = (v) => v) {
+    const row = document.createElement('div');
+    row.className = 'ctl slider';
+    row.innerHTML = `<div class="ctl-head"><span>${label}</span><span class="val"></span></div>
+                     <input type="range" min="${min}" max="${max}" step="${step}">`;
+    sec.appendChild(row);
+    const input = row.querySelector('input');
+    const val = row.querySelector('.val');
+    const sync = () => { input.value = obj[key]; val.textContent = fmt(obj[key]); };
+    sync();
+    input.addEventListener('input', () => {
+      obj[key] = parseFloat(input.value);
+      val.textContent = fmt(obj[key]);
+      onChange?.();
+    });
+    this._syncs.push(sync);
+    return { sync, set: (v) => { obj[key] = v; sync(); } };
+  }
+
+  toggle(sec, obj, key, label, onChange) {
+    const row = document.createElement('label');
+    row.className = 'ctl toggle';
+    row.innerHTML = `<input type="checkbox"><span>${label}</span>`;
+    sec.appendChild(row);
+    const input = row.querySelector('input');
+    const sync = () => { input.checked = !!obj[key]; };
+    sync();
+    input.addEventListener('change', () => { obj[key] = input.checked; onChange?.(); });
+    this._syncs.push(sync);
+    return { sync };
+  }
+
+  button(sec, label, onClick, cls = '') {
+    const b = document.createElement('button');
+    b.className = `btn ${cls}`;
+    b.textContent = label;
+    b.addEventListener('click', onClick);
+    sec.appendChild(b);
+    return b;
+  }
+
+  buttonRow(sec) {
+    const row = document.createElement('div');
+    row.className = 'btn-row';
+    sec.appendChild(row);
+    return row;
+  }
+
+  syncAll() {
+    this._syncs.forEach((s) => s());
+  }
+}
+
+// ============================================================================
+// the construction-steps player
+// ============================================================================
+
+export class StepPlayer {
+  /**
+   * steps: [{t, d}] captions; index 0 = empty canvas / intro card.
+   * refresh: the view's refresh() -- recomputes geometry, then calls apply().
+   */
+  constructor(dw, panel, steps, refresh) {
+    this.dw = dw;
+    this.steps = steps;
+    this.refresh = refresh;
+    const q = new URLSearchParams(location.search).get('step');  // deep-link a step
+    this.k = q === 'last' ? steps.length - 1
+      : Math.max(0, Math.min(steps.length - 1, parseInt(q ?? '0', 10) || 0));
+    this.speed = 3;
+    this._timer = null;
+    dw.finalStep = steps.length - 1;
+
+    this.caption = document.createElement('div');
+    this.caption.className = 'eq-caption';
+    this.caption.innerHTML = `<span class="pill"></span>
+      <div class="cap-body"><div class="cap-t"></div><div class="cap-d"></div></div>`;
+    dw.container.appendChild(this.caption);
+
+    // progress bar of the complete drawing (click / drag scrubs the steps)
+    this.progress = document.createElement('div');
+    this.progress.className = 'eq-progress';
+    this.progress.innerHTML = '<div class="fill"></div>';
+    dw.container.appendChild(this.progress);
+    const scrub = (ev) => {
+      const r = this.progress.getBoundingClientRect();
+      const f = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width));
+      this._stop();
+      this.set(Math.round(f * (this.steps.length - 1)));
+    };
+    this.progress.addEventListener('pointerdown', (ev) => {
+      this.progress.setPointerCapture(ev.pointerId);
+      scrub(ev);
+    });
+    this.progress.addEventListener('pointermove', (ev) => {
+      if (ev.buttons) scrub(ev);
+    });
+
+    this.cam = false;
+    this.ghostPreview = true;
+    const sec = panel.section('Construction steps');
+    this._slider = panel.slider(sec, this, 'k', 'step', 0, steps.length - 1, 1,
+                                () => this.set(this.k));
+    panel.slider(sec, this, 'speed', 'speed', 0.5, 5, 0.5, () => {
+      if (this._timer) { this._stop(); this._start(); }
+    }, (v) => `${v.toFixed(1)}x`);
+    panel.toggle(sec, this, 'cam', 'cam — camera follows the steps', () => {
+      if (this.cam) this.dw.glideToStep(this.k);
+      else this.dw.glideHome();
+    });
+    panel.toggle(sec, this, 'ghostPreview', 'ghost — preview the final drawing', () => {
+      this.dw.ghostEnabled = this.ghostPreview;
+      this.refresh();
+    });
+    const row = panel.buttonRow(sec);
+    panel.button(row, '⏮', () => { this._stop(); this.set(0); });
+    panel.button(row, '◀', () => { this._stop(); this.set(this.k - 1); });
+    this._playBtn = panel.button(row, '▶ play', () => this.playPause(), 'accent');
+    panel.button(row, '▶', () => { this._stop(); this.set(this.k + 1); });
+    panel.button(row, '⏭', () => { this._stop(); this.set(this.steps.length - 1); });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight' || e.key === 'Right') { this._stop(); this.set(this.k + 1); }
+      else if (e.key === 'ArrowLeft' || e.key === 'Left') { this._stop(); this.set(this.k - 1); }
+      else if (e.key === ' ') { e.preventDefault(); this.playPause(); }
+    });
+
+    // opening a view starts the construction automatically; a ?step= deep
+    // link (or the movie renderer) opts out
+    if (q === null) setTimeout(() => { if (!this._timer && this.k === 0) this.playPause(); }, 700);
+  }
+
+  set(k) {
+    const prev = this.k;
+    this.k = Math.max(0, Math.min(this.steps.length - 1, Math.round(k)));
+    this._slider.sync();
+    this.refresh();
+    if (this.cam && this.k !== prev) this.dw.glideToStep(this.k);
+  }
+
+  /** Called by the view's refresh() with the freshly computed geometry. */
+  apply(d, state) {
+    this.dw.applyStep(this.k, d, state);
+    const { t, d: desc } = this.steps[this.k];
+    this.caption.querySelector('.pill').textContent = `${this.k}/${this.steps.length - 1}`;
+    this.caption.querySelector('.cap-t').textContent = t;
+    this.caption.querySelector('.cap-d').textContent = desc;
+    this.progress.querySelector('.fill').style.width
+      = `${(100 * this.k) / (this.steps.length - 1)}%`;
+  }
+
+  _start() {
+    // leave room for the draw-in animation (~1.8s) before the next step
+    this._timer = setInterval(() => {
+      if (this.k >= this.steps.length - 1) this._stop();
+      else this.set(this.k + 1);
+    }, 3400 / this.speed);
+    this._playBtn.textContent = '⏸ pause';
+  }
+
+  _stop() {
+    clearInterval(this._timer);
+    this._timer = null;
+    this._playBtn.textContent = '▶ play';
+  }
+
+  playPause() {
+    if (this._timer) { this._stop(); return; }
+    if (this.k >= this.steps.length - 1) this.set(0);
+    this._start();
+  }
+}

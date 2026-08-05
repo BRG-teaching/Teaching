@@ -1,0 +1,18 @@
+[project]
+name = "teaching"
+version = "0.1.0"
+description = "Teaching material: COMPAS-based examples and drawings"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "compas",
+    "compas_viewer",
+    "numpy",
+]
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "websocket-client>=1.9.0",
+]

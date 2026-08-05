@@ -2,6 +2,43 @@
 
 Resources for teaching.
 
+## Setup
+
+Requires [uv](https://docs.astral.sh/uv/). From the repo root:
+
+```bash
+uv sync
+```
+
+Run any script with `uv run` (works from any subdirectory):
+
+```bash
+uv run 2_computational_form_finding/Equilibrium/drawings/view_1/view_1_compas.py
+```
+
+### Step-by-step drawings (web)
+
+Interactive step-by-step construction player for the eQUILIBRIUM drawings
+(three.js, no build step):
+
+```bash
+cd 2_computational_form_finding/Equilibrium/drawings/web
+python3 -m http.server 8741
+# open http://localhost:8741/?view=1
+```
+
+Each drawing is a small module in `web/views/view_N.js`; the shared 2D viewer,
+step player and color scheme live in `web/lib/`. View 1 is hand-written and
+fully interactive (drag points, change forces); views 2–54 are generated from
+the python dumps by `web/tools/convert.py` and replayed step by step.
+`?view=N&step=K` (or `step=last`) deep-links a construction step.
+
+Step-by-step movies (one frame per step, saved to `web/movies/`):
+
+```bash
+python3 web/tools/make_movies.py 1 2 14   # needs the server above running
+```
+
 ## Schedule
 
 - 1 ECTS = 30 h total student workload (ETH standard)
