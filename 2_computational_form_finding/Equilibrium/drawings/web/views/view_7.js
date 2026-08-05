@@ -236,16 +236,26 @@ export function create(dw, panel, makePlayer) {
     dw.seg(`seg${i}`, { intro: segIntro[i], w: W_BAR, color: memberColor(cks[i]) });
   }
 
-  // step 21: reactions (green, on the closing rays + at the supports)
-  dw.arrow('reacF1', { intro: 20, ...ARROW });      // V2 -> o
-  dw.arrow('reacF2', { intro: 20, ...ARROW });      // o -> I1
+  // step 21: reactions (green, on the closing rays + at the supports),
+  // captioned A (at E) / B (at F) on both sides like the applet
+  dw.arrow('reacF1', { intro: 20, ...ARROW });      // V2 -> o  = B
+  dw.arrow('reacF2', { intro: 20, ...ARROW });      // o -> I1  = A
   dw.arrow('reacE', { intro: 20, ...ARROW });
   dw.arrow('reacF', { intro: 20, ...ARROW });
+  dw.label('lblAf', 'A', { cls: 'num', intro: 20, color: PAL.green });
+  dw.label('lblBf', 'B', { cls: 'num', intro: 20, color: PAL.green });
+  dw.label('lblAs', 'A', { cls: 'num', intro: 20, color: PAL.green });
+  dw.label('lblBs', 'B', { cls: 'num', intro: 20, color: PAL.green });
 
-  // step 22: reaction components, both sides
+  // step 22: reaction components, both sides, with the applet's H/V captions
   for (const n of ['cmpV2Z3', 'cmpZ3P6', 'cmpP6W3', 'cmpW3I1',
                    'cmpE1', 'cmpE2', 'cmpF1', 'cmpF2']) {
     dw.arrow(n, { intro: 21, ...ARROW });
+  }
+  for (const [n, text] of [['lblAVs', 'Aᵥ'], ['lblAHs', 'Aₕ'], ['lblBHs', 'Bₕ'],
+                           ['lblBVs', 'Bᵥ'], ['lblAVf', 'Aᵥ'], ['lblAHf', 'Aₕ'],
+                           ['lblBHf', 'Bₕ'], ['lblBVf', 'Bᵥ']]) {
+    dw.label(n, text, { cls: 'num', intro: 21, color: PAL.green });
   }
 
   // points
@@ -330,12 +340,12 @@ export function create(dw, panel, makePlayer) {
   dw.link('chordEN', 'poleL1');
   dw.link('chordNF', 'poleL2');
   for (let i = 0; i < 4; i++) dw.link(`load${i}`, `edge${i}`);
-  dw.link('reacE', 'reacF2');
-  dw.link('reacF', 'reacF1');
-  dw.link('cmpE1', 'cmpP6W3');
-  dw.link('cmpE2', 'cmpW3I1');
-  dw.link('cmpF1', 'cmpV2Z3');
-  dw.link('cmpF2', 'cmpZ3P6');
+  dw.link('reacE', 'reacF2', 'lblAf', 'lblAs');
+  dw.link('reacF', 'reacF1', 'lblBf', 'lblBs');
+  dw.link('cmpE1', 'cmpP6W3', 'lblAVf', 'lblAVs');
+  dw.link('cmpE2', 'cmpW3I1', 'lblAHf', 'lblAHs');
+  dw.link('cmpF1', 'cmpV2Z3', 'lblBHf', 'lblBHs');
+  dw.link('cmpF2', 'cmpZ3P6', 'lblBVf', 'lblBVs');
   dw.ghostable('fr0', 'fr1', 'fr2', 'fr3', 'fr4', 'edge0', 'edge1', 'edge2', 'edge3');
 
   // node-equilibrium inspector: free-body star of the selected node in an
@@ -450,6 +460,20 @@ export function create(dw, panel, makePlayer) {
     dw.setArrow('cmpE2', V.sub(d.E, vE2), d.E);
     dw.setArrow('cmpF1', V.sub(d.F, vF1), d.F);
     dw.setArrow('cmpF2', V.sub(d.F, vF2), d.F);
+
+    // reaction + component captions (A at E, B at F, both sides)
+    dw.setLabel('lblAf', V.add(d.E, V.mul(V.unit(V.sub(d.E, d.Q3)), 0.9 * s.sLS + 1.5)));
+    dw.setLabel('lblBf', V.add(d.F, V.mul(V.unit(V.sub(d.F, d.T3)), 0.9 * s.sLS + 1.5)));
+    dw.setLabel('lblAs', V.mid(...beside(d.P6, d.I1, d.fcent, 1.9)));
+    dw.setLabel('lblBs', V.mid(...beside(d.V2, d.P6, d.fcent, 1.9)));
+    dw.setLabel('lblAVf', V.add(V.sub(d.E, V.mul(vE1, 0.5)), [1.3, 0]));
+    dw.setLabel('lblAHf', V.add(V.sub(d.E, V.mul(vE2, 0.5)), [0, -1.3]));
+    dw.setLabel('lblBVf', V.add(V.sub(d.F, V.mul(vF2, 0.5)), [-1.4, 0]));
+    dw.setLabel('lblBHf', V.add(V.sub(d.F, V.mul(vF1, 0.5)), [0, -1.3]));
+    dw.setLabel('lblAVs', V.add(V.mid(d.P6, d.W3), [1.3, 0]));
+    dw.setLabel('lblAHs', V.add(V.mid(d.W3, d.I1), [0, 1.3]));
+    dw.setLabel('lblBHs', V.add(V.mid(d.V2, d.Z3), [0, -1.3]));
+    dw.setLabel('lblBVs', V.add(V.mid(d.Z3, d.P6), [-1.4, 0]));
 
     dw.setDisk('pt_E', d.E);
     dw.setDisk('pt_F', d.F);
