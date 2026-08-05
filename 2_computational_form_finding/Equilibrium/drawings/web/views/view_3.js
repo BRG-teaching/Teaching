@@ -36,7 +36,8 @@ const BANK_R = [[17.91, 4], [18.1818, 5.7921], [17.7809, 7.3957], [18.4491, 12.2
 const SUP_L = [[2.06, 4], [4, 4], [4.0831, 1.7728], [4.3369, -1.5692], [4.4215, -2.3306]];
 const SUP_R = [[17.94, 4], [16, 4], [15.9169, 1.7728], [15.6631, -1.5692], [15.5785, -2.3306]];
 const VY = [-2.2818, 22.8911];           // vertical guide extent
-const RESOLVE = 14;                      // final step: trial construction retires
+const DIM_Y1 = -3.41, DIM_Y2 = -4.8165, TICK = 0.28;  // dimension rows (applet b_6 / d_6)
+const RESOLVE = 15;                      // final step: trial construction retires
 
 function segPairs(poly) {
   const out = [];
@@ -102,6 +103,7 @@ const DEFAULTS = {
   tpx: 60.8804, tpy: 7.9474,                        // trial pole o'
   uy: 16.353,                                       // trial start U1 on R1's vertical
   poleT: -11.9268,                                  // pole o along the chord parallel
+  vt: -18.5,                                        // resultant arrow along its line of action (applet K3)
   F: 8,                                             // each load [5, 20] kN
   sFD: 0.75,                                        // scaleForceDiagram [0.5, 5] kN/unit
   sLS: 2,                                           // loadSymbol [1, 3]
@@ -120,11 +122,12 @@ const STEPS = [
   { t: 'Trial ray o′–Q₁', d: 'right: ray from o′ to Q₁ — left: start at U₁ on R₁\'s vertical, parallel to it up to L₁\'s vertical' },
   { t: 'Trial ray o′–P₁', d: 'right: ray from o′ to P₁ — left: continue parallel to it up to M₁\'s vertical' },
   { t: 'Trial ray o′–O₁', d: 'right: ray from o′ to O₁ — left: continue parallel to it up to S₁\'s vertical' },
+  { t: 'The resultant, located', d: 'both sides at once: extend the outer trial strings — they meet on R\'s line of action (left), and R = O₁→Q₁ on the load line (right), both dashed green' },
   { t: 'Trial closing string', d: 'left: dashed string U₁–Z₁ — right: the parallel through o′ cuts the load line at i' },
   { t: 'The real chord → pole o', d: 'left: dashed chord R₁–S₁ — right: through i, parallel to the chord; choose the pole o on it' },
   { t: 'Cable 5 — form and force', d: 'right: Q₁–o — left: from R₁ parallel to it, down to L₁\'s vertical → node C₂' },
   { t: 'Cable 2 — form and force', d: 'right: o–P₁ — left: from C₂ parallel to it → node D₂ on M₁\'s vertical' },
-  { t: 'Cable 3 — form and force', d: 'right: o–O₁ — left: D₂–S₁ closes the funicular, parallel to it' },
+  { t: 'Cable 3 — form and force', d: 'right: o–O₁ — left: D₂–S₁ closes the funicular, parallel to it — the outer cables extended also meet on R\'s line of action' },
   { t: 'Hangers 4 and 1', d: 'left: hang the deck: C₂–L₁ (4), D₂–M₁ (1) — right: their forces are the load segments P₁–Q₁ (4), O₁–P₁ (1)' },
   { t: 'Reactions', d: 'left: the cable pulls the anchors outward — right: the same vectors Q₁→o and o→O₁ close the polygon' },
   { t: 'Tension', d: 'the trial construction disappears — closed polygon = equilibrium, cable and hangers resolve pink = tension' },
@@ -133,6 +136,7 @@ const STEPS = [
 const cache = {
   V1: [8, 19.9013], W1: [12, 19.2563], Z1: [18.3801, 13.5492],
   A2: [46.3339, 10.4068], C2: [8, 6.0025], D2: [12, 6.0028],
+  R5: [10, 21.0454], H3: [10, 4.2142],
 };
 const DN = [0, 1];
 
@@ -154,6 +158,12 @@ function compute(s) {
   cache.Z1 = V.intersect(W1, V.sub(O1, Tp), [S1[0], 0], DN) || cache.Z1;
   const Z1 = cache.Z1;
 
+  // the outer trial strings extended meet at R5 on the resultant's line of
+  // action (applet R_5 = a_1 ∩ c_1); the dashed green R is drawn on it
+  cache.R5 = V.intersect(U1, V.sub(Tp, Q1), W1, V.sub(O1, Tp)) || cache.R5;
+  const R5 = cache.R5;
+  const Rv = [R5[0], R5[1] + s.vt];
+
   // closing string -> division point i; chord parallel -> pole o
   cache.A2 = V.intersect(Tp, V.sub(Z1, U1), O1, DN) || cache.A2;
   const A2 = cache.A2;
@@ -165,6 +175,11 @@ function compute(s) {
   const C2 = cache.C2;
   cache.D2 = V.intersect(C2, V.sub(P1, B2), [s.m1x, 0], DN) || cache.D2;
   const D2 = cache.D2;
+
+  // final state: the outer REAL strings extended meet at H3 on the same line
+  // of action (applet H_3 = m_1 ∩ p_1, with extensions t_7 / a_8)
+  cache.H3 = V.intersect(R1, V.sub(B2, Q1), D2, V.sub(O1, B2)) || cache.H3;
+  const H3 = cache.H3;
 
   const col = (w) => (V.isCompression(w) ? PAL.blue : PAL.red);
   const c5 = col(V.ggbAngle(V.sub(R1, C2), V.sub(B2, Q1)));
@@ -179,7 +194,7 @@ function compute(s) {
   const N3 = V.dist(B2, O1) * s.sFD;
 
   return { L1, M1, R1, S1, O1, P1, Q1, Tp, U1, V1, W1, Z1, A2, B2, C2, D2,
-           uch, fcent, c1, c2, c3, c4, c5, N5, N2, N3 };
+           R5, Rv, H3, uch, fcent, c1, c2, c3, c4, c5, N5, N2, N3 };
 }
 
 /** Arrow drawn beside (not on) a force segment, pushed away from `cent`. */
@@ -212,8 +227,17 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('hatch', HATCH.length, { intro: 1, w: 0.055, color: 0xb9b9b9, flash: false });
   dw.poly('slab', 4, { intro: 1, color: PAL.white, flash: false });
   dw.strokes('slabEdge', 4, { intro: 1, w: W_SITE });
+  // dimension lines (default-on in the applet, boolean u_4): the overall
+  // "12 m" span with the site, the three "4 m" spans with the load points
+  dw.strokes('dimBot', 3, { intro: 1, w: 0.07, color: PAL.grey, flash: false });
+  dw.label('dimL', '12 m', { intro: 1, flash: false, color: PAL.grey });
+  dw.strokes('dimTop', 7, { intro: 2, w: 0.07, color: PAL.grey, flash: false });
+  dw.label('dim1', '', { intro: 2, flash: false, color: PAL.grey });
+  dw.label('dim2', '', { intro: 2, flash: false, color: PAL.grey });
+  dw.label('dim3', '', { intro: 2, flash: false, color: PAL.grey });
   // the site is background: it appears instantly, only the construction draws in
-  dw.instant('bankL', 'bankR', 'supL', 'supR', 'hatch', 'slab', 'slabEdge');
+  dw.instant('bankL', 'bankR', 'supL', 'supR', 'hatch', 'slab', 'slabEdge',
+             'dimBot', 'dimTop');
 
   // step 2: the loads, drawn simultaneously left (deck) and right (load line)
   dw.dashLine('vL', { intro: 2, dash: 0.5 });
@@ -224,40 +248,57 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('aload1', { intro: 2, ...ARROW });
   dw.arrow('aload2', { intro: 2, ...ARROW });
 
-  // steps 4-6: trial rays (right) with the trial funicular sides (left)
+  // steps 4-6: trial rays (right) with the trial funicular sides (left),
+  // all grey as in the applet
   dw.dashLine('vR', { intro: 4, dash: 0.5 });
-  dw.seg('ray1', { intro: 4, outro: RESOLVE, w: W_RAY });
-  dw.seg('tf1', { intro: 4, outro: RESOLVE, w: W_TRIAL });
-  dw.seg('ray2', { intro: 5, outro: RESOLVE, w: W_RAY });
-  dw.seg('tf2', { intro: 5, outro: RESOLVE, w: W_TRIAL });
+  dw.seg('ray1', { intro: 4, outro: RESOLVE, w: W_RAY, color: PAL.grey });
+  dw.seg('tf1', { intro: 4, outro: RESOLVE, w: W_TRIAL, color: PAL.grey });
+  dw.seg('ray2', { intro: 5, outro: RESOLVE, w: W_RAY, color: PAL.grey });
+  dw.seg('tf2', { intro: 5, outro: RESOLVE, w: W_TRIAL, color: PAL.grey });
   dw.dashLine('vS', { intro: 6, dash: 0.5 });
-  dw.seg('ray3', { intro: 6, outro: RESOLVE, w: W_RAY });
-  dw.seg('tf3', { intro: 6, outro: RESOLVE, w: W_TRIAL });
+  dw.seg('ray3', { intro: 6, outro: RESOLVE, w: W_RAY, color: PAL.grey });
+  dw.seg('tf3', { intro: 6, outro: RESOLVE, w: W_TRIAL, color: PAL.grey });
 
-  // step 7: trial closing string (left) -> division point i (right)
-  dw.dashLine('tclose', { intro: 7, outro: RESOLVE, dash: 0.5 });
-  dw.seg('tpar', { intro: 7, outro: RESOLVE, w: W_RAY });
+  // step 7: the resultant, in BOTH diagrams (applet R_5 / r_7 / s_7 / l_3):
+  // outer trial strings extended (grey dashed) meet at R5 on R's line of
+  // action; the thick dashed green R on it (left) and on the load line (right)
+  dw.dashLine('uext1', { intro: 7, outro: RESOLVE, dash: 0.5 });
+  dw.dashLine('uext3', { intro: 7, outro: RESOLVE, dash: 0.5 });
+  dw.dashLine('resGuide', { intro: 7, dash: 0.5 });
+  dw.dashArrow('resArrow', { intro: 7, w: 0.4, headLen: 1.3, headW: 0.5, dash: 0.66 });
+  dw.dashArrow('resFormArrow', { intro: 7, w: 0.4, headLen: 1.3, headW: 0.5, dash: 0.66 });
+  dw.label('lblRf', 'R', { cls: 'num', intro: 7, color: PAL.green });
+  dw.label('lblRm', 'R', { cls: 'num', intro: 7, color: PAL.green });
 
-  // step 8: the real chord (left) -> pole o on the parallel through i (right)
-  dw.dashLine('chord', { intro: 8, dash: 0.5 });
-  dw.dashLine('polePar', { intro: 8, dash: 0.5 });
+  // step 8: trial closing string (left) -> division point i (right)
+  dw.dashLine('tclose', { intro: 8, outro: RESOLVE, dash: 0.5 });
+  dw.dashLine('tpar', { intro: 8, outro: RESOLVE, dash: 0.5 });
 
-  // steps 9-11: each cable segment (left) with its pole ray = force (right)
-  dw.seg('force5', { intro: 9, w: W_BAR, color: memberColor('c5') });
-  dw.seg('cable5', { intro: 9, w: W_BAR, color: memberColor('c5') });
-  dw.seg('force2', { intro: 10, w: W_BAR, color: memberColor('c2') });
-  dw.seg('cable2', { intro: 10, w: W_BAR, color: memberColor('c2') });
-  dw.seg('force3', { intro: 11, w: W_BAR, color: memberColor('c3') });
-  dw.seg('cable3', { intro: 11, w: W_BAR, color: memberColor('c3') });
+  // step 9: the real chord (left) -> pole o on the parallel through i (right),
+  // both BLACK dashed as in the applet (e_1 / k_1)
+  dw.dashLine('chord', { intro: 9, color: PAL.black, dash: 0.5 });
+  dw.dashLine('polePar', { intro: 9, color: PAL.black, dash: 0.5 });
 
-  // step 12: hangers (left) with their load-line segments (right)
-  dw.seg('hang4', { intro: 12, w: W_BAR, color: memberColor('c4') });
-  dw.seg('hang1', { intro: 12, w: W_BAR, color: memberColor('c1') });
-  dw.seg('force4', { intro: 12, w: W_BAR, color: memberColor('c4') });
-  dw.seg('force1', { intro: 12, w: W_BAR, color: memberColor('c1') });
+  // steps 10-12: each cable segment (left) with its pole ray = force (right)
+  dw.seg('force5', { intro: 10, w: W_BAR, color: memberColor('c5') });
+  dw.seg('cable5', { intro: 10, w: W_BAR, color: memberColor('c5') });
+  dw.seg('force2', { intro: 11, w: W_BAR, color: memberColor('c2') });
+  dw.seg('cable2', { intro: 11, w: W_BAR, color: memberColor('c2') });
+  dw.seg('force3', { intro: 12, w: W_BAR, color: memberColor('c3') });
+  dw.seg('cable3', { intro: 12, w: W_BAR, color: memberColor('c3') });
+  // with cable 3 the funicular is complete: the outer real strings extended
+  // (applet t_7 / a_8) relocate the resultant's intersection to H3
+  dw.dashLine('hext5', { intro: 12, dash: 0.5 });
+  dw.dashLine('hext3', { intro: 12, dash: 0.5 });
 
-  // step 13: reactions at the anchors (left) + beside the polygon (right)
-  for (const n of ['arrR', 'arrS', 'aR5', 'aR3']) dw.arrow(n, { intro: 13, ...ARROW });
+  // step 13: hangers (left) with their load-line segments (right)
+  dw.seg('hang4', { intro: 13, w: W_BAR, color: memberColor('c4') });
+  dw.seg('hang1', { intro: 13, w: W_BAR, color: memberColor('c1') });
+  dw.seg('force4', { intro: 13, w: W_BAR, color: memberColor('c4') });
+  dw.seg('force1', { intro: 13, w: W_BAR, color: memberColor('c1') });
+
+  // step 14: reactions at the anchors (left) + beside the polygon (right)
+  for (const n of ['arrR', 'arrS', 'aR5', 'aR3']) dw.arrow(n, { intro: 14, ...ARROW });
 
   // points: white face + black boundary, light pink while current
   const HANDLE = { r: 0.35 }, DERIVED = { r: 0.27 };
@@ -274,25 +315,28 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_V1', { intro: 4, outro: RESOLVE, ...DERIVED, when: show });
   dw.disk('pt_W1', { intro: 5, outro: RESOLVE, ...DERIVED, when: show });
   dw.disk('pt_Z1', { intro: 6, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_A2', { intro: 7, ...DERIVED, when: show });
-  dw.disk('pt_B2', { intro: 8, ...HANDLE, when: show });
-  dw.disk('pt_C2', { intro: 9, ...DERIVED, when: show });
-  dw.disk('pt_D2', { intro: 10, ...DERIVED, when: show });
+  dw.disk('pt_R5', { intro: 7, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_Rv', { intro: 7, ...HANDLE, when: show });
+  dw.disk('pt_A2', { intro: 8, ...DERIVED, when: show });
+  dw.disk('pt_B2', { intro: 9, ...HANDLE, when: show });
+  dw.disk('pt_C2', { intro: 10, ...DERIVED, when: show });
+  dw.disk('pt_D2', { intro: 11, ...DERIVED, when: show });
+  dw.disk('pt_H3', { intro: 12, ...DERIVED, when: show });
 
   const letters = {
     R1: ['R₁', 1], S1: ['S₁', 1], L1: ['L₁', 2], M1: ['M₁', 2],
     O1: ['O₁', 2], P1: ['P₁', 2], Q1: ['Q₁', 2],
-    Tp: ['o′', 3, RESOLVE], A2: ['i', 7], B2: ['o', 8], C2: ['C₂', 9], D2: ['D₂', 10],
+    Tp: ['o′', 3, RESOLVE], A2: ['i', 8], B2: ['o', 9], C2: ['C₂', 10], D2: ['D₂', 11],
   };
   for (const [p, [text, intro, outro]] of Object.entries(letters)) {
     dw.label(`lbl_${p}`, text, { cls: 'point', intro, outro, when: show });
   }
 
   // member numbers: the same number appears on BOTH sides in the same step
-  const numbers = { f5: [9, '5', 'c5'], f2: [10, '2', 'c2'], f3: [11, '3', 'c3'],
-                    f4: [12, '4', 'c4'], f1: [12, '1', 'c1'],
-                    s5: [9, '5', 'c5'], s2: [10, '2', 'c2'], s3: [11, '3', 'c3'],
-                    s4: [12, '4', 'c4'], s1: [12, '1', 'c1'] };
+  const numbers = { f5: [10, '5', 'c5'], f2: [11, '2', 'c2'], f3: [12, '3', 'c3'],
+                    f4: [13, '4', 'c4'], f1: [13, '1', 'c1'],
+                    s5: [10, '5', 'c5'], s2: [11, '2', 'c2'], s3: [12, '3', 'c3'],
+                    s4: [13, '4', 'c4'], s1: [13, '1', 'c1'] };
   for (const [name, [intro, text, ck]] of Object.entries(numbers)) {
     dw.label(name, text, { cls: 'num', intro, color: { final: (dd) => dd[ck] } });
   }
@@ -312,7 +356,9 @@ export function create(dw, panel, makePlayer) {
   dw.link('chord', 'polePar');
   dw.link('arrR', 'aR5');
   dw.link('arrS', 'aR3');
-  dw.ghostable('force1', 'force2', 'force3', 'force4', 'force5', 'aload1', 'aload2');
+  dw.link('resArrow', 'resFormArrow', 'resGuide', 'lblRf', 'lblRm');
+  dw.ghostable('force1', 'force2', 'force3', 'force4', 'force5', 'aload1', 'aload2',
+               'resArrow');
 
   // final step: magnitude readout + optional internal forces
   dw.label('ro5', '', { intro: RESOLVE, flash: false, color: { final: (dd) => dd.c5 } });
@@ -376,6 +422,24 @@ export function create(dw, panel, makePlayer) {
       [[x0, yb], [x1, yb]], [[x1, yb], [x1, yt]], [[x1, yt], [x0, yt]], [[x0, yt], [x0, yb]],
     ]);
 
+    // dimension lines: overall span below, thirds split at L1 / M1 above
+    const [dx0, dx1] = [DECK[0][0], DECK[1][0]];
+    const vt = (x, y) => [[x, y - TICK], [x, y + TICK]];
+    dw.setStrokes('dimBot', [[[dx0, DIM_Y2], [dx1, DIM_Y2]], vt(dx0, DIM_Y2), vt(dx1, DIM_Y2)]);
+    dw.setStrokes('dimTop', [
+      [[dx0, DIM_Y1], [s.l1x, DIM_Y1]], [[s.l1x, DIM_Y1], [s.m1x, DIM_Y1]],
+      [[s.m1x, DIM_Y1], [dx1, DIM_Y1]],
+      vt(dx0, DIM_Y1), vt(s.l1x, DIM_Y1), vt(s.m1x, DIM_Y1), vt(dx1, DIM_Y1),
+    ]);
+    dw.setLabel('dimL', [(dx0 + dx1) / 2, DIM_Y2 - 0.85]);
+    dw.setLabel('dim1', [(dx0 + s.l1x) / 2, DIM_Y1 + 0.8]);
+    dw.setLabel('dim2', [(s.l1x + s.m1x) / 2, DIM_Y1 + 0.8]);
+    dw.setLabel('dim3', [(s.m1x + dx1) / 2, DIM_Y1 + 0.8]);
+    const dm = (v) => `${(Math.round(v * 10) / 10).toString()} m`;
+    dw.setText('dim1', dm(s.l1x - dx0));
+    dw.setText('dim2', dm(s.m1x - s.l1x));
+    dw.setText('dim3', dm(dx1 - s.m1x));
+
     dw.setDashLine('vL', [[s.l1x, VY[0]], [s.l1x, VY[1]]]);
     dw.setDashLine('vM', [[s.m1x, VY[0]], [s.m1x, VY[1]]]);
     dw.setArrow('loadL', d.L1, [s.l1x, DECK_Y - s.sLS]);
@@ -392,8 +456,22 @@ export function create(dw, panel, makePlayer) {
     dw.setSeg('tf1', d.U1, d.V1);
     dw.setSeg('tf2', d.V1, d.W1);
     dw.setSeg('tf3', d.W1, d.Z1);
+
+    // the resultant: outer trial strings extended to R5, R dashed green on
+    // its line of action (left) and on the full load line (right)
+    dw.setDashLine('uext1', [d.V1, d.R5]);
+    dw.setDashLine('uext3', [d.W1, d.R5]);
+    dw.setDashLine('resGuide', [[d.R5[0], VY[0]], [d.R5[0], VY[1]]]);
+    dw.setDashArrow('resArrow', d.O1, d.Q1);
+    dw.setDashArrow('resFormArrow', d.Rv, V.add(d.Rv, [0, -2 * s.sLS]));
+    dw.setLabel('lblRf', V.add(V.mid(d.O1, d.Q1), [-1.5, 2.5]));
+    dw.setLabel('lblRm', V.add(d.Rv, [1.2, -s.sLS]));
+    // relocated at the final state: the outer real cables extended to H3
+    dw.setDashLine('hext5', [d.C2, d.H3]);
+    dw.setDashLine('hext3', [d.H3, d.D2]);
+
     dw.setDashLine('tclose', [d.U1, d.Z1]);
-    dw.setSeg('tpar', d.Tp, d.A2);
+    dw.setDashLine('tpar', [d.Tp, d.A2]);
 
     dw.setDashLine('chord', [d.R1, d.S1]);
     const pp = V.mul(d.uch, Math.sign(s.poleT) || 1);
@@ -416,7 +494,7 @@ export function create(dw, panel, makePlayer) {
     dw.setArrow('aR3', ...beside(d.B2, d.O1, d.fcent));
 
     for (const p of Object.keys(letters)) dw.setDisk(`pt_${p}`, d[p]);
-    for (const p of ['U1', 'V1', 'W1', 'Z1']) dw.setDisk(`pt_${p}`, d[p]);
+    for (const p of ['U1', 'V1', 'W1', 'Z1', 'R5', 'Rv', 'H3']) dw.setDisk(`pt_${p}`, d[p]);
     const off = { R1: [-1.2, -0.8], S1: [1.3, -0.8], L1: [-1.0, -0.8], M1: [1.0, -0.8],
                   O1: [1.6, 0.4], P1: [1.7, -0.9], Q1: [1.6, -0.5],
                   Tp: [1.3, 0], A2: [-1.2, 0.5], B2: [-0.4, -1.3], C2: [-1.4, 0.35], D2: [1.4, 0.35] };
@@ -483,7 +561,7 @@ export function create(dw, panel, makePlayer) {
 
   // drag windows [first step, last step) per handle
   const win = { L1: [2, 99], M1: [2, 99], R1: [1, 99], S1: [1, 99], O1: [2, 99],
-                Tp: [3, RESOLVE], U1: [4, RESOLVE], B2: [8, 99] };
+                Tp: [3, RESOLVE], U1: [4, RESOLVE], Rv: [7, 99], B2: [9, 99] };
   dw.enableDrag(
     (wx, wy, tol) => {
       let best = null;
@@ -502,7 +580,9 @@ export function create(dw, panel, makePlayer) {
       else if (name === 'O1') { s.o1x = wx; s.o1y = wy; }
       else if (name === 'Tp') { s.tpx = wx; s.tpy = wy; }
       else if (name === 'U1') s.uy = Math.max(VY[0] + 0.5, Math.min(VY[1] - 0.5, wy));
-      else if (name === 'B2') {
+      else if (name === 'Rv') {
+        s.vt = Math.max(VY[0] + 0.5 - d.R5[1], Math.min(VY[1] - 0.5 - d.R5[1], wy - d.R5[1]));
+      } else if (name === 'B2') {
         let t = V.dot(V.sub([wx, wy], d.A2), d.uch);
         if (Math.abs(t) < 0.5) t = 0.5 * (Math.sign(t) || -1);
         s.poleT = Math.max(-35, Math.min(35, t));
