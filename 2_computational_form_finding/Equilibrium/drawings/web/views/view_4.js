@@ -53,14 +53,14 @@ const STEPS = [
   { t: 'Force 4', d: 'left: force 4 at D — right: tip-to-tail, parallel' },
   { t: 'Force 5', d: 'left: force 5 at E — right: tip-to-tail, parallel' },
   { t: 'Force 6', d: 'left: force 6 at F — right: tip-to-tail, parallel' },
-  { t: 'Pole O₁ and rays', d: 'right: choose a pole O₁ and connect it to every vertex of the force polygon' },
-  { t: 'String ∥ ray O₁–H₁', d: 'left: choose O₆, draw the string parallel to the first ray until line of action 1' },
-  { t: 'String ∥ ray O₁–I₁', d: 'left: continue from the intersection, parallel to the next ray, to line of action 2' },
-  { t: 'String ∥ ray O₁–J₁', d: 'left: continue to line of action 3' },
-  { t: 'String ∥ ray O₁–K₁', d: 'left: continue to line of action 4' },
-  { t: 'String ∥ ray O₁–L₁', d: 'left: continue to line of action 5' },
-  { t: 'String ∥ ray O₁–M₁', d: 'left: continue to line of action 6' },
-  { t: 'Close the funicular', d: 'left: extend the last string (∥ O₁–N₁) and the first string — dashed — they intersect at T₂' },
+  { t: 'Pole o′ and rays', d: 'right: choose a pole o′ and connect it to every vertex of the force polygon — rays 1…7' },
+  { t: 'String ∥ ray o′–H₁', d: 'left: choose O₆, draw the string parallel to the first ray until line of action 1' },
+  { t: 'String ∥ ray o′–I₁', d: 'left: continue from the intersection, parallel to the next ray, to line of action 2' },
+  { t: 'String ∥ ray o′–J₁', d: 'left: continue to line of action 3' },
+  { t: 'String ∥ ray o′–K₁', d: 'left: continue to line of action 4' },
+  { t: 'String ∥ ray o′–L₁', d: 'left: continue to line of action 5' },
+  { t: 'String ∥ ray o′–M₁', d: 'left: continue to line of action 6' },
+  { t: 'Close the funicular', d: 'left: extend the last string (∥ o′–N₁) and the first string — dashed — they intersect at T₂' },
   { t: 'The resultant — in both diagrams', d: 'right: R runs from the polygon start to its end — left: through T₂, parallel to it: the six forces reduce to R, dashed in both diagrams' },
 ];
 
@@ -104,8 +104,10 @@ function compute(s) {
 
   const W2 = V.add(T2, V.mul(uR, s.wt));
   const Rkn = V.len(R) / s.sFD;
+  // solid forward extension of the last string beyond S2 (applet m_9 -> P_6)
+  const P6 = V.add(F5, V.mul(V.unit(V.sub(F5, T2)), 9.94));
 
-  return { Ap, Sp, dir, Pp, R, uR, O1, O6, Fp, T2, W2, Rkn };
+  return { Ap, Sp, dir, Pp, R, uR, O1, O6, Fp, T2, W2, Rkn, P6 };
 }
 
 export function create(dw, panel, makePlayer) {
@@ -116,35 +118,37 @@ export function create(dw, panel, makePlayer) {
   const W_BAR = 0.5, W_RAY = 0.22, W_STR = 0.4;
   const ARROW = { w: 0.66, headLen: 2.1, headW: 0.8 };
   const RARROW = { w: 0.8, headLen: 2.6, headW: 1.0 };
-  const FCENT = [130, -8];                 // green edge arrows push away from here
 
   dw.label('form_title', 'Form Diagram', { cls: 'title', flash: false });
   dw.label('force_title', 'Force Diagram', { cls: 'title', flash: false });
   dw.label('force_sub', '', { flash: false });
 
-  // steps 1-6: each given force (left) + its polygon edge (right)
+  // steps 1-6: each given force (left) + its polygon edge (right):
+  // the edge vectors are GREEN arrows drawn ON the polygon, as in the applet
   for (let i = 0; i < N; i++) {
     dw.dashLine(`loa${i}`, { intro: i + 1, dash: 1.1 });
     dw.arrow(`arr${i}`, { intro: i + 1, ...ARROW });
-    dw.seg(`edge${i}`, { intro: i + 1, w: W_BAR });
-    dw.arrow(`earr${i}`, { intro: i + 1, ...ARROW });
+    dw.arrow(`edge${i}`, { intro: i + 1, ...ARROW });
   }
 
   // the resultant appears in BOTH diagrams at the final step, dashed green
   dw.dashArrow('resArrow', { intro: RESOLVE, flash: false, ...RARROW });
 
-  // step 8: pole + rays; each later string re-flashes its ray
+  // step 8: pole + rays (grey, as in the applet); each later string
+  // re-flashes its ray
   for (let i = 0; i <= N; i++) {
-    dw.seg(`ray${i}`, { intro: 7, w: W_RAY });
+    dw.seg(`ray${i}`, { intro: 7, w: W_RAY, color: PAL.grey });
     dw.highlight(`ray${i}`, [8 + i]);
   }
 
-  // steps 9-15: funicular strings; the two closing pieces are UNLOADED
-  // string extensions -- drawn dashed so they read differently from the
-  // loaded strings, meeting at T2
-  for (let i = 0; i < N; i++) dw.seg(`str${i}`, { intro: 8 + i, w: W_STR });
+  // steps 9-15: funicular strings (grey trial construction, as in the
+  // applet); the two closing pieces are UNLOADED string extensions -- drawn
+  // dashed so they read differently from the loaded strings, meeting at T2
+  for (let i = 0; i < N; i++) dw.seg(`str${i}`, { intro: 8 + i, w: W_STR, color: PAL.grey });
   dw.dashLine('strClose', { intro: 14, dash: 1.1 });   // last string S2 -> T2
   dw.dashLine('strExt', { intro: 14, dash: 1.1 });     // first string extended G2 -> T2
+  // the last string also continues solid FORWARD beyond S2 (applet m_9)
+  dw.seg('strFwd', { intro: RESOLVE, w: W_STR, color: PAL.grey, flash: false });
 
   // step 16 is the last step: draw the located resultant in its final green
   dw.dashLine('loaR', { intro: RESOLVE, dash: 1.1, flash: false });
@@ -170,7 +174,7 @@ export function create(dw, panel, makePlayer) {
     dw.label(`lblA${i}`, LETTERS[i], { cls: 'point', intro: i + 1, when: show });
   }
   dw.label('lblH1', 'H₁', { cls: 'point', intro: 1, when: show });
-  dw.label('lblO1', 'O₁', { cls: 'point', intro: 7, when: show });
+  dw.label('lblO1', 'o′', { cls: 'point', intro: 7, when: show });   // the applet's pole name
   dw.label('lblO6', 'O₆', { cls: 'point', intro: 8, when: show });
   dw.label('lblT2', 'T₂', { cls: 'point', intro: 14, when: show });
 
@@ -179,6 +183,13 @@ export function create(dw, panel, makePlayer) {
     dw.label(`f${i}`, `${i + 1}`, { cls: 'num', intro: i + 1, color: PAL.green });
     dw.label(`s${i}`, `${i + 1}`, { cls: 'num', intro: i + 1, color: PAL.green });
   }
+
+  // ray/string numbers 1..7 on BOTH diagrams (default-on in the applet,
+  // boolean o_5), grey like the construction they number
+  for (let i = 0; i <= N; i++) {
+    dw.label(`rn${i}`, `${i + 1}`, { cls: 'num', intro: 7, color: PAL.grey });
+    dw.label(`stn${i}`, `${i + 1}`, { cls: 'num', intro: i < N ? 8 + i : 14, color: PAL.grey });
+  }
   dw.label('fR', 'R', { cls: 'num', intro: RESOLVE, flash: false, color: PAL.green });
   dw.label('sR', 'R', { cls: 'num', intro: RESOLVE, flash: false, color: PAL.green });
   dw.label('roR', '', { intro: RESOLVE, flash: false, color: PAL.green });
@@ -186,17 +197,17 @@ export function create(dw, panel, makePlayer) {
   // dual pairs: each force <-> its polygon edge; each string <-> its ray;
   // the resultant <-> its located line of action
   for (let i = 0; i < N; i++) {
-    dw.link(`arr${i}`, `loa${i}`, `edge${i}`, `earr${i}`, `f${i}`, `s${i}`);
-    if (i > 0) dw.link(`str${i}`, `ray${i}`);
+    dw.link(`arr${i}`, `loa${i}`, `edge${i}`, `f${i}`, `s${i}`);
+    if (i > 0) dw.link(`str${i}`, `ray${i}`, `stn${i}`, `rn${i}`);
   }
   // the first string + its extension pair with the TOP ray, the closing
   // string with the BOTTOM ray -- each side of the closing pair is dual to
   // its own end of the force diagram
-  dw.link('str0', 'ray0', 'strExt');
-  dw.link('strClose', 'ray6');
+  dw.link('str0', 'ray0', 'strExt', 'stn0', 'rn0');
+  dw.link('strClose', 'strFwd', 'ray6', 'stn6', 'rn6');
   dw.link('resArrow', 'loaR', 'arrR', 'fR', 'sR');
   const ghostNames = [];
-  for (let i = 0; i < N; i++) ghostNames.push(`edge${i}`, `earr${i}`);
+  for (let i = 0; i < N; i++) ghostNames.push(`edge${i}`);
   for (let i = 0; i <= N; i++) ghostNames.push(`ray${i}`);
   dw.ghostable(...ghostNames, 'resArrow');
 
@@ -230,18 +241,36 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('force_sub', [95, 20.6]);
     dw.setText('force_sub', `1 unit :: ${(1 / s.sFD).toFixed(2)} kN`);
 
+    // edge numbers: the polygon doubles back on itself, so for each edge try
+    // both sides of the midpoint and keep the one with the most clearance
+    // from every other edge and from the resultant's chord
+    const dPS = (q, a, b) => {
+      const ab = V.sub(b, a);
+      const l2 = ab[0] * ab[0] + ab[1] * ab[1];
+      const t = l2 > 1e-12
+        ? Math.max(0, Math.min(1, V.dot(V.sub(q, a), ab) / l2)) : 0;
+      return V.dist(q, V.add(a, V.mul(ab, t)));
+    };
+    const clearance = (q, skip) => {
+      let best = Infinity;
+      for (let j = 0; j <= N; j++) {
+        if (j === skip) continue;
+        const b = j < N ? [d.Pp[j], d.Pp[j + 1]] : [d.Pp[0], d.Pp[N]];   // last = R
+        best = Math.min(best, dPS(q, b[0], b[1]));
+      }
+      return best;
+    };
     for (let i = 0; i < N; i++) {
       dw.setDashLine(`loa${i}`, loaSeg(d.Ap[i], d.dir[i]));
       dw.setArrow(`arr${i}`, d.Sp[i], d.Ap[i]);
-      dw.setSeg(`edge${i}`, d.Pp[i], d.Pp[i + 1]);
-      // green arrow beside the edge; number on the far side of the arrow
+      // green edge vector ON the polygon; number beside it
+      dw.setArrow(`edge${i}`, d.Pp[i], d.Pp[i + 1]);
       const u = V.unit(V.sub(d.Pp[i + 1], d.Pp[i]));
       const p = V.perp(u);
       const m = V.mid(d.Pp[i], d.Pp[i + 1]);
-      const sgn = V.dot(p, V.sub(m, FCENT)) >= 0 ? 1 : -1;
-      dw.setArrow(`earr${i}`, V.add(d.Pp[i], V.mul(p, 1.5 * sgn)),
-                  V.add(d.Pp[i + 1], V.mul(p, 1.5 * sgn)));
-      dw.setLabel(`s${i}`, V.add(m, V.mul(p, 3.4 * sgn)));
+      const cand1 = V.add(m, V.mul(p, 2.2));
+      const cand2 = V.add(m, V.mul(p, -2.2));
+      dw.setLabel(`s${i}`, clearance(cand1, i) >= clearance(cand2, i) ? cand1 : cand2);
       // form: number beside the arrow, letter beside the point
       const pf = V.perp(d.dir[i]);
       dw.setLabel(`f${i}`, V.add(V.mid(d.Sp[i], d.Ap[i]), V.mul(pf, 1.9)));
@@ -255,12 +284,34 @@ export function create(dw, panel, makePlayer) {
     dw.setDashArrow('resArrow', d.Pp[0], d.Pp[N]);
     dw.setLabel('sR', V.add(V.mid(d.Pp[0], d.Pp[N]), V.mul(V.perp(d.uR), -2.6)));
 
-    for (let i = 0; i <= N; i++) dw.setSeg(`ray${i}`, d.O1, d.Pp[i]);
+    // rays + their numbers 1..7 (offset toward the outside of the fan)
+    const mdir = V.unit(V.sub(V.mid(d.Pp[0], d.Pp[N]), d.O1));
+    for (let i = 0; i <= N; i++) {
+      dw.setSeg(`ray${i}`, d.O1, d.Pp[i]);
+      const u = V.unit(V.sub(d.Pp[i], d.O1));
+      const cr = mdir[0] * u[1] - mdir[1] * u[0];
+      const sgn = cr >= 0 ? 1 : -1;
+      dw.setLabel(`rn${i}`, V.add(V.mid(d.O1, d.Pp[i]), V.mul(V.perp(u), 1.5 * sgn)));
+    }
 
     dw.setSeg('str0', d.O6, d.Fp[0]);
     for (let i = 1; i < N; i++) dw.setSeg(`str${i}`, d.Fp[i - 1], d.Fp[i]);
     dw.setDashLine('strClose', [d.Fp[N - 1], d.T2]);
     dw.setDashLine('strExt', [d.Fp[0], d.T2]);
+    dw.setSeg('strFwd', d.Fp[N - 1], d.P6);
+
+    // string numbers 1..7, offset away from the string-node centroid
+    const scent = V.mul(d.Fp.reduce((a, q) => V.add(a, q), [0, 0]), 1 / N);
+    const strPts = [[d.O6, d.Fp[0]]];
+    for (let i = 1; i < N; i++) strPts.push([d.Fp[i - 1], d.Fp[i]]);
+    strPts.push([d.Fp[N - 1], d.T2]);
+    for (let i = 0; i <= N; i++) {
+      const [a, b] = strPts[i];
+      const m = V.mid(a, b);
+      const p = V.perp(V.unit(V.sub(b, a)));
+      const sgn = V.dot(p, V.sub(m, scent)) >= 0 ? 1 : -1;
+      dw.setLabel(`stn${i}`, V.add(m, V.mul(p, 1.7 * sgn)));
+    }
 
     dw.setDashLine('loaR', loaSeg(d.T2, d.uR));
     dw.setDashArrow('arrR', d.W2, V.add(d.W2, V.mul(d.uR, 2 * s.sLS)));
