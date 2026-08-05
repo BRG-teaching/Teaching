@@ -12,8 +12,12 @@ Downloaded 2026-06-30.
   `geogebra_macro.xml` (custom tools), `geogebra_javascript.js` (applet scripting), and embedded images.
 - **courses/** — 9 courses; each `course_<id>/` has its index plus
   `lecture/`, `exercise/`, `project/`, `schedule/`, `thisweek/` subfolders with the saved item pages.
-- **files/** — 163 PDF resources (897 MB): lecture slides, exercise tasks/solutions,
-  scripts, formularies (German `_de` and English `_en` variants).
+- **files/** — 163 PDF resources (857 MB): lecture slides, exercise tasks/solutions,
+  scripts, formularies (German `_de` and English `_en` variants). Kept on the
+  `pdf-archive` branch, not on `main`: the published site is only the drawings
+  grid and its view pages, and the PDFs alone would put the GitHub Pages
+  deployment near its 1 GB limit. Retrieve them with
+  `git checkout pdf-archive -- 2_computational_form_finding/Equilibrium/files`.
 - **MANIFEST.json** — machine-readable index of every drawing, course, and file.
 
 ## Drawings index
