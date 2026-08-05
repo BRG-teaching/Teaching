@@ -47,13 +47,22 @@
   /* Tile CSS copied from brg.ethz.ch/research/theses (Vuetify v-card flat rounded="0"):
      no border, no border-radius, no box-shadow; edge-to-edge image; 24px gutters;
      v-card-text 1rem padding; Roboto text-body-1/-2 typography. */
+  /* Columns follow Vuetify's breakpoints as on brg.ethz.ch (v-col cols=12 sm=6 md=4):
+     1 column below 600px, 2 from 600px, 3 from 960px (container capped at 1440px).
+     Type sizes are constant at every width, as on brg.ethz.ch (no clamp/vw, root 16px). */
   #grid {
     max-width: 1440px;
     margin: 0 auto;
     padding: 48px 40px 64px;
     display: grid;
     gap: 24px;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 600px) { #grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 960px) { #grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 599.98px) {
+    #grid { padding: 24px 16px 48px; }
+    header .inner { padding: 28px 16px 24px; }
   }
   .card {
     display: block;
