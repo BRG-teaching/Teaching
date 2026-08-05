@@ -49,9 +49,11 @@ Viewer behaviour (implemented in lib/eqdraw.js — views get it for free):
 - Elements are **drawn gradually** when a step is entered (grow from their
   start point, sequentially, like hand drawing). Movies disable this via
   `player.dw.animEnabled = false`.
-- The element(s) of the current step are **pink** (points: **light-pink** fill
-  with pink boundary) — when the step finishes they take their **proper color
-  immediately** (no black-pending phase).
+- The element(s) of the current step are **black** (the being-drawn color;
+  points get a light-grey fill) — when the step finishes they take their
+  **proper color immediately**. Tension resolves **pink #ce4095**, compression
+  **blue** (user decision 2026-08-05: pink replaces red for tension, black
+  replaces pink for being-drawn).
 - Points otherwise: **white center, black boundary**, in all cases.
 - Label text is **colored like the element it belongs to** (pass
   `color: {final: (d) => …}` or a hex to `dw.label`).
@@ -64,8 +66,8 @@ Viewer behaviour (implemented in lib/eqdraw.js — views get it for free):
   not yet drawn appear as a thin pale blue-green preview, far behind the
   drawn lines (opt-in per element via `dw.ghostable(...)`; the form diagram
   is never ghosted).
-- **Hover = yellow** on both members of a dual pair; being-drawn = pink
-  (#ce4095, sampled from the reference video); tension red = #ce2121.
+- **Hover = yellow** on both members of a dual pair; being-drawn = black;
+  tension = pink #ce4095; compression = blue.
 - **Internal-force pipes on by default** (`o1: true`) with a scale that makes
   them clearly visible; dark sidebar panel (video style).
 
@@ -166,7 +168,8 @@ Update this table as views are done:
 | 5 | Funicular Line Through Two Points 1 | hand-written ✔ (two-point theorem, method 1) |
 | 6 | Funicular Line Through Two Points 2 | hand-written ✔ (method 2: split R at M₁, orange chords) |
 | 7 | Funicular Line Through Three Points 1 | hand-written ✔ (two spans, two trials, one pole; reactions + H/V components) |
-| 8–35, 37–54 | … | auto-converted, to redo |
+| 8 | Funicular For Vertical Forces | hand-written ✔ (hidden trial staged grey → division point i; pole locus ∥ closing line; node inspector) |
+| 9–35, 37–54 | … | auto-converted, to redo |
 | 36 | Single-panel truss | hand-written ✔ |
 
 ## Platform (beyond the per-view work)
@@ -184,3 +187,35 @@ Update this table as views are done:
   every member/load/string/reaction pair in every view.
 - `dw.instant(...names)` — background/site elements: appear immediately in
   their final color (no draw-in, no pink flash).
+
+## Node-equilibrium inspector (the applets' mode 2)
+
+Every hand-written view has a "Node equilibrium" panel section with a node
+slider (0 = off) AND click-to-inspect: clicking a node point in the form
+diagram selects it (a click = pointerdown+pointerup without significant
+movement — dragging still drags; clicking the selected node deselects).
+Slider and click stay in sync (`panel.syncAll()`).
+
+Library support in `lib/eqdraw.js` (use these, don't re-implement):
+
+- `dw.nodeSelect(nodes, onSelect)` — the click hook; `nodes` =
+  `[{ at: () => [x, y] }, …]`, `onSelect(i)` gets the 0-based index.
+- `dw.selectDisk(name)` — marks the selected node's disk with an ORANGE edge
+  (call from refresh with the current selection, null to clear).
+- `dw.nodeInspector(count, { w, headLen, headW, r, when })` +
+  `dw.setNodeInspector(center, radius, title, sides)` — the drawing itself:
+  THICK BLACK arrows (~1.5x the view's member width), gated by `when`
+  (selection only, NEVER by construction step):
+  - `nq*`: the node's FREE-BODY STAR, enlarged in an inset at the TOP of the
+    form-diagram area — every force acting on the node radiates from one
+    point, magnitudes proportional (longest scaled to `radius`);
+  - `nf*`: the same forces tip-to-tail ON the node's closed sub-polygon in
+    the force diagram (drawn 1:1 where those forces live).
+
+Deriving `sides` (per node, from the view's own compute()): the forces at a
+node are the SIDES of its closed sub-polygon in the force diagram — load-line
+edge + adjacent member rays, ordered tip-to-tail so they sum to zero (verify
+numerically). Supports and load points degenerate to two opposite collinear
+vectors (member force + reaction/load). Views with no members (view 4) use
+the funicular string crossings: node i closes the pole triangle
+{edge P_i–P_i+1, ray to the pole, ray back}.
