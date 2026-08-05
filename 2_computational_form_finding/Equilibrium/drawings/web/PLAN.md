@@ -169,7 +169,8 @@ Update this table as views are done:
 | 6 | Funicular Line Through Two Points 2 | hand-written ✔ (method 2: split R at M₁, orange chords) |
 | 7 | Funicular Line Through Three Points 1 | hand-written ✔ (two spans, two trials, one pole; reactions + H/V components) |
 | 8 | Funicular For Vertical Forces | hand-written ✔ (hidden trial staged grey → division point i; pole locus ∥ closing line; node inspector) |
-| 9–35, 37–54 | … | auto-converted, to redo |
+| 9–14, 16–35, 37–54 | … | auto-converted, to redo |
+| 15 | Cable For Non-uniformly Distributed Load | hand-written ✔ (24-strip cable, R₁/R₂ trials through sag point V₃, pole parallelogram, tangents meet on R; node inspector) |
 | 36 | Single Panel Truss | hand-written ✔ (redone to standard: applet's trial-pole/division-point construction, antiresultant + offset apparatus, parallel reactions → H/V, member 1 force segment, node inspector) |
 
 ## Platform (beyond the per-view work)
