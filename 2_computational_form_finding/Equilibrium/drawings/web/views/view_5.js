@@ -234,10 +234,12 @@ export function create(dw, panel, makePlayer) {
   for (const [n, intro] of [['H1', 11], ['I1', 12], ['J1', 13]]) {
     dw.disk(`pt_${n}`, { intro, ...DERIVED, when: show });
   }
+  dw.disk('pt_M1', { intro: 14, ...DERIVED, when: show });
 
   const letters = {
     I: ['I', 1], E3: ['E₃', 2], G3: ['G₃', 2], M: ['o′', 3],
     E1: ['i', 9], G1: ['o', 10], H1: ['I', 11], I1: ['II', 12], J1: ['III', 13],
+    M1: ['M₁', 14],
   };
   for (const [p, [text, intro, outro]] of Object.entries(letters)) {
     dw.label(`lbl_${p}`, text, { cls: 'point', intro, outro, when: show });
@@ -361,10 +363,11 @@ export function create(dw, panel, makePlayer) {
     dw.setDisk('pt_G3', d.G3);
     dw.setDisk('pt_M', d.M);
     dw.setDisk('pt_H3', d.H3);
-    for (const p of ['P', 'Q', 'R', 'S', 'E1', 'G1', 'H1', 'I1', 'J1']) dw.setDisk(`pt_${p}`, d[p]);
+    for (const p of ['P', 'Q', 'R', 'S', 'E1', 'G1', 'H1', 'I1', 'J1', 'M1']) dw.setDisk(`pt_${p}`, d[p]);
 
     const off = { I: [1.7, 0.7], E3: [-1.7, -1.3], G3: [1.7, -1.3], M: [1.8, 0],
-                  E1: [1.6, 1.3], G1: [-0.6, -1.8], H1: [-1.6, -1.1], I1: [-1.6, -1.0], J1: [1.6, -1.1] };
+                  E1: [1.6, 1.3], G1: [-0.6, -1.8], H1: [-1.6, -1.1], I1: [-1.6, -1.0], J1: [1.6, -1.1],
+                  M1: [1.8, -0.9] };
     for (const p of Object.keys(letters)) dw.setLabel(`lbl_${p}`, V.add(d[p], off[p]));
 
     for (let i = 0; i < 4; i++) {
@@ -376,28 +379,33 @@ export function create(dw, panel, makePlayer) {
     }
   }
 
+  // node-equilibrium inspector: node k -> its point, its disk, and the sides
+  // of its closed sub-polygon in the force diagram (load-line edge, next-member
+  // ray, previous-member ray; supports degenerate to member force + reaction;
+  // M1 balances R against the two chord forces = the outer triangle I-L-o)
+  const NODE_DISKS = ['pt_E3', 'pt_H1', 'pt_I1', 'pt_J1', 'pt_G3', 'pt_M1'];
+  const nodeAt = [() => d.E3, () => d.H1, () => d.I1, () => d.J1, () => d.G3, () => d.M1];
+  const nodePolys = () => [
+    [[d.L, d.G1], [d.G1, d.L]],
+    [[d.K, d.L], [d.L, d.G1], [d.G1, d.K]],
+    [[d.J, d.K], [d.K, d.G1], [d.G1, d.J]],
+    [[d.I, d.J], [d.J, d.G1], [d.G1, d.I]],
+    [[d.I, d.G1], [d.G1, d.I]],
+    [[d.I, d.L], [d.L, d.G1], [d.G1, d.I]],
+  ];
+
   function updateNode() {
-    // nodes: E3, I(H1), II(I1), III(J1), G3; forces = sides of each node's
-    // closed triangle in the force diagram (load, next member, prev member)
-    const NP = [d.E3, d.H1, d.I1, d.J1, d.G3];
-    const polys = [
-      [[d.L, d.G1], [d.G1, d.L]],
-      [[d.K, d.L], [d.L, d.G1], [d.G1, d.K]],
-      [[d.J, d.K], [d.K, d.G1], [d.G1, d.J]],
-      [[d.I, d.J], [d.J, d.G1], [d.G1, d.I]],
-      [[d.I, d.G1], [d.G1, d.I]],
-    ];
-    const j = Math.round(s.node) - 1;
-    const node = NP[Math.max(0, Math.min(4, j))];
-    const sides = polys[Math.max(0, Math.min(4, j))];
+    const j = Math.max(0, Math.min(NODE_DISKS.length - 1, Math.round(s.node) - 1));
+    const node = nodeAt[j]();
+    const sides = nodePolys()[j];
+    dw.selectDisk(s.node > 0 ? NODE_DISKS[j] : null);
     let tip = node;
     for (let i = 0; i < 3; i++) {
-      const side = sides[i % sides.length];
-      const v = V.sub(side[1], side[0]);
       if (i < sides.length) {
+        const v = V.sub(sides[i][1], sides[i][0]);
         dw.setArrow(`nq${i}`, tip, V.add(tip, v));
         tip = V.add(tip, v);
-        dw.setArrow(`nf${i}`, side[0], side[1]);
+        dw.setArrow(`nf${i}`, sides[i][0], sides[i][1]);
       } else {
         dw.setArrow(`nq${i}`, node, node);
         dw.setArrow(`nf${i}`, node, node);

@@ -33,6 +33,7 @@ export const PAL = {
   yellow: 0xe8ac00, // hover highlight of dual form <-> force elements
   yellowLight: 0xf9e08a, // point fill while hover-highlighted
   grey: 0xa0a0a0,   // guides / construction lines
+  orange: 0xe07a26, // node-equilibrium inspector (the applets' mode-2 orange)
   black: 0x111111,
   white: 0xffffff,
 };
@@ -88,6 +89,7 @@ export class Drawing {
 
     this.animEnabled = true;   // draw-in animation (movies disable it)
     this.ghostEnabled = true;  // pale preview of the final drawing
+    this._selDisk = null;      // disk of the selected node (orange edge)
     this._anims = [];          // running draw-in animations
     this._lastStep = null;
     this._lastApply = null;
@@ -655,7 +657,8 @@ export class Drawing {
       if (!e.visible || e.color === undefined) continue;
       if (e.kind === 'disk') {
         e.mats[0].color.setHex(hovered ? PAL.yellowLight : flashing ? PAL.pinkLight : resolved);
-        e.edgeMat.color.setHex(hovered ? PAL.yellow : flashing ? PAL.pink : e.edgeHex);
+        e.edgeMat.color.setHex(hovered ? PAL.yellow : flashing ? PAL.pink
+          : name === this._selDisk ? PAL.orange : e.edgeHex);
         continue;
       }
       for (const m of e.mats) {
@@ -733,6 +736,42 @@ export class Drawing {
   _tolerance() {
     const h = this.renderer.domElement.clientHeight || 1;
     return 14 * ((this.camera.top - this.camera.bottom) / this.camera.zoom) / h;
+  }
+
+  /** Node-equilibrium click-to-inspect (the applets' mode 2): clicking a node
+      point of the form diagram — pointerdown + pointerup without significant
+      movement, so dragging a node still drags it — calls onSelect(i) with the
+      0-based index of the closest node within tolerance.
+      nodes: [{ at: () => [x, y] }].  Pair with selectDisk() so the selected
+      node's disk renders with an orange edge. */
+  nodeSelect(nodes, onSelect) {
+    const el = this.renderer.domElement;
+    let downAt = null;
+    el.addEventListener('pointerdown', (ev) => {
+      if (ev.button === 0) downAt = [ev.clientX, ev.clientY];
+    });
+    el.addEventListener('pointerup', (ev) => {
+      if (!downAt) return;
+      const moved = Math.hypot(ev.clientX - downAt[0], ev.clientY - downAt[1]);
+      downAt = null;
+      if (moved > 5) return;                      // it was a drag / pan, not a click
+      const w = this.worldFromEvent(ev);
+      if (!w) return;
+      let best = null;
+      let tol = this._tolerance();
+      nodes.forEach((n, i) => {
+        const p = n.at();
+        const dd = Math.hypot(p[0] - w[0], p[1] - w[1]);
+        if (dd < tol) { tol = dd; best = i; }
+      });
+      if (best !== null) onSelect(best);
+    });
+  }
+
+  /** Mark the disk `name` as the selected node (orange edge); null clears.
+      Call from the view's refresh so slider and click stay in sync. */
+  selectDisk(name) {
+    this._selDisk = name ?? null;
   }
 
   enableDrag(hit, onDrag) {

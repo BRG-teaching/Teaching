@@ -188,7 +188,9 @@
       document.title = mod.meta.title;
       const dw = new Drawing(document.getElementById('viewport'), mod.meta);
       const panel = new Panel(document.getElementById('sidebar'), mod.meta);
-      // __player is used by tools (movie rendering) to drive the steps
+      // __player / __dw are used by tools (movie rendering, checks) to
+      // drive the steps and inspect element geometry
+      window.__dw = dw;
       window.__player = mod.create(dw, panel,
         (steps, refresh) => new StepPlayer(dw, panel, steps, refresh));
     } catch (err) {
