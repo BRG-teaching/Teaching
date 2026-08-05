@@ -16,8 +16,17 @@ Downloaded 2026-06-30.
   scripts, formularies (German `_de` and English `_en` variants). Kept on the
   `pdf-archive` branch, not on `main`: the published site is only the drawings
   grid and its view pages, and the PDFs alone would put the GitHub Pages
-  deployment near its 1 GB limit. Retrieve them with
-  `git checkout pdf-archive -- 2_computational_form_finding/Equilibrium/files`.
+  deployment near its 1 GB limit. Retrieve them into the working tree with
+
+  ```bash
+  git fetch origin pdf-archive
+  git restore --source=origin/pdf-archive --worktree -- 2_computational_form_finding/Equilibrium/files
+  ```
+
+  `restore --worktree` deliberately does not stage them, and `.gitignore`
+  covers the folder, so a restored copy cannot drift back onto `main` and
+  re-inflate the deployment. Use `git checkout pdf-archive` only to work on
+  the archive itself.
 - **MANIFEST.json** — machine-readable index of every drawing, course, and file.
 
 ## Drawings index
