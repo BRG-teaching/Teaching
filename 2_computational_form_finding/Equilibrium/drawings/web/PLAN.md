@@ -170,7 +170,7 @@ Update this table as views are done:
 | 7 | Funicular Line Through Three Points 1 | hand-written ✔ (two spans, two trials, one pole; reactions + H/V components) |
 | 8 | Funicular For Vertical Forces | hand-written ✔ (hidden trial staged grey → division point i; pole locus ∥ closing line; node inspector) |
 | 9–35, 37–54 | … | auto-converted, to redo |
-| 36 | Single-panel truss | hand-written ✔ |
+| 36 | Single Panel Truss | hand-written ✔ (redone to standard: applet's trial-pole/division-point construction, antiresultant + offset apparatus, parallel reactions → H/V, member 1 force segment, node inspector) |
 
 ## Platform (beyond the per-view work)
 
