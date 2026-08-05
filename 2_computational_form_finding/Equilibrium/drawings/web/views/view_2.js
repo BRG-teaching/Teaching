@@ -197,10 +197,13 @@ export function create(dw, panel, makePlayer) {
   dw.label('dimA', '', { intro: 2, flash: false, color: PAL.grey });
   dw.label('dimB', '', { intro: 2, flash: false, color: PAL.grey });
 
-  // step 2: the load, drawn simultaneously left (at C2) and right (Z -> A1)
+  // step 2: the load, drawn simultaneously left (at C2) and right (Z -> A1),
+  // with the applet's on-canvas F1 captions (vectors u and v, green)
   dw.arrow('load', { intro: 2, w: 0.29, headLen: 0.9, headW: 0.34 });
   dw.dashLine('pguide', { intro: 2, dash: 0.5 });
   dw.arrow('aload', { intro: 2, w: 0.29, headLen: 0.9, headW: 0.34 });
+  dw.label('lfF1', 'F₁', { cls: 'num', intro: 2, color: PAL.green });
+  dw.label('lsF1', 'F₁', { cls: 'num', intro: 2, color: PAL.green });
 
   // step 3: hanger 1 (left) + its force segment Z-A1 (right)
   dw.dashLine('hguide', { intro: 3, dash: 0.5 });
@@ -255,7 +258,7 @@ export function create(dw, panel, makePlayer) {
   dw.link('bar1', 'force1', 'f1', 's1');
   dw.link('bar2', 'force2', 'par2', 'f2', 's2');
   dw.link('bar3', 'force3', 'par3', 'f3', 's3');
-  dw.link('load', 'aload');
+  dw.link('load', 'aload', 'lfF1', 'lsF1');
   dw.link('arrV', 'a2');
   dw.link('arrW', 'a3');
   dw.ghostable('force1', 'force2', 'force3', 'aload');
@@ -346,6 +349,10 @@ export function create(dw, panel, makePlayer) {
     dw.setDashLine('par3', [V.sub(d.Z, V.mul(e3, 4)), V.add(d.B1, V.mul(e3, 6))]);
     dw.setSeg('force2', d.A1, d.B1);
     dw.setSeg('force3', d.B1, d.Z);
+
+    // F1 captions: beside the load at C2 (left) and the load vector Z->A1 (right)
+    dw.setLabel('lfF1', V.add(V.mid(d.C2, d.Eload), [-1.2, 0]));
+    dw.setLabel('lsF1', V.mid(...beside(d.Z, d.A1, d.centroid, 2.2)));
 
     // green vectors: beside the triangle sides + the same pulls at V and W
     dw.setArrow('aload', ...beside(d.Z, d.A1, d.centroid));
