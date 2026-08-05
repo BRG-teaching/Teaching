@@ -82,21 +82,18 @@
     border: 1px solid #d9d9d9;
     border-radius: 50%;
   }
-  .meta { display: flex; gap: 12px; align-items: baseline; padding: 24px 16px 32px; }
-  .meta .n {
-    font: 500 12px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    color: #999;
-    min-width: 20px;
-  }
+  .meta { padding: 24px 16px 32px; cursor: pointer; }
   .meta .t {
+    display: block;
     font-size: 1rem;
     font-weight: 500;
     line-height: 1.5;
     letter-spacing: 0.03125em;
+    color: #2196ea;
   }
-  .card:hover .t { text-decoration: underline; text-underline-offset: 3px; }
   .meta .txt { min-width: 0; }
   .meta .d {
+    display: block;
     margin-top: 8px;
     font-size: 0.875rem;
     font-weight: 400;
@@ -108,8 +105,8 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  .card { cursor: pointer; }
   .card.todo .t { color: #b3b3b3; font-weight: 400; }
-  .card.todo:hover .t { text-decoration: none; }
 </style>
 </head>
 <body>
@@ -150,8 +147,7 @@
       card.href = `./?view=${n}`;
       card.innerHTML = `
         <div class="thumb"><div class="placeholder"></div></div>
-        <div class="meta"><span class="n">${String(n).padStart(2, '0')}</span>
-          <span class="txt"><span class="t">View ${n}</span></span></div>`;
+        <div class="meta"><span class="txt"><span class="t">View ${n}</span></span></div>`;
       grid.appendChild(card);
 
       // title + one-sentence description from the view module's meta
