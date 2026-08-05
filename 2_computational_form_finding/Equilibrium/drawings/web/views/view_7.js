@@ -20,6 +20,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 7 — Funicular Line Through Three Points 1',
   subtitle: 'three prescribed points: two spans, two trials, one pole',
+  about: 'Four loads and three prescribed points. Each span is solved as a two-point problem with its own trial pole and division point; the parallels to the two chords through those points meet at the single pole whose funicular passes through all three points — the middle string runs straight through N.',
   frame: [[-4.7889, -12.5105], [85.2134, 32.4907]],
 };
 
@@ -28,7 +29,7 @@ const WALL_F = [[40, 0], [40, 15]];      // right wall (F slides on it)
 const RAIL = [[20, 0], [20, 19.6]];      // middle rail (N slides on it)
 const LOAD_Y = 19.6;                     // the four loads hang from this line
 const CLIP_Y = [21.5, -7.5];             // lines of action / span guides extent
-const RESOLVE = 23;
+const RESOLVE = 22;
 
 const DEFAULTS = {
   ey: 12.5637, fy: 11.8519, ny: 3.7055,             // E, F, N along their rails
@@ -54,14 +55,13 @@ const DEFAULTS = {
 const STEPS = [
   { t: 'How to draw this scheme', d: 'step through with the slider, press play, or use ←/→' },
   { t: 'Three points to pass through', d: 'left: the funicular must pass through E and F on the walls, and through N on the middle rail' },
-  { t: 'The four loads', d: 'left: four loads with their lines of action — two act between E and N, two between N and F' },
-  { t: 'Span E–N: its load line', d: 'right: stack loads 1 and 2 tip-to-tail: I₁→V₁→W₁ — left: guides through E and N parallel to it' },
+  { t: 'Span E–N: loads 1 and 2', d: 'left: the two loads between E and N — right: the same vectors stacked tip-to-tail: I₁→V₁→W₁, with guides through E and N' },
   { t: 'Trial pole o′₁', d: 'right: place a trial pole o′₁ for the first span, with rays to I₁, V₁, W₁' },
   { t: 'Trial string ∥ o′₁–I₁', d: 'left: start at W₂ on E\'s guide, parallel to the first ray, up to line of action 1' },
   { t: 'Trial string ∥ o′₁–V₁', d: 'left: continue parallel to the middle ray to line of action 2' },
   { t: 'Trial string ∥ o′₁–W₁', d: 'left: continue parallel to the last ray to N\'s guide' },
   { t: 'Closing → division point i₁', d: 'left: dashed closing — right: the parallel through o′₁ cuts the span load line at i₁' },
-  { t: 'Span N–F: its load line', d: 'right: stack loads 3 and 4: W₁→U₂→V₂ — left: guides through N and F parallel to it' },
+  { t: 'Span N–F: loads 3 and 4', d: 'left: the two loads between N and F — right: the same vectors stacked: W₁→U₂→V₂, with guides through N and F' },
   { t: 'Trial pole o′₂', d: 'right: place a trial pole o′₂ for the second span, with rays to W₁, U₂, V₂' },
   { t: 'Trial string ∥ o′₂–W₁', d: 'left: start at J₃ on N\'s guide, parallel to the first ray, to line of action 3' },
   { t: 'Trial string ∥ o′₂–U₂', d: 'left: continue parallel to the middle ray to line of action 4' },
@@ -75,7 +75,7 @@ const STEPS = [
   { t: 'Segment 6 — form and force', d: 'right: o–V₂ — left: parallel to it — it lands exactly on F' },
   { t: 'Reactions', d: 'right: the polygon closes with V₂→o and o→I₁ — left: the same pulls appear at F and E' },
   { t: 'Reaction components', d: 'both sides: each reaction splits into a horizontal and a vertical component' },
-  { t: 'Tension', d: 'the trial constructions disappear — the funicular through E, N and F resolves red = tension' },
+  { t: 'Tension', d: 'the trial constructions disappear — the funicular through E, N and F resolves pink = tension' },
 ];
 
 const cache = {};
@@ -181,70 +181,70 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('wallF', { intro: 1, dash: 0.6 });
   dw.dashLine('rail', { intro: 1, dash: 0.6 });
 
-  // step 2: the four loads with their lines of action
+  // steps 2 / 8: each span's loads (left) drawn TOGETHER with its load line
+  // (right): green edges + grey dashed bracket + span guides
   for (let i = 0; i < 4; i++) {
-    dw.dashLine(`loa${i}`, { intro: 2, dash: 0.6 });
-    dw.arrow(`load${i}`, { intro: 2, ...ARROW });
+    const at = i < 2 ? 2 : 8;
+    dw.dashLine(`loa${i}`, { intro: at, dash: 0.6 });
+    dw.arrow(`load${i}`, { intro: at, ...ARROW });
   }
-
-  // step 3 / 9: the two span load lines (green edges + grey dashed bracket)
-  dw.arrow('edge0', { intro: 3, ...ARROW });
-  dw.arrow('edge1', { intro: 3, ...ARROW });
-  dw.dashArrow('brk1', { intro: 3, outro: RESOLVE, color: PAL.grey,
+  dw.arrow('edge0', { intro: 2, ...ARROW });
+  dw.arrow('edge1', { intro: 2, ...ARROW });
+  dw.dashArrow('brk1', { intro: 2, outro: RESOLVE, color: PAL.grey,
                          w: 0.34, headLen: 0.001, headW: 0.001, dash: 0.8 });
-  dw.dashLine('gE', { intro: 3, outro: RESOLVE, dash: 0.6 });
-  dw.dashLine('gN1', { intro: 3, outro: RESOLVE, dash: 0.6 });
-  dw.arrow('edge2', { intro: 9, ...ARROW });
-  dw.arrow('edge3', { intro: 9, ...ARROW });
-  dw.dashArrow('brk2', { intro: 9, outro: RESOLVE, color: PAL.grey,
+  dw.dashLine('gE', { intro: 2, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('gN1', { intro: 2, outro: RESOLVE, dash: 0.6 });
+  dw.arrow('edge2', { intro: 8, ...ARROW });
+  dw.arrow('edge3', { intro: 8, ...ARROW });
+  dw.dashArrow('brk2', { intro: 8, outro: RESOLVE, color: PAL.grey,
                          w: 0.34, headLen: 0.001, headW: 0.001, dash: 0.8 });
-  dw.dashLine('gN2', { intro: 9, outro: RESOLVE, dash: 0.6 });
-  dw.dashLine('gF', { intro: 9, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('gN2', { intro: 8, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('gF', { intro: 8, outro: RESOLVE, dash: 0.6 });
 
   // trial 1 (steps 4-8), all grey, retired at the end
   for (let i = 0; i < 3; i++) {
-    dw.seg(`tr1_${i}`, { intro: 4, outro: RESOLVE, w: W_RAY, color: PAL.grey });
-    dw.seg(`tf1_${i}`, { intro: 5 + i, outro: RESOLVE, w: W_STR, color: PAL.grey });
-    dw.highlight(`tr1_${i}`, [5 + i]);
+    dw.seg(`tr1_${i}`, { intro: 3, outro: RESOLVE, w: W_RAY, color: PAL.grey });
+    dw.seg(`tf1_${i}`, { intro: 4 + i, outro: RESOLVE, w: W_STR, color: PAL.grey });
+    dw.highlight(`tr1_${i}`, [4 + i]);
   }
-  dw.dashLine('tclose1', { intro: 8, outro: RESOLVE, dash: 0.6 });
-  dw.dashLine('tpar1', { intro: 8, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('tclose1', { intro: 7, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('tpar1', { intro: 7, outro: RESOLVE, dash: 0.6 });
 
   // trial 2 (steps 10-14)
   for (let i = 0; i < 3; i++) {
-    dw.seg(`tr2_${i}`, { intro: 10, outro: RESOLVE, w: W_RAY, color: PAL.grey });
-    dw.seg(`tf2_${i}`, { intro: 11 + i, outro: RESOLVE, w: W_STR, color: PAL.grey });
-    dw.highlight(`tr2_${i}`, [11 + i]);
+    dw.seg(`tr2_${i}`, { intro: 9, outro: RESOLVE, w: W_RAY, color: PAL.grey });
+    dw.seg(`tf2_${i}`, { intro: 10 + i, outro: RESOLVE, w: W_STR, color: PAL.grey });
+    dw.highlight(`tr2_${i}`, [10 + i]);
   }
-  dw.dashLine('tclose2', { intro: 14, outro: RESOLVE, dash: 0.6 });
-  dw.dashLine('tpar2', { intro: 14, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('tclose2', { intro: 13, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('tpar2', { intro: 13, outro: RESOLVE, dash: 0.6 });
 
   // step 15: chords + pole lines (black dashed), retired at the end
-  dw.dashLine('chordEN', { intro: 15, outro: RESOLVE, color: PAL.black, dash: 0.8 });
-  dw.dashLine('chordNF', { intro: 15, outro: RESOLVE, color: PAL.black, dash: 0.8 });
-  dw.dashLine('poleL1', { intro: 15, outro: RESOLVE, color: PAL.black, dash: 0.8 });
-  dw.dashLine('poleL2', { intro: 15, outro: RESOLVE, color: PAL.black, dash: 0.8 });
+  dw.dashLine('chordEN', { intro: 14, outro: RESOLVE, color: PAL.black, dash: 0.8 });
+  dw.dashLine('chordNF', { intro: 14, outro: RESOLVE, color: PAL.black, dash: 0.8 });
+  dw.dashLine('poleL1', { intro: 14, outro: RESOLVE, color: PAL.black, dash: 0.8 });
+  dw.dashLine('poleL2', { intro: 14, outro: RESOLVE, color: PAL.black, dash: 0.8 });
 
   // steps 16-20: the five rays and six members (3 and 4 share ray o-W1)
-  const rayIntro = [16, 17, 18, 19, 20];
+  const rayIntro = [15, 16, 17, 18, 19];
   for (let i = 0; i < 5; i++) {
     dw.seg(`fr${i}`, { intro: rayIntro[i], w: W_BAR, color: memberColor(rayCk[i]) });
   }
-  const segIntro = [16, 17, 18, 18, 19, 20];
+  const segIntro = [15, 16, 17, 17, 18, 19];
   for (let i = 0; i < 6; i++) {
     dw.seg(`seg${i}`, { intro: segIntro[i], w: W_BAR, color: memberColor(cks[i]) });
   }
 
   // step 21: reactions (green, on the closing rays + at the supports)
-  dw.arrow('reacF1', { intro: 21, ...ARROW });      // V2 -> o
-  dw.arrow('reacF2', { intro: 21, ...ARROW });      // o -> I1
-  dw.arrow('reacE', { intro: 21, ...ARROW });
-  dw.arrow('reacF', { intro: 21, ...ARROW });
+  dw.arrow('reacF1', { intro: 20, ...ARROW });      // V2 -> o
+  dw.arrow('reacF2', { intro: 20, ...ARROW });      // o -> I1
+  dw.arrow('reacE', { intro: 20, ...ARROW });
+  dw.arrow('reacF', { intro: 20, ...ARROW });
 
   // step 22: reaction components, both sides
   for (const n of ['cmpV2Z3', 'cmpZ3P6', 'cmpP6W3', 'cmpW3I1',
                    'cmpE1', 'cmpE2', 'cmpF1', 'cmpF2']) {
-    dw.arrow(n, { intro: 22, ...ARROW });
+    dw.arrow(n, { intro: 21, ...ARROW });
   }
 
   // points
@@ -254,36 +254,36 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_F', { intro: 1, ...HANDLE, when: show });
   dw.disk('pt_N', { intro: 1, ...HANDLE, when: show });
   for (let i = 0; i < 4; i++) {
-    dw.disk(`pt_A${i}`, { intro: 2, ...HANDLE, when: show });
-    dw.disk(`pt_R${i}`, { intro: 2, ...HANDLE, when: show });
+    dw.disk(`pt_A${i}`, { intro: i < 2 ? 2 : 8, ...HANDLE, when: show });
+    dw.disk(`pt_R${i}`, { intro: i < 2 ? 2 : 8, ...HANDLE, when: show });
   }
-  dw.disk('pt_I1', { intro: 3, ...HANDLE, when: show });
-  dw.disk('pt_V1', { intro: 3, ...DERIVED, when: show });
-  dw.disk('pt_W1', { intro: 3, ...DERIVED, when: show });
-  dw.disk('pt_U2', { intro: 9, ...DERIVED, when: show });
-  dw.disk('pt_V2', { intro: 9, ...DERIVED, when: show });
-  dw.disk('pt_Z1', { intro: 4, outro: RESOLVE, ...HANDLE, when: show });
-  dw.disk('pt_W2', { intro: 5, outro: RESOLVE, ...HANDLE, when: show });
-  dw.disk('pt_B3', { intro: 5, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_C3', { intro: 6, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_D3', { intro: 7, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_O3', { intro: 8, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_Z2', { intro: 10, outro: RESOLVE, ...HANDLE, when: show });
-  dw.disk('pt_J3', { intro: 11, outro: RESOLVE, ...HANDLE, when: show });
-  dw.disk('pt_K3', { intro: 11, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_L3', { intro: 12, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_M3', { intro: 13, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_N3', { intro: 14, outro: RESOLVE, ...DERIVED, when: show });
-  dw.disk('pt_P6', { intro: 15, ...DERIVED, when: show });
-  dw.disk('pt_Q3', { intro: 16, ...DERIVED, when: show });
-  dw.disk('pt_R3', { intro: 17, ...DERIVED, when: show });
-  dw.disk('pt_S3', { intro: 18, ...DERIVED, when: show });
-  dw.disk('pt_T3', { intro: 19, ...DERIVED, when: show });
+  dw.disk('pt_I1', { intro: 2, ...HANDLE, when: show });
+  dw.disk('pt_V1', { intro: 2, ...DERIVED, when: show });
+  dw.disk('pt_W1', { intro: 2, ...DERIVED, when: show });
+  dw.disk('pt_U2', { intro: 8, ...DERIVED, when: show });
+  dw.disk('pt_V2', { intro: 8, ...DERIVED, when: show });
+  dw.disk('pt_Z1', { intro: 3, outro: RESOLVE, ...HANDLE, when: show });
+  dw.disk('pt_W2', { intro: 4, outro: RESOLVE, ...HANDLE, when: show });
+  dw.disk('pt_B3', { intro: 4, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_C3', { intro: 5, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_D3', { intro: 6, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_O3', { intro: 7, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_Z2', { intro: 9, outro: RESOLVE, ...HANDLE, when: show });
+  dw.disk('pt_J3', { intro: 10, outro: RESOLVE, ...HANDLE, when: show });
+  dw.disk('pt_K3', { intro: 10, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_L3', { intro: 11, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_M3', { intro: 12, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_N3', { intro: 13, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_P6', { intro: 14, ...DERIVED, when: show });
+  dw.disk('pt_Q3', { intro: 15, ...DERIVED, when: show });
+  dw.disk('pt_R3', { intro: 16, ...DERIVED, when: show });
+  dw.disk('pt_S3', { intro: 17, ...DERIVED, when: show });
+  dw.disk('pt_T3', { intro: 18, ...DERIVED, when: show });
 
   const letters = {
-    E: ['E', 1], F: ['F', 1], N: ['N', 1], I1: ['I₁', 3],
-    Z1: ['o′₁', 4, RESOLVE], O3: ['i₁', 8, RESOLVE],
-    Z2: ['o′₂', 10, RESOLVE], N3: ['i₂', 14, RESOLVE], P6: ['o', 15],
+    E: ['E', 1], F: ['F', 1], N: ['N', 1], I1: ['I₁', 2],
+    Z1: ['o′₁', 3, RESOLVE], O3: ['i₁', 7, RESOLVE],
+    Z2: ['o′₂', 9, RESOLVE], N3: ['i₂', 13, RESOLVE], P6: ['o', 14],
   };
   for (const [p, [text, intro, outro]] of Object.entries(letters)) {
     dw.label(`lbl_${p}`, text, { cls: 'point', intro, outro, when: show });
@@ -413,8 +413,11 @@ export function create(dw, panel, makePlayer) {
     dw.setArrow('cmpW3I1', d.W3, d.I1);
     dw.setArrow('cmpV2Z3', d.V2, d.Z3);
     dw.setArrow('cmpZ3P6', d.Z3, d.P6);
-    const vE1 = V.sub(d.W3, d.P6), vE2 = V.sub(d.I1, d.W3);
-    const vF1 = V.sub(d.Z3, d.V2), vF2 = V.sub(d.P6, d.Z3);
+    // support components scaled to the load-symbol size (not force units)
+    const kE = (1.6 * s.sLS) / Math.max(V.dist(d.P6, d.I1), 1e-6);
+    const kF = (1.6 * s.sLS) / Math.max(V.dist(d.V2, d.P6), 1e-6);
+    const vE1 = V.mul(V.sub(d.W3, d.P6), kE), vE2 = V.mul(V.sub(d.I1, d.W3), kE);
+    const vF1 = V.mul(V.sub(d.Z3, d.V2), kF), vF2 = V.mul(V.sub(d.P6, d.Z3), kF);
     dw.setArrow('cmpE1', V.sub(d.E, vE1), d.E);
     dw.setArrow('cmpE2', V.sub(d.E, vE2), d.E);
     dw.setArrow('cmpF1', V.sub(d.F, vF1), d.F);
@@ -474,11 +477,11 @@ export function create(dw, panel, makePlayer) {
   const hits = [];
   hits.push(['E', () => d.E, 1, 99], ['F', () => d.F, 1, 99], ['N', () => d.N, 1, 99]);
   for (let i = 0; i < 4; i++) {
-    hits.push([`A${i}`, () => d.Ap[i], 2, 99], [`R${i}`, () => d.Hd[i], 2, 99]);
+    hits.push([`A${i}`, () => d.Ap[i], i < 2 ? 2 : 8, 99], [`R${i}`, () => d.Hd[i], i < 2 ? 2 : 8, 99]);
   }
-  hits.push(['I1', () => d.I1, 3, 99],
-            ['Z1', () => d.Z1, 4, RESOLVE], ['W2', () => d.W2, 5, RESOLVE],
-            ['Z2', () => d.Z2, 10, RESOLVE], ['J3', () => d.J3, 11, RESOLVE]);
+  hits.push(['I1', () => d.I1, 2, 99],
+            ['Z1', () => d.Z1, 3, RESOLVE], ['W2', () => d.W2, 4, RESOLVE],
+            ['Z2', () => d.Z2, 9, RESOLVE], ['J3', () => d.J3, 10, RESOLVE]);
   dw.enableDrag(
     (wx, wy, tol) => {
       let best = null;

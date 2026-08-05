@@ -17,6 +17,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 3 — Pedestrian Bridge 2',
   subtitle: 'two loads: trial funicular, closing string, true cable',
+  about: 'A deck hung from a cable at two points. A trial funicular with an arbitrary pole finds the division point of the load line; the true pole must lie on the parallel to the anchor chord through that point, which makes the cable pass through both anchors.',
   frame: [[-6.8624, -7.3049], [64.4231, 28.3379]],
 };
 
@@ -125,7 +126,7 @@ const STEPS = [
   { t: 'Cable 3 — form and force', d: 'right: o–O₁ — left: D₂–S₁ closes the funicular, parallel to it' },
   { t: 'Hangers 4 and 1', d: 'left: hang the deck: C₂–L₁ (4), D₂–M₁ (1) — right: their forces are the load segments P₁–Q₁ (4), O₁–P₁ (1)' },
   { t: 'Reactions', d: 'left: the cable pulls the anchors outward — right: the same vectors Q₁→o and o→O₁ close the polygon' },
-  { t: 'Tension', d: 'the trial construction disappears — closed polygon = equilibrium, cable and hangers resolve red = tension' },
+  { t: 'Tension', d: 'the trial construction disappears — closed polygon = equilibrium, cable and hangers resolve pink = tension' },
 ];
 
 const cache = {

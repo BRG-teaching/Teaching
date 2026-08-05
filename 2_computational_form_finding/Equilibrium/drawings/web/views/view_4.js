@@ -17,6 +17,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 4 — Resultant of Non-concurrent Forces',
   subtitle: 'force polygon + funicular polygon locate the resultant',
+  about: 'Six non-concurrent forces are reduced to a single resultant. The force polygon gives its magnitude and direction; a funicular polygon drawn across the lines of action locates its position: the outer strings extended meet on the resultant\'s line of action.',
   frame: [[-27.6089, -57.592], [138.8078, 25.6164]],
 };
 

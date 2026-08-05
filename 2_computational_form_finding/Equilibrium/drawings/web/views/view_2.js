@@ -14,6 +14,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 2 — Pedestrian Bridge 1',
   subtitle: 'deck hung from two cables: form + force diagram',
+  about: 'A pedestrian deck hangs from a V-shaped cable anchored to two rock banks. The load at the deck is carried by a hanger to the cable node; the force triangle of that node, built from parallels to the cables, gives the two anchor forces directly.',
   frame: [[-4.9243, -0.5757], [65.4306, 34.6017]],
 };
 
@@ -119,7 +120,7 @@ const STEPS = [
   { t: 'Point B₁', d: 'the two parallels intersect at B₁: the force triangle closes' },
   { t: 'Cable forces', d: 'A₁–B₁ is the force in cable 2, B₁–Z in cable 3 — the cables flash on the left' },
   { t: 'Follow the arrows', d: 'tip-to-tail round the triangle — the same vectors act at C₂, V and W in the form diagram' },
-  { t: 'Tension', d: 'closed triangle = node C₃ in equilibrium; the cables resolve red = tension' },
+  { t: 'Tension', d: 'closed triangle = node C₃ in equilibrium; the cables resolve pink = tension' },
 ];
 
 let b1Cache = [33.5185, 17.151];   // last valid B1, reused if the cables align

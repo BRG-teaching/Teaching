@@ -4,14 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>eQUILIBRIUM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { -webkit-font-smoothing: antialiased; }
   body {
-    font: 15px/1.4 "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+    font: 400 15px/1.4 Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     color: #111;
-    background: #fff;
+    background: #eef0f2;
   }
   header {
     background: #16181d;
@@ -44,20 +47,26 @@
   #grid {
     max-width: 1520px;
     margin: 0 auto;
-    padding: 24px 40px 80px;
+    padding: 32px 40px 80px;
     display: grid;
+    gap: 24px;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
   .card {
     display: block;
     text-decoration: none;
     color: inherit;
-    border-bottom: 1px solid #e5e5e5;
-    border-right: 1px solid #e5e5e5;
-    padding: 18px 18px 20px;
-    transition: background 0.12s;
+    background: #fff;
+    border: 1px solid #e2e4e8;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(20, 24, 32, 0.05);
+    padding: 16px 16px 18px;
+    transition: box-shadow 0.15s, border-color 0.15s;
   }
-  .card:hover { background: #f7f7f7; }
+  .card:hover {
+    border-color: #cfd3d9;
+    box-shadow: 0 4px 14px rgba(20, 24, 32, 0.1);
+  }
   .thumb {
     aspect-ratio: 5 / 3;
     background: #fff;
@@ -78,11 +87,24 @@
     min-width: 20px;
   }
   .meta .t {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     letter-spacing: -0.01em;
   }
+  .card:hover .t { text-decoration: underline; text-underline-offset: 3px; }
+  .meta .txt { min-width: 0; }
+  .meta .d {
+    margin-top: 5px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #6b7078;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
   .card.todo .t { color: #b3b3b3; font-weight: 400; }
+  .card.todo:hover .t { text-decoration: none; }
 </style>
 </head>
 <body>
@@ -124,15 +146,28 @@
       card.innerHTML = `
         <div class="thumb"><div class="placeholder"></div></div>
         <div class="meta"><span class="n">${String(n).padStart(2, '0')}</span>
-          <span class="t">View ${n}</span></div>`;
+          <span class="txt"><span class="t">View ${n}</span></span></div>`;
       grid.appendChild(card);
 
-      // title from the view module's meta (fetched as text, no evaluation)
+      // title + one-sentence description from the view module's meta
+      // (fetched as text, no evaluation)
       fetch(`./views/view_${n}.js`).then((r) => r.text()).then((src) => {
         const m = src.match(/title:\s*'([^']+)'/);
         if (m) {
           card.querySelector('.t').textContent =
             m[1].replace(/\\'/g, "'").replace(/^Drawing \d+\s+—\s+/, '');
+        }
+        const a = src.match(/about:\s*'((?:\\'|[^'])+)'/);
+        if (a) {
+          let text = a[1].replace(/\\'/g, "'");
+          text = (text.match(/^.*?[.!?](?=\s|$)/) || [text])[0].trim();
+          if (text.length > 140) {
+            text = text.slice(0, 140).replace(/\s+\S*$/, '') + '…';
+          }
+          const d = document.createElement('span');
+          d.className = 'd';
+          d.textContent = text;
+          card.querySelector('.txt').appendChild(d);
         }
         if (!src.startsWith('// Auto-generated')) card.classList.remove('todo');
       }).catch(() => {});

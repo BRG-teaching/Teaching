@@ -25,10 +25,10 @@ import { OrbitControls } from './vendor/OrbitControls.js';
 // palette based on the reference video (blue softened per user preference)
 export const PAL = {
   blue: 0x2563eb,   // member in compression
-  red: 0xce2121,    // member in tension (really red, slightly dark)
+  red: 0xce4095,    // member in tension (pink -- the user prefers pink over red)
   green: 0x51923d,  // external loads
-  pink: 0xce4095,   // element(s) being drawn (sampled from the reference video)
-  pinkLight: 0xf0b7d7, // point fill while its step is current
+  pink: 0x111111,   // element(s) being drawn are BLACK (they turn pink/blue after)
+  pinkLight: 0xe8e8e8, // point fill while its step is current
   ghost: 0x9ed4c9,  // pale blue-green ghost of the final drawing
   yellow: 0xe8ac00, // hover highlight of dual form <-> force elements
   yellowLight: 0xf9e08a, // point fill while hover-highlighted
@@ -776,6 +776,12 @@ export class Panel {
     head.className = 'panel-head';
     head.innerHTML = `<h1>${meta.title}</h1>${meta.subtitle ? `<p>${meta.subtitle}</p>` : ''}`;
     root.appendChild(head);
+    if (meta.about) {
+      const about = document.createElement('div');
+      about.className = 'panel-section';
+      about.innerHTML = `<h2>Description</h2><p class="about">${meta.about}</p>`;
+      root.appendChild(about);
+    }
   }
 
   section(title) {

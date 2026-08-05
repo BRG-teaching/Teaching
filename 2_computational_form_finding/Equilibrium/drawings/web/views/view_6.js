@@ -19,6 +19,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 6 — Funicular Line Through Two Points 2',
   subtitle: 'two-point funicular via the resultant and point M₁',
+  about: 'The same two-point problem solved through the resultant: split R at any point M₁ of its line of action into two forces toward the prescribed points; parallels to those two chords through the ends of the load line intersect at the pole.',
   frame: [[-2.6331, 16.5109], [123.3003, 79.4776]],
 };
 
@@ -64,7 +65,7 @@ const STEPS = [
   { t: 'Segment 2 — form and force', d: 'right: K–o — left: parallel to it → node II' },
   { t: 'Segment 3 — form and force', d: 'right: J–o — left: parallel to it → node III' },
   { t: 'Segment 4 — form and force', d: 'right: I–o — left: parallel to it from III — it lands exactly on G₃, and strings 1, 4 extended pass through M₁' },
-  { t: 'Tension', d: 'the funicular through E₃ and G₃ resolves red = tension (the grey trial stays as a record of the construction)' },
+  { t: 'Tension', d: 'the funicular through E₃ and G₃ resolves pink = tension (the grey trial stays as a record of the construction)' },
 ];
 
 const cache = {};

@@ -17,6 +17,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 36 — Single panel truss',
   subtitle: 'reactions by the three-force rule, then the force polygon',
+  about: 'A single truss panel analysed with the three-force rule: the known load and the two unknown member directions must meet in one point, and the closed force triangle gives both member forces.',
   frame: [[-0.44, -1.45], [15.62, 6.58]],
 };
 
@@ -42,7 +43,7 @@ const STEPS = [
   { t: 'Reactions', d: 'read off R_B = p→q (roller) and R_A = q→o (pin)' },
   { t: 'Node C', d: 'through o and p, parallels to the members A–C and C–B meet in c' },
   { t: 'Member forces', d: 'o–c is the force in A–C, c–p the force in C–B' },
-  { t: 'Compression / tension', d: 'blue = compression, red = tension' },
+  { t: 'Compression / tension', d: 'blue = compression, pink = tension' },
 ];
 
 function compute(st) {

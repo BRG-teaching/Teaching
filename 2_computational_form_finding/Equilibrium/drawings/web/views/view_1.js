@@ -12,6 +12,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 1 — Subsystem',
   subtitle: 'three-bar node: form + force diagram',
+  about: 'A single node where three bars meet, loaded along one of them. The force polygon of the node is built by drawing parallels to the bars: a closed polygon means the node is in equilibrium, and the sense of each force tells whether its bar is in compression (blue) or tension (red).',
   frame: [[-5.2088, 15.2557], [127.3526, 81.5364]],
 };
 
@@ -45,7 +46,7 @@ const STEPS = [
   { t: 'Bar 2 — form and parallel', d: 'left: choose D, bar 2 = D–A — right: dashed parallel to bar 2 through the other end' },
   { t: 'Point H', d: 'the two parallels intersect at H: the polygon closes' },
   { t: 'Forces in bars 1 and 2', d: 'G–H is the force in bar 2, H–F4 in bar 1 — the bars flash on the left' },
-  { t: 'Compression / tension', d: 'closed polygon = equilibrium; blue = compression, red = tension' },
+  { t: 'Compression / tension', d: 'closed polygon = equilibrium; blue = compression, pink = tension' },
 ];
 
 let hCache = [82.19, 50.03]; // last valid H, reused if bars 1 and 2 become parallel
