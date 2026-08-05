@@ -169,7 +169,8 @@ Update this table as views are done:
 | 6 | Funicular Line Through Two Points 2 | hand-written ✔ (method 2: split R at M₁, orange chords) |
 | 7 | Funicular Line Through Three Points 1 | hand-written ✔ (two spans, two trials, one pole; reactions + H/V components) |
 | 8 | Funicular For Vertical Forces | hand-written ✔ (hidden trial staged grey → division point i; pole locus ∥ closing line; node inspector) |
-| 9–11, 13–14, 16–35, 37–54 | … | auto-converted, to redo |
+| 9 | Parabola Construction | hand-written ✔ (three points A/B/C, tangents meet 2h below closing string → pole; midpoint rule quarters → eighths, funicular ∥ rays; tangent-division method with orange rulers l₁/l₂, envelope + enclosing polygon; node inspector) |
+| 10–11, 13–14, 16–35, 37–54 | … | auto-converted, to redo |
 | 12 | Complex Prestress | hand-written ✔ (lens system: trial → division point i, pole line ∥ chord, prestress picks poles o₁/o₂ on opposite sides, 14 members + 6 ties all paired, PointLoad Q, dimensions P_upper/P_lower, node inspector) |
 | 15 | Cable For Non-uniformly Distributed Load | hand-written ✔ (24-strip cable, R₁/R₂ trials through sag point V₃, pole parallelogram, tangents meet on R; node inspector) |
 | 36 | Single Panel Truss | hand-written ✔ (redone to standard: applet's trial-pole/division-point construction, antiresultant + offset apparatus, parallel reactions → H/V, member 1 force segment, node inspector) |
