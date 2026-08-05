@@ -133,13 +133,19 @@
   <script type="module">
     const grid = document.getElementById('grid');
 
-    // discover the available views from the dev server's directory listing
+    // The view ids come from views.json; static hosts (GitHub Pages) serve no
+    // directory listing, so that listing is only a fallback for a dev server
+    // whose views.json has gone stale. Regenerate with:
+    //   ls views/*.js | sed 's/.*view_\([0-9]*\)\.js/\1/' | sort -n \
+    //     | paste -sd, - | sed 's/^/[/; s/$/]/' > views.json
     let views = [];
     try {
+      views = await (await fetch('./views.json')).json();
+    } catch {
       const html = await (await fetch('./views/')).text();
       views = [...new Set([...html.matchAll(/view_(\d+)\.js/g)].map((m) => +m[1]))]
         .sort((a, b) => a - b);
-    } catch { views = Array.from({ length: 54 }, (_, i) => i + 1); }
+    }
     document.getElementById('count').textContent = `${views.length} drawings`;
 
     // autoplay the construction loops like GIFs; pause the off-screen ones

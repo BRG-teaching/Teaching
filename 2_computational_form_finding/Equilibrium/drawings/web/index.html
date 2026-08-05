@@ -149,15 +149,19 @@
     const id = new URLSearchParams(location.search).get('view') ?? '1';
 
     // ---- view navigation (prev / dropdown / next) --------------------
-    // Discover the available views from the dev server's directory
-    // listing; fall back to 1..54 if it can't be parsed.
+    // The view ids come from views.json; static hosts (GitHub Pages) serve no
+    // directory listing, so that listing is only a fallback for a dev server
+    // whose views.json has gone stale.
     let views = [];
     try {
-      const html = await (await fetch('./views/')).text();
-      views = [...new Set([...html.matchAll(/view_(\d+)\.js/g)].map((m) => +m[1]))]
-        .sort((a, b) => a - b);
-    } catch { /* no listing available */ }
-    if (!views.length) views = Array.from({ length: 54 }, (_, i) => i + 1);
+      views = await (await fetch('./views.json')).json();
+    } catch {
+      try {
+        const html = await (await fetch('./views/')).text();
+        views = [...new Set([...html.matchAll(/view_(\d+)\.js/g)].map((m) => +m[1]))]
+          .sort((a, b) => a - b);
+      } catch { /* no listing available */ }
+    }
 
     const cur = views.indexOf(+id);
     const goto = (n) => { location.search = `?view=${n}`; };
