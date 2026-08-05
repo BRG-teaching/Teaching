@@ -183,9 +183,12 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('chE', { intro: 10, outro: 12, color: ORANGE, dash: 1.1 });
   dw.dashLine('chG', { intro: 10, outro: 12, color: ORANGE, dash: 1.1 });
 
-  // step 11: orange parallels through L and I intersect at the pole o
-  dw.dashLine('parL', { intro: 11, outro: 12, color: ORANGE, dash: 1.1 });
-  dw.dashLine('parI', { intro: 11, outro: 12, color: ORANGE, dash: 1.1 });
+  // step 11: orange parallels through L and I intersect at the pole o.
+  // flash: false — they are visible ONLY at step 11 (the applet's c_2/d_2
+  // retire when the funicular starts), so they must appear orange at once,
+  // never black. Orange lines never carry arrowheads.
+  dw.dashLine('parL', { intro: 11, outro: 12, color: ORANGE, dash: 1.1, flash: false });
+  dw.dashLine('parI', { intro: 11, outro: 12, color: ORANGE, dash: 1.1, flash: false });
 
   // steps 12-15: each funicular segment (left) with its pole ray (right)
   const cks = ['c1', 'c2', 'c3', 'c4'];
