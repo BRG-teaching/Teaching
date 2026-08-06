@@ -155,7 +155,9 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('arcN', { intro: 2, dash: 0.12, when: (st) => st.sc });
 
   // step 2: the load at C + its line of action || F on the load line
-  dw.dashLine('loa', { intro: 2, dash: 0.15 });
+  // (the applet never draws the load's line of action in the final state --
+  //  it retires with the trial apparatus)
+  dw.dashLine('loa', { intro: 2, outro: 8, dash: 0.15 });
   dw.arrow('loadF', { intro: 2, ...ARROW });
   dw.arrow('edgeF', { intro: 2, ...ARROW });
   dw.label('lblFf', 'F', { intro: 2, color: PAL.green });
@@ -166,12 +168,13 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('fpFoff', { intro: 3, outro: 7, ...ARROW });
   dw.label('lblFpf', 'F′', { intro: 3, outro: 7, color: PAL.green });
   dw.label('lblFp', 'F′', { intro: 3, outro: 7, color: PAL.green });
-  dw.dashLine('offL1', { intro: 3, outro: 10, dash: 0.12 });
-  dw.dashLine('offL2', { intro: 3, outro: 10, dash: 0.12 });
+  // offset connectors: black dotted in the applet (r_5, s_5, a_6)
+  dw.dashLine('offL1', { intro: 3, outro: 10, dash: 0.12, color: PAL.black });
+  dw.dashLine('offL2', { intro: 3, outro: 10, dash: 0.12, color: PAL.black });
 
-  // steps 4-6: reaction lines of action + trial pole/rays/strings/closing
-  dw.dashLine('loaA', { intro: 4, outro: 10, dash: 0.15 });
-  dw.dashLine('loaB', { intro: 4, outro: 10, dash: 0.15 });
+  // steps 4-6: reaction lines of action (black dotted h_4/j_4) + trial
+  dw.dashLine('loaA', { intro: 4, outro: 10, dash: 0.15, color: PAL.black });
+  dw.dashLine('loaB', { intro: 4, outro: 10, dash: 0.15, color: PAL.black });
   dw.seg('tray0', { intro: 4, outro: 8, w: W_RAY, color: PAL.grey });
   dw.seg('tray1', { intro: 4, outro: 8, w: W_RAY, color: PAL.grey });
   dw.seg('tstr0', { intro: 5, outro: 8, w: W_STR, color: PAL.grey });
@@ -190,7 +193,7 @@ export function create(dw, panel, makePlayer) {
   dw.label('lblRBo', 'B', { intro: 7, outro: 10, color: PAL.green });
   dw.label('lblRAp', 'A', { intro: 7, outro: 10, color: PAL.green });
   dw.label('lblRBp', 'B', { intro: 7, outro: 10, color: PAL.green });
-  dw.dashLine('offL3', { intro: 6, outro: 10, dash: 0.12 });
+  dw.dashLine('offL3', { intro: 6, outro: 10, dash: 0.12, color: PAL.black });
 
   // steps 8-10: the members with their force segments
   dw.seg('m2', { intro: 8, w: W_BAR, color: memberColor('c2') });
@@ -207,10 +210,19 @@ export function create(dw, panel, makePlayer) {
               color: { final: (dd) => dd[cks[i]] } });
   }
 
-  // step 10: the roller at B + B_V; step 11: A_V + A_H (both sides)
-  dw.circle('rolC', { intro: 10, color: PAL.green });
-  dw.seg('rolG', { intro: 10, w: 0.028, color: PAL.green });
-  dw.strokes('rolT', 5, { intro: 10, w: 0.022, color: PAL.green });
+  // step 10: the roller at B + B_V; step 11: pin at A + A_V + A_H.
+  // Support glyphs follow the applet's supportRollerHorizontal /
+  // supportHingeHorizontalLeft macros (scaleSupportSymbol = 0.3): black
+  // outlines, pale fill, ground line th3, 8 hatch ticks parallel to the
+  // triangle's edge.
+  dw.circle('rolC', { intro: 10, color: PAL.black, flash: false });
+  dw.poly('rolF', 16, { intro: 10, color: PAL.black, opacity: 0.12, flash: false });
+  dw.seg('rolG', { intro: 10, w: 0.032, color: PAL.black, flash: false });
+  dw.strokes('rolT', 8, { intro: 10, w: 0.016, color: PAL.black, flash: false });
+  dw.poly('pinF', 3, { intro: 11, color: PAL.black, opacity: 0.12, flash: false });
+  dw.strokes('pinO', 3, { intro: 11, w: 0.022, color: PAL.black, flash: false });
+  dw.seg('pinG', { intro: 11, w: 0.032, color: PAL.black, flash: false });
+  dw.strokes('pinT', 8, { intro: 11, w: 0.016, color: PAL.black, flash: false });
   dw.dashLine('guideUW', { intro: 10, outro: RESOLVE, dash: 0.12 });
   dw.arrow('cmpBVf', { intro: 10, ...ARROW });     // O' -> W
   dw.arrow('cmpBV', { intro: 10, ...ARROW });
@@ -222,6 +234,8 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('cmpAH', { intro: 11, ...ARROW });
   dw.label('lblAVf', 'A_V', { intro: 11, color: PAL.green });
   dw.label('lblAHf', 'A_H', { intro: 11, color: PAL.green });
+  dw.label('lblAV', 'A_V', { intro: 11, color: PAL.green });
+  dw.label('lblAH', 'A_H', { intro: 11, color: PAL.green });
 
   // points
   const HANDLE = { r: 0.1 }, DERIVED = { r: 0.075 };
@@ -278,8 +292,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('reacApar', 'reacAoff', 'lblRAp', 'lblRAo');
   dw.link('reacBpar', 'reacBoff', 'lblRBp', 'lblRBo');
   dw.link('cmpBV', 'cmpBVf', 'lblBV', 'lblBVf');
-  dw.link('cmpAV', 'cmpAVf', 'lblAVf');
-  dw.link('cmpAH', 'cmpAHf', 'lblAHf');
+  dw.link('cmpAV', 'cmpAVf', 'lblAVf', 'lblAV');
+  dw.link('cmpAH', 'cmpAHf', 'lblAHf', 'lblAH');
   dw.ghostable('edgeF', 'fr2', 'fr3', 'f1w', 'cmpBVf', 'cmpAVf', 'cmpAHf');
 
   // ------------------------------------------------------------------
@@ -358,27 +372,51 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`sn${i}`, V.add(m, V.mul(V.unit(V.sub(m, d.fcent)), i === 0 ? -0.28 : 0.28)));
     }
 
-    // the roller at B (green glyph) + H/V components
-    const rc = V.add(d.B, [0, -0.32]);
-    dw.setCircle('rolC', rc, 0.22);
-    dw.setSeg('rolG', V.add(d.B, [-0.55, -0.56]), V.add(d.B, [0.55, -0.56]));
-    const ticks = [];
-    for (let i = 0; i < 5; i++) {
-      const x = d.B[0] - 0.42 + i * 0.21;
-      ticks.push([[x + 0.14, d.B[1] - 0.57], [x, d.B[1] - 0.78]]);
-    }
-    dw.setStrokes('rolT', ticks);
+    // support glyphs (applet macro geometry, scaleSupportSymbol s = 0.3):
+    // triangle height sqrt(3)/2*s, ground line +-s, 8 hatch ticks parallel
+    // to the triangle edge dropping 0.35*s below the ground line
+    const SS = 0.3;
+    const H_TRI = (Math.sqrt(3) / 2) * SS;                     // 0.2598
+    const hatch = (P) => {
+      const y0 = P[1] - H_TRI;
+      const t = [];
+      for (let i = 0; i < 8; i++) {
+        const x = P[0] - SS + (i * 2 * SS) / 7;
+        t.push([[x, y0], [x - 0.35 * SS / Math.tan(Math.PI / 3), y0 - 0.35 * SS]]);
+      }
+      return t;
+    };
+    // roller at B: circle sitting between B and the ground line
+    const rc = V.add(d.B, [0, -H_TRI / 2]);
+    dw.setCircle('rolC', rc, H_TRI / 2);
+    dw.setPoly('rolF', [...Array(16)].map((_, i) => {
+      const a = (i / 16) * 2 * Math.PI;
+      return V.add(rc, [Math.cos(a) * H_TRI / 2, Math.sin(a) * H_TRI / 2]);
+    }));
+    dw.setSeg('rolG', V.add(d.B, [-SS, -H_TRI]), V.add(d.B, [SS, -H_TRI]));
+    dw.setStrokes('rolT', hatch(d.B));
+    // pin (hinge) at A: triangle with its apex at A
+    const pinPts = [d.A, V.add(d.A, [-SS / 2, -H_TRI]), V.add(d.A, [SS / 2, -H_TRI])];
+    dw.setPoly('pinF', pinPts);
+    dw.setStrokes('pinO', [[pinPts[0], pinPts[1]], [pinPts[1], pinPts[2]], [pinPts[2], pinPts[0]]]);
+    dw.setSeg('pinG', V.add(d.A, [-SS, -H_TRI]), V.add(d.A, [SS, -H_TRI]));
+    dw.setStrokes('pinT', hatch(d.A));
     dw.setDashLine('guideUW', [d.U, d.W]);
+    // H/V components -- force side on the polygon, form side as the applet's
+    // schematic support arrows: A_V/B_V point up at the support from below
+    // the ground hatching, A_H points at A from the left (b_3/e_3/v_4)
     dw.setArrow('cmpBVf', d.Op, d.W);
-    dw.setArrow('cmpBV', d.B, V.add(d.B, [0, 1.1]));
+    dw.setArrow('cmpBV', V.add(d.B, [0, -1.47]), V.add(d.B, [0, -0.47]));
     dw.setLabel('lblBVf', V.add(V.mid(d.Op, d.W), [0.38, 0]));
-    dw.setLabel('lblBV', V.add(d.B, [0.4, 0.85]));
+    dw.setLabel('lblBV', V.add(d.B, [0.42, -1.05]));
     dw.setArrow('cmpAVf', d.W, d.Z);
     dw.setArrow('cmpAHf', d.Z, d.O);
-    dw.setArrow('cmpAV', d.A, V.add(d.A, [0, 1.1]));
-    dw.setArrow('cmpAH', d.A, V.add(d.A, [Math.sign(d.O[0] - d.Z[0]) || -1, 0]));
+    dw.setArrow('cmpAV', V.add(d.A, [0, -1.47]), V.add(d.A, [0, -0.47]));
+    dw.setArrow('cmpAH', V.add(d.A, [-1.21, 0]), V.add(d.A, [-0.21, 0]));
     dw.setLabel('lblAVf', V.add(V.mid(d.W, d.Z), [0.38, 0]));
     dw.setLabel('lblAHf', V.add(V.mid(d.Z, d.O), [0, 0.3]));
+    dw.setLabel('lblAV', V.add(d.A, [-0.44, -1.05]));
+    dw.setLabel('lblAH', V.add(d.A, [-1.05, 0.26]));
 
     dw.setDisk('pt_A', d.A);
     dw.setDisk('pt_B', d.B);
@@ -395,7 +433,7 @@ export function create(dw, panel, makePlayer) {
     dw.setDisk('pt_W', d.W);
     dw.setDisk('pt_Z', d.Z);
 
-    const off = { A: [-0.34, -0.3], B: [0.38, -0.14], C: [0.36, 0.22],
+    const off = { A: [-0.42, 0.22], B: [0.42, 0.22], C: [0.36, 0.22],
                   R: [0.32, 0.28], U: [0.1, -0.36],
                   Q: [0.34, -0.22], S: [-0.34, 0.16], T: [0.36, 0.16] };
     const at = { A: d.A, B: d.B, C: d.C, R: d.R, U: d.U, Q: d.Q, S: d.S, T: d.T };
