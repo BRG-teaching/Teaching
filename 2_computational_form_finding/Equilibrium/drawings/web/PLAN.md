@@ -132,12 +132,17 @@ every visible element and follow it:
    history). Read `view_N/view_N_compas.py` for baked ground-truth coordinates
    and `view_N/page.html` for the title.
    **Check the applet's embedded images** (`view_N/applet_0/<hash>/*.png`,
-   referenced by `<element type="image">` with startPoint anchors): they are
-   usually the *site drawing* (hatched rock, deck slab, dimension figures) that
-   gives the bare polylines their meaning. Don't ship the bitmaps — reproduce
-   them as vectors: hachure ticks along ground/rock outlines (`hatchTicks` in
-   view_2.js), decks as outlined white slabs, and bare grey "scale" segments as
-   real dimension lines with end ticks and live length labels.
+   referenced by `<element type="image">` with startPoint anchors). Two cases
+   (user decision 2026-08-06):
+   - **Photographs of built structures** (e.g. view 18 Salginatobel): ship the
+     ACTUAL photo — copy the PNG into `web/assets/` and render it with
+     `dw.image` at the applet's exact anchor, extent and opacity (typically
+     ~20%), behind the drawing, instant. A vector silhouette is NOT acceptable.
+   - **Drawn site figures** (hatched rock, deck slab, dimension figures):
+     reproduce as vectors — hachure ticks along ground/rock outlines
+     (`hatchTicks` in view_2.js), decks as outlined white slabs, and bare grey
+     "scale" segments as real dimension lines with end ticks and live length
+     labels.
 2. Identify: free points, on-path points, sliders, the load(s), the members,
    the force-polygon chain (which parallels through which points), dynamic
    color formulas, annotation arrows (`scaleOffset` pattern), texts.
@@ -171,7 +176,8 @@ Update this table as views are done:
 | 8 | Funicular For Vertical Forces | hand-written ✔ (hidden trial staged grey → division point i; pole locus ∥ closing line; node inspector) |
 | 9 | Parabola Construction | hand-written ✔ (three points A/B/C, tangents meet 2h below closing string → pole; midpoint rule quarters → eighths, funicular ∥ rays; tangent-division method with orange rulers l₁/l₂, envelope + enclosing polygon; node inspector) |
 | 10 | Parabola v. Catenary | hand-written ✔ (parabola via chord-mirror tangents → pole o; rulers measure s₁…s₉ → node loads Rᵢ → catenary load line; trial pole M + trial funicular → closing/chords → divisions i₁ i₂ i₃ → pole o₁; catenary members 1…9 paired with rays, parabola kept black as comparison; node inspector on the 10 cable nodes) |
-| 11, 13–14, 17, 20–35, 37–54 | … | auto-converted, to redo |
+| 11, 14, 17, 20–35, 37–54 | … | auto-converted, to redo |
+| 13 | Tower Bridge | hand-written ✔ (side-span chain through F/E/I = three-point problem ×4 load cases: dead g (visible trial → divisions i₁/i₂ → chord parallels → pole o), superposition check (mode-2 strings II/III on the chord lines), live q₁/q₂ (new lines → poles o₁/o₂, envelope), point load Q (Q-alone chord triangle, step-8 trial apparatus → pole o₃), backstay over the saddle, FDD slider separates the 4 force systems; etching as vector silhouette; regression 1.5e-6 / 96 pts (full XML eval 1.8e-13 / 497); node inspector F+15 hangers+I) |
 | 19 | Wooden bridge in Essing | hand-written ✔ (continuous band over 17+32.5+32.5+17 m: 20-strip main half-field, pole o₁ from support tangent + horizontal crown tangent, funicular through draggable crown C; approach field mirrored ⇒ loads laid off upward (Fₗ = −Fᵣ), pole o₂; vertical through o₁ → N₇ → trestle reaction A, anchor Fₗ with Fₗₕ = H; right half grey mirror; site = applet's 87-element vector drawing (band arcs, double-line trestles, bearings, terrain); regression 4.9e-7 / 140 pts; node inspector on abutment/pier/20 strip nodes/crown) |
 | 16 | Minimum and Maximum Thrust | hand-written ✔ (masonry arch, 16 voussoirs; max line through crown intrados + springing extrados, min line through crown extrados + springing intrados; two trial funiculars (orange/cyan) → division points W₄/Z₄ → poles o₁/o₂ on the crown horizontal; H_max/H_min readouts; node inspector on thrust line 1) |
 | 18 | Salginatobel Bridge | hand-written ✔ (three-hinge chords → poles o₁/o₂, 30-strip funicular through D and B, extra load Q re-poses the three-point problem via trial + crown chords → pole o; bridge photo as vector silhouette; node inspector over the arch nodes) |
