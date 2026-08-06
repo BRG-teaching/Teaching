@@ -49,6 +49,9 @@ const DEFAULTS = {
   sIF: 0.12,
   o1: true,
   n4: true,
+  hideRF: true,                                     // applet default: reaction forces
+                                                    // hidden in the force diagram at rest
+  sc: false,                                        // show constraints (applet default)
   node: 0,                                          // node-equilibrium inspector (0 = off)
 };
 
@@ -146,21 +149,27 @@ function compute(s) {
   const Z3 = [P6[0], V2[1]];
 
   const fcent = V.mul(V.add(V.add(I1, V2), P6), 1 / 3);
+
+  // single rigid offset for the WHOLE force-side reaction apparatus (both
+  // hypotenuses A/B and their H/V component triangles translate together, so
+  // every tip lands exactly on the next tail); pushed outside the ray fan
+  const pOut = (a, b) => {
+    const p = V.perp(V.unit(V.sub(b, a)));
+    return V.dot(p, V.sub(V.mid(a, b), fcent)) >= 0 ? p : V.mul(p, -1);
+  };
+  const roff = V.mul(V.unit(V.add(pOut(P6, I1), pOut(V2, P6))), 1.6);
   const Ns = [V.dist(P6, I1), V.dist(P6, V1), V.dist(P6, W1),
               V.dist(P6, U2), V.dist(P6, V2)].map((l) => l / s.sFD);
 
   return { E, F, N, Ap, Hd, dir, I1, V1, W1, U2, V2, u1, u2,
            Z1, W2, B3, C3, D3, O3, Z2, J3, K3, L3, M3, N3, P6,
-           Q3, R3, S3, T3, W3, Z3, fcent, c1, c2, c34, c5, c6, Ns };
+           Q3, R3, S3, T3, W3, Z3, fcent, roff, c1, c2, c34, c5, c6, Ns };
 }
 
-/** Arrow drawn beside (not on) a force segment, pushed away from cent. */
-function beside(a, b, cent, off = 0.65) {
-  const u = V.unit(V.sub(b, a));
-  const p = V.perp(u);
-  const sgn = V.dot(p, V.sub(V.mid(a, b), cent)) >= 0 ? 1 : -1;
-  const o = V.mul(p, off * sgn);
-  return [V.add(a, o), V.add(b, o)];
+/** Unit perpendicular of a->b pointing away from cent (label side helper). */
+function awaySide(a, b, cent) {
+  const p = V.perp(V.unit(V.sub(b, a)));
+  return V.dot(p, V.sub(V.mid(a, b), cent)) >= 0 ? p : V.mul(p, -1);
 }
 
 export function create(dw, panel, makePlayer) {
@@ -188,7 +197,14 @@ export function create(dw, panel, makePlayer) {
     const at = i < 2 ? 2 : 8;
     dw.dashLine(`loa${i}`, { intro: at, dash: 0.6 });
     dw.arrow(`load${i}`, { intro: at, ...ARROW });
+    // the applet captions every load F_1..F_4 in BOTH diagrams (green)
+    dw.label(`lblFf${i}`, `F${'₁₂₃₄'[i]}`, { intro: at, color: PAL.green });
+    dw.label(`lblF${i}`, `F${'₁₂₃₄'[i]}`, { intro: at, color: PAL.green });
+    // the arc rails the load-direction handles ride on ("show constraints")
+    dw.dashLine(`arc${i}`, { intro: at, dash: 0.45, when: (st) => st.sc });
   }
+  // N's rail anchor G-H (the applet's showConstraints segment h)
+  dw.dashLine('consH', { intro: 1, dash: 0.45, when: (st) => st.sc });
   dw.arrow('edge0', { intro: 2, ...ARROW });
   dw.arrow('edge1', { intro: 2, ...ARROW });
   dw.dashArrow('brk1', { intro: 2, outro: RESOLVE, color: PAL.grey,
@@ -236,16 +252,21 @@ export function create(dw, panel, makePlayer) {
     dw.seg(`seg${i}`, { intro: segIntro[i], w: W_BAR, color: memberColor(cks[i]) });
   }
 
-  // step 21: reactions (green, on the closing rays + at the supports),
-  // captioned A (at E) / B (at F) on both sides like the applet
-  dw.arrow('reacF1', { intro: 20, ...ARROW });      // V2 -> o  = B
-  dw.arrow('reacF2', { intro: 20, ...ARROW });      // o -> I1  = A
+  // step 21: reactions (green, beside the closing rays + at the supports),
+  // captioned A (at E) / B (at F) on both sides like the applet. The applet's
+  // hideRF checkbox (default TRUE) hides the force-diagram pair at rest --
+  // ours keeps them through the construction steps and applies the toggle at
+  // the final state (mirrors the applet: always shown at its reaction step 11,
+  // hidden at step 0 unless unchecked).
+  const rfShown = (st) => !st.hideRF || player.k < RESOLVE;
+  dw.arrow('reacF1', { intro: 20, ...ARROW, when: rfShown });   // V2 -> o  = B
+  dw.arrow('reacF2', { intro: 20, ...ARROW, when: rfShown });   // o -> I1  = A
   dw.arrow('reacE', { intro: 20, ...ARROW });
   dw.arrow('reacF', { intro: 20, ...ARROW });
   dw.label('lblAf', 'A', { cls: 'num', intro: 20, color: PAL.green });
   dw.label('lblBf', 'B', { cls: 'num', intro: 20, color: PAL.green });
-  dw.label('lblAs', 'A', { cls: 'num', intro: 20, color: PAL.green });
-  dw.label('lblBs', 'B', { cls: 'num', intro: 20, color: PAL.green });
+  dw.label('lblAs', 'A', { cls: 'num', intro: 20, color: PAL.green, when: rfShown });
+  dw.label('lblBs', 'B', { cls: 'num', intro: 20, color: PAL.green, when: rfShown });
 
   // step 22: reaction components, both sides, with the applet's H/V captions
   for (const n of ['cmpV2Z3', 'cmpZ3P6', 'cmpP6W3', 'cmpW3I1',
@@ -293,11 +314,11 @@ export function create(dw, panel, makePlayer) {
 
   const letters = {
     E: ['E', 1], F: ['F', 1], N: ['N', 1], I1: ['I₁', 2],
-    Z1: ['o′₁', 3, RESOLVE], O3: ['i₁', 7, RESOLVE],
-    Z2: ['o′₂', 9, RESOLVE], N3: ['i₂', 13, RESOLVE], P6: ['o', 14],
+    Z1: ['o′₁', 3, RESOLVE], O3: ['i₁', 7, RESOLVE, PAL.grey],
+    Z2: ['o′₂', 9, RESOLVE], N3: ['i₂', 13, RESOLVE, PAL.grey], P6: ['o', 14],
   };
-  for (const [p, [text, intro, outro]] of Object.entries(letters)) {
-    dw.label(`lbl_${p}`, text, { cls: 'point', intro, outro, when: show });
+  for (const [p, [text, intro, outro, color]] of Object.entries(letters)) {
+    dw.label(`lbl_${p}`, text, { cls: 'point', intro, outro, color, when: show });
   }
 
   // member numbers 1..6 (ray o-W1 carries both 3 and 4)
@@ -339,7 +360,7 @@ export function create(dw, panel, makePlayer) {
   dw.link('tclose2', 'tpar2');
   dw.link('chordEN', 'poleL1');
   dw.link('chordNF', 'poleL2');
-  for (let i = 0; i < 4; i++) dw.link(`load${i}`, `edge${i}`);
+  for (let i = 0; i < 4; i++) dw.link(`load${i}`, `edge${i}`, `lblFf${i}`, `lblF${i}`);
   dw.link('reacE', 'reacF2', 'lblAf', 'lblAs');
   dw.link('reacF', 'reacF1', 'lblBf', 'lblBs');
   dw.link('cmpE1', 'cmpP6W3', 'lblAVf', 'lblAVs');
@@ -359,18 +380,19 @@ export function create(dw, panel, makePlayer) {
   const NODE_NAMES = ['E', '1·2', '2·3', 'N', '4·5', '5·6', 'F'];
   const NODE_DISKS = ['pt_E', 'pt_Q3', 'pt_R3', 'pt_N', 'pt_S3', 'pt_T3', 'pt_F'];
   const nodeAt = [() => d.E, () => d.Q3, () => d.R3, () => d.N, () => d.S3, () => d.T3, () => d.F];
-  // support reactions use the SAME offset geometry as the visible green arrows
-  // reacF2/reacF1 (beside the closing rays), so the black highlight lands
-  // exactly on them; member forces stay on the rays (offsetting a side
-  // translates it — its vector, hence the free-body star, is unchanged)
+  // support reactions use the SAME rigid offset d.roff as the visible green
+  // reaction arrows reacF2/reacF1, so the black highlight lands exactly on
+  // them; member forces stay on the rays (offsetting a side translates it —
+  // its vector, hence the free-body star, is unchanged)
+  const TT = (p) => V.add(p, d.roff);
   const nodePolys = () => [
-    [[d.I1, d.P6], beside(d.P6, d.I1, d.fcent)],
+    [[d.I1, d.P6], [TT(d.P6), TT(d.I1)]],
     [[d.I1, d.V1], [d.V1, d.P6], [d.P6, d.I1]],
     [[d.V1, d.W1], [d.W1, d.P6], [d.P6, d.V1]],
     [[d.W1, d.P6], [d.P6, d.W1]],
     [[d.W1, d.U2], [d.U2, d.P6], [d.P6, d.W1]],
     [[d.U2, d.V2], [d.V2, d.P6], [d.P6, d.U2]],
-    [[d.P6, d.V2], beside(d.V2, d.P6, d.fcent)],
+    [[d.P6, d.V2], [TT(d.V2), TT(d.P6)]],
   ];
 
   function updateNode() {
@@ -398,7 +420,19 @@ export function create(dw, panel, makePlayer) {
       dw.setArrow(`load${i}`, d.Hd[i], d.Ap[i]);
       dw.setDisk(`pt_A${i}`, d.Ap[i]);
       dw.setDisk(`pt_R${i}`, d.Hd[i]);
+      dw.setLabel(`lblFf${i}`, V.add(V.mid(d.Hd[i], d.Ap[i]), [1.35, 0.2]));
+      // handle arc rail: radius loadSymbol around the load point, spanning the
+      // applet's saved aperture (~±26° about vertical, chord at y = 23.19)
+      const arc = [];
+      for (let a = -26; a <= 26; a += 4) {
+        const t = ((90 + a) * Math.PI) / 180;
+        arc.push(V.add(d.Ap[i], V.mul([Math.cos(t), Math.sin(t)], s.sLS)));
+      }
+      dw.setDashLine(`arc${i}`, arc);
     }
+    dw.setDashLine('consH', [[17, 0], [23, 0]]);
+    const edgeMid = [V.mid(d.I1, d.V1), V.mid(d.V1, d.W1), V.mid(d.W1, d.U2), V.mid(d.U2, d.V2)];
+    for (let i = 0; i < 4; i++) dw.setLabel(`lblF${i}`, V.add(edgeMid[i], [1.35, 0.2]));
 
     dw.setArrow('edge0', d.I1, d.V1);
     dw.setArrow('edge1', d.V1, d.W1);
@@ -444,40 +478,49 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`fn${i}`, V.add(V.mid(segPts[i][0], segPts[i][1]), V.mul(pf, 1.3)));
     }
 
-    // reactions: beside the closing rays (right) and at the supports (left)
-    dw.setArrow('reacF1', ...beside(d.V2, d.P6, d.fcent));
-    dw.setArrow('reacF2', ...beside(d.P6, d.I1, d.fcent));
-    dw.setArrow('reacE', d.E, V.add(d.E, V.mul(V.unit(V.sub(d.E, d.Q3)), 0.9 * s.sLS)));
-    dw.setArrow('reacF', d.F, V.add(d.F, V.mul(V.unit(V.sub(d.F, d.T3)), 0.9 * s.sLS)));
+    // reactions + H/V components, force side: the applet draws A = o->I1 and
+    // B = V2->o with their component right triangles ON the pole geometry
+    // (legs share the vertical through o). We translate the WHOLE apparatus
+    // rigidly by the single offset d.roff so nothing covers the pink rays and
+    // every arrow still lands tip-to-tail (A_v tail = A tail, A_h head = A
+    // head, B head = A tail at o).
+    const T = (p) => V.add(p, d.roff);
+    dw.setArrow('reacF1', T(d.V2), T(d.P6));          // B (hypotenuse)
+    dw.setArrow('reacF2', T(d.P6), T(d.I1));          // A (hypotenuse)
+    dw.setArrow('cmpP6W3', T(d.P6), T(d.W3));         // A_v leg
+    dw.setArrow('cmpW3I1', T(d.W3), T(d.I1));         // A_h leg
+    dw.setArrow('cmpV2Z3', T(d.V2), T(d.Z3));         // B_h leg
+    dw.setArrow('cmpZ3P6', T(d.Z3), T(d.P6));         // B_v leg
 
-    // components: reaction at E = (o->W3) + (W3->I1); at F = (V2->Z3) + (Z3->o)
-    dw.setArrow('cmpP6W3', d.P6, d.W3);
-    dw.setArrow('cmpW3I1', d.W3, d.I1);
-    dw.setArrow('cmpV2Z3', d.V2, d.Z3);
-    dw.setArrow('cmpZ3P6', d.Z3, d.P6);
-    // support components scaled to the load-symbol size (not force units)
+    // form side: the same right triangles hung on the supports, scaled to the
+    // load-symbol size -- hypotenuse = the reaction, legs = its components,
+    // chained tail(E) -> corner -> tip so all three arrows touch
     const kE = (1.6 * s.sLS) / Math.max(V.dist(d.P6, d.I1), 1e-6);
     const kF = (1.6 * s.sLS) / Math.max(V.dist(d.V2, d.P6), 1e-6);
-    const vE1 = V.mul(V.sub(d.W3, d.P6), kE), vE2 = V.mul(V.sub(d.I1, d.W3), kE);
-    const vF1 = V.mul(V.sub(d.Z3, d.V2), kF), vF2 = V.mul(V.sub(d.P6, d.Z3), kF);
-    dw.setArrow('cmpE1', V.sub(d.E, vE1), d.E);
-    dw.setArrow('cmpE2', V.sub(d.E, vE2), d.E);
-    dw.setArrow('cmpF1', V.sub(d.F, vF1), d.F);
-    dw.setArrow('cmpF2', V.sub(d.F, vF2), d.F);
+    const aV = V.mul(V.sub(d.I1, d.P6), kE);          // full reaction A at E
+    const bV = V.mul(V.sub(d.P6, d.V2), kF);          // full reaction B at F
+    const cE = V.add(d.E, [0, aV[1]]);                // corner of A's triangle
+    const cF = V.add(d.F, [0, bV[1]]);                // corner of B's triangle
+    dw.setArrow('reacE', d.E, V.add(d.E, aV));
+    dw.setArrow('reacF', d.F, V.add(d.F, bV));
+    dw.setArrow('cmpE1', d.E, cE);                    // A_v: E -> corner
+    dw.setArrow('cmpE2', cE, V.add(d.E, aV));         // A_h: corner -> tip
+    dw.setArrow('cmpF2', d.F, cF);                    // B_v: F -> corner
+    dw.setArrow('cmpF1', cF, V.add(d.F, bV));         // B_h: corner -> tip
 
     // reaction + component captions (A at E, B at F, both sides)
-    dw.setLabel('lblAf', V.add(d.E, V.mul(V.unit(V.sub(d.E, d.Q3)), 0.9 * s.sLS + 1.5)));
-    dw.setLabel('lblBf', V.add(d.F, V.mul(V.unit(V.sub(d.F, d.T3)), 0.9 * s.sLS + 1.5)));
-    dw.setLabel('lblAs', V.mid(...beside(d.P6, d.I1, d.fcent, 1.9)));
-    dw.setLabel('lblBs', V.mid(...beside(d.V2, d.P6, d.fcent, 1.9)));
-    dw.setLabel('lblAVf', V.add(V.sub(d.E, V.mul(vE1, 0.5)), [1.3, 0]));
-    dw.setLabel('lblAHf', V.add(V.sub(d.E, V.mul(vE2, 0.5)), [0, -1.3]));
-    dw.setLabel('lblBVf', V.add(V.sub(d.F, V.mul(vF2, 0.5)), [-1.4, 0]));
-    dw.setLabel('lblBHf', V.add(V.sub(d.F, V.mul(vF1, 0.5)), [0, -1.3]));
-    dw.setLabel('lblAVs', V.add(V.mid(d.P6, d.W3), [1.3, 0]));
-    dw.setLabel('lblAHs', V.add(V.mid(d.W3, d.I1), [0, 1.3]));
-    dw.setLabel('lblBHs', V.add(V.mid(d.V2, d.Z3), [0, -1.3]));
-    dw.setLabel('lblBVs', V.add(V.mid(d.Z3, d.P6), [-1.4, 0]));
+    dw.setLabel('lblAf', V.add(V.add(d.E, aV), V.mul(V.unit(aV), 1.5)));
+    dw.setLabel('lblBf', V.add(V.add(d.F, bV), V.mul(V.unit(bV), 1.5)));
+    dw.setLabel('lblAs', V.add(V.mid(T(d.P6), T(d.I1)), V.mul(awaySide(d.P6, d.I1, d.fcent), 1.1)));
+    dw.setLabel('lblBs', V.add(V.mid(T(d.V2), T(d.P6)), V.mul(awaySide(d.V2, d.P6, d.fcent), 1.1)));
+    dw.setLabel('lblAVf', V.add(V.mid(d.E, cE), [1.3, 0]));
+    dw.setLabel('lblAHf', V.add(V.mid(cE, V.add(d.E, aV)), [0, 1.2]));
+    dw.setLabel('lblBVf', V.add(V.mid(d.F, cF), [-1.4, 0]));
+    dw.setLabel('lblBHf', V.add(V.mid(cF, V.add(d.F, bV)), [0, 1.2]));
+    dw.setLabel('lblAVs', V.add(V.mid(T(d.P6), T(d.W3)), [1.25, 0]));
+    dw.setLabel('lblAHs', V.add(V.mid(T(d.W3), T(d.I1)), [0, 1.2]));
+    dw.setLabel('lblBHs', V.add(V.mid(T(d.V2), T(d.Z3)), [0, -1.2]));
+    dw.setLabel('lblBVs', V.add(V.mid(T(d.Z3), T(d.P6)), [1.25, 0]));
 
     dw.setDisk('pt_E', d.E);
     dw.setDisk('pt_F', d.F);
@@ -525,6 +568,8 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.4, 0.01, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
+  panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);
+  panel.toggle(par, s, 'sc', 'show constraints', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off): E, 1·2, 2·3, N, 4·5, 5·6, F', 0, 7, 1, refresh);
   panel.button(par, 'return to start', () => {

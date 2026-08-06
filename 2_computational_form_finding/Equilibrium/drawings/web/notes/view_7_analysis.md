@@ -95,3 +95,52 @@ through N); 19 reactions + resolve (trial retires).
   in the text above).
 - i_7 + m_7 are the GeoGebra export frame, never drawn (not a room outline).
 The implemented view used the correct interpretations.
+
+## Audit vs live original (2026-08-06)
+
+Driven the live applet (block.arch.ethz.ch/eq/drawing/view/7) headless via the
+ggbApplet JS API: enumerated all objects, flipped every boolean, swept
+mode 0/1 x step 0-12 with screenshots (scratchpad/audit789/live7/).
+
+### Toggle / mode table
+
+| control | default | effect (live-verified) |
+|---|---|---|
+| `hideRF` | **true** | hides z_1/u_2 = the green A/B reaction vectors in the FORCE diagram at the final state (step 0); at step 11 they show regardless |
+| `showConstraints` | false | shows h + I (N's rail anchor G-H on y=0) and the four CircleArc rails k_2/p_2/q_2/r_2 the load-direction handles ride on (grey dashed, radius = loadSymbol, ~±26° about vertical) |
+| `showHandles` | false | export-frame + scaffold corner handles only — never ported |
+| `mode` 0/1 | 0 | ONLY swaps which slider is visible (sIF in mode 0, step in mode 1); zero visibility diff across all steps — no hidden second construction |
+
+### Deviations found → fixed
+
+1. **Missing F₁..F₄ load captions** — the applet captions every load vector in
+   BOTH diagrams (green, v/w/z/u_1 form + u_5/v_5/w_5/u_6 force). Added
+   `lblFf*`/`lblF*` labels, linked into the load↔edge hover groups.
+2. **Missing `hideRF` checkbox** (applet default TRUE). Added; gates the
+   force-diagram reaction hypotenuses + their A/B labels at the resolve step
+   only (they always show during our reaction/component steps, mirroring the
+   applet's step-11 behaviour).
+3. **Missing `showConstraints` checkbox**. Added: G-H rail segment + the four
+   handle arc rails (sampled dashed arcs, radius sLS, ±26°).
+4. **Reaction/component chains not end-to-end** (user defect report): the
+   offset green reactions were placed with independent per-arrow `beside()`
+   offsets, overlapping the pink rays and never touching their H/V components.
+   Rebuilt: force side translates the applet's WHOLE component apparatus
+   (A = o→I₁ with legs o→W₃→I₁; B = V₂→o with legs V₂→Z₃→o) rigidly by ONE
+   offset vector `roff` (perp-blend pushed outside the ray fan) — every
+   arrowhead lands exactly on the next tail (verified numerically: all 7
+   junction gaps = 0 after drags). Form side: each support carries the same
+   right triangle scaled to 1.6·loadSymbol — reaction hypotenuse from the
+   support, A_v support→corner, A_h corner→tip, all touching. Node-inspector
+   reaction highlights reuse the same `roff` geometry.
+5. **i₁/i₂ label color** — applet renders them grey 0.6 (not black). Fixed.
+
+### Checked, no change needed
+- Walls e/f, rail m, lines of action, span guides: grey dashed, extents match.
+- Load-line brackets a_3/j_4 are GREY (0.6 DYNCOLOR else-branch) th5 dash10 →
+  our grey dashed bracket is correct (earlier notes said black).
+- A/B force-side caption swap in the applet (z_1='A' at V₂→o) contradicts its
+  own step-12 components; our physical assignment stands (documented earlier).
+- Middle string black in the live final = degenerate DYNCOLOR angle artifact;
+  physically it carries the same tension → stays pink like members 3/4.
+- Trial retirement at resolve matches the applet (trials hidden from step 10).
