@@ -170,7 +170,8 @@ Update this table as views are done:
 | 7 | Funicular Line Through Three Points 1 | hand-written ✔ (two spans, two trials, one pole; reactions + H/V components) |
 | 8 | Funicular For Vertical Forces | hand-written ✔ (hidden trial staged grey → division point i; pole locus ∥ closing line; node inspector) |
 | 9 | Parabola Construction | hand-written ✔ (three points A/B/C, tangents meet 2h below closing string → pole; midpoint rule quarters → eighths, funicular ∥ rays; tangent-division method with orange rulers l₁/l₂, envelope + enclosing polygon; node inspector) |
-| 10–11, 13–14, 17, 19–35, 37–54 | … | auto-converted, to redo |
+| 10 | Parabola v. Catenary | hand-written ✔ (parabola via chord-mirror tangents → pole o; rulers measure s₁…s₉ → node loads Rᵢ → catenary load line; trial pole M + trial funicular → closing/chords → divisions i₁ i₂ i₃ → pole o₁; catenary members 1…9 paired with rays, parabola kept black as comparison; node inspector on the 10 cable nodes) |
+| 11, 13–14, 17, 19–35, 37–54 | … | auto-converted, to redo |
 | 16 | Minimum and Maximum Thrust | hand-written ✔ (masonry arch, 16 voussoirs; max line through crown intrados + springing extrados, min line through crown extrados + springing intrados; two trial funiculars (orange/cyan) → division points W₄/Z₄ → poles o₁/o₂ on the crown horizontal; H_max/H_min readouts; node inspector on thrust line 1) |
 | 18 | Salginatobel Bridge | hand-written ✔ (three-hinge chords → poles o₁/o₂, 30-strip funicular through D and B, extra load Q re-poses the three-point problem via trial + crown chords → pole o; bridge photo as vector silhouette; node inspector over the arch nodes) |
 | 12 | Complex Prestress | hand-written ✔ (lens system: trial → division point i, pole line ∥ chord, prestress picks poles o₁/o₂ on opposite sides, 14 members + 6 ties all paired, PointLoad Q, dimensions P_upper/P_lower, node inspector) |
