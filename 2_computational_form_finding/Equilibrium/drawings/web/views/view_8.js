@@ -48,7 +48,9 @@ const DEFAULTS = {
   node: 0,                               // node-equilibrium inspector (0 = off)
   o1: true,
   sc: false,                             // show constraints (the load rails)
-  n4: true,
+  n4: true,                              // show points (the applet's o_3, default true)
+  hideRF: false,                         // hide reaction forces in force diagram
+  o2: false,                             // hide inner forces (blacken the coloring)
 };
 
 // every construction move happens on BOTH sides at once
@@ -115,7 +117,9 @@ function compute(s) {
   const U1 = inter('U1', T1, V.sub(O, G1), Rp[2], DOWN);
   const V1 = inter('V1', U1, V.sub(O, H1), Rp[3], DOWN);
 
-  const col = (w) => (V.isCompression(w) ? PAL.blue : PAL.red);
+  // "hide inner forces" (the applet's o_2 checkbox) blackens the dynamic
+  // tension/compression coloring of members AND rays
+  const col = (w) => (s.o2 ? PAL.black : (V.isCompression(w) ? PAL.blue : PAL.red));
   const c1 = col(V.ggbAngle(V.sub(S1, A), V.sub(O, D1)));
   const c2 = col(V.ggbAngle(V.sub(T1, S1), V.sub(O, E1)));
   const c3 = col(V.ggbAngle(V.sub(U1, T1), V.sub(O, G1)));
@@ -131,17 +135,23 @@ function compute(s) {
   const fcent = V.mul(V.add(V.add(D1, I1), O), 1 / 3);
   const Ns = verts.map((v) => V.dist(O, v) / s.sFD);            // N1..N5 (= RA, .., RB)
 
+  // single rigid offset for the force-side reaction chain B = I1->o, A = o->D1
+  // (both arrows translate together so B's head still lands on A's tail at o)
+  const pOut = (a, b) => {
+    const p = V.perp(V.unit(V.sub(b, a)));
+    return V.dot(p, V.sub(V.mid(a, b), fcent)) >= 0 ? p : V.mul(p, -1);
+  };
+  const roff = V.mul(V.unit(V.add(pOut(O, D1), pOut(I1, O))), 1.3);
+
   return { A, B, Rp, Tl, D1, E1, G1, H1, I1, verts, J1, K1, L1, M1, N1, O1, P5,
-           Q1, uc, O, S1, T1, U1, V1, c1, c2, c3, c4, c5, sag, dirA, dirB, fcent, Ns };
+           Q1, uc, O, S1, T1, U1, V1, c1, c2, c3, c4, c5, sag, dirA, dirB,
+           fcent, roff, Ns };
 }
 
-/** Arrow drawn beside (not on) a force segment, pushed away from `cent`. */
-function beside(a, b, cent, off = 0.7) {
-  const u = V.unit(V.sub(b, a));
-  const p = V.perp(u);
-  const sgn = V.dot(p, V.sub(V.mid(a, b), cent)) >= 0 ? 1 : -1;
-  const o = V.mul(p, off * sgn);
-  return [V.add(a, o), V.add(b, o)];
+/** Unit perpendicular of a->b pointing away from cent (label side helper). */
+function awaySide(a, b, cent) {
+  const p = V.perp(V.unit(V.sub(b, a)));
+  return V.dot(p, V.sub(V.mid(a, b), cent)) >= 0 ? p : V.mul(p, -1);
 }
 
 export function create(dw, panel, makePlayer) {
@@ -195,13 +205,16 @@ export function create(dw, panel, makePlayer) {
     dw.label(`sn${i}`, `${i + 1}`, { cls: 'num', intro: 12 + i, color: { final: (dd) => dd[cks[i]] } });
   }
 
-  // step 17: reactions -- beside the closing rays (right) and at the supports
-  dw.arrow('reacAf', { intro: 17, ...ARROW });     // o -> D1
-  dw.arrow('reacBf', { intro: 17, ...ARROW });     // I1 -> o
+  // step 17: reactions -- the rigid offset chain I1 -> o -> D1 beside the
+  // closing rays (right) and at the supports (left). The applet's hideRF
+  // checkbox (default false) hides the force-diagram pair.
+  const rfShown = (st) => !st.hideRF;
+  dw.arrow('reacAf', { intro: 17, ...ARROW, when: rfShown });   // o -> D1
+  dw.arrow('reacBf', { intro: 17, ...ARROW, when: rfShown });   // I1 -> o
   dw.arrow('reacA', { intro: 17, ...ARROW });
   dw.arrow('reacB', { intro: 17, ...ARROW });
-  dw.label('lblRA', 'A', { intro: 17, color: PAL.green });
-  dw.label('lblRB', 'B', { intro: 17, color: PAL.green });
+  dw.label('lblRA', 'A', { intro: 17, color: PAL.green, when: rfShown });
+  dw.label('lblRB', 'B', { intro: 17, color: PAL.green, when: rfShown });
 
   // points
   const HANDLE = { r: 0.42 }, DERIVED = { r: 0.32 };
@@ -308,11 +321,14 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`fn${i}`, V.add(V.mid(segs[i][0], segs[i][1]), V.mul(pf, 1.2)));
     }
 
-    // reactions: beside the closing rays (right), at the supports (left);
-    // pulling away from the support when the funicular sags, pushing into it
-    // when it arches (the applet's v_2 / u_2 If(...) branches)
-    dw.setArrow('reacAf', ...beside(d.O, d.D1, d.fcent));
-    dw.setArrow('reacBf', ...beside(d.I1, d.O, d.fcent));
+    // reactions: the WHOLE force-side chain I1 -> o (B) -> D1 (A) translated
+    // rigidly by the single offset d.roff, so B's arrowhead lands exactly on
+    // A's tail (at o + roff) and neither covers the pink rays; at the
+    // supports (left): pulling away when the funicular sags, pushing into
+    // them when it arches (the applet's v_2 / u_2 If(...) branches)
+    const T = (p) => V.add(p, d.roff);
+    dw.setArrow('reacAf', T(d.O), T(d.D1));
+    dw.setArrow('reacBf', T(d.I1), T(d.O));
     const la = 1.3 * s.sLS;
     if (d.sag) {
       dw.setArrow('reacA', d.A, V.add(d.A, V.mul(d.dirA, la)));
@@ -321,10 +337,10 @@ export function create(dw, panel, makePlayer) {
       dw.setArrow('reacA', V.sub(d.A, V.mul(d.dirA, la)), d.A);
       dw.setArrow('reacB', V.sub(d.B, V.mul(d.dirB, la)), d.B);
     }
-    const [ra0, ra1] = beside(d.O, d.D1, d.fcent);
-    const [rb0, rb1] = beside(d.I1, d.O, d.fcent);
-    dw.setLabel('lblRA', V.add(V.mid(ra0, ra1), V.mul(V.perp(V.unit(V.sub(ra1, ra0))), -0.9)));
-    dw.setLabel('lblRB', V.add(V.mid(rb0, rb1), V.mul(V.perp(V.unit(V.sub(rb1, rb0))), -0.9)));
+    const outA = awaySide(d.O, d.D1, d.fcent);
+    const outB = awaySide(d.I1, d.O, d.fcent);
+    dw.setLabel('lblRA', V.add(V.mid(T(d.O), T(d.D1)), V.mul(outA, 1.0)));
+    dw.setLabel('lblRB', V.add(V.mid(T(d.I1), T(d.O)), V.mul(outB, 1.0)));
 
     dw.setDisk('pt_A', d.A);
     dw.setDisk('pt_B', d.B);
@@ -352,17 +368,18 @@ export function create(dw, panel, makePlayer) {
   const NODE_NAMES = ['A', 'I', 'II', 'III', 'IV', 'B'];
   const NODE_DISKS = ['pt_A', 'pt_S1', 'pt_T1', 'pt_U1', 'pt_V1', 'pt_B'];
   const nodeAt = [() => d.A, () => d.S1, () => d.T1, () => d.U1, () => d.V1, () => d.B];
-  // support reactions use the SAME offset geometry as the visible green arrows
-  // reacAf/reacBf (beside the closing rays), so the black highlight lands
-  // exactly on them; member forces stay on the rays (offsetting a side
-  // translates it — its vector, hence the free-body star, is unchanged)
+  // support reactions use the SAME rigid offset d.roff as the visible green
+  // arrows reacAf/reacBf, so the black highlight lands exactly on them;
+  // member forces stay on the rays (offsetting a side translates it — its
+  // vector, hence the free-body star, is unchanged)
+  const TT = (p) => V.add(p, d.roff);
   const nodePolys = () => [
-    [beside(d.O, d.D1, d.fcent), [d.D1, d.O]],
+    [[TT(d.O), TT(d.D1)], [d.D1, d.O]],
     [[d.D1, d.E1], [d.E1, d.O], [d.O, d.D1]],
     [[d.E1, d.G1], [d.G1, d.O], [d.O, d.E1]],
     [[d.G1, d.H1], [d.H1, d.O], [d.O, d.G1]],
     [[d.H1, d.I1], [d.I1, d.O], [d.O, d.H1]],
-    [beside(d.I1, d.O, d.fcent), [d.O, d.I1]],
+    [[TT(d.I1), TT(d.O)], [d.O, d.I1]],
   ];
 
   function updateNode() {
@@ -395,6 +412,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.2, 0.005, refresh);
   panel.toggle(par, s, 'sc', 'show constraints (load rails)', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
+  panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);
+  panel.toggle(par, s, 'o2', 'hide inner forces', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = A, 2–5 = I…IV, 6 = B)', 0, 6, 1, refresh);
   panel.button(par, 'return to start', () => {
