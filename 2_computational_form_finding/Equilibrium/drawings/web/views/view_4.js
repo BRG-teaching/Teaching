@@ -17,7 +17,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 4 — Resultant of Non-concurrent Forces',
   subtitle: 'force polygon + funicular polygon locate the resultant',
-  about: 'Six non-concurrent forces are reduced to a single resultant. The force polygon gives its magnitude and direction; a funicular polygon drawn across the lines of action locates its position: the outer strings extended meet on the resultant\'s line of action.',
+  about: 'Six non-concurrent forces are reduced to a single resultant with the funicular polygon. The force polygon gives R\'s magnitude and direction; choosing a pole decomposes every force into two components, and the strings drawn across the lines of action make the opposite components neutralize each other — only the first and last survive, so extending those two strings locates R\'s line of action.',
   frame: [[-27.6089, -57.592], [138.8078, 25.6164]],
 };
 
@@ -43,7 +43,20 @@ const DEFAULTS = {
   sLS: 7,                                 // scaleLoadSymbol [1, 10]
   n4: true,
   node: 0,                                // node-equilibrium inspector (0 = off)
+  // the applet's hidden show/hide checkboxes, with its defaults
+  c: false,                               // 'show actual loads form diagram'
+  svF: false,                             // 'show vectors in force diagram'
+  svM: false,                             // 'show vectors in form diagram'
+  o3: false,                              // 'Parallelzeichen' (parallel marks)
+  cons: false,                            // 'show constraints' (handle arcs)
+  o6: false,                              // force-polygon letters b..g
+  o5: true,                               // numbering auxiliary construction 1..7
 };
+
+// direction-handle constraint arcs (applet CircleArc endpoints), as angle
+// offsets [from, to] relative to each handle's default direction, ccw
+const ARC_OFF = [[-0.289, 0.668], [-0.529, 0.706], [-0.346, 0.702],
+                 [-0.293, 0.786], [0, 1.158], [-1.264, 0]];
 
 const STEPS = [
   { t: 'How to draw this scheme', d: 'step through with the slider, press play, or use ←/→' },
@@ -131,6 +144,49 @@ export function create(dw, panel, makePlayer) {
     dw.arrow(`edge${i}`, { intro: i + 1, ...ARROW });
   }
 
+  // ---- the applet's hidden show/hide layers (all default off) ----
+  // 'show actual loads form diagram' (applet c): each load TO SCALE
+  // (F_i x sFD) on its line of action while the polygon is built (retired
+  // when the funicular starts, as in the applet), with dashed orange
+  // correspondence lines to its force-polygon edge at the exact step
+  const whenC = (st) => st.c;
+  for (let i = 0; i < N; i++) {
+    dw.arrow(`act${i}`, { intro: i + 1, outro: 7, when: whenC, color: PAL.grey, ...ARROW });
+    dw.dashLine(`clT${i}`, { intro: i + 1, outro: i + 2, when: whenC, color: PAL.orange, dash: 0.9, flash: false });
+    dw.dashLine(`clH${i}`, { intro: i + 1, outro: i + 2, when: whenC, color: PAL.orange, dash: 0.9, flash: false });
+  }
+  // 'Parallelzeichen' (o_3): parallel marks on the line of action and on the
+  // matching polygon edge, only at that force's step
+  const whenO3 = (st) => st.o3;
+  for (let i = 0; i < N; i++) {
+    dw.seg(`pmF${i}`, { intro: i + 1, outro: i + 2, when: whenO3, w: 0.5, z: 0.25, color: PAL.orange, flash: false });
+    dw.seg(`pmS${i}`, { intro: i + 1, outro: i + 2, when: whenO3, w: 0.5, z: 0.25, color: PAL.orange, flash: false });
+  }
+  // 'show constraints': dashed arcs the direction handles ride on
+  for (let i = 0; i < N; i++) {
+    dw.dashLine(`arc${i}`, { intro: i + 1, when: (st) => st.cons, dash: 0.9, flash: false });
+  }
+  // 'show vectors in force diagram' (showVectorsForce): per string step, the
+  // node's force triangle -- edge vector + components via the pole; the
+  // 'away' component lingers one step so the next node's opposite component
+  // visibly neutralizes it; the FIRST component survives into R
+  const whenVF = (st) => st.svF;
+  const whenVM = (st) => st.svM;
+  const THIN = { w: 0.3, headLen: 1.7, headW: 0.62 };
+  for (let j = 0; j < N; j++) {
+    dw.arrow(`vfe${j}`, { intro: 8 + j, outro: 9 + j, when: whenVF, color: PAL.grey, ...ARROW });
+    dw.arrow(`vfa${j}`, { intro: 8 + j, outro: j === 0 ? undefined : 9 + j, when: whenVF, color: PAL.grey, ...THIN });
+    dw.arrow(`vfb${j}`, { intro: 8 + j, outro: j < N - 1 ? 10 + j : undefined, when: whenVF, color: PAL.grey, ...THIN });
+    // 'show vectors in form diagram': the same two component directions as
+    // unit x sLS arrows radiating at the funicular node
+    dw.arrow(`vma${j}`, { intro: 8 + j, outro: j === 0 ? undefined : 9 + j, when: whenVM, color: PAL.grey, ...ARROW });
+    dw.arrow(`vmb${j}`, { intro: 8 + j, outro: j < N - 1 ? 10 + j : undefined, when: whenVM, color: PAL.grey, ...ARROW });
+  }
+  // 'show points' (o_6): lowercase letters on the force-polygon vertices
+  for (let i = 0; i < N; i++) {
+    dw.label(`plt${i}`, 'bcdefg'[i], { cls: 'point', intro: i + 1, when: (st) => st.o6, flash: false });
+  }
+
   // the resultant appears in BOTH diagrams at the final step, dashed green
   dw.dashArrow('resArrow', { intro: RESOLVE, flash: false, ...RARROW });
 
@@ -178,17 +234,19 @@ export function create(dw, panel, makePlayer) {
   dw.label('lblO6', 'O₆', { cls: 'point', intro: 8, when: show });
   dw.label('lblT2', 'T₂', { cls: 'point', intro: 14, when: show });
 
-  // numbers 1..6 + R on BOTH sides, green like the forces
+  // force captions F1..F6 + R on BOTH sides, green like the forces (the
+  // applet captions both the load symbols and the polygon edges F_i)
   for (let i = 0; i < N; i++) {
-    dw.label(`f${i}`, `${i + 1}`, { cls: 'num', intro: i + 1, color: PAL.green });
-    dw.label(`s${i}`, `${i + 1}`, { cls: 'num', intro: i + 1, color: PAL.green });
+    dw.label(`f${i}`, `F${'₁₂₃₄₅₆'[i]}`, { cls: 'num', intro: i + 1, color: PAL.green });
+    dw.label(`s${i}`, `F${'₁₂₃₄₅₆'[i]}`, { cls: 'num', intro: i + 1, color: PAL.green });
   }
 
-  // ray/string numbers 1..7 on BOTH diagrams (default-on in the applet,
-  // boolean o_5), grey like the construction they number
+  // ray/string numbers 1..7 on BOTH diagrams (the applet's o_5 'Numbering
+  // auxiliary construction', default ON), grey like the construction
+  const whenO5 = (st) => st.o5;
   for (let i = 0; i <= N; i++) {
-    dw.label(`rn${i}`, `${i + 1}`, { cls: 'num', intro: 7, color: PAL.grey });
-    dw.label(`stn${i}`, `${i + 1}`, { cls: 'num', intro: i < N ? 8 + i : 14, color: PAL.grey });
+    dw.label(`rn${i}`, `${i + 1}`, { cls: 'num', intro: 7, when: whenO5, color: PAL.grey });
+    dw.label(`stn${i}`, `${i + 1}`, { cls: 'num', intro: i < N ? 8 + i : 14, when: whenO5, color: PAL.grey });
   }
   dw.label('fR', 'R', { cls: 'num', intro: RESOLVE, flash: false, color: PAL.green });
   dw.label('sR', 'R', { cls: 'num', intro: RESOLVE, flash: false, color: PAL.green });
@@ -284,6 +342,39 @@ export function create(dw, panel, makePlayer) {
     dw.setDashArrow('resArrow', d.Pp[0], d.Pp[N]);
     dw.setLabel('sR', V.add(V.mid(d.Pp[0], d.Pp[N]), V.mul(V.perp(d.uR), -2.6)));
 
+    // hidden show/hide layers
+    const pcent = V.mul(d.Pp.reduce((a, q) => V.add(a, q), [0, 0]), 1 / (N + 1));
+    for (let i = 0; i < N; i++) {
+      const tip = V.add(d.Sp[i], V.mul(d.dir[i], s.F[i] * s.sFD));
+      dw.setArrow(`act${i}`, d.Sp[i], tip);                       // actual load to scale
+      dw.setDashLine(`clT${i}`, [d.Sp[i], d.Pp[i]]);              // tail -> edge tail
+      dw.setDashLine(`clH${i}`, [tip, d.Pp[i + 1]]);              // head -> edge head
+      dw.setSeg(`pmF${i}`, d.Sp[i], V.add(d.Sp[i], V.mul(d.dir[i], 0.7 * s.sLS)));
+      dw.setSeg(`pmS${i}`, d.Pp[i], V.add(d.Pp[i], V.mul(V.sub(d.Pp[i + 1], d.Pp[i]), 0.7)));
+      // constraint arc around the application point, straddling the handle
+      const th = s.th[i];
+      const arc = [];
+      for (let k = 0; k <= 20; k++) {
+        const a = th + ARC_OFF[i][0] + (k / 20) * (ARC_OFF[i][1] - ARC_OFF[i][0]);
+        arc.push(V.add(d.Ap[i], V.mul([Math.cos(a), Math.sin(a)], s.sLS)));
+      }
+      dw.setDashLine(`arc${i}`, arc);
+      // force-polygon letters b..g beside the vertices, away from the centroid
+      const pv = d.Pp[i + 1];
+      dw.setLabel(`plt${i}`, V.add(pv, V.mul(V.unit(V.sub(pv, pcent)), 2.3)));
+    }
+    // per-node vector layers (toggles): the node's force triangle via the
+    // pole (right) and the same component directions at the node (left)
+    for (let j = 0; j < N; j++) {
+      dw.setArrow(`vfe${j}`, d.Pp[j], d.Pp[j + 1]);
+      dw.setArrow(`vfa${j}`, d.Pp[j], d.O1);
+      dw.setArrow(`vfb${j}`, d.O1, d.Pp[j + 1]);
+      const ua = V.unit(V.sub(d.O1, d.Pp[j]));
+      const ub = V.unit(V.sub(d.Pp[j + 1], d.O1));
+      dw.setArrow(`vma${j}`, d.Fp[j], V.add(d.Fp[j], V.mul(ua, s.sLS)));
+      dw.setArrow(`vmb${j}`, d.Fp[j], V.add(d.Fp[j], V.mul(ub, s.sLS)));
+    }
+
     // rays + their numbers 1..7 (offset toward the outside of the fan)
     const mdir = V.unit(V.sub(V.mid(d.Pp[0], d.Pp[N]), d.O1));
     for (let i = 0; i <= N; i++) {
@@ -353,7 +444,16 @@ export function create(dw, panel, makePlayer) {
   }
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 1, 5, 0.1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 10, 0.5, refresh);
-  panel.toggle(par, s, 'n4', 'show points', refresh);
+  // the applet's show/hide checkboxes (its defaults: only numbering on)
+  const sh = panel.section('Show / hide');
+  panel.toggle(sh, s, 'c', 'show actual loads (form)', refresh);
+  panel.toggle(sh, s, 'svF', 'show vectors in force diagram', refresh);
+  panel.toggle(sh, s, 'svM', 'show vectors in form diagram', refresh);
+  panel.toggle(sh, s, 'o3', 'parallel marks', refresh);
+  panel.toggle(sh, s, 'cons', 'show constraints', refresh);
+  panel.toggle(sh, s, 'o6', 'force letters b–g', refresh);
+  panel.toggle(sh, s, 'o5', 'numbering 1–7', refresh);
+  panel.toggle(sh, s, 'n4', 'show points', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'string node (0 = off, k = at force k)', 0, N, 1, refresh);
   panel.button(par, 'return to start', () => {
