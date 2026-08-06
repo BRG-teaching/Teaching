@@ -366,6 +366,17 @@ export function create(dw, panel, makePlayer) {
   // geometry refresh
   // ------------------------------------------------------------------
 
+  // reaction arrow offset beside its ray, pushed away from the polygon
+  // centroid — shared by update() (the visible green arrows reacAf/reacBf)
+  // and nodePoly() (the inspector's reaction sides land exactly on them)
+  const reacSide = (a, b) => {
+    const fcent = V.mul(V.add(V.add(d.O7, d.Q7), d.C9), 1 / 3);
+    const u = V.unit(V.sub(b, a));
+    const pp = V.perp(u);
+    const sgn = V.dot(pp, V.sub(V.mid(a, b), fcent)) >= 0 ? 1 : -1;
+    return [V.add(a, V.mul(pp, 0.18 * sgn)), V.add(b, V.mul(pp, 0.18 * sgn))];
+  };
+
   function update() {
     dw.setLabel('form_title', [1.6, 6.15]);
     dw.setLabel('force_title', [11.3, 6.15]);
@@ -467,15 +478,8 @@ export function create(dw, panel, makePlayer) {
     dw.setStrokes('arch2', pairs(d.arch2));
 
     // reactions: beside the outer rays (right), thrust into the springings (left)
-    const fcent = V.mul(V.add(V.add(d.O7, d.Q7), d.C9), 1 / 3);
-    const bes = (a, b) => {
-      const u = V.unit(V.sub(b, a));
-      const pp = V.perp(u);
-      const sgn = V.dot(pp, V.sub(V.mid(a, b), fcent)) >= 0 ? 1 : -1;
-      return [V.add(a, V.mul(pp, 0.18 * sgn)), V.add(b, V.mul(pp, 0.18 * sgn))];
-    };
-    const [ra0, ra1] = bes(d.C9, d.O7);
-    const [rb0, rb1] = bes(d.Q7, d.C9);
+    const [ra0, ra1] = reacSide(d.C9, d.O7);
+    const [rb0, rb1] = reacSide(d.Q7, d.C9);
     dw.setArrow('reacAf', ra0, ra1);
     dw.setArrow('reacBf', rb0, rb1);
     dw.setLabel('lRA', V.add(V.mid(ra0, ra1), V.mul(V.perp(V.unit(V.sub(ra1, ra0))), -0.5)));
@@ -513,10 +517,14 @@ export function create(dw, panel, makePlayer) {
 
   // node-equilibrium inspector: 1 = A, 2..31 = strip nodes, 32 = B.
   // Each side of the node's sub-polygon is one force acting ON the node.
+  // springing reactions use the SAME offset geometry as the visible green
+  // arrows reacAf/reacBf (reacSide), so the black highlight lands exactly on
+  // them; member forces stay on the rays (offsetting a side translates it —
+  // its vector, hence the free-body star, is unchanged)
   function nodePoly() {
     const j = Math.round(s.node);
-    if (j <= 1) return [[d.C9, d.O7], [d.O7, d.C9]];
-    if (j >= N_STRIP + 2) return [[d.Q7, d.C9], [d.C9, d.Q7]];
+    if (j <= 1) return [reacSide(d.C9, d.O7), [d.O7, d.C9]];
+    if (j >= N_STRIP + 2) return [reacSide(d.Q7, d.C9), [d.C9, d.Q7]];
     const k = j - 1;
     return [[d.pts2[k - 1], d.pts2[k]], [d.pts2[k], d.C9], [d.C9, d.pts2[k - 1]]];
   }

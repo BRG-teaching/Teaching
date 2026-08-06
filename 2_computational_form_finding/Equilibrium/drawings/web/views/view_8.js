@@ -11,7 +11,7 @@
  * Live port of view_8/applet_0/geogebra.xml. The applet keeps its trial
  * machinery (pole J_1, funicular from K_1, closing, parallel) permanently
  * hidden and only shows its result Q_1 ("i"); we stage it as the grey trial
- * construction and retire it at the end. The full chain (load line, hidden
+ * construction and keep it to the end. The full chain (load line, hidden
  * trial, division point, pole line, every funicular vertex, closure on W,
  * reaction arrows) is regression-checked against the applet's baked
  * coordinates to ~5e-7.
@@ -71,7 +71,7 @@ const STEPS = [
   { t: 'String 4 — form and force', d: 'right: the fourth ray — left: continue parallel to it → node IV' },
   { t: 'String 5 — form and force', d: 'right: the last ray — left: continue parallel to it: it lands exactly ON B' },
   { t: 'Reactions A and B', d: 'right: i splits the load line: B = from below i to o, A = from o back to the top — left: the same pulls appear at the supports' },
-  { t: 'Tension', d: 'the grey trial disappears — the funicular between A and B resolves pink = tension; drag o along its locus, the supports, or the loads' },
+  { t: 'Tension', d: 'the funicular between A and B resolves pink = tension — the grey trial stays for comparison; drag o along its locus, the supports, or the loads' },
 ];
 
 const cache = {};
@@ -171,18 +171,18 @@ export function create(dw, panel, makePlayer) {
     dw.dashLine(`cw${i}`, { intro: 2, dash: 0.45, when: (st) => st.sc });
   }
 
-  // trial (steps 3-9), all grey, retired at the end (the applet never shows it)
+  // trial (steps 3-9), all grey, kept to the end (user: construction information must never disappear)
   for (let i = 0; i < 5; i++) {
-    dw.seg(`tr${i}`, { intro: 3, outro: RESOLVE, w: W_RAY, color: PAL.grey });
-    dw.seg(`tf${i}`, { intro: 4 + i, outro: RESOLVE, w: W_STR, color: PAL.grey });
+    dw.seg(`tr${i}`, { intro: 3, w: W_RAY, color: PAL.grey });
+    dw.seg(`tf${i}`, { intro: 4 + i, w: W_STR, color: PAL.grey });
     dw.highlight(`tr${i}`, [4 + i]);
   }
-  dw.dashLine('tclose', { intro: 9, outro: RESOLVE, dash: 0.6 });
-  dw.dashLine('tpar', { intro: 9, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('tclose', { intro: 9, dash: 0.6 });
+  dw.dashLine('tpar', { intro: 9, dash: 0.6 });
 
   // step 10: the closing line A-B (black dashed, kept) + the pole locus
   dw.dashLine('closeAB', { intro: 10, color: PAL.black, dash: 0.8 });
-  dw.dashLine('locus', { intro: 10, outro: RESOLVE, dash: 0.6 });
+  dw.dashLine('locus', { intro: 10, dash: 0.6 });
   // step 11: the pole o + the closing ray o-i (black dashed, kept)
   dw.dashLine('rayOI', { intro: 11, color: PAL.black, dash: 0.8 });
   dw.highlight('closeAB', [11]);
@@ -211,10 +211,10 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 4; i++) dw.disk(`pt_R${i}`, { intro: 2, ...HANDLE, when: show });
   dw.disk('pt_D1', { intro: 2, ...HANDLE, when: show });
   for (const p of ['E1', 'G1', 'H1', 'I1']) dw.disk(`pt_${p}`, { intro: 2, ...DERIVED, when: show });
-  dw.disk('pt_J1', { intro: 3, outro: RESOLVE, ...HANDLE, when: show });
-  dw.disk('pt_K1', { intro: 4, outro: RESOLVE, ...HANDLE, when: show });
+  dw.disk('pt_J1', { intro: 3, ...HANDLE, when: show });
+  dw.disk('pt_K1', { intro: 4, ...HANDLE, when: show });
   for (const [p, k] of [['L1', 4], ['M1', 5], ['N1', 6], ['O1', 7], ['P5', 8]]) {
-    dw.disk(`pt_${p}`, { intro: k, outro: RESOLVE, ...DERIVED, when: show });
+    dw.disk(`pt_${p}`, { intro: k, ...DERIVED, when: show });
   }
   dw.disk('pt_Q1', { intro: 9, ...DERIVED, when: show });
   dw.disk('pt_O', { intro: 11, ...HANDLE, when: show });
@@ -223,7 +223,7 @@ export function create(dw, panel, makePlayer) {
   }
 
   const letters = {
-    A: ['A', 1], B: ['B', 1], J1: ['o′', 3, RESOLVE], K1: ['K₁', 4, RESOLVE],
+    A: ['A', 1], B: ['B', 1], J1: ['o′', 3], K1: ['K₁', 4],
     Q1: ['i', 9], O: ['o', 11],
     S1: ['I', 12], T1: ['II', 13], U1: ['III', 14], V1: ['IV', 15],
   };
@@ -352,13 +352,17 @@ export function create(dw, panel, makePlayer) {
   const NODE_NAMES = ['A', 'I', 'II', 'III', 'IV', 'B'];
   const NODE_DISKS = ['pt_A', 'pt_S1', 'pt_T1', 'pt_U1', 'pt_V1', 'pt_B'];
   const nodeAt = [() => d.A, () => d.S1, () => d.T1, () => d.U1, () => d.V1, () => d.B];
+  // support reactions use the SAME offset geometry as the visible green arrows
+  // reacAf/reacBf (beside the closing rays), so the black highlight lands
+  // exactly on them; member forces stay on the rays (offsetting a side
+  // translates it — its vector, hence the free-body star, is unchanged)
   const nodePolys = () => [
-    [[d.O, d.D1], [d.D1, d.O]],
+    [beside(d.O, d.D1, d.fcent), [d.D1, d.O]],
     [[d.D1, d.E1], [d.E1, d.O], [d.O, d.D1]],
     [[d.E1, d.G1], [d.G1, d.O], [d.O, d.E1]],
     [[d.G1, d.H1], [d.H1, d.O], [d.O, d.G1]],
     [[d.H1, d.I1], [d.I1, d.O], [d.O, d.H1]],
-    [[d.I1, d.O], [d.O, d.I1]],
+    [beside(d.I1, d.O, d.fcent), [d.O, d.I1]],
   ];
 
   function updateNode() {
@@ -403,7 +407,7 @@ export function create(dw, panel, makePlayer) {
   hits.push(['A', () => d.A, 1, 99], ['B', () => d.B, 1, 99]);
   for (let i = 0; i < 4; i++) hits.push([`R${i}`, () => d.Rp[i], 2, 99]);
   hits.push(['D1', () => d.D1, 2, 99],
-            ['J1', () => d.J1, 3, RESOLVE], ['K1', () => d.K1, 4, RESOLVE],
+            ['J1', () => d.J1, 3, 99], ['K1', () => d.K1, 4, 99],
             ['O', () => d.O, 11, 99]);
   const rails = [[0.5, XR / 4 - 0.5], [XR / 4 + 0.5, XR / 2 - 0.5],
                  [XR / 2 + 0.5, 3 * XR / 4 - 0.5], [3 * XR / 4 + 0.5, XR - 0.5]];

@@ -283,11 +283,15 @@ export function create(dw, panel, makePlayer) {
   const NODE_NAMES = ['C₂', 'C₃', 'V', 'W'];
   const NODE_DISKS = ['pt_C2', 'pt_C3', 'pt_V', 'pt_W'];
   const nodeAt = [() => d.C2, () => d.C3, () => d.V, () => d.W];
+  // anchor reactions use the SAME offset geometry as the visible green arrows
+  // a2/a3 (beside the triangle sides), so the black highlight lands exactly on
+  // them; member forces stay on the polygon (offsetting a side translates it —
+  // its vector, hence the free-body star, is unchanged)
   const nodePolys = () => [
     [[d.Z, d.A1], [d.A1, d.Z]],
     [[d.Z, d.A1], [d.A1, d.B1], [d.B1, d.Z]],
-    [[d.B1, d.A1], [d.A1, d.B1]],
-    [[d.Z, d.B1], [d.B1, d.Z]],
+    [[d.B1, d.A1], beside(d.A1, d.B1, d.centroid)],
+    [[d.Z, d.B1], beside(d.B1, d.Z, d.centroid)],
   ];
 
   function updateNode() {

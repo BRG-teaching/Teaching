@@ -410,12 +410,16 @@ export function create(dw, panel, makePlayer) {
   const NODE_NAMES = ['E₃', 'I', 'II', 'III', 'G₃', 'M₁'];
   const NODE_DISKS = ['pt_E3', 'pt_H1', 'pt_I1', 'pt_J1', 'pt_G3', 'pt_M1'];
   const nodeAt = [() => d.E3, () => d.H1, () => d.I1, () => d.J1, () => d.G3, () => d.M1];
+  // support reactions use the SAME offset geometry as the visible green arrows
+  // aR1/aR4 (beside the closing rays), so the black highlight lands exactly on
+  // them; member forces stay on the rays (offsetting a side translates it —
+  // its vector, hence the free-body star, is unchanged)
   const nodePolys = () => [
-    [[d.L, d.G1], [d.G1, d.L]],
+    [beside(d.L, d.G1, d.fcent), [d.G1, d.L]],
     [[d.K, d.L], [d.L, d.G1], [d.G1, d.K]],
     [[d.J, d.K], [d.K, d.G1], [d.G1, d.J]],
     [[d.I, d.J], [d.J, d.G1], [d.G1, d.I]],
-    [[d.I, d.G1], [d.G1, d.I]],
+    [[d.I, d.G1], beside(d.G1, d.I, d.fcent)],
     [[d.I, d.L], [d.L, d.G1], [d.G1, d.I]],
   ];
 
