@@ -45,6 +45,8 @@ const DEFAULTS = {
   node: 0,                                          // node-equilibrium inspector (0 = off)                                        // internal-force pipe scale
   o1: true,
   n4: true,
+  hideRF: false,                                    // applet boolean (its checkbox is hidden): hide reaction forces in force diagram
+  oRF: 0.6,                                         // applet slider offsetReactionForces [0, 1]
 };
 
 // every construction move happens on BOTH sides at once
@@ -200,9 +202,27 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('chM1a', { intro: 15, color: PAL.black, dash: 0.85 });
   dw.dashLine('chM1b', { intro: 15, dash: 0.85 });
 
-  // step 16 is final: reactions in green, no flash
-  for (const n of ['arrE3', 'arrG3', 'aR1', 'aR4']) {
-    dw.arrow(n, { intro: RESOLVE, flash: false, ...ARROW });
+  // step 16 is final: reactions in green, no flash; the force-diagram pair
+  // (and its dotted offset connectors) obeys the applet's hideRF boolean
+  dw.arrow('arrE3', { intro: RESOLVE, flash: false, ...ARROW });
+  dw.arrow('arrG3', { intro: RESOLVE, flash: false, ...ARROW });
+  const showRF = (st) => !st.hideRF;
+  dw.arrow('aR1', { intro: RESOLVE, flash: false, when: showRF, ...ARROW });
+  dw.arrow('aR4', { intro: RESOLVE, flash: false, when: showRF, ...ARROW });
+  // dotted connectors tying the closing-ray ends to the offset reaction
+  // arrows (the applet's h_6/i_6/m_6/n_6, driven by offsetReactionForces)
+  for (const n of ['cnA1', 'cnA2', 'cnB1', 'cnB2']) {
+    dw.dashLine(n, { intro: RESOLVE, flash: false, when: showRF, color: PAL.black, dash: 0.35 });
+  }
+  // reaction captions A / B on both sides (applet w_1/u_2 and v_2/w_2)
+  dw.label('lblAf', 'A', { cls: 'num', intro: RESOLVE, flash: false, color: PAL.green });
+  dw.label('lblBf', 'B', { cls: 'num', intro: RESOLVE, flash: false, color: PAL.green });
+  dw.label('lblAs', 'A', { cls: 'num', intro: RESOLVE, flash: false, when: showRF, color: PAL.green });
+  dw.label('lblBs', 'B', { cls: 'num', intro: RESOLVE, flash: false, when: showRF, color: PAL.green });
+  // load captions F1..F3 on both sides (applet u/v/w and n/m/l, green)
+  for (let i = 0; i < 3; i++) {
+    dw.label(`lfF${i}`, `F${'₁₂₃'[i]}`, { cls: 'num', intro: 1, color: PAL.green });
+    dw.label(`lsF${i}`, `F${'₁₂₃'[i]}`, { cls: 'num', intro: 1, color: PAL.green });
   }
 
   // points
@@ -271,14 +291,14 @@ export function create(dw, panel, makePlayer) {
     dw.link(`seg${i}`, `fr${i}`, `fn${i}`, `sn${i}`);
     dw.link(`tf${i}`, `tr${i}`);
   }
-  dw.link('load0', 'edge0');
-  dw.link('load1', 'edge1');
-  dw.link('load2', 'edge2');
+  dw.link('load0', 'edge0', 'lfF0', 'lsF0');
+  dw.link('load1', 'edge1', 'lfF1', 'lsF1');
+  dw.link('load2', 'edge2', 'lfF2', 'lsF2');
   dw.link('resArrow', 'resFormArrow', 'resGuide');
   dw.link('chE', 'parL');
   dw.link('chG', 'parI');
-  dw.link('arrE3', 'aR1');
-  dw.link('arrG3', 'aR4');
+  dw.link('arrE3', 'aR1', 'lblAf', 'lblAs');
+  dw.link('arrG3', 'aR4', 'lblBf', 'lblBs');
   dw.ghostable('fr0', 'fr1', 'fr2', 'fr3', 'edge0', 'edge1', 'edge2', 'resArrow');
 
   // ------------------------------------------------------------------
@@ -298,6 +318,12 @@ export function create(dw, panel, makePlayer) {
       dw.setArrow(`edge${i}`, edges[i][0], edges[i][1]);
       dw.setDisk(`pt_L${i}`, d.Lp[i]);
       dw.setDisk(`pt_H${i}`, d.Hd[i]);
+      // captions F1..F3 beside the load (left) and its load-line edge (right)
+      dw.setLabel(`lfF${i}`, V.add(V.mid(d.Lp[i], d.Hd[i]), V.mul(V.perp(d.dir[i]), -1.7)));
+      const em = V.mid(edges[i][0], edges[i][1]);
+      const ep = V.perp(V.unit(V.sub(edges[i][1], edges[i][0])));
+      const esgn = V.dot(ep, V.sub(em, d.fcent)) >= 0 ? 1 : -1;
+      dw.setLabel(`lsF${i}`, V.add(em, V.mul(ep, 2.0 * esgn)));
     }
     dw.setDisk('pt_I', d.I);
     dw.setDisk('pt_J', d.J);
@@ -341,10 +367,24 @@ export function create(dw, panel, makePlayer) {
     dw.setDashLine('chM1a', [d.H1, d.M1]);
     dw.setDashLine('chM1b', [d.M1, d.J1]);
 
-    dw.setArrow('arrE3', d.E3, V.add(d.E3, V.mul(V.unit(V.sub(d.E3, d.H1)), 0.8 * s.sLS)));
-    dw.setArrow('arrG3', d.G3, V.add(d.G3, V.mul(V.unit(V.sub(d.G3, d.J1)), 0.8 * s.sLS)));
-    dw.setArrow('aR1', ...beside(d.L, d.G1, d.fcent));
-    dw.setArrow('aR4', ...beside(d.G1, d.I, d.fcent));
+    // form reactions: length = load symbol, pointing outward (applet w_1/u_2)
+    dw.setArrow('arrE3', d.E3, V.add(d.E3, V.mul(V.unit(V.sub(d.E3, d.H1)), s.sLS)));
+    dw.setArrow('arrG3', d.G3, V.add(d.G3, V.mul(V.unit(V.sub(d.G3, d.J1)), s.sLS)));
+    // force reactions: offset from the closing rays by offsetReactionForces,
+    // with dotted connectors at both ends (applet v_2/w_2 + h_6..n_6)
+    const offA = beside(d.L, d.G1, d.fcent, s.oRF);
+    const offB = beside(d.G1, d.I, d.fcent, s.oRF);
+    dw.setArrow('aR1', ...offA);
+    dw.setArrow('aR4', ...offB);
+    dw.setDashLine('cnA1', [d.L, offA[0]]);
+    dw.setDashLine('cnA2', [d.G1, offA[1]]);
+    dw.setDashLine('cnB1', [d.G1, offB[0]]);
+    dw.setDashLine('cnB2', [d.I, offB[1]]);
+    // reaction captions A / B on both sides
+    dw.setLabel('lblAf', V.add(d.E3, V.mul(V.unit(V.sub(d.E3, d.H1)), s.sLS + 1.6)));
+    dw.setLabel('lblBf', V.add(d.G3, V.mul(V.unit(V.sub(d.G3, d.J1)), s.sLS + 1.6)));
+    dw.setLabel('lblAs', V.mid(...beside(d.L, d.G1, d.fcent, s.oRF + 1.8)));
+    dw.setLabel('lblBs', V.mid(...beside(d.G1, d.I, d.fcent, s.oRF + 1.8)));
 
     dw.setDisk('pt_E3', d.E3);
     dw.setDisk('pt_G3', d.G3);
@@ -373,19 +413,22 @@ export function create(dw, panel, makePlayer) {
   // M1 balances R against the two chord forces = the outer triangle L-o-I,
   // matching the original applet's node 6). Each side, as a vector, is one
   // force acting ON the node.
-  const NODE_NAMES = ['E₃', 'I', 'II', 'III', 'G₃', 'M₁'];
-  const NODE_DISKS = ['pt_E3', 'pt_H1', 'pt_I1', 'pt_J1', 'pt_G3', 'pt_M1'];
-  const nodeAt = [() => d.E3, () => d.H1, () => d.I1, () => d.J1, () => d.G3, () => d.M1];
+  // node order follows the applet's node slider: 1-3 = I..III, 4 = A (E₃),
+  // 5 = B (G₃), 6 = M₁
+  const NODE_NAMES = ['I', 'II', 'III', 'E₃ (A)', 'G₃ (B)', 'M₁'];
+  const NODE_DISKS = ['pt_H1', 'pt_I1', 'pt_J1', 'pt_E3', 'pt_G3', 'pt_M1'];
+  const nodeAt = [() => d.H1, () => d.I1, () => d.J1, () => d.E3, () => d.G3, () => d.M1];
   // support reactions use the SAME offset geometry as the visible green arrows
-  // aR1/aR4 (beside the closing rays), so the black highlight lands exactly on
-  // them; member forces stay on the rays (offsetting a side translates it —
-  // its vector, hence the free-body star, is unchanged)
+  // aR1/aR4 (beside the closing rays, offsetReactionForces away), so the black
+  // highlight lands exactly on them; member forces stay on the rays
+  // (offsetting a side translates it — its vector, hence the free-body star,
+  // is unchanged)
   const nodePolys = () => [
-    [beside(d.L, d.G1, d.fcent), [d.G1, d.L]],
     [[d.K, d.L], [d.L, d.G1], [d.G1, d.K]],
     [[d.J, d.K], [d.K, d.G1], [d.G1, d.J]],
     [[d.I, d.J], [d.J, d.G1], [d.G1, d.I]],
-    [[d.I, d.G1], beside(d.G1, d.I, d.fcent)],
+    [beside(d.L, d.G1, d.fcent, s.oRF), [d.G1, d.L]],
+    [[d.I, d.G1], beside(d.G1, d.I, d.fcent, s.oRF)],
     [[d.I, d.L], [d.L, d.G1], [d.G1, d.I]],
   ];
 
@@ -418,8 +461,10 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.4, 0.01, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
+  panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);
+  panel.slider(par, s, 'oRF', 'offset reaction forces', 0, 1, 0.1, refresh);
   const nodeSec = panel.section('Node equilibrium');
-  panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = E₃, 2–4 = I…III, 5 = G₃, 6 = M₁)',
+  panel.slider(nodeSec, s, 'node', 'node (0 = off, 1–3 = I…III, 4 = A, 5 = B, 6 = M₁)',
                0, 6, 1, refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(s, { ...DEFAULTS, px: [...DEFAULTS.px], py: [...DEFAULTS.py],
