@@ -136,3 +136,58 @@ W₈, Z₈, C₉, D₉, E₉ (+ exact parallelogram identity), all 24 cable vert
 the closing hit on B, T₁₁, xR, P₂/H₁₁ (orange string), support arrow tips
 R₈/S₈/C₁₁/D₁₁/E₁₁/F₁₁ — 66 targets, max |Δ| = 4.98e-7 (the baked dump is
 rounded to 6 decimals; the homogeneous-coordinate targets agree to 1e-11).
+
+## Audit vs live original (2026-08-06)
+
+Live page driven headless via CDP + ggbApplet API; both booleans flipped,
+mode 0/1 + step 0..9 swept, offsetReactionForces probed at 1.5 with exact
+point coordinates read back; per-step visibility matrix dumped.
+
+### Toggle / slider table (live)
+
+| control | default | effect |
+|---|---|---|
+| o_1 "show handles" | false | hidden y-level handle points (frame helpers) — never drawn ✓ |
+| o_2 "hide external forces in force diagram" | false | hides v_9/u_9 (green A/B on the rays) AND the offset connectors t_15/a_16/b_16/c_16 — R (w_9) stays |
+| offsetReactionForces 0..2 | 0 | slides the force-diagram A/B arrows sideways, PERPENDICULAR to their ray: offset = orf·(u.y, −u.x), u = unit(loadline-end − o); black dotted connectors from S₂/o/o/U₃ to the shifted copies (verified against live J₁₁/K₁₁/L₁₁/M₁₁ to 1e-12) |
+| length_q 1..14, g, factor_q, sFD | 10, 3.2, 2.2, 0.3 | already ported ✓ |
+| mode 0/1 + step 0..9 | 0 | step colors: current-step elements flash ORANGE, then settle: trial + components GREY, R₁/R₂ and reactions GREEN, R's action line BLACK dotted, cable RED (black in mode 1) |
+
+### Deviations found → fixed
+
+1. **offsetReactionForces slider missing** → added ("offset reaction
+   forces", 0..2, default 0): offsets fA/fB + labels perpendicular to their
+   rays exactly as the applet, with the four BLACK dotted connectors,
+   hidden together with o_2; node-inspector support sub-polygons put the
+   reaction side on the OFFSET arrow (member side stays on the ray).
+2. **o_2 caption** was "hide reaction forces…" → renamed "hide external
+   forces in force diagram" (the applet's caption).
+3. **Reaction components A₁/A₂/B₁/B₂** were green — the applet's steady
+   color is GREY th5 (they are a temporary decomposition; only the full
+   reactions turn green). Both diagrams + labels now grey.
+4. **Missing k_8/l_8**: at the pole step the applet re-adds the component
+   pair on the parallelogram's far sides (o′₂→o 'B₁', o→o′₁ 'A₂', grey,
+   retired with the components). Added (intro 7, outro 9).
+5. **R's line of action s_7** is BLACK dotted (R₁/R₂'s stay grey) — was
+   grey. Fixed.
+6. **Trial pole rays** (S₂–o′₁, A₉–o′₁, A₉–o′₂, U₃–o′₂) are DASHED grey in
+   the applet (dash10, persist) — were solid. Now dashed.
+7. **V₃'s rail l_3** is an always-visible site element — was intro 4. Now
+   instant at step 1.
+8. **q/g block labels** sit at the LEFT of the bands in the applet — were
+   centered above. Moved.
+
+### Checked, judged intentional (kept)
+
+- R₁/R₂/R as DASHED green double-diagram vectors (applet: solid green th5;
+  orange only as its current-step flash) — standing platform rule
+  "resultant = dashed green in both diagrams".
+- Per-strip green load arrows under the g-block (applet keeps its per-strip
+  vectors hidden) — explicit form↔force pairing, documented port decision.
+- c_15/d_15 (dashed previews of the outer rays, applet steps 6-7): covered
+  by our green fA/fB arrows on the same geometry in the same step.
+- Trial strings retire at cable start (applet step 8 = our step 11) ✓;
+  poles/rays/parallelogram/tangents persist (applet mode-1 end state) ✓.
+
+Verification: 16 steps re-screenshot; orf=1.5 screenshot matches the live
+offset probe; o_2 hides A/B + connectors, R stays.

@@ -46,8 +46,9 @@ const DEFAULTS = {
   sFD: 0.3,                           // scaleForceDiagram [0.1, 1] units/kN
   sLS: 2.8,                           // loadSymbol [1, 5]
   sIF: 0.012,
+  orf: 0,                             // offsetReactionForces [0, 2] (applet slider)
   o1: true,                           // internal-force pipes
-  o2: false,                          // hide reaction forces in force diagram
+  o2: false,                          // hide external forces in force diagram
   n4: true,                           // show points
   node: 0,                            // node-equilibrium inspector (0 = off)
 };
@@ -166,8 +167,9 @@ export function create(dw, panel, makePlayer) {
   dw.label('lbl_q', 'q', { cls: 'num', intro: 1, color: PAL.green });
   dw.label('lbl_g', 'g', { cls: 'num', intro: 1, color: PAL.green });
   dw.dashLine('bound', { intro: 1, color: PAL.black, dash: 0.55 });   // a_5
+  dw.dashLine('rail', { intro: 1, dash: 1.3 });   // l_3: V3's rail, site (always on)
   dw.instant(...[...Array(NSTRIP + 2)].map((_, k) => `grid${k}`),
-             'qFill', 'qEdge', 'gFill', 'gEdge', 'lbl_q', 'lbl_g', 'bound');
+             'qFill', 'qEdge', 'gFill', 'gEdge', 'lbl_q', 'lbl_g', 'bound', 'rail');
 
   // ------------------------------------------------------------------
   // step 2: per-strip loads (left) drawn WITH the load line edges (right)
@@ -191,46 +193,60 @@ export function create(dw, panel, makePlayer) {
   dw.label('lblR1s', 'R₁', { cls: 'num', intro: 3, outro: 8, color: PAL.green });
   dw.label('lblR2s', 'R₂', { cls: 'num', intro: 3, outro: 8, color: PAL.green });
 
-  // steps 4-5: the two trial funiculars (grey strings left, grey rays right)
-  dw.dashLine('rail', { intro: 4, dash: 0.55 });                       // l_3
+  // steps 4-5: the two trial funiculars (grey strings left, grey DASHED
+  // rays right -- the applet draws the pole rays dash10, and they stay)
   dw.seg('tf1a', { intro: 4, outro: 11, w: W_STR, color: PAL.grey });  // A-W8
   dw.seg('tf1b', { intro: 4, outro: 11, w: W_STR, color: PAL.grey });  // W8-B
-  dw.seg('tr1a', { intro: 4, w: W_RAY, color: PAL.grey });             // S2-C9
-  dw.seg('tr1b', { intro: 4, w: W_RAY, color: PAL.grey });             // A9-C9
+  dw.dashLine('tr1a', { intro: 4, dash: 0.7 });                        // S2-C9
+  dw.dashLine('tr1b', { intro: 4, dash: 0.7 });                        // A9-C9
   dw.seg('tf2a', { intro: 5, outro: 11, w: W_STR, color: PAL.grey });  // A-Z8
   dw.seg('tf2b', { intro: 5, outro: 11, w: W_STR, color: PAL.grey });  // Z8-B
-  dw.seg('tr2a', { intro: 5, w: W_RAY, color: PAL.grey });             // A9-D9
-  dw.seg('tr2b', { intro: 5, w: W_RAY, color: PAL.grey });             // U3-D9
+  dw.dashLine('tr2a', { intro: 5, dash: 0.7 });                        // A9-D9
+  dw.dashLine('tr2b', { intro: 5, dash: 0.7 });                        // U3-D9
   dw.link('tf1a', 'tr1a');
   dw.link('tf1b', 'tr1b');
   dw.link('tf2a', 'tr2a');
   dw.link('tf2b', 'tr2b');
 
   // step 6: reaction components at the supports + on the force diagram
+  // (the applet paints the components GREY th5 -- they are a temporary
+  //  decomposition, only the full reactions turn green)
   const CMP = [['cmpA1', 'fA1', 'A₁'], ['cmpA2', 'fA2', 'A₂'],
                ['cmpB1', 'fB1', 'B₁'], ['cmpB2', 'fB2', 'B₂']];
   for (const [fm, fo, txt] of CMP) {
-    dw.arrow(fm, { intro: 6, outro: 9, ...ARROW });
-    dw.arrow(fo, { intro: 6, outro: 9, ...ARROW });
-    dw.label(`lbl_${fm}`, txt, { cls: 'num', intro: 6, outro: 9, color: PAL.green });
-    dw.label(`lbl_${fo}`, txt, { cls: 'num', intro: 6, outro: 9, color: PAL.green });
+    dw.arrow(fm, { intro: 6, outro: 9, ...ARROW, color: PAL.grey });
+    dw.arrow(fo, { intro: 6, outro: 9, ...ARROW, color: PAL.grey });
+    dw.label(`lbl_${fm}`, txt, { cls: 'num', intro: 6, outro: 9, color: PAL.grey });
+    dw.label(`lbl_${fo}`, txt, { cls: 'num', intro: 6, outro: 9, color: PAL.grey });
     dw.link(fm, fo, `lbl_${fm}`, `lbl_${fo}`);
   }
 
-  // step 7: the pole o closes the parallelogram (grey dashed, stays)
+  // step 7: the pole o closes the parallelogram (grey dashed, stays); the
+  // applet re-adds the component pair on the far sides (k_8 = o'2->o 'B1',
+  // l_8 = o->o'1 'A2', grey th5, retired with the components)
   dw.dashLine('par1', { intro: 7, dash: 0.7 });                        // C9-E9
   dw.dashLine('par2', { intro: 7, dash: 0.7 });                        // E9-D9
   dw.link('par1', 'par2');
+  dw.arrow('parB1', { intro: 7, outro: 9, ...ARROW, color: PAL.grey });
+  dw.arrow('parA2', { intro: 7, outro: 9, ...ARROW, color: PAL.grey });
+  dw.label('lbl_parB1', 'B₁', { cls: 'num', intro: 7, outro: 9, color: PAL.grey });
+  dw.label('lbl_parA2', 'A₂', { cls: 'num', intro: 7, outro: 9, color: PAL.grey });
+  dw.link('parB1', 'lbl_parB1');
+  dw.link('parA2', 'lbl_parA2');
 
   // step 8: the total load R -- dashed green in BOTH diagrams + its line
-  dw.dashLine('rLoa', { intro: 8, dash: 0.55 });
+  // of action (BLACK dotted in the applet, s_7 -- R1/R2's stay grey)
+  dw.dashLine('rLoa', { intro: 8, dash: 0.55, color: PAL.black });
   dw.dashArrow('rTf', { intro: 8, ...DARR });
   dw.dashArrow('rTs', { intro: 8, ...DARR });
   dw.label('lblRf', 'R', { cls: 'num', intro: 8, color: PAL.green });
   dw.label('lblRs', 'R', { cls: 'num', intro: 8, color: PAL.green });
   dw.link('rTf', 'rTs', 'lblRf', 'lblRs', 'rLoa');
 
-  // step 9: reactions (green) + the support tangents meet at T11 on R
+  // step 9: reactions (green) + the support tangents meet at T11 on R.
+  // The force-side arrows can be slid sideways with the applet's
+  // offsetReactionForces slider; black dotted connectors (t_15/a_16/
+  // b_16/c_16) tie the offset copies back to the load line.
   dw.arrow('reacA', { intro: 9, ...ARROW });
   dw.arrow('reacB', { intro: 9, ...ARROW });
   const noO2 = (st) => !st.o2;
@@ -240,6 +256,9 @@ export function create(dw, panel, makePlayer) {
   dw.label('lbl_reacB', 'B', { cls: 'num', intro: 9, color: PAL.green });
   dw.label('lbl_fA', 'A', { cls: 'num', intro: 9, when: noO2, color: PAL.green });
   dw.label('lbl_fB', 'B', { cls: 'num', intro: 9, when: noO2, color: PAL.green });
+  for (const n of ['ofA1', 'ofA2', 'ofB1', 'ofB2']) {
+    dw.dashLine(n, { intro: 9, when: noO2, dash: 0.4, color: PAL.black, flash: false });
+  }
   dw.dashLine('tanA', { intro: 9, dash: 0.7 });
   dw.dashLine('tanB', { intro: 9, dash: 0.7 });
   dw.link('reacA', 'fA', 'lbl_reacA', 'lbl_fA');
@@ -317,8 +336,13 @@ export function create(dw, panel, makePlayer) {
   const NODE_NAMES = ['A', ...[...Array(NSTRIP)].map((_, k) => `${k + 1}`), 'B'];
   const nodeAt = NODE_DISKS.map((_, j) => () => (j === 0 ? d.A : j === NSTRIP + 1 ? d.B : d.X[j]));
   const nodePoly = (j) => {
-    if (j === 0) return [[d.S2, d.E9], [d.E9, d.S2]];
-    if (j === NSTRIP + 1) return [[d.E9, d.U3], [d.U3, d.E9]];
+    // support nodes: the reaction side lands ON the visible (possibly
+    // offset) reaction arrow, the member side stays on the ray itself
+    const uA = V.unit(V.sub(d.S2, d.E9)), uB = V.unit(V.sub(d.U3, d.E9));
+    const offA = V.mul([uA[1], -uA[0]], s.orf);
+    const offB = V.mul([uB[1], -uB[0]], s.orf);
+    if (j === 0) return [[d.S2, d.E9], [V.add(d.E9, offA), V.add(d.S2, offA)]];
+    if (j === NSTRIP + 1) return [[d.E9, d.U3], [V.add(d.U3, offB), V.add(d.E9, offB)]];
     return [[d.P[j - 1], d.P[j]], [d.P[j], d.E9], [d.E9, d.P[j - 1]]];
   };
 
@@ -351,8 +375,9 @@ export function create(dw, panel, makePlayer) {
     const gP = [[s.ax, Y_G], [s.ax, yGb], [s.bx, yGb], [s.bx, Y_G]];
     dw.setPoly('gFill', gP);
     dw.setStrokes('gEdge', [[gP[0], gP[1]], [gP[1], gP[2]], [gP[2], gP[3]], [gP[3], gP[0]]]);
-    dw.setLabel('lbl_q', [(s.ax + d.W1x) / 2, Y_Q + 1.2]);
-    dw.setLabel('lbl_g', [(s.ax + s.bx) / 2, Y_G + 1.2]);
+    // block labels sit at the LEFT of the bands, as in the applet
+    dw.setLabel('lbl_q', [s.ax - 2.6, Y_Q - s.sLS / 4]);
+    dw.setLabel('lbl_g', [s.ax - 2.6, Y_G - s.sLS / 4]);
     dw.setDashLine('bound', [[d.W1x, Y_GRID_B], [d.W1x, Y_GRID_T]]);
 
     // step 2: strip loads + load line
@@ -380,12 +405,12 @@ export function create(dw, panel, makePlayer) {
     dw.setDashLine('rail', [[d.W1x, RAIL_Y[0]], [d.W1x, RAIL_Y[1]]]);
     dw.setSeg('tf1a', d.A, d.W8);
     dw.setSeg('tf1b', d.W8, d.B);
-    dw.setSeg('tr1a', d.S2, d.C9);
-    dw.setSeg('tr1b', d.A9, d.C9);
+    dw.setDashLine('tr1a', [d.S2, d.C9]);
+    dw.setDashLine('tr1b', [d.A9, d.C9]);
     dw.setSeg('tf2a', d.A, d.Z8);
     dw.setSeg('tf2b', d.Z8, d.B);
-    dw.setSeg('tr2a', d.A9, d.D9);
-    dw.setSeg('tr2b', d.U3, d.D9);
+    dw.setDashLine('tr2a', [d.A9, d.D9]);
+    dw.setDashLine('tr2b', [d.U3, d.D9]);
 
     // step 6: components
     dw.setArrow('cmpA1', d.A, d.D11);
@@ -408,6 +433,11 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lbl_fA2', lblAt(d.D9, d.A9));
     dw.setLabel('lbl_fB1', lblAt(d.A9, d.C9, -1.5));
     dw.setLabel('lbl_fB2', lblAt(d.U3, d.D9, -1.5));
+    // step 7: the component pair re-added on the parallelogram's far sides
+    dw.setArrow('parB1', d.D9, d.E9);
+    dw.setArrow('parA2', d.E9, d.C9);
+    dw.setLabel('lbl_parB1', lblAt(d.D9, d.E9, -1.5));
+    dw.setLabel('lbl_parA2', lblAt(d.E9, d.C9, -1.5));
 
     // step 7: pole parallelogram
     dw.setDashLine('par1', [d.C9, d.E9]);
@@ -420,15 +450,27 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lblRf', [d.xR + 1.5, Y_RTIP + 2.6]);
     dw.setLabel('lblRs', [d.S2[0] + 1.8, (d.S2[1] + d.U3[1]) / 2]);
 
-    // step 9: reactions + tangents
+    // step 9: reactions + tangents; the force-side arrows slide sideways by
+    // offsetReactionForces, perpendicular to their ray (applet: J11/K11,
+    // M11/L11), with black dotted connectors back to the ray's endpoints
+    const uA = V.unit(V.sub(d.S2, d.E9));
+    const uB = V.unit(V.sub(d.U3, d.E9));
+    const offA = V.mul([uA[1], -uA[0]], s.orf);
+    const offB = V.mul([uB[1], -uB[0]], s.orf);
+    const E9a = V.add(d.E9, offA), S2a = V.add(d.S2, offA);
+    const E9b = V.add(d.E9, offB), U3b = V.add(d.U3, offB);
     dw.setArrow('reacA', d.A, d.R8);
     dw.setArrow('reacB', d.B, d.S8);
-    dw.setArrow('fA', d.E9, d.S2);
-    dw.setArrow('fB', d.E9, d.U3);
+    dw.setArrow('fA', E9a, S2a);
+    dw.setArrow('fB', E9b, U3b);
+    dw.setDashLine('ofA1', [d.S2, S2a]);
+    dw.setDashLine('ofA2', [d.E9, E9a]);
+    dw.setDashLine('ofB1', [d.E9, E9b]);
+    dw.setDashLine('ofB2', [d.U3, U3b]);
     dw.setLabel('lbl_reacA', V.add(d.R8, V.mul(V.unit(V.sub(d.R8, d.A)), 1.4)));
     dw.setLabel('lbl_reacB', V.add(d.S8, V.mul(V.unit(V.sub(d.S8, d.B)), 1.4)));
-    dw.setLabel('lbl_fA', lblAt(d.E9, d.S2, -1.5));
-    dw.setLabel('lbl_fB', lblAt(d.E9, d.U3, 1.5));
+    dw.setLabel('lbl_fA', lblAt(E9a, S2a, -1.5));
+    dw.setLabel('lbl_fB', lblAt(E9b, U3b, 1.5));
     dw.setDashLine('tanA', [d.A, d.T11]);
     dw.setDashLine('tanB', [d.T11, d.B]);
 
@@ -486,8 +528,9 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 5, 0.1, refresh);
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.04, 0.001, refresh);
+  panel.slider(par, s, 'orf', 'offset reaction forces', 0, 2, 0.05, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
-  panel.toggle(par, s, 'o2', 'hide reaction forces in force diagram', refresh);
+  panel.toggle(par, s, 'o2', 'hide external forces in force diagram', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off): 1 = A, 2–25 = cable nodes, 26 = B',
                0, NSTRIP + 2, 1, refresh);
