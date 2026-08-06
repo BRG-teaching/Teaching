@@ -476,6 +476,32 @@ export class Drawing {
     this._applyGeo(e);
   }
 
+  /** Embedded applet photograph (site image): a textured plane far behind the
+      construction, GeoGebra-style 3-corner anchor [bottomLeft, bottomRight,
+      topLeft], drawn at the applet's opacity. Site element: appears instantly
+      (no draw-in), is never flashed pink and never recolored. */
+  image(name, url, { corners, opacity = 1.0, z = -2.5, intro = 0, outro, when } = {}) {
+    const tex = new THREE.TextureLoader().load(url);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide,
+      transparent: true, opacity, depthWrite: false });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+    mesh.frustumCulled = false;
+    const e = this._register(name, { kind: 'image', objs: [mesh], mesh, mats: [mat],
+                                     z, intro, outro, when, flash: false, anim: false });
+    if (corners) this.setImage(name, corners);
+    return e;
+  }
+
+  setImage(name, [bl, br, tl]) {
+    const e = this.elems.get(name);
+    e.geo = { bl, br, tl };
+    e.mesh.position.set((br[0] + tl[0]) / 2, (br[1] + tl[1]) / 2, e.z);
+    e.mesh.rotation.z = Math.atan2(br[1] - bl[1], br[0] - bl[0]);
+    e.mesh.scale.set(Math.hypot(br[0] - bl[0], br[1] - bl[1]) || 1e-6,
+                     Math.hypot(tl[0] - bl[0], tl[1] - bl[1]) || 1e-6, 1);
+  }
+
   /** Point: small circle with a thin outline -- white face, black boundary;
       light-pink face + pink boundary while its intro step is the current one. */
   disk(name, { r = 0.65, face = PAL.white, edge = 0x3c3f46, z = Z.disk, intro = 0, outro, when } = {}) {
