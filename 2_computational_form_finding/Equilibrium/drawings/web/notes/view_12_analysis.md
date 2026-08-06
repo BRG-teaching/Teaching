@@ -180,3 +180,52 @@ Node inspector (16 nodes): A(C), 1·2 … 6·7 (upper), B(E), C(D), 8·9 … 13�
 (lower), D(F₄); interior nodes balance three forces (two chord members + tie),
 upper node j: [[L[j],o₁],[o₁,L[j+1]],[L[j+1],L[j]]], lower node j:
 [[L[j],L[j+1]],[L[j+1],o₂],[o₂,L[j]]], anchors: member force + reaction.
+
+## Audit vs live original (2026-08-06)
+
+Live page driven headless via CDP + ggbApplet API (getAllObjectNames /
+setValue / getVisible / getColor per step); every boolean flipped, PointLoad
+0..6 swept, mode/step swept, per-step visibility matrix dumped.
+
+### Toggle / mode table (live)
+
+| control | default | effect |
+|---|---|---|
+| o "Hilfskonstruktion" | false | trial pole o′ + rays + funicular from U + dashed closing e_1 + chord f_1 + pole line g_1, all BLACK in the applet (ours: grey per platform trial rule, staged as steps 3–12, retired at resolve — equivalent) |
+| o_3 "hide reaction forces in force diagram" | false | hides v_1/w_1/u_2/v_2 (A/B/D/C on the closing rays) → our hideRF ✓ |
+| o_4 "show handles" | false | frame helpers, never drawn ✓ |
+| mode 0/1 + step 0..3 | 0 | **mode 1 = subsystem free bodies**: step 1 isolates the UPPER cable (lower chord+its points+P_lower+C/D reactions hidden, orange F₁..F₆ tie-force vectors of length loadSymbol pull DOWN at the chord nodes, and orange F-vectors span the load-line edges); step 2 isolates the LOWER cable (mirror, forces UP); step 3 = complete drawing with the ties + their load-line edges flashed ORANGE |
+| PointLoad 0..6, Q −8..8 | 0, 8 | green 'Q' arrow + widened gap ✓ already ported |
+
+### Deviations found → fixed
+
+1. **Subsystem views missing** (the applet's whole mode-1 pedagogy). Added a
+   "Subsystem" panel slider (0 complete / 1 upper / 2 lower / 3 ties):
+   gates both cables' members/points/reactions/dimensions, replaces the ties
+   with orange tie-force arrows (length = loadSymbol; down on the upper
+   chord, up on the lower) on BOTH diagrams, ties+edges recolor orange at 3.
+2. **Load-line edges** were green ARROWS with green labels; the applet draws
+   them as th3 SEGMENTS in the ties' dynamic color (c_4..h_4 — tie forces
+   are member forces, not external loads). Now tie-colored segments (resolve
+   pink), F₁..F₆ labels colored to match (orange in subsystem views).
+3. **Droppers e_7/f_7** (dimension line up to o₁/o₂) are BLACK dotted in the
+   applet — were grey. Fixed.
+
+### Checked, judged intentional (kept)
+
+- Hatched anchor blocks: the live canvas draws NO anchors — but the applet
+  embeds the (hidden, show=false) tracing template Vorlage.png which shows
+  exactly these hatched wedges; our vectors reproduce that source drawing.
+- Lines of action grey dashed (applet: black dotted th2) — platform-wide
+  "guides are grey + dashed" contract.
+- P_upper/P_lower dimension lines with end ticks + live kN values (applet:
+  plain grey segments, X-cross endpoints, caption only). d_7's dotted style
+  is covered by the solid g_7 on the same span in the applet itself.
+- Member numbers 1..14 in both diagrams (applet numbers nothing) — platform.
+- Trial construction staged grey as steps + retired at resolve (applet:
+  hidden checkbox, black); U started at y=33 (applet's saved 16.7 puts the
+  trial below the visible window).
+- F labels on the load line (applet shows them only in mode 1).
+
+Verification: all 33 steps re-screenshot; sub=1/2/3 screenshots match the
+live mode-1 grid; PointLoad/Q, hideRF unchanged and correct.

@@ -57,6 +57,8 @@ const DEFAULTS = {
   o1: true,
   n4: true,
   hideRF: false,              // applet checkbox: hide reactions in force diagram
+  sub: 0,                     // subsystem view (applet mode 1): 0 = complete,
+                              // 1 = upper cable, 2 = lower cable, 3 = ties
   node: 0,                    // node-equilibrium inspector (0 = off)
 };
 
@@ -170,23 +172,35 @@ export function create(dw, panel, makePlayer) {
   const W_BAR = 0.42, W_TIE = 0.55, W_RAY = 0.2, W_STR = 0.34;
   const ARROW = { w: 0.55, headLen: 1.9, headW: 0.72 };
   const memberColor = (arr, i) => ({ pending: PAL.black, final: (dd) => dd[arr][i] });
+  // subsystem view gates (the applet's mode 1: step 1 isolates the upper
+  // cable, 2 the lower, 3 highlights the ties orange)
+  const SUB = () => Math.round(s.sub);
+  const subU = (st) => SUB() !== 2;
+  const subL = (st) => SUB() !== 1;
+  const subTie = (st) => SUB() === 0 || SUB() === 3;
+  const tieColor = (i) => ({ pending: PAL.black,
+                             final: (dd) => (SUB() === 3 ? PAL.orange : dd.ct[i]) });
 
   dw.label('form_title', 'Form Diagram', { cls: 'title', flash: false });
   dw.label('force_title', 'Force Diagram', { cls: 'title', flash: false });
   dw.label('force_sub', '', { flash: false });
 
-  // step 1: the four hatched anchor blocks (site background)
-  for (const n of ['anchC', 'anchE', 'anchD', 'anchF']) {
-    dw.strokes(n, 8, { intro: 1, w: 0.16, color: PAL.grey, flash: false });
-  }
+  // step 1: the four hatched anchor blocks (site: the applet's hidden
+  // Vorlage.png template drawing, reproduced as vectors)
+  dw.strokes('anchC', 8, { intro: 1, w: 0.16, color: PAL.grey, flash: false, when: subU });
+  dw.strokes('anchE', 8, { intro: 1, w: 0.16, color: PAL.grey, flash: false, when: subU });
+  dw.strokes('anchD', 8, { intro: 1, w: 0.16, color: PAL.grey, flash: false, when: subL });
+  dw.strokes('anchF', 8, { intro: 1, w: 0.16, color: PAL.grey, flash: false, when: subL });
   dw.instant('anchC', 'anchE', 'anchD', 'anchF');
 
-  // step 2: six lines of action (left) + the load line edges (right):
-  // green arrows drawn ON the line, one per tie, labels F1..F6
+  // step 2: six lines of action (left) + the load line edges (right).
+  // The applet draws the edges as th3 SEGMENTS in the ties' dynamic color
+  // (c_4..h_4) -- the tie forces are member forces, not external loads
   for (let k = 0; k < 6; k++) {
     dw.dashLine(`gv${k}`, { intro: 2, dash: 1.0 });
-    dw.arrow(`edge${k}`, { intro: 2, ...ARROW });
-    dw.label(`fl${k}`, `F${SUBD[k + 1]}`, { cls: 'num', intro: 2, color: PAL.green });
+    dw.seg(`edge${k}`, { intro: 2, w: W_TIE, color: tieColor(k) });
+    dw.label(`fl${k}`, `F${SUBD[k + 1]}`, { cls: 'num', intro: 2,
+             color: { final: (dd) => (SUB() !== 0 ? PAL.orange : dd.ct[k]) } });
   }
   dw.dashLine('gload', { intro: 2, dash: 1.0 });
   dw.arrow('qarr', { intro: 2, ...ARROW, when: (st) => st.PL >= 1 });
@@ -208,84 +222,115 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('poleLine', { intro: 12, outro: RESOLVE, color: PAL.black, dash: 1.3 });
 
   // step 13 / 22: the poles fixed by the prestress (dashed distance segments,
-  // dimension lines with end ticks, grey dashed droppers) -- these persist
-  dw.dashLine('dP1', { intro: 13, color: PAL.black, dash: 1.3 });
-  dw.dashLine('dP2', { intro: 22, color: PAL.black, dash: 1.3 });
-  dw.strokes('dimU', 3, { intro: 13, w: 0.16, color: PAL.grey });
-  dw.strokes('dimL', 3, { intro: 22, w: 0.16, color: PAL.grey });
-  dw.dashLine('dropG1', { intro: 13, dash: 1.0 });
-  dw.dashLine('dropN1', { intro: 22, dash: 1.0 });
-  dw.label('lblPup', '', { intro: 13, color: PAL.grey });
-  dw.label('lblPlo', '', { intro: 22, color: PAL.grey });
+  // dimension lines with end ticks, BLACK dotted droppers e_7/f_7) -- persist
+  dw.dashLine('dP1', { intro: 13, color: PAL.black, dash: 1.3, when: subU });
+  dw.dashLine('dP2', { intro: 22, color: PAL.black, dash: 1.3, when: subL });
+  dw.strokes('dimU', 3, { intro: 13, w: 0.16, color: PAL.grey, when: subU });
+  dw.strokes('dimL', 3, { intro: 22, w: 0.16, color: PAL.grey, when: subL });
+  dw.dashLine('dropG1', { intro: 13, dash: 1.0, color: PAL.black, when: subU });
+  dw.dashLine('dropN1', { intro: 22, dash: 1.0, color: PAL.black, when: subL });
+  dw.label('lblPup', '', { intro: 13, color: PAL.grey, when: subU });
+  dw.label('lblPlo', '', { intro: 22, color: PAL.grey, when: subL });
 
   // steps 14-20 / 23-29: the members, each drawn WITH its pole ray
   for (let k = 0; k < 7; k++) {
-    dw.seg(`fr${k}`, { intro: 14 + k, w: W_BAR, color: memberColor('cu', k) });
-    dw.seg(`useg${k}`, { intro: 14 + k, w: W_BAR, color: memberColor('cu', k) });
-    dw.seg(`lr${k}`, { intro: 23 + k, w: W_BAR, color: memberColor('cl', k) });
-    dw.seg(`lseg${k}`, { intro: 23 + k, w: W_BAR, color: memberColor('cl', k) });
-    dw.label(`fnU${k}`, `${k + 1}`, { cls: 'num', intro: 14 + k, color: { final: (dd) => dd.cu[k] } });
-    dw.label(`snU${k}`, `${k + 1}`, { cls: 'num', intro: 14 + k, color: { final: (dd) => dd.cu[k] } });
-    dw.label(`fnL${k}`, `${k + 8}`, { cls: 'num', intro: 23 + k, color: { final: (dd) => dd.cl[k] } });
-    dw.label(`snL${k}`, `${k + 8}`, { cls: 'num', intro: 23 + k, color: { final: (dd) => dd.cl[k] } });
+    dw.seg(`fr${k}`, { intro: 14 + k, w: W_BAR, color: memberColor('cu', k), when: subU });
+    dw.seg(`useg${k}`, { intro: 14 + k, w: W_BAR, color: memberColor('cu', k), when: subU });
+    dw.seg(`lr${k}`, { intro: 23 + k, w: W_BAR, color: memberColor('cl', k), when: subL });
+    dw.seg(`lseg${k}`, { intro: 23 + k, w: W_BAR, color: memberColor('cl', k), when: subL });
+    dw.label(`fnU${k}`, `${k + 1}`, { cls: 'num', intro: 14 + k, color: { final: (dd) => dd.cu[k] }, when: subU });
+    dw.label(`snU${k}`, `${k + 1}`, { cls: 'num', intro: 14 + k, color: { final: (dd) => dd.cu[k] }, when: subU });
+    dw.label(`fnL${k}`, `${k + 8}`, { cls: 'num', intro: 23 + k, color: { final: (dd) => dd.cl[k] }, when: subL });
+    dw.label(`snL${k}`, `${k + 8}`, { cls: 'num', intro: 23 + k, color: { final: (dd) => dd.cl[k] }, when: subL });
   }
 
   // step 21 / 30: reactions, form + force sides together (force ones toggleable)
   const rf = (st) => !st.hideRF;
-  for (const [n, intro] of [['reacA', 21], ['reacB', 21], ['reacC', 30], ['reacD', 30]]) {
-    dw.arrow(n, { intro, ...ARROW });
+  const rfU = (st) => !st.hideRF && SUB() !== 2;
+  const rfL = (st) => !st.hideRF && SUB() !== 1;
+  for (const [n, intro, wn] of [['reacA', 21, subU], ['reacB', 21, subU],
+                                ['reacC', 30, subL], ['reacD', 30, subL]]) {
+    dw.arrow(n, { intro, ...ARROW, when: wn });
   }
-  for (const [n, intro] of [['vA', 21], ['vB', 21], ['vC', 30], ['vD', 30]]) {
-    dw.arrow(n, { intro, ...ARROW, when: rf });
+  for (const [n, intro, wn] of [['vA', 21, rfU], ['vB', 21, rfU],
+                                ['vC', 30, rfL], ['vD', 30, rfL]]) {
+    dw.arrow(n, { intro, ...ARROW, when: wn });
   }
-  for (const [n, txt, intro] of [['lblAf', 'A', 21], ['lblBf', 'B', 21],
-                                 ['lblCf', 'C', 30], ['lblDf', 'D', 30]]) {
-    dw.label(n, txt, { cls: 'num', intro, color: PAL.green });
+  for (const [n, txt, intro, wn] of [['lblAf', 'A', 21, subU], ['lblBf', 'B', 21, subU],
+                                     ['lblCf', 'C', 30, subL], ['lblDf', 'D', 30, subL]]) {
+    dw.label(n, txt, { cls: 'num', intro, color: PAL.green, when: wn });
   }
-  for (const [n, txt, intro] of [['lblAr', 'A', 21], ['lblBr', 'B', 21],
-                                 ['lblCr', 'C', 30], ['lblDr', 'D', 30]]) {
-    dw.label(n, txt, { cls: 'num', intro, color: PAL.green, when: rf });
+  for (const [n, txt, intro, wn] of [['lblAr', 'A', 21, rfU], ['lblBr', 'B', 21, rfU],
+                                     ['lblCr', 'C', 30, rfL], ['lblDr', 'D', 30, rfL]]) {
+    dw.label(n, txt, { cls: 'num', intro, color: PAL.green, when: wn });
   }
 
-  // step 31: the six ties (their forces are the load-line edges F1..F6)
+  // step 31: the six ties (their forces are the load-line edges F1..F6);
+  // in the subsystem views the ties are replaced by their orange forces
   for (let k = 0; k < 6; k++) {
-    dw.seg(`tie${k}`, { intro: 31, w: W_TIE, color: memberColor('ct', k) });
+    dw.seg(`tie${k}`, { intro: 31, w: W_TIE, color: tieColor(k), when: subTie });
     dw.highlight(`edge${k}`, [31]);
+  }
+
+  // subsystem views (applet mode 1, steps 1/2): the isolated cable carries
+  // the six tie forces as ORANGE arrows of length loadSymbol -- pulling the
+  // upper cable down (v_4..a_5) and the lower cable up (n_5..b_6); on the
+  // load line the same forces span their edges (b_5..m_5 / d_6..i_6)
+  for (let k = 0; k < 6; k++) {
+    dw.arrow(`subUF${k}`, { ...ARROW, color: PAL.orange, flash: false,
+                            when: () => SUB() === 1 });
+    dw.arrow(`subLF${k}`, { ...ARROW, color: PAL.orange, flash: false,
+                            when: () => SUB() === 2 });
+    dw.arrow(`subUS${k}`, { ...ARROW, color: PAL.orange, flash: false,
+                            when: () => SUB() === 1 });
+    dw.arrow(`subLS${k}`, { ...ARROW, color: PAL.orange, flash: false,
+                            when: () => SUB() === 2 });
+    dw.label(`subUFl${k}`, `F${SUBD[k + 1]}`, { cls: 'num', color: PAL.orange,
+                                                when: () => SUB() === 1 });
+    dw.label(`subLFl${k}`, `F${SUBD[k + 1]}`, { cls: 'num', color: PAL.orange,
+                                                when: () => SUB() === 2 });
+    dw.instant(`subUF${k}`, `subLF${k}`, `subUS${k}`, `subLS${k}`);
   }
 
   // points
   const HANDLE = { r: 0.72 }, DERIVED = { r: 0.54 };
   const show = (st) => st.n4;
-  for (const n of ['C', 'E', 'D', 'F4']) dw.disk(`pt_${n}`, { intro: 1, ...HANDLE, when: show });
+  const showU = (st) => st.n4 && SUB() !== 2;
+  const showL = (st) => st.n4 && SUB() !== 1;
+  for (const n of ['C', 'E']) dw.disk(`pt_${n}`, { intro: 1, ...HANDLE, when: showU });
+  for (const n of ['D', 'F4']) dw.disk(`pt_${n}`, { intro: 1, ...HANDLE, when: showL });
   for (let k = 0; k < 7; k++) dw.disk(`pt_L${k}`, { intro: 2, ...DERIVED, when: show });
   dw.disk('pt_V', { intro: 3, outro: RESOLVE, ...HANDLE, when: show });
   dw.disk('pt_U', { intro: 4, outro: RESOLVE, ...HANDLE, when: show });
   for (let k = 0; k < 7; k++) dw.disk(`pt_t${k}`, { intro: 4 + k, outro: RESOLVE, ...DERIVED, when: show });
   dw.disk('pt_i', { intro: 11, ...DERIVED, when: show });
-  dw.disk('pt_G1', { intro: 13, ...DERIVED, when: show });
-  dw.disk('pt_N1', { intro: 22, ...DERIVED, when: show });
+  dw.disk('pt_G1', { intro: 13, ...DERIVED, when: showU });
+  dw.disk('pt_N1', { intro: 22, ...DERIVED, when: showL });
   for (let k = 0; k < 6; k++) {
-    dw.disk(`pt_up${k}`, { intro: 14 + k, ...DERIVED, when: show });
-    dw.disk(`pt_lo${k}`, { intro: 23 + k, ...DERIVED, when: show });
+    dw.disk(`pt_up${k}`, { intro: 14 + k, ...DERIVED, when: showU });
+    dw.disk(`pt_lo${k}`, { intro: 23 + k, ...DERIVED, when: showL });
   }
   dw.disk('pt_R3', { intro: 13, ...HANDLE, when: show });
 
   const letters = {
-    C: ['C', 1], E: ['E', 1], D: ['D', 1], F4: ['F', 1],
-    V: ['o′', 3, RESOLVE], i: ['i', 11], G1: ['o₁', 13], N1: ['o₂', 22],
+    C: ['C', 1, undefined, showU], E: ['E', 1, undefined, showU],
+    D: ['D', 1, undefined, showL], F4: ['F', 1, undefined, showL],
+    V: ['o′', 3, RESOLVE, show], i: ['i', 11, undefined, show],
+    G1: ['o₁', 13, undefined, showU], N1: ['o₂', 22, undefined, showL],
   };
-  for (const [p, [text, intro, outro]] of Object.entries(letters)) {
-    dw.label(`lbl_${p}`, text, { cls: 'point', intro, outro, when: show });
+  for (const [p, [text, intro, outro, wn]] of Object.entries(letters)) {
+    dw.label(`lbl_${p}`, text, { cls: 'point', intro, outro, when: wn });
   }
 
   // internal-force pipes (on by default): 7 upper + 6 ties + 7 lower
   for (let k = 0; k < 20; k++) {
     const arr = k < 7 ? 'cu' : k < 13 ? 'ct' : 'cl';
     const i = k < 7 ? k : k < 13 ? k - 7 : k - 13;
+    const grp = k < 7 ? subU : k < 13 ? subTie : subL;
     dw.poly(`if${k}`, 4, {
       intro: RESOLVE, opacity: 0.45, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd[arr][i] },
-      when: (st) => st.o1,
+      when: (st) => st.o1 && grp(st),
     });
   }
   // force readouts (two columns: upper members, lower members, ties line)
@@ -293,9 +338,11 @@ export function create(dw, panel, makePlayer) {
     const arr = k < 7 ? 'cu' : 'cl';
     const i = k % 7;
     dw.label(`ro${k}`, '', { intro: RESOLVE, flash: false,
-                             color: { final: (dd) => dd[arr][i] } });
+                             color: { final: (dd) => dd[arr][i] },
+                             when: k < 7 ? subU : subL });
   }
-  dw.label('roT', '', { intro: RESOLVE, flash: false, color: { final: (dd) => dd.ct[0] } });
+  dw.label('roT', '', { intro: RESOLVE, flash: false,
+                        color: { final: (dd) => dd.ct[0] }, when: subTie });
 
   // node-equilibrium inspector: free-body star inset at the top of the form
   // diagram + tip-to-tail forces on the node's sub-polygon in the force
@@ -388,7 +435,7 @@ export function create(dw, panel, makePlayer) {
     // guides + load line
     for (let k = 0; k < 6; k++) {
       dw.setDashLine(`gv${k}`, [[GX[k], GUIDE_Y[0]], [GX[k], GUIDE_Y[1]]]);
-      dw.setArrow(`edge${k}`, d.L[k + 1], d.L[k]);            // downward
+      dw.setSeg(`edge${k}`, d.L[k + 1], d.L[k]);
       dw.setLabel(`fl${k}`, V.add(V.mid(d.L[k + 1], d.L[k]), [2.3, 0]));
     }
     dw.setDashLine('gload', [[d.M[0], GUIDE_Y[0]], [d.M[0], GUIDE_Y[1]]]);
@@ -456,6 +503,15 @@ export function create(dw, panel, makePlayer) {
       dw.setDisk(`pt_up${k}`, d.UP[k + 1]);
       dw.setDisk(`pt_lo${k}`, d.LO[k + 1]);
       dw.setSeg(`tie${k}`, d.UP[k + 1], d.LO[k + 1]);
+      // subsystem tie forces: orange arrows of length loadSymbol at the
+      // isolated cable's nodes (down on the upper, up on the lower), plus
+      // the same forces spanning their load-line edges
+      dw.setArrow(`subUF${k}`, d.UP[k + 1], V.add(d.UP[k + 1], [0, -s.sLS]));
+      dw.setArrow(`subLF${k}`, d.LO[k + 1], V.add(d.LO[k + 1], [0, s.sLS]));
+      dw.setArrow(`subUS${k}`, d.L[k + 1], d.L[k]);
+      dw.setArrow(`subLS${k}`, d.L[k], d.L[k + 1]);
+      dw.setLabel(`subUFl${k}`, V.add(d.UP[k + 1], [1.7, -s.sLS * 0.55]));
+      dw.setLabel(`subLFl${k}`, V.add(d.LO[k + 1], [1.7, s.sLS * 0.55]));
     }
 
     // reactions: at the anchors (length sLS, like the applet's loadSymbol
@@ -531,6 +587,10 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.12, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reactions in force diagram', refresh);
+  const subSec = panel.section('Subsystem');
+  panel.slider(subSec, s, 'sub',
+               'free body (0 = complete, 1 = upper cable, 2 = lower cable, 3 = ties)',
+               0, 3, 1, refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off): A, 1·2 … 6·7, B, C, 8·9 … 13·14, D',
                0, 16, 1, refresh);
