@@ -7,8 +7,10 @@ mode/step flipped live and screenshotted — layers match the XML conditions.
 Embedded image `a1b98286b378c7d47139df40f61252b4/Tower_bridge.png` (960×516,
 alpha 0.4, corners B=(−40.35,−67) → A=(243.40,−67), shown at steps 0/3/6/9):
 the historical etching of the SIDE SPAN — short abutment tower left, tall
-gothic tower right, deck girder, water hatching, "270 0" dimension. Reproduced
-as a vector silhouette anchored to the form geometry (never the bitmap).
+gothic tower right, deck girder, water hatching, "270 0" dimension. Shipped
+as the ACTUAL image (web/assets/view_13_etching.png) via dw.image at the
+applet's exact anchors and opacity (image policy 2026-08-06: built-structure
+imagery is never redrawn).
 
 ## The model
 

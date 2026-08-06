@@ -17,7 +17,7 @@
  * chain re-evaluated at 1.8e-13 vs baked coords, and this file's own compute
  * regression-checked at 1.5e-6 over 96 chained points -- see
  * notes/view_13_analysis.md). The applet's Tower Bridge etching (40% grey
- * backdrop) is reproduced as a vector silhouette.
+ * backdrop) is shipped as the actual image at its exact applet anchors.
  */
 
 import { PAL } from '../lib/eqdraw.js';
@@ -65,7 +65,7 @@ const DEFAULTS = {
   o1: true,                              // internal-force pipes
   node: 0,
   hideRF: false,
-  ph: true,                              // Tower Bridge silhouette (the etching)
+  ph: true,                              // the Tower Bridge etching backdrop
   n4: true,
   _k: 99,
 };
@@ -260,10 +260,13 @@ export function create(dw, panel, makePlayer) {
   dw.label('force_sub', '', { flash: false });
 
   // ---- step 1: site ----
+  // The applet's Tower Bridge etching, at its exact GeoGebra anchors
+  // (corners B -> A, alpha 0.4) -- the actual image, never a redrawn copy.
   const silw = (st) => st.ph;
-  dw.strokes('silTower', 46, { intro: 1, w: 0.14, color: PAL.grey, when: silw });
-  dw.strokes('silWater', 50, { intro: 1, w: 0.09, color: PAL.grey, when: silw });
-  dw.instant('silTower', 'silWater');
+  const IMG_BL = [-40.35014, -67], IMG_BR = [243.40382959383373, -67];
+  const IMG_TL = [IMG_BL[0], IMG_BL[1] + (IMG_BR[0] - IMG_BL[0]) * (516 / 960)];
+  dw.image('etching', 'assets/view_13_etching.png',
+           { corners: [IMG_BL, IMG_BR, IMG_TL], opacity: 0.4, intro: 1, when: silw });
   dw.seg('deck', { intro: 1, w: 0.26, color: PAL.black });
   for (let k = 0; k < 15; k++) dw.dashLine(`hang${k}`, { intro: 1, dash: DASH, flash: false });
   dw.dashLine('edgeL', { intro: 1, dash: DASH, flash: false });
@@ -529,56 +532,6 @@ export function create(dw, panel, makePlayer) {
   // geometry refresh
   // ------------------------------------------------------------------
 
-  function silhouette() {
-    const dy = s.gy;                       // deck height
-    const T = [];                          // towers
-    const wy = dy - 8.2;                   // water line
-    // main (tall) tower around x = 82.3
-    const tx = RX, iy = s.iy;
-    const shW = 5.4, top = iy + 13, set = iy + 8.6;
-    T.push([[tx - 6.8, wy], [tx - 6.8, dy - 1.2]], [[tx + 6.8, wy], [tx + 6.8, dy - 1.2]],
-           [[tx - 6.8, dy - 1.2], [tx - shW, dy + 2.4]], [[tx + 6.8, dy - 1.2], [tx + shW, dy + 2.4]],
-           [[tx - shW, dy + 2.4], [tx - shW, set]], [[tx + shW, dy + 2.4], [tx + shW, set]],
-           [[tx - shW, set], [tx - shW + 1.1, set + 1.4]], [[tx + shW, set], [tx + shW - 1.1, set + 1.4]],
-           [[tx - shW + 1.1, set + 1.4], [tx - shW + 1.1, top]], [[tx + shW - 1.1, set + 1.4], [tx + shW - 1.1, top]],
-           [[tx - shW + 1.1, top], [tx + shW - 1.1, top]],
-           // corner turrets + centre spire
-           [[tx - shW + 0.4, top], [tx - shW + 0.4, top + 3.4]], [[tx - shW + 1.8, top], [tx - shW + 1.8, top + 3.4]],
-           [[tx - shW + 0.4, top + 3.4], [tx - shW + 1.1, top + 5.6]], [[tx - shW + 1.8, top + 3.4], [tx - shW + 1.1, top + 5.6]],
-           [[tx + shW - 0.4, top], [tx + shW - 0.4, top + 3.4]], [[tx + shW - 1.8, top], [tx + shW - 1.8, top + 3.4]],
-           [[tx + shW - 0.4, top + 3.4], [tx + shW - 1.1, top + 5.6]], [[tx + shW - 1.8, top + 3.4], [tx + shW - 1.1, top + 5.6]],
-           [[tx - 1.5, top], [tx, top + 7.2]], [[tx + 1.5, top], [tx, top + 7.2]],
-           // windows
-           [[tx - 1.9, dy + 6], [tx - 1.9, set - 4]], [[tx + 1.9, dy + 6], [tx + 1.9, set - 4]],
-           [[tx - 1.9, (dy + 6 + set - 4) / 2], [tx + 1.9, (dy + 6 + set - 4) / 2]],
-           // deck arch through the pier
-           [[tx - 6.8, dy - 1.2], [tx + 6.8, dy - 1.2]]);
-    // short (abutment) tower around x = 0
-    const ax = LX, fy = s.fy;
-    T.push([[ax - 4.6, wy], [ax - 4.6, dy - 0.8]], [[ax + 3.4, wy], [ax + 3.4, dy - 0.8]],
-           [[ax - 4.6, dy - 0.8], [ax - 3.4, dy + 1.6]], [[ax + 3.4, dy - 0.8], [ax + 2.6, dy + 1.6]],
-           [[ax - 3.4, dy + 1.6], [ax - 3.4, fy + 1.6]], [[ax + 2.6, dy + 1.6], [ax + 2.6, fy + 1.6]],
-           [[ax - 3.4, fy + 1.6], [ax + 2.6, fy + 1.6]],
-           [[ax - 3.4, fy + 1.6], [ax - 0.4, fy + 5.4]], [[ax + 2.6, fy + 1.6], [ax - 0.4, fy + 5.4]],
-           [[ax - 3.0, fy + 1.6], [ax - 3.0, fy + 3.1]], [[ax + 2.2, fy + 1.6], [ax + 2.2, fy + 3.1]],
-           [[ax - 1.3, dy + 4], [ax - 1.3, fy - 2]], [[ax + 0.7, dy + 4], [ax + 0.7, fy - 2]],
-           // approach deck to the left
-           [[ax - 12.5, dy], [ax - 4.6, dy]], [[ax - 12.5, dy - 1], [ax - 4.6, dy - 1]]);
-    // suspended-deck girder line + approach on the right
-    T.push([[LX, dy - 1], [RX, dy - 1]], [[RX + 6.8, dy], [RX + 12.5, dy]],
-           [[RX + 6.8, dy - 1], [RX + 12.5, dy - 1]],
-           [[s.t3x, dy], [s.t3x, dy + 1.6]]);          // backstay anchor mast stub
-    while (T.length < 46) T.push([[0, wy], [0, wy]]);
-    dw.setStrokes('silTower', T.slice(0, 46));
-
-    const W = [];
-    W.push([[-13, wy], [96, wy]]);
-    for (let x = -12; x < 95; x += 4.3) W.push([[x, wy - 0.9], [x + 2.3, wy - 0.9]]);
-    for (let x = -10; x < 94; x += 5.1) W.push([[x, wy - 2], [x + 1.7, wy - 2]]);
-    while (W.length < 50) W.push([[0, wy], [0, wy]]);
-    dw.setStrokes('silWater', W.slice(0, 50));
-  }
-
   function update() {
     const dy = s.gy, bt = dy + BANDH;
     dw.setLabel('form_title', [-8, 86.3]);
@@ -586,7 +539,6 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('force_sub', [180, 86.3]);
     dw.setText('force_sub', `1 unit :: ${(1 / s.sFD).toFixed(2)} kN`);
 
-    silhouette();
     dw.setSeg('deck', [LX, dy], [RX, dy]);
     d.hx.forEach((x, k) => dw.setDashLine(`hang${k}`, [[x, RAIL_B], [x, RAIL_T]]));
     dw.setDashLine('edgeL', [[LX, RAIL_B], [LX, RAIL_T]]);
@@ -848,7 +800,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.04, 0.001, refresh);
   panel.toggle(par, s, 'o1', 'show internal forces (pipes)', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);
-  panel.toggle(par, s, 'ph', 'show the bridge (silhouette)', refresh);
+  panel.toggle(par, s, 'ph', 'show the bridge (the applet\u2019s etching)', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = F, 2–16 = hangers, 17 = I)',
