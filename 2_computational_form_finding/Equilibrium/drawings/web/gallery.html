@@ -196,7 +196,7 @@
         v.loop = true;
         v.autoplay = true;
         v.playsInline = true;
-        v.preload = 'auto';
+        v.preload = 'none';   // poster paints instantly; play() on scroll-in fetches the loop
         v.poster = `./movies/view_${n}.png`;
         v.src = `./movies/view_${n}.mp4`;
         const thumb = card.querySelector('.thumb');

@@ -36,6 +36,8 @@ PER_STEP = 14       # frames captured per construction step (covers the draw-in)
 FRAME_GAP = 0.05    # capture pacing; playback compresses time ~2.5x -> fluent
 HOLD_LAST = 2.0     # seconds to hold the final drawing
 WINDOW = (1500, 900)
+DSF = 2             # capture at 2x device pixels so gallery loops stay crisp on 4K/HiDPI
+OUT_W = 1320        # output width (2x the card width the gallery renders at)
 
 WEB = Path(__file__).resolve().parents[1]
 MOVIES = WEB / "movies"
@@ -48,6 +50,7 @@ class Chrome:
         self.proc = subprocess.Popen(
             ["google-chrome", "--headless=new", "--remote-debugging-port=0",
              f"--window-size={WINDOW[0]},{WINDOW[1]}", "--hide-scrollbars",
+             f"--force-device-scale-factor={DSF}",
              "--user-data-dir=" + tempfile.mkdtemp(prefix="eqmovie-chrome-"),
              "about:blank"],
             stderr=subprocess.PIPE, text=True)
@@ -115,17 +118,18 @@ def make_movie(chrome, view):
                 time.sleep(FRAME_GAP)
                 chrome.screenshot(f"{tmp}/f{f:05d}.png")
                 f += 1
-        crop = "crop=iw-250:ih:250:0"       # drop the sidebar, keep the canvas
+        # drop the sidebar (250 CSS px, captured at DSF device px), keep the canvas
+        crop = f"crop=iw-{250 * DSF}:ih:{250 * DSF}:0"
         out = MOVIES / f"view_{view}.mp4"
         subprocess.run(
             ["ffmpeg", "-y", "-v", "error", "-framerate", str(FPS), "-i", f"{tmp}/f%05d.png",
-             "-vf", f"tpad=stop_mode=clone:stop_duration={HOLD_LAST},{crop},scale=660:-2",
+             "-vf", f"tpad=stop_mode=clone:stop_duration={HOLD_LAST},{crop},scale={OUT_W}:-2",
              "-c:v", "libx264", "-pix_fmt", "yuv420p", str(out)],
             check=True)
         # static poster of the finished drawing for the gallery grid
         subprocess.run(
             ["ffmpeg", "-y", "-v", "error", "-i", f"{tmp}/f{f - 1:05d}.png",
-             "-vf", f"{crop},scale=660:-2", str(MOVIES / f"view_{view}.png")],
+             "-vf", f"{crop},scale={OUT_W}:-2", str(MOVIES / f"view_{view}.png")],
             check=True)
     print(f"view_{view}: {n + 1} frames -> {out}")
 

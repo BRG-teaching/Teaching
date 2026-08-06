@@ -128,6 +128,14 @@ export class Drawing {
 
     this._resize();
     new ResizeObserver(() => this._resize()).observe(container);
+    // re-apply the pixel ratio when the window moves to a screen with a
+    // different DPR (or the browser zoom changes) — a stale ratio renders
+    // the canvas pixelated / blurry
+    const watchDPR = () => {
+      matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
+        .addEventListener('change', () => { this._resize(); watchDPR(); }, { once: true });
+    };
+    watchDPR();
     this.zoomFit(true);
     this.renderer.setAnimationLoop(() => this._tick());
   }
@@ -135,6 +143,7 @@ export class Drawing {
   _resize() {
     const w = this.container.clientWidth || 1;
     const h = this.container.clientHeight || 1;
+    this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(w, h, false);
     this._fitFrustum(w / h);
   }
