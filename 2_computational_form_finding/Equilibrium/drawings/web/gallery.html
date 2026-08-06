@@ -199,6 +199,13 @@
         v.preload = 'none';   // poster paints instantly; play() on scroll-in fetches the loop
         v.poster = `./movies/view_${n}.png`;
         v.src = `./movies/view_${n}.mp4`;
+        // every loop starts at step 0 = a blank canvas; if they all start in
+        // phase the whole grid goes white at once right after the posters
+        // paint ("the thumbnails disappear").  Spread the starting phases so
+        // the grid always shows a mix of construction states.
+        v.addEventListener('loadedmetadata', () => {
+          if (isFinite(v.duration)) v.currentTime = (0.381966 * n * v.duration) % v.duration;
+        }, { once: true });
         const thumb = card.querySelector('.thumb');
         thumb.textContent = '';
         thumb.appendChild(v);
