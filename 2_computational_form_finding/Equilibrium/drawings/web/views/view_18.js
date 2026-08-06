@@ -524,7 +524,8 @@ export function create(dw, panel, makePlayer) {
     const j = Math.round(s.node);
     dw.selectDisk(null);
     const name = j <= 1 ? 'A' : j >= N_STRIP + 2 ? 'B' : `${j - 1}`;
-    dw.setNodeInspector([13.6, 5.2], 0.72, `node ${name}`, nodePoly());
+    const pos = j <= 1 ? d.arch2[0] : j >= N_STRIP + 2 ? d.arch2[N_STRIP + 1] : d.arch2[j - 1];
+    dw.setNodeInspector(pos, 0.72, `node ${name}`, nodePoly());
   }
 
   let player = null;
