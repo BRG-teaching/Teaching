@@ -190,6 +190,7 @@ Update this table as views are done:
 | 12 | Complex Prestress | hand-written ✔ (lens system: trial → division point i, pole line ∥ chord, prestress picks poles o₁/o₂ on opposite sides, 14 members + 6 ties all paired, PointLoad Q, dimensions P_upper/P_lower, node inspector) |
 | 15 | Cable For Non-uniformly Distributed Load | hand-written ✔ (24-strip cable, R₁/R₂ trials through sag point V₃, pole parallelogram, tangents meet on R; node inspector) |
 | 36 | Single Panel Truss | hand-written ✔ (redone to standard: applet's trial-pole/division-point construction, antiresultant + offset apparatus, parallel reactions → H/V, member 1 force segment, node inspector) |
+| 46 | Internal forces in a beam – point load | hand-written ✔ (four stacked bands tied by dotted verticals: beam, grey trial funicular → division point c, V-diagram = horizontal projections of a/c/b (applet red), pole o at distance H AT THE LEVEL OF c → horizontal closing, funicular from baseline L1–L2 with 10 sampled ordinates mirrored ×sFD·H below = M-diagram, M(x)=H·y(x); offset reaction chain b→c→a; strings 1/2 paired with rays; regression 9e-14/49 pts ×4 states; node inspector on the 3 funicular nodes) |
 
 ## Platform (beyond the per-view work)
 
