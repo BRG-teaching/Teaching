@@ -17,7 +17,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 3 — Pedestrian Bridge 2',
   subtitle: 'two loads: trial funicular, closing string, true cable',
-  about: 'A deck hung from a cable at two points. A trial funicular with an arbitrary pole finds the division point of the load line; the true pole must lie on the parallel to the anchor chord through that point, which makes the cable pass through both anchors.',
+  about: 'A deck hung from a cable at two points. A trial funicular with an arbitrary pole finds the division point of the load line; the true pole must lie on the parallel to the anchor chord through that point, which makes the cable pass through both anchors. The original applet\'s "symmetric" and "asymmetric" states move the anchors — in the asymmetric one a wedge of the right bank has fractured away.',
   frame: [[-6.8624, -7.3049], [64.4231, 28.3379]],
 };
 
@@ -68,6 +68,24 @@ const HATCH = [
   ...hatchTicks(SUP_L, GORGE), ...hatchTicks(SUP_R, GORGE),
 ];
 
+// "fractured rock" wedge on the right bank face (traced from the applet's
+// alternate site image FracturedRock.jpg, world coordinates): in the
+// asymmetric state this piece has broken away, so the right anchor sits below
+// it and the left anchor climbs to sound rock high on the left bank
+const WEDGE = [
+  [18.31, 12.52], [18.35, 12.99], [18.42, 13.92], [18.55, 14.05], [19.18, 13.83],
+  [19.66, 13.33], [20.33, 12.70], [20.47, 12.21], [20.47, 11.98], [20.11, 11.31],
+  [19.83, 11.04], [19.18, 10.70], [18.49, 10.52], [18.22, 10.41], [18.20, 11.22],
+  [18.26, 11.80],
+];
+const closedPairs = (poly) => [...segPairs(poly), [poly[poly.length - 1], poly[0]]];
+
+// scenario anchor presets (the applet's "Symmetric State" / "Asymmetric
+// State" buttons: R_1 -> G_2/I_2, S_1 -> H_2/J_2, B_2 -> K_2/P_5, F back
+// to 8, rock image swapped)
+const ANCHORS_SYM = { R: [1.7973, 11.5498], S: [18.3801, 11.71] };
+const ANCHORS_ASYM = { R: [0.2727, 19.7605], S: [18.0537, 9.3595] };
+
 function polyPoint(poly, u) {
   let acc = 0;
   for (let i = 0; i < poly.length - 1; i++) {
@@ -108,8 +126,11 @@ const DEFAULTS = {
   sFD: 0.75,                                        // scaleForceDiagram [0.5, 5] kN/unit
   sLS: 2,                                           // loadSymbol [1, 3]
   sIF: 0.06,                                        // scaleInternalForces [0, 0.05]
+  sOff: 0.4,                                        // scaleOffset [0.001, 1] (green arrows beside the polygon)
   o1: true,                                        // "show internal forces"
   n4: true,                                         // "show points"
+  dims: true,                                       // "show dimensions" (applet u_4, default true)
+  fractured: false,                                 // "show fractured rock" (applet o_2)
   node: 0,                                          // node-equilibrium inspector (0 = off)
 };
 
@@ -227,17 +248,22 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('hatch', HATCH.length, { intro: 1, w: 0.055, color: 0xb9b9b9, flash: false });
   dw.poly('slab', 4, { intro: 1, color: PAL.white, flash: false });
   dw.strokes('slabEdge', 4, { intro: 1, w: W_SITE });
-  // dimension lines (default-on in the applet, boolean u_4): the overall
-  // "12 m" span with the site, the three "4 m" spans with the load points
-  dw.strokes('dimBot', 3, { intro: 1, w: 0.07, color: PAL.grey, flash: false });
-  dw.label('dimL', '12 m', { intro: 1, flash: false, color: PAL.grey });
-  dw.strokes('dimTop', 7, { intro: 2, w: 0.07, color: PAL.grey, flash: false });
-  dw.label('dim1', '', { intro: 2, flash: false, color: PAL.grey });
-  dw.label('dim2', '', { intro: 2, flash: false, color: PAL.grey });
-  dw.label('dim3', '', { intro: 2, flash: false, color: PAL.grey });
+  // "fractured rock" (asymmetric state): broken-off wedge on the right bank
+  const frOn = (st) => st.fractured;
+  dw.poly('wedge', WEDGE.length, { intro: 1, color: 0x8f8f8f, opacity: 0.55, flash: false, when: frOn });
+  dw.strokes('wedgeEdge', WEDGE.length, { intro: 1, w: 0.07, color: 0x6f6f6f, flash: false, when: frOn });
+  // dimension lines (the applet's "show dimensions" u_4, default on): the
+  // overall "12 m" span with the site, the three "4 m" spans with the loads
+  const dimsOn = (st) => st.dims;
+  dw.strokes('dimBot', 3, { intro: 1, w: 0.07, color: PAL.grey, flash: false, when: dimsOn });
+  dw.label('dimL', '12 m', { intro: 1, flash: false, color: PAL.grey, when: dimsOn });
+  dw.strokes('dimTop', 7, { intro: 2, w: 0.07, color: PAL.grey, flash: false, when: dimsOn });
+  dw.label('dim1', '', { intro: 2, flash: false, color: PAL.grey, when: dimsOn });
+  dw.label('dim2', '', { intro: 2, flash: false, color: PAL.grey, when: dimsOn });
+  dw.label('dim3', '', { intro: 2, flash: false, color: PAL.grey, when: dimsOn });
   // the site is background: it appears instantly, only the construction draws in
   dw.instant('bankL', 'bankR', 'supL', 'supR', 'hatch', 'slab', 'slabEdge',
-             'dimBot', 'dimTop');
+             'dimBot', 'dimTop', 'wedge', 'wedgeEdge');
 
   // step 2: the loads, drawn simultaneously left (deck) and right (load line)
   dw.dashLine('vL', { intro: 2, dash: 0.5 });
@@ -297,8 +323,13 @@ export function create(dw, panel, makePlayer) {
   dw.seg('force4', { intro: 13, w: W_BAR, color: memberColor('c4') });
   dw.seg('force1', { intro: 13, w: W_BAR, color: memberColor('c1') });
 
-  // step 14: reactions at the anchors (left) + beside the polygon (right)
+  // step 14: reactions at the anchors (left) + beside the polygon (right),
+  // captioned A / B like the applet's green anchor vectors
   for (const n of ['arrR', 'arrS', 'aR5', 'aR3']) dw.arrow(n, { intro: 14, ...ARROW });
+  dw.label('lfA', 'A', { cls: 'num', intro: 14, color: PAL.green });
+  dw.label('lfB', 'B', { cls: 'num', intro: 14, color: PAL.green });
+  dw.label('lsA', 'A', { cls: 'num', intro: 14, color: PAL.green });
+  dw.label('lsB', 'B', { cls: 'num', intro: 14, color: PAL.green });
 
   // points: white face + black boundary, light pink while current
   const HANDLE = { r: 0.35 }, DERIVED = { r: 0.27 };
@@ -354,8 +385,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('tf3', 'ray3');
   dw.link('tclose', 'tpar');
   dw.link('chord', 'polePar');
-  dw.link('arrR', 'aR5');
-  dw.link('arrS', 'aR3');
+  dw.link('arrR', 'aR5', 'lfA', 'lsA');
+  dw.link('arrS', 'aR3', 'lfB', 'lsB');
   dw.link('resArrow', 'resFormArrow', 'resGuide', 'lblRf', 'lblRm');
   dw.ghostable('force1', 'force2', 'force3', 'force4', 'force5', 'aload1', 'aload2',
                'resArrow');
@@ -381,20 +412,27 @@ export function create(dw, panel, makePlayer) {
   // triangle {hanger load edge, next cable ray, previous cable ray}; anchors
   // R1/S1 and load points L1/M1 degenerate to member force + reaction/load.
   dw.nodeInspector(3, { when: (st) => st.node > 0, w: 0.36, headLen: 1.2, headW: 0.45, r: 0.33 });
-  const NODE_NAMES = ['R₁', 'C₂', 'D₂', 'S₁', 'L₁', 'M₁'];
-  const NODE_DISKS = ['pt_R1', 'pt_C2', 'pt_D2', 'pt_S1', 'pt_L1', 'pt_M1'];
-  const nodeAt = [() => d.R1, () => d.C2, () => d.D2, () => d.S1, () => d.L1, () => d.M1];
+  // node 7 = the applet's resultant node: at H₃ (outer real cables extended
+  // meet on R's line of action) the three forces R, A and B balance
+  const NODE_NAMES = ['R₁', 'C₂', 'D₂', 'S₁', 'L₁', 'M₁', 'R at H₃'];
+  const NODE_DISKS = ['pt_R1', 'pt_C2', 'pt_D2', 'pt_S1', 'pt_L1', 'pt_M1', 'pt_H3'];
+  const nodeAt = [() => d.R1, () => d.C2, () => d.D2, () => d.S1, () => d.L1, () => d.M1,
+                  () => d.H3];
   // anchor reactions use the SAME offset geometry as the visible green arrows
   // aR5/aR3 (beside the polygon), so the black highlight lands exactly on
   // them; member forces stay on the polygon (offsetting a side translates it —
   // its vector, hence the free-body star, is unchanged)
+  // offset of the green vectors beside the polygon = the applet's scaleOffset
+  // slider (visible, default 0.4; 0.66 world units at the default)
+  const bes = (a, b, off = 1.65 * s.sOff) => beside(a, b, d.fcent, off);
   const nodePolys = () => [
-    [[d.B2, d.Q1], beside(d.Q1, d.B2, d.fcent)],
+    [[d.B2, d.Q1], bes(d.Q1, d.B2)],
     [[d.P1, d.Q1], [d.Q1, d.B2], [d.B2, d.P1]],
     [[d.O1, d.P1], [d.P1, d.B2], [d.B2, d.O1]],
     [[d.O1, d.B2], beside(d.B2, d.O1, d.fcent)],
     [[d.P1, d.Q1], [d.Q1, d.P1]],
     [[d.O1, d.P1], [d.P1, d.O1]],
+    [[d.O1, d.Q1], bes(d.Q1, d.B2), bes(d.B2, d.O1)],
   ];
 
   function updateNode() {
@@ -419,6 +457,8 @@ export function create(dw, panel, makePlayer) {
     dw.setStrokes('supL', segPairs(SUP_L));
     dw.setStrokes('supR', segPairs(SUP_R));
     dw.setStrokes('hatch', HATCH);
+    dw.setPoly('wedge', WEDGE);
+    dw.setStrokes('wedgeEdge', closedPairs(WEDGE));
     const [x0, x1] = SLAB_X;
     const [yb, yt] = [DECK_Y - SLAB_H / 2, DECK_Y + SLAB_H / 2];
     dw.setPoly('slab', [[x0, yb], [x1, yb], [x1, yt], [x0, yt]]);
@@ -449,8 +489,8 @@ export function create(dw, panel, makePlayer) {
     dw.setArrow('loadL', d.L1, [s.l1x, DECK_Y - s.sLS]);
     dw.setArrow('loadM', d.M1, [s.m1x, DECK_Y - s.sLS]);
     dw.setDashLine('vLoad', [[s.o1x, VY[0]], [s.o1x, VY[1]]]);
-    dw.setArrow('aload1', ...beside(d.O1, d.P1, d.fcent));
-    dw.setArrow('aload2', ...beside(d.P1, d.Q1, d.fcent));
+    dw.setArrow('aload1', ...bes(d.O1, d.P1));
+    dw.setArrow('aload2', ...bes(d.P1, d.Q1));
 
     dw.setDashLine('vR', [[d.R1[0], VY[0]], [d.R1[0], VY[1]]]);
     dw.setDashLine('vS', [[d.S1[0], VY[0]], [d.S1[0], VY[1]]]);
@@ -492,10 +532,16 @@ export function create(dw, panel, makePlayer) {
     dw.setSeg('force4', d.P1, d.Q1);
     dw.setSeg('force1', d.O1, d.P1);
 
-    dw.setArrow('arrR', d.R1, V.add(d.R1, V.mul(V.unit(V.sub(d.R1, d.C2)), s.sLS)));
-    dw.setArrow('arrS', d.S1, V.add(d.S1, V.mul(V.unit(V.sub(d.S1, d.D2)), s.sLS)));
-    dw.setArrow('aR5', ...beside(d.Q1, d.B2, d.fcent));
-    dw.setArrow('aR3', ...beside(d.B2, d.O1, d.fcent));
+    const uR = V.unit(V.sub(d.R1, d.C2)), uS = V.unit(V.sub(d.S1, d.D2));
+    dw.setArrow('arrR', d.R1, V.add(d.R1, V.mul(uR, s.sLS)));
+    dw.setArrow('arrS', d.S1, V.add(d.S1, V.mul(uS, s.sLS)));
+    dw.setArrow('aR5', ...bes(d.Q1, d.B2));
+    dw.setArrow('aR3', ...bes(d.B2, d.O1));
+    const below = (u) => (V.perp(u)[1] <= 0 ? V.perp(u) : V.mul(V.perp(u), -1));
+    dw.setLabel('lfA', V.add(V.add(d.R1, V.mul(uR, s.sLS * 0.55)), V.mul(below(uR), 1.0)));
+    dw.setLabel('lfB', V.add(V.add(d.S1, V.mul(uS, s.sLS * 0.55)), V.mul(below(uS), 1.0)));
+    dw.setLabel('lsA', V.mid(...bes(d.Q1, d.B2, 1.65 * s.sOff + 1.4)));
+    dw.setLabel('lsB', V.mid(...bes(d.B2, d.O1, 1.65 * s.sOff + 1.4)));
 
     for (const p of Object.keys(letters)) dw.setDisk(`pt_${p}`, d[p]);
     for (const p of ['U1', 'V1', 'W1', 'Z1', 'R5', 'Rv', 'H3']) dw.setDisk(`pt_${p}`, d[p]);
@@ -548,15 +594,47 @@ export function create(dw, panel, makePlayer) {
   const view = panel.section('View');
   panel.button(view, 'zoom fit', () => dw.zoomFit());
 
+  // the applet's scenario buttons. The pole preset is the applet's own
+  // construction: K_2 = left intersection of the circles of radius 12/sFD
+  // around Q_1 and O_1 (so both anchor cables carry 12 kN in the symmetric
+  // state); the asymmetric state keeps the pole's distance from P_1 along the
+  // ray to the current pole (applet P_5), then re-anchors it on the new
+  // parallel through i.
+  const scenario = (anchors, asym) => () => {
+    s.F = 8;
+    s.tR = polyProject(BANK_L, anchors.R);
+    s.tS = polyProject(BANK_R, anchors.S);
+    s.fractured = asym;
+    const d0 = compute(s);                       // new anchors, old pole parameter
+    const r = 12 / s.sFD;
+    const half = V.dist(d0.O1, d0.Q1) / 2;
+    const dx = Math.sqrt(Math.max(0, r * r - half * half));
+    const K2 = [s.o1x - dx, (d0.O1[1] + d0.Q1[1]) / 2];
+    let target = K2;
+    if (asym) {
+      const u = V.unit(V.sub(d0.B2, d0.P1));
+      target = V.add(d0.P1, V.mul(u, V.dist(d0.P1, K2)));
+    }
+    s.poleT = V.dot(V.sub(target, d0.A2), d0.uch);
+    panel.syncAll();
+    refresh();
+  };
+  const scen = panel.section('Scenario');
+  panel.button(scen, 'symmetric state', scenario(ANCHORS_SYM, false));
+  panel.button(scen, 'asymmetric state', scenario(ANCHORS_ASYM, true));
+
   const par = panel.section('Parameters');
-  panel.slider(par, s, 'F', 'F (each load, kN)', 5, 20, 0.5, refresh);
-  panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 0.5, 5, 0.05, refresh);
+  panel.slider(par, s, 'F', 'F (each load, kN)', 5, 20, 0.2, refresh);
+  panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 0.5, 5, 0.25, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 3, 0.1, refresh);
+  panel.slider(par, s, 'sOff', 'scale offset (green arrows)', 0.05, 1, 0.05, refresh);
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
+  panel.toggle(par, s, 'fractured', 'show fractured rock', refresh);
+  panel.toggle(par, s, 'dims', 'show dimensions', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   const nodeSec = panel.section('Node equilibrium');
-  panel.slider(nodeSec, s, 'node', 'node (0 = off): R₁, C₂, D₂, S₁, L₁, M₁', 0, 6, 1, refresh);
+  panel.slider(nodeSec, s, 'node', 'node (0 = off): R₁, C₂, D₂, S₁, L₁, M₁, R', 0, 7, 1, refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(s, DEFAULTS);
     panel.syncAll();
