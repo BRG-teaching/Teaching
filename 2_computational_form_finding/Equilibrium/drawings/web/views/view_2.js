@@ -14,7 +14,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 2 — Pedestrian Bridge 1',
   subtitle: 'deck hung from two cables: form + force diagram',
-  about: 'A pedestrian deck hangs from a V-shaped cable anchored to two rock banks. The load at the deck is carried by a hanger to the cable node; the force triangle of that node, built from parallels to the cables, gives the two anchor forces directly.',
+  about: 'A pedestrian deck hangs from a V-shaped cable anchored to two rock banks. The load at the deck is carried by a hanger to the cable node; the force triangle of that node, built from parallels to the cables, gives the two anchor forces directly. The "fractured rock" scenario of the original applet breaks the right bank face and moves both anchors to sound rock.',
   frame: [[-4.9243, -0.5757], [65.4306, 34.6017]],
 };
 
@@ -64,6 +64,28 @@ const HATCH = [
   ...hatchTicks(SUP_L, GORGE), ...hatchTicks(SUP_R, GORGE),
 ];
 
+// "fractured rock" wedges on the right bank face (traced from the applet's
+// alternate site image VorlageFracturdRock.png, world coordinates): where the
+// rock broke away, the anchors must move to sound rock
+const WEDGE_HI = [
+  [21.01, 24.01], [20.95, 24.54], [20.87, 25.42], [21.13, 25.34], [21.88, 25.40],
+  [22.32, 24.96], [22.69, 24.53], [22.72, 24.07], [22.79, 23.29], [22.66, 22.89],
+  [22.31, 22.47], [21.80, 21.83], [21.47, 21.42], [21.24, 22.36], [21.14, 23.05],
+  [21.10, 23.41],
+];
+const WEDGE_LO = [
+  [20.95, 16.24], [21.03, 16.76], [21.17, 17.75], [21.33, 18.12], [22.02, 17.86],
+  [22.59, 17.28], [23.39, 16.48], [23.50, 16.11], [23.57, 15.56], [23.40, 15.21],
+  [22.73, 14.39], [21.98, 14.09], [21.20, 13.95], [20.71, 13.76], [20.70, 14.55],
+  [20.82, 15.35],
+];
+const closedPairs = (poly) => [...segPairs(poly), [poly[poly.length - 1], poly[0]]];
+
+// scenario anchor presets (the applet's "Original System" / "Fractured Rock"
+// buttons: V -> F_3/H_3, W -> G_3/I_3, F back to 12, rock image swapped)
+const ANCHORS_ORIGINAL = { V: [4.739, 17.7099], W: [21.2612, 17.8298] };
+const ANCHORS_FRACTURED = { V: [4.0076, 22.1389], W: [20.9817, 11.6811] };
+
 /** Arclength position u -> point on the polyline (clamped). */
 function polyPoint(poly, u) {
   let acc = 0;
@@ -105,6 +127,8 @@ const DEFAULTS = {
   sIF: 0.06,                                     // scaleInternalForces [0, 0.05]
   o1: true,                                     // "show internal forces"
   n4: true,                                      // "show points"
+  dims: true,                                    // "show dimensions" (applet e_3, default true)
+  fractured: false,                              // "show fractured rock" (applet o_2)
   node: 0,                                       // node-equilibrium inspector (0 = off)
 };
 
@@ -187,15 +211,24 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('hatch', HATCH.length, { intro: 1, w: 0.055, color: 0xb9b9b9, flash: false });
   dw.poly('slab', 4, { intro: 1, color: PAL.white, flash: false });
   dw.strokes('slabEdge', 4, { intro: 1, w: W_SITE });
-  dw.strokes('dimBot', 3, { intro: 1, w: 0.07, color: PAL.grey, flash: false });
-  dw.label('dimL', '12.0 m', { intro: 1, flash: false, color: PAL.grey });
+  // "fractured rock" scenario: broken-off wedges on the right bank face
+  const frOn = (st) => st.fractured;
+  dw.poly('wedgeHi', WEDGE_HI.length, { intro: 1, color: 0x8f8f8f, opacity: 0.6, flash: false, when: frOn });
+  dw.poly('wedgeLo', WEDGE_LO.length, { intro: 1, color: 0x8f8f8f, opacity: 0.6, flash: false, when: frOn });
+  dw.strokes('wedgeHiEdge', WEDGE_HI.length, { intro: 1, w: 0.07, color: 0x6f6f6f, flash: false, when: frOn });
+  dw.strokes('wedgeLoEdge', WEDGE_LO.length, { intro: 1, w: 0.07, color: 0x6f6f6f, flash: false, when: frOn });
+  // dimensions gated by the applet's "show dimensions" (e_3, default on)
+  const dimsOn = (st) => st.dims;
+  dw.strokes('dimBot', 3, { intro: 1, w: 0.07, color: PAL.grey, flash: false, when: dimsOn });
+  dw.label('dimL', '12.0 m', { intro: 1, flash: false, color: PAL.grey, when: dimsOn });
   // the site is background: it appears instantly, only the construction draws in
-  dw.instant('bankL', 'bankR', 'supL', 'supR', 'hatch', 'slab', 'slabEdge', 'dimBot');
+  dw.instant('bankL', 'bankR', 'supL', 'supR', 'hatch', 'slab', 'slabEdge', 'dimBot',
+             'wedgeHi', 'wedgeLo', 'wedgeHiEdge', 'wedgeLoEdge');
 
   // step 2: the load point splits the span into two half-span dimensions
-  dw.strokes('dimTop', 5, { intro: 2, w: 0.07, color: PAL.grey, flash: false });
-  dw.label('dimA', '', { intro: 2, flash: false, color: PAL.grey });
-  dw.label('dimB', '', { intro: 2, flash: false, color: PAL.grey });
+  dw.strokes('dimTop', 5, { intro: 2, w: 0.07, color: PAL.grey, flash: false, when: dimsOn });
+  dw.label('dimA', '', { intro: 2, flash: false, color: PAL.grey, when: dimsOn });
+  dw.label('dimB', '', { intro: 2, flash: false, color: PAL.grey, when: dimsOn });
 
   // step 2: the load, drawn simultaneously left (at C2) and right (Z -> A1),
   // with the applet's on-canvas F1 captions (vectors u and v, green)
@@ -222,10 +255,16 @@ export function create(dw, panel, makePlayer) {
   dw.highlight('bar2', [7]);
   dw.highlight('bar3', [7]);
 
-  // step 8: direction arrows in BOTH diagrams
+  // step 8: direction arrows in BOTH diagrams, with the applet's A / B
+  // captions on the anchor forces (vector captions t='A', w='B' and their
+  // force-diagram twins)
   for (const n of ['a2', 'a3', 'arrV', 'arrW']) {
     dw.arrow(n, { intro: 8, w: 0.29, headLen: 0.9, headW: 0.34 });
   }
+  dw.label('lfA', 'A', { cls: 'num', intro: 8, color: PAL.green });
+  dw.label('lfB', 'B', { cls: 'num', intro: 8, color: PAL.green });
+  dw.label('lsA', 'A', { cls: 'num', intro: 8, color: PAL.green });
+  dw.label('lsB', 'B', { cls: 'num', intro: 8, color: PAL.green });
 
   // points: white face + black boundary, light pink while current
   const HANDLE = { r: 0.35 }, DERIVED = { r: 0.27 };
@@ -259,8 +298,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('bar2', 'force2', 'par2', 'f2', 's2');
   dw.link('bar3', 'force3', 'par3', 'f3', 's3');
   dw.link('load', 'aload', 'lfF1', 'lsF1');
-  dw.link('arrV', 'a2');
-  dw.link('arrW', 'a3');
+  dw.link('arrV', 'a2', 'lfA', 'lsA');
+  dw.link('arrW', 'a3', 'lfB', 'lsB');
   dw.ghostable('force1', 'force2', 'force3', 'aload');
 
   // final step: magnitude readout + optional internal forces
@@ -317,6 +356,11 @@ export function create(dw, panel, makePlayer) {
     dw.setStrokes('supR', segPairs(SUP_R));
     dw.setStrokes('hatch', HATCH);
 
+    dw.setPoly('wedgeHi', WEDGE_HI);
+    dw.setPoly('wedgeLo', WEDGE_LO);
+    dw.setStrokes('wedgeHiEdge', closedPairs(WEDGE_HI));
+    dw.setStrokes('wedgeLoEdge', closedPairs(WEDGE_LO));
+
     // deck slab centred on the deck line
     const [x0, x1] = [DECK[0][0], DECK[1][0]];
     const [yb, yt] = [DECK_Y - SLAB_H / 2, DECK_Y + SLAB_H / 2];
@@ -358,12 +402,19 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lfF1', V.add(V.mid(d.C2, d.Eload), [-1.2, 0]));
     dw.setLabel('lsF1', V.mid(...beside(d.Z, d.A1, d.centroid, 2.2)));
 
-    // green vectors: beside the triangle sides + the same pulls at V and W
+    // green vectors: beside the triangle sides + the same pulls at V and W,
+    // captioned A / B like the applet
     dw.setArrow('aload', ...beside(d.Z, d.A1, d.centroid));
     dw.setArrow('a2', ...beside(d.A1, d.B1, d.centroid));
     dw.setArrow('a3', ...beside(d.B1, d.Z, d.centroid));
-    dw.setArrow('arrV', d.V, V.add(d.V, V.mul(V.unit(V.sub(d.V, d.C3)), s.sLS)));
-    dw.setArrow('arrW', d.W, V.add(d.W, V.mul(V.unit(V.sub(d.W, d.C3)), s.sLS)));
+    const uV = V.unit(V.sub(d.V, d.C3)), uW = V.unit(V.sub(d.W, d.C3));
+    dw.setArrow('arrV', d.V, V.add(d.V, V.mul(uV, s.sLS)));
+    dw.setArrow('arrW', d.W, V.add(d.W, V.mul(uW, s.sLS)));
+    const below = (u) => (V.perp(u)[1] <= 0 ? V.perp(u) : V.mul(V.perp(u), -1));
+    dw.setLabel('lfA', V.add(V.add(d.V, V.mul(uV, s.sLS * 0.55)), V.mul(below(uV), 1.0)));
+    dw.setLabel('lfB', V.add(V.add(d.W, V.mul(uW, s.sLS * 0.55)), V.mul(below(uW), 1.0)));
+    dw.setLabel('lsA', V.mid(...beside(d.A1, d.B1, d.centroid, 2.3)));
+    dw.setLabel('lsB', V.mid(...beside(d.B1, d.Z, d.centroid, 2.3)));
 
     for (const p of ['C2', 'C3', 'V', 'W', 'Z', 'A1', 'B1']) dw.setDisk(`pt_${p}`, d[p]);
     const off = { C2: [-1.1, -0.6], C3: [1.1, -0.5], V: [-1.2, -0.9], W: [1.2, -0.9],
@@ -384,8 +435,8 @@ export function create(dw, panel, makePlayer) {
 
     dw.setLabel('roN2', [56.5, 7.6]);
     dw.setLabel('roN3', [56.5, 5.8]);
-    dw.setText('roN2', `N₂ = ${d.N2.toFixed(1)} kN`);
-    dw.setText('roN3', `N₃ = ${d.N3.toFixed(1)} kN`);
+    dw.setText('roN2', `A = N₂ = ${d.N2.toFixed(1)} kN`);
+    dw.setText('roN3', `B = N₃ = ${d.N3.toFixed(1)} kN`);
 
     // internal-force rectangles: width proportional to the force in kN
     dw.setPoly('if1', V.rectPoints(d.C3, d.C2, s.sIF * s.F));
@@ -410,12 +461,28 @@ export function create(dw, panel, makePlayer) {
   const view = panel.section('View');
   panel.button(view, 'zoom fit', () => dw.zoomFit());
 
+  // the applet's scenario buttons: anchors to preset positions, F back to 12,
+  // rock face swapped between the intact and the fractured site drawing
+  const scenario = (anchors, fractured) => () => {
+    s.F = 12;
+    s.tV = polyProject(BANK_L, anchors.V);
+    s.tW = polyProject(BANK_R, anchors.W);
+    s.fractured = fractured;
+    panel.syncAll();
+    refresh();
+  };
+  const scen = panel.section('Scenario');
+  panel.button(scen, 'original system', scenario(ANCHORS_ORIGINAL, false));
+  panel.button(scen, 'fractured rock', scenario(ANCHORS_FRACTURED, true));
+
   const par = panel.section('Parameters');
-  panel.slider(par, s, 'F', 'F (load, kN)', 5, 20, 0.5, refresh);
-  panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 0.2, 2, 0.05, refresh);
+  panel.slider(par, s, 'F', 'F (load, kN)', 5, 20, 0.2, refresh);
+  panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 0.2, 2, 0.1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 4, 0.1, refresh);
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
+  panel.toggle(par, s, 'fractured', 'show fractured rock', refresh);
+  panel.toggle(par, s, 'dims', 'show dimensions', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = C₂, 2 = C₃, 3 = V, 4 = W)', 0, 4, 1, refresh);
