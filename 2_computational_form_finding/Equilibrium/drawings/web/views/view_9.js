@@ -83,6 +83,16 @@ function onv(p, d, x) {
   return [x, p[1] + d[1] * ((x - p[0]) / (Math.abs(d[0]) < 1e-9 ? 1e-9 : d[0]))];
 }
 
+/** The applet's X-shaped dimension tick: two crossing strokes at each point. */
+function xTicks(pts, t = 0.16) {
+  const out = [];
+  for (const p of pts) {
+    out.push([[p[0] - t, p[1] - t], [p[0] + t, p[1] + t]]);
+    out.push([[p[0] - t, p[1] + t], [p[0] + t, p[1] - t]]);
+  }
+  return out;
+}
+
 // the construction (mirrors applet_0/geogebra.xml, evaluated live)
 function compute(s) {
   const A = [XA, s.ay], B = [XB, s.by], C = [XC, s.cy];
@@ -192,7 +202,12 @@ export function create(dw, panel, makePlayer) {
   dw.label('lbl_l2b', 'l/2', { intro: 1, outro: 8, flash: false, color: PAL.grey });
   dw.label('lbl_l2a2', 'l/2', { intro: RESOLVE, flash: false, color: PAL.grey });
   dw.label('lbl_l2b2', 'l/2', { intro: RESOLVE, flash: false, color: PAL.grey });
-  dw.instant('wallA', 'wallB', 'centre', 'dimL', 'dimL2a', 'dimL2b', 'dimL2a2', 'dimL2b2');
+  // the applet marks every dimension division with a small X tick
+  dw.strokes('tickL', 4, { intro: 1, w: W_DIM, color: PAL.grey, flash: false });
+  dw.strokes('tickL2', 6, { intro: 1, outro: 8, w: W_DIM, color: PAL.grey, flash: false });
+  dw.strokes('tickL2r', 6, { intro: RESOLVE, w: W_DIM, color: PAL.grey, flash: false });
+  dw.instant('wallA', 'wallB', 'centre', 'dimL', 'dimL2a', 'dimL2b', 'dimL2a2', 'dimL2b2',
+             'tickL', 'tickL2', 'tickL2r');
 
   // ------------------------------------------------------------------
   // step 2: the load q (left) + the load line R (right)
@@ -209,13 +224,15 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   // steps 3-4: closing string, rise h, mirror point 2h
   // ------------------------------------------------------------------
-  dw.dashLine('chord', { intro: 3, color: PAL.black, dash: 0.5 });
+  dw.dashLine('chord', { intro: 3, color: PAL.grey, dash: 0.5 });   // applet: grey 0.6 dashed
   dw.dashLine('gG', { intro: 3, dash: 0.4 });                // level of the crossing
   dw.dashLine('gC', { intro: 3, dash: 0.4 });                // level of C
   dw.seg('dimH', { intro: 3, w: W_DIM, color: PAL.grey, flash: false });
   dw.label('lbl_h', 'h', { intro: 3, flash: false, color: PAL.grey });
+  dw.strokes('tickH', 4, { intro: 3, w: W_DIM, color: PAL.grey, flash: false });
   dw.seg('dimH2', { intro: 4, outro: 7, w: W_DIM, color: PAL.grey, flash: false });
   dw.label('lbl_h2', '2h', { intro: 4, outro: 7, flash: false, color: PAL.grey });
+  dw.strokes('tickH2', 4, { intro: 4, outro: 7, w: W_DIM, color: PAL.grey, flash: false });
 
   // ------------------------------------------------------------------
   // steps 5-6: tangents -> pole o; reactions
@@ -253,6 +270,7 @@ export function create(dw, panel, makePlayer) {
     dw.seg(`dimL4_${i}`, { intro: 8, outro: 10, w: W_DIM, color: PAL.grey, flash: false });
     dw.label(`lbl_l4_${i}`, 'l/4', { cls: 'point', intro: 8, outro: 10, flash: false, color: PAL.grey });
   }
+  dw.strokes('tickL4', 10, { intro: 8, outro: 10, w: W_DIM, color: PAL.grey, flash: false });
   dw.seg('mseg10', { intro: 8, outro: RESOLVE, w: W_STR, color: PAL.grey });
   dw.seg('mseg18', { intro: 8, outro: RESOLVE, w: W_STR, color: PAL.grey });
   // 'y = y' and 'z = z' annotations (the applet's step-4 evidence)
@@ -264,6 +282,7 @@ export function create(dw, panel, makePlayer) {
   dw.label('lbl_y2', 'y', { cls: 'point', intro: 8, outro: 10, color: PAL.grey });
   dw.label('lbl_z1', 'z', { cls: 'point', intro: 8, outro: 10, color: PAL.grey });
   dw.label('lbl_z2', 'z', { cls: 'point', intro: 8, outro: 10, color: PAL.grey });
+  dw.strokes('tickZ', 6, { intro: 8, outro: 10, w: W_DIM, color: PAL.grey, flash: false });
   // load line quartered + node loads at x = 6, 10, 14, 18, 22
   for (let i = 0; i < 5; i++) {
     dw.arrow(`qv${i}`, { intro: 8, outro: 10, ...NARROW });
@@ -293,6 +312,7 @@ export function create(dw, panel, makePlayer) {
     dw.seg(`dimL8_${i}`, { intro: 10, outro: RESOLVE, w: W_DIM, color: PAL.grey, flash: false });
     dw.label(`lbl_l8_${i}`, 'l/8', { cls: 'point', intro: 10, outro: RESOLVE, flash: false, color: PAL.grey });
   }
+  dw.strokes('tickL8', 18, { intro: 10, outro: RESOLVE, w: W_DIM, color: PAL.grey, flash: false });
   for (const n of ['mseg8', 'mseg12', 'mseg16', 'mseg20']) {
     dw.seg(n, { intro: 10, outro: RESOLVE, w: W_STR, color: PAL.grey });
   }
@@ -447,6 +467,11 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lbl_l2b', [17.3, 15.42]);
     dw.setLabel('lbl_l2a2', [9.3, 15.42]);
     dw.setLabel('lbl_l2b2', [17.3, 15.42]);
+    dw.setStrokes('tickL', xTicks([[XA, 16], [XB, 16]]));
+    dw.setStrokes('tickL2', xTicks([[XA, 15], [XC, 15], [XB, 15]]));
+    dw.setStrokes('tickL2r', xTicks([[XA, 15], [XC, 15], [XB, 15]]));
+    dw.setStrokes('tickL4', xTicks([0, 1, 2, 3, 4].map((k) => [XA + 4 * k, 15])));
+    dw.setStrokes('tickL8', xTicks([0, 1, 2, 3, 4, 5, 6, 7, 8].map((k) => [XA + 2 * k, 15])));
 
     // load strip + midspan resultant
     const yb = Y_TOP - 0.4 * s.sLS;
@@ -467,8 +492,10 @@ export function create(dw, panel, makePlayer) {
     dw.setDashLine('gC', [[GUIDE_X[0], d.C[1]], [GUIDE_X[1], d.C[1]]]);
     dw.setSeg('dimH', [24, d.G1[1]], [24, d.C[1]]);
     dw.setLabel('lbl_h', [24.55, d.C[1] + 0.32 * (d.G1[1] - d.C[1])]);
+    dw.setStrokes('tickH', xTicks([[24, d.G1[1]], [24, d.C[1]]]));
     dw.setSeg('dimH2', [25, d.G1[1]], [25, d.I1[1]]);
     dw.setLabel('lbl_h2', [25.7, d.C[1] - 0.8]);
+    dw.setStrokes('tickH2', xTicks([[25, d.G1[1]], [25, d.I1[1]]]));
 
     dw.setDashLine('tanA', [d.A, d.I1]);
     dw.setDashLine('tanB', [d.I1, d.B]);
@@ -513,6 +540,7 @@ export function create(dw, panel, makePlayer) {
     dw.setSeg('zSeg2', [18, QZY], [22, QZY]);
     dw.setLabel('lbl_z1', [16, QZY + 0.35]);
     dw.setLabel('lbl_z2', [20, QZY + 0.35]);
+    dw.setStrokes('tickZ', xTicks([[14, QZY], [18, QZY], [22, QZY]]));
     const q4pts = [d.Q2, ...d.cut4, d.D3];
     for (let i = 0; i < 5; i++) {
       dw.setArrow(`qv${i}`, q4pts[i], q4pts[i + 1]);

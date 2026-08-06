@@ -158,3 +158,49 @@ Result: **max error 6.8e-7** (limited only by the 6-decimal rounding of the
 baked dump). Funicular edges are parallel to their rays to 3e-16; all 8
 members resolve tension via ggbAngle/isCompression (hanging cable);
 N₁..N₈ = 16.8, 14.9, 13.8, 13.6, 14.5, 16.2, 18.5, 21.2 kN at defaults.
+
+## Audit vs live original (2026-08-06)
+
+Driven the live applet headless via the ggbApplet JS API: enumerated all
+objects, flipped every boolean, swept mode 0/1/2 x step 0-8 with screenshots
+(scratchpad/audit789/live9/).
+
+### Toggle / mode table
+
+| control | default | effect (live-verified) |
+|---|---|---|
+| `overlay` | false | mode 0 only: superimposes the eighth rays d_4..k_4 + the funicular polyline f_1 on the tangent-method curve |
+| `showPoints` | false | the 9 load-line cut points S_2..D_3 |
+| `hideRF` | false | NO effect in this applet (checkbox unused/unwired) |
+| `showHandles` | false | O_2 (node-resultant row anchor) |
+| `showHandles_1` | false | l_7/k_7 scaffold |
+| `showResultantLabels` | false | no effect (unused) |
+| `Offset` slider | 1.3 [1,10] | hidden slider moving the orange tangent rulers |
+| `mode` 0/1/2, `step` 0-8 | 0 | mode 2 = secant/midpoint construction, mode 1 = tangent division, mode 0 = overview (curve only + overlay checkbox) |
+
+### Deviations found → fixed
+
+1. **Closing string (chord A-B) color** — the applet's p_1 is GREY 0.6 dashed
+   (dash 15), not black. Fixed `chord` to grey.
+2. **Dimension end ticks missing** — every live dimension row (l, l/2, l/4,
+   l/8, h, 2 h, z) carries small X-shaped ticks at its division points; ours
+   drew bare hairlines. Added xTicks strokes to all seven dimension rows with
+   the same intro/outro staging as their lines.
+
+### Checked, no change needed
+- Green reactions A/B lie ON the outer rays exactly like the live applet
+  (thick green over the thin black rays, meeting at o) — chain is naturally
+  end-to-end: D₃→o→Q₂ with the load line; no offsets involved.
+- `hideRF` exists in our panel and actually works; in the applet the checkbox
+  is dead — keeping the working version (default false = same look).
+- `overlay` needs no control: our merged sequence passes through exactly that
+  state (step 14, funicular + tangent method superimposed).
+- `showPoints` default-false hides the applet's load-line cut disks; our
+  platform-wide "show points" (default true) is the documented superset.
+- Offset slider, load strip q (green, 0.1 fill, left 'q'), level guides
+  q_7/r_7 (grey 153 dash), 'R' labels left of the load line, node-R rows at
+  O_2's level, orange rulers l₁/l₂ + division points, envelope, enclosing
+  polygon, y/z annotation figures: all match the live rendering.
+- The y-ticks appear ORANGE in the live applet only because they exist solely
+  at their flash step (step 4); our grey staging over steps 8-9 is the
+  platform's flash convention.
