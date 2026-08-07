@@ -2,6 +2,10 @@
 
 Resources for teaching.
 
+## Description
+
+https://docs.google.com/document/d/17gDPkJS4DjB0FUJg9BehDfBTe4H2NIyb7-zygBppUCI/edit?tab=t.0
+
 ## Setup
 
 Requires [uv](https://docs.astral.sh/uv/). From the repo root:
