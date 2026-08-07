@@ -85,7 +85,17 @@
     place-content: center;
     overflow: hidden;
   }
-  .thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb { position: relative; }
+  .thumb img.poster { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* the loop sits ON TOP of the poster and only becomes visible once it is
+     actually rendering frames — a stalled or rate-limited video can never
+     blank the card (the poster stays underneath) */
+  .thumb video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .thumb video.live { opacity: 1; }
   .thumb .placeholder {
     width: 26px; height: 26px;
     border: 1px solid #d9d9d9;
@@ -133,30 +143,103 @@
   <script type="module">
     const grid = document.getElementById('grid');
 
-    // The view ids come from views.json; static hosts (GitHub Pages) serve no
-    // directory listing, so that listing is only a fallback for a dev server
-    // whose views.json has gone stale. Regenerate with:
-    //   ls views/*.js | sed 's/.*view_\([0-9]*\)\.js/\1/' | sort -n \
-    //     | paste -sd, - | sed 's/^/[/; s/$/]/' > views.json
-    let views = [];
+    // ONE manifest fetch (gallery-data.json, built by tools/make_manifest.py
+    // in the Pages workflow) instead of probing every view module and movie:
+    // the old per-view fetches + HEADs (~106 requests at once) tripped GitHub
+    // Pages' rate limiting — movies 503'd and the cards went blank.
+    // Fallbacks (dev server without a manifest): views.json, then the
+    // directory listing; those paths keep the old per-view probing.
+    let cards = null;
     try {
-      views = await (await fetch('./views.json')).json();
-    } catch {
-      const html = await (await fetch('./views/')).text();
-      views = [...new Set([...html.matchAll(/view_(\d+)\.js/g)].map((m) => +m[1]))]
-        .sort((a, b) => a - b);
+      cards = await (await fetch('./gallery-data.json')).json();
+    } catch {}
+    let views = [];
+    if (cards) {
+      views = cards.map((c) => c.n);
+    } else {
+      try {
+        views = await (await fetch('./views.json')).json();
+      } catch {
+        const html = await (await fetch('./views/')).text();
+        views = [...new Set([...html.matchAll(/view_(\d+)\.js/g)].map((m) => +m[1]))]
+          .sort((a, b) => a - b);
+      }
     }
     document.getElementById('count').textContent = `${views.length} drawings`;
 
-    // autoplay the construction loops like GIFs; pause the off-screen ones
+    // autoplay the construction loops like GIFs; pause the off-screen ones.
+    // First plays are jittered so scroll-ins don't burst-request the host.
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
-        if (e.isIntersecting) e.target.play().catch(() => {});
-        else e.target.pause();
+        const v = e.target;
+        if (e.isIntersecting) {
+          if (v._jitter === undefined) {
+            v._jitter = setTimeout(() => v.play().catch(() => {}), 150 * (v._idx % 9));
+          } else {
+            v.play().catch(() => {});
+          }
+        } else {
+          v.pause();
+        }
       }
     }, { rootMargin: '120px' });
 
-    for (const n of views) {
+    const fillMeta = (card, n, title, about, todo) => {
+      if (title) {
+        card.querySelector('.t').textContent =
+          title.replace(/^Drawing \d+\s+—\s+/, '');
+      }
+      if (about) {
+        let text = (about.match(/^.*?[.!?](?=\s|$)/) || [about])[0].trim();
+        if (text.length > 140) {
+          text = text.slice(0, 140).replace(/\s+\S*$/, '') + '…';
+        }
+        const d = document.createElement('span');
+        d.className = 'd';
+        d.textContent = text;
+        card.querySelector('.txt').appendChild(d);
+      }
+      if (!todo) card.classList.remove('todo');
+    };
+
+    const addMovie = (card, n, idx) => {
+      const thumb = card.querySelector('.thumb');
+      thumb.textContent = '';
+      // poster as a real <img> UNDER the video: a stalled, throttled, or
+      // GPU-broken video can never blank the card
+      const img = document.createElement('img');
+      img.className = 'poster';
+      img.loading = 'lazy';
+      img.src = `./movies/view_${n}.png`;
+      thumb.appendChild(img);
+      const v = document.createElement('video');
+      v.muted = true;
+      v.loop = true;
+      v.playsInline = true;
+      v.preload = 'none';   // fetch only when scrolled in and play() fires
+      v.src = `./movies/view_${n}.mp4`;
+      v._idx = idx;
+      // loops start at step 0 = a blank canvas; spread the starting phases so
+      // the grid never blanks out in unison
+      v.addEventListener('loadedmetadata', () => {
+        if (isFinite(v.duration)) v.currentTime = (0.381966 * n * v.duration) % v.duration;
+      }, { once: true });
+      // reveal the loop only once frames are really rendering
+      v.addEventListener('timeupdate', () => {
+        if (v.currentTime > 0.05) v.classList.add('live');
+      });
+      // a rate-limited (503) load: keep the poster, retry a few times
+      let tries = 0;
+      v.addEventListener('error', () => {
+        v.classList.remove('live');
+        if (tries++ < 3) setTimeout(() => { v.load(); v.play().catch(() => {}); },
+                                    2000 * tries * (1 + Math.random()));
+      });
+      thumb.appendChild(v);
+      io.observe(v);
+    };
+
+    views.forEach((n, idx) => {
       const card = document.createElement('a');
       card.className = 'card todo';
       card.href = `./?view=${n}`;
@@ -165,53 +248,24 @@
         <div class="meta"><span class="txt"><span class="t">View ${n}</span></span></div>`;
       grid.appendChild(card);
 
-      // title + one-sentence description from the view module's meta
-      // (fetched as text, no evaluation)
+      const c = cards && cards.find((c) => c.n === n);
+      if (c) {
+        fillMeta(card, n, c.title, c.about, c.todo);
+        if (c.movie) addMovie(card, n, idx);
+        return;
+      }
+
+      // no manifest (dev server): probe the module + movie like before
       fetch(`./views/view_${n}.js`).then((r) => r.text()).then((src) => {
         const m = src.match(/title:\s*'([^']+)'/);
-        if (m) {
-          card.querySelector('.t').textContent =
-            m[1].replace(/\\'/g, "'").replace(/^Drawing \d+\s+—\s+/, '');
-        }
         const a = src.match(/about:\s*'((?:\\'|[^'])+)'/);
-        if (a) {
-          let text = a[1].replace(/\\'/g, "'");
-          text = (text.match(/^.*?[.!?](?=\s|$)/) || [text])[0].trim();
-          if (text.length > 140) {
-            text = text.slice(0, 140).replace(/\s+\S*$/, '') + '…';
-          }
-          const d = document.createElement('span');
-          d.className = 'd';
-          d.textContent = text;
-          card.querySelector('.txt').appendChild(d);
-        }
-        if (!src.startsWith('// Auto-generated')) card.classList.remove('todo');
+        fillMeta(card, n, m && m[1].replace(/\\'/g, "'"),
+                 a && a[1].replace(/\\'/g, "'"), src.startsWith('// Auto-generated'));
       }).catch(() => {});
-
-      // the construction loops continuously, GIF-style (poster paints first)
       fetch(`./movies/view_${n}.mp4`, { method: 'HEAD' }).then((r) => {
-        if (!r.ok) return;
-        const v = document.createElement('video');
-        v.muted = true;
-        v.loop = true;
-        v.autoplay = true;
-        v.playsInline = true;
-        v.preload = 'none';   // poster paints instantly; play() on scroll-in fetches the loop
-        v.poster = `./movies/view_${n}.png`;
-        v.src = `./movies/view_${n}.mp4`;
-        // every loop starts at step 0 = a blank canvas; if they all start in
-        // phase the whole grid goes white at once right after the posters
-        // paint ("the thumbnails disappear").  Spread the starting phases so
-        // the grid always shows a mix of construction states.
-        v.addEventListener('loadedmetadata', () => {
-          if (isFinite(v.duration)) v.currentTime = (0.381966 * n * v.duration) % v.duration;
-        }, { once: true });
-        const thumb = card.querySelector('.thumb');
-        thumb.textContent = '';
-        thumb.appendChild(v);
-        io.observe(v);
+        if (r.ok) addMovie(card, n, idx);
       }).catch(() => {});
-    }
+    });
   </script>
 </body>
 </html>

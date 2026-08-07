@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Build gallery manifest
+        run: python3 2_computational_form_finding/Equilibrium/drawings/web/tools/make_manifest.py
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
