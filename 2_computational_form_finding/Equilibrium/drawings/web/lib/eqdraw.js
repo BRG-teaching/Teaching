@@ -597,8 +597,14 @@ export class Drawing {
           }
           g = { kind: 'darrow', meshes, head, objs: [...meshes, head] };
         }
+      } else if (e.kind === 'strokes') {
+        const meshes = [];
+        for (let i = 0; i < e.meshes.length; i++) {
+          meshes.push(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat));
+        }
+        g = { kind: 'strokes', meshes, objs: meshes };
       } else {
-        continue;              // ghost twins exist for seg / arrow / darrow only
+        continue;              // ghost twins exist for seg / arrow / darrow / strokes only
       }
       g.w = e.w; g.z = e.z; g.headLen = e.headLen; g.headW = e.headW;
       g.dash = e.dash; g.mats = [mat]; g.ghostNow = true;
