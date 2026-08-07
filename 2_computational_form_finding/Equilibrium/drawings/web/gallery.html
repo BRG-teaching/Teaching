@@ -224,10 +224,32 @@
       v.addEventListener('loadedmetadata', () => {
         if (isFinite(v.duration)) v.currentTime = (0.381966 * n * v.duration) % v.duration;
       }, { once: true });
-      // reveal the loop only once frames are really rendering
+      // reveal the loop only once a sampled frame PROVES the video is really
+      // rendering: a starved/reset GPU decoder "plays" pure black frames
+      // (currentTime advances, no picture) — trusting timeupdate would paint
+      // that blank over the poster, the "thumbnails disappear" symptom
+      const probe = document.createElement('canvas');
+      probe.width = 48; probe.height = 30;
+      const px = probe.getContext('2d', { willReadFrequently: true });
+      let checks = 0;
+      const check = () => {
+        if (v.classList.contains('live') || checks++ > 40 || !v.videoWidth) return;
+        try {
+          px.drawImage(v, 0, 0, probe.width, probe.height);
+          const d = px.getImageData(0, 0, probe.width, probe.height).data;
+          let lum = 0;
+          for (let i = 0; i < d.length; i += 4) lum += d[i] + d[i + 1] + d[i + 2];
+          // real frames of these white-canvas drawings are bright; broken
+          // decode is pure black — anything clearly non-black is a picture
+          if (lum / (d.length / 4) > 48) { v.classList.add('live'); return; }
+        } catch {}
+        if (v.requestVideoFrameCallback) v.requestVideoFrameCallback(check);
+        else setTimeout(check, 400);
+      };
       v.addEventListener('timeupdate', () => {
-        if (v.currentTime > 0.05) v.classList.add('live');
-      });
+        if (!v.classList.contains('live') && checks === 0) check();
+      }, { once: true });
+      if (v.requestVideoFrameCallback) v.requestVideoFrameCallback(check);
       // a rate-limited (503) load: keep the poster, retry a few times
       let tries = 0;
       v.addEventListener('error', () => {
