@@ -288,6 +288,9 @@ export function create(dw, panel, makePlayer) {
   dw.label('dimH3', '12m', { cls: 'point', intro: 1, flash: false, when: (st) => st.dims });
   dw.strokes('dimE4', 3, { intro: 13, w: 0.025, color: 0xa8a8a8, flash: false, when: (st) => st.dims });
   dw.label('dimE4t', '', { cls: 'point', intro: 13, flash: false, when: (st) => st.dims });
+  // applet's e_8 dim: horizontal offset of the dragged pylon foot E2 from its start (0m at rest)
+  dw.strokes('dimE2', 3, { intro: 13, w: 0.025, color: 0xa8a8a8, flash: false, when: (st) => st.dims });
+  dw.label('dimE2t', '', { cls: 'point', intro: 13, flash: false, when: (st) => st.dims });
   dw.label('dimAlpha', '', { cls: 'point', intro: 13, flash: false, when: (st) => st.dims });
 
   // points
@@ -363,7 +366,7 @@ export function create(dw, panel, makePlayer) {
     dw.setStrokes('ground', [[C7[0], C7[1]], [C7[1], C7[2]], [C7[2], C7[3]],
       [N8[0], N8[1]], [N8[1], N8[2]], [N8[2], N8[3]], [N8[3], N8[4]], [N8[4], N8[5]],
       [PLAT1[0], PLAT1[1]], [STEP1[0], STEP1[1]], [PLAT2[0], PLAT2[1]],
-      [[-0.922, 0.2537], [C7[0], C7[0][1]] ]]);
+      [[-0.922, 0.2537], C7[0]]]);
     dw.setDashLine('plat1', PLAT1);
     dw.setDashLine('plat2', PLAT2);
 
@@ -485,7 +488,14 @@ export function create(dw, panel, makePlayer) {
       vt(WX, -0.282), vt(d.E4[0], -0.282)]);
     dw.setLabel('dimE4t', [(WX + d.E4[0]) / 2, -0.7]);
     dw.setText('dimE4t', `${Math.round(4 * Math.abs(d.E4[0] - WX))}m`);
-    dw.setLabel('dimAlpha', V.add(d.E2, [1.55, 0.72]));
+    // e_8: offset of E2 from its start position, on the row through N_2 (0m at rest)
+    const Y_DIM2 = -1.2916072318505418, E2X0 = 15.169472488416774;
+    dw.setStrokes('dimE2', [[[E2X0, Y_DIM2], [d.E2[0], Y_DIM2]],
+      [[E2X0 - 0.12, Y_DIM2 - 0.12], [E2X0 + 0.12, Y_DIM2 + 0.12]],
+      [[d.E2[0] - 0.12, Y_DIM2 + 0.12], [d.E2[0] + 0.12, Y_DIM2 - 0.12]]]);
+    dw.setLabel('dimE2t', [(E2X0 + d.E2[0]) / 2, Y_DIM2 - 0.42]);
+    dw.setText('dimE2t', `${Math.round(4 * Math.abs(d.E2[0] - E2X0))}m`);
+    dw.setLabel('dimAlpha', V.add(d.E2, [2.0, 0.72]));
     dw.setText('dimAlpha', `α = ${(Math.round(d.alpha * 10) / 10).toFixed(1)}°`);
 
     // points
