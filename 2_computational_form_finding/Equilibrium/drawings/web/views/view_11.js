@@ -731,7 +731,10 @@ export function create(dw, panel, makePlayer) {
     dst = computeSideTrial(s, d);
     update();
     updateNode();
-    imgMesh.visible = player.k <= 1;
+    // the applet's pic3 shows at step ≟ 0 = its RESOLVED presentation state:
+    // keep it at our intro AND at the finished drawing, hide it mid-construction
+    const last = player.k >= player.steps.length - 1;
+    imgMesh.visible = player.k <= 1 || last;
     imgMat.opacity = player.k === 0 ? 0.95 : 0.4;
     player.apply(d, s);
   }
