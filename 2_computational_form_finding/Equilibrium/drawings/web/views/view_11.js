@@ -64,6 +64,8 @@ const DEFAULTS = {
   sIF: 0.35,
   trial: false,                           // main-span trial construction
   sideTrial: true,                        // the applet's TrialFunicular
+  arr: false,                             // the applet's o_2 showArrows layer
+  dims: true,                             // the applet's showDimensions (default ON)
   o1: true,                               // show internal forces
   showPts: false,
   node: 0,
@@ -242,11 +244,12 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 5; i++) dw.dashLine(`stat${i}`, { intro: 1, dash: 0.35 });
   dw.dashLine('ctr', { intro: 1, dash: 0.18 });              // sag handle guide
   for (let i = 0; i < 45; i++) dw.dashLine(`hg${i}`, { intro: 1, dash: 0.09 });
-  dw.seg('dim', { intro: 1, w: W_DIM, color: PAL.grey, flash: false });
-  dw.strokes('dimT', 5, { intro: 1, w: W_DIM, color: PAL.grey, flash: false });
-  dw.label('dim1', '1125 ft (345 m)', { cls: 'point', intro: 1, flash: false, color: PAL.grey });
-  dw.label('dim2', '4200 ft (1280 m)', { cls: 'point', intro: 1, flash: false, color: PAL.grey });
-  dw.label('dim3', '1125 ft (345 m)', { cls: 'point', intro: 1, flash: false, color: PAL.grey });
+  const dimsOn = (st) => st.dims;         // the applet's showDimensions checkbox
+  dw.seg('dim', { intro: 1, w: W_DIM, color: PAL.grey, flash: false, when: dimsOn });
+  dw.strokes('dimT', 5, { intro: 1, w: W_DIM, color: PAL.grey, flash: false, when: dimsOn });
+  dw.label('dim1', '1125 ft (345 m)', { cls: 'point', intro: 1, flash: false, color: PAL.grey, when: dimsOn });
+  dw.label('dim2', '4200 ft (1280 m)', { cls: 'point', intro: 1, flash: false, color: PAL.grey, when: dimsOn });
+  dw.label('dim3', '1125 ft (345 m)', { cls: 'point', intro: 1, flash: false, color: PAL.grey, when: dimsOn });
   dw.instant('deckLf', 'deckLe', 'deckMf', 'deckMe', 'deckRf', 'deckRe',
              'tower1', 'tower2', 'anch1', 'anch2', 'ctr', 'dim', 'dimT',
              ...Array.from({ length: 5 }, (_, i) => `stat${i}`),
@@ -260,6 +263,16 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('R1force', { intro: 2, ...ARROW });
   dw.label('lbl_R1force', 'R₁ (field)', { cls: 'num', intro: 2, color: PAL.green });
   dw.link('R1form', 'R1force', 'lbl_R1form', 'lbl_R1force');
+
+  // the applet's hidden o_2 "showArrows" layer: the band load drawn as the
+  // 29 + 8 + 8 individual per-hanger load arrows hanging under the deck
+  // (applet: main span at its load step, left side span at the side-load
+  // step; we mirror the right side span too, consistent with our step 10)
+  const arr = (st) => st.arr;
+  const PHA = { w: 0.045, headLen: 0.16, headW: 0.09, color: PAL.green, flash: false };
+  for (let j = 0; j < 29; j++) dw.arrow(`pha${j}`, { intro: 2, when: arr, ...PHA });
+  for (let j = 0; j < 8; j++) dw.arrow(`phaL${j}`, { intro: 7, when: arr, ...PHA });
+  for (let j = 0; j < 8; j++) dw.arrow(`phaR${j}`, { intro: 10, when: arr, ...PHA });
 
   // ------------------------------------------------------------------
   // step 3: half-chords -> pole o (+ optional main trial construction)
@@ -534,6 +547,17 @@ export function create(dw, panel, makePlayer) {
     dw.setArrow('R1force', d.O8, d.T9);
     dw.setLabel('lbl_R1force', [s.o8x + 1.05, (d.O8[1] + d.T9[1]) / 2]);
 
+    // per-hanger load arrows (applet o_2 layer): tails on the deck axis,
+    // 0.5 . sLS long, straight down (applet: y 5.05 -> 4.55 at sLS = 1)
+    const phaY = (DECK0 + DECK1) / 2, phaL = 0.5 * s.sLS;
+    for (let j = 0; j < 29; j++) {
+      dw.setArrow(`pha${j}`, [MAIN_X[j], phaY], [MAIN_X[j], phaY - phaL]);
+    }
+    for (let j = 0; j < 8; j++) {
+      dw.setArrow(`phaL${j}`, [SIDE_L[j], phaY], [SIDE_L[j], phaY - phaL]);
+      dw.setArrow(`phaR${j}`, [mirX(SIDE_L[j]), phaY], [mirX(SIDE_L[j]), phaY - phaL]);
+    }
+
     // half-chords -> pole
     dw.setDashLine('hc1', [d.B6, d.C]);
     dw.setDashLine('hc2', [d.B6, d.Z5]);
@@ -754,8 +778,10 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sLS', 'scale load symbol', 0.5, 2, 0.05, refresh);
   panel.toggle(par, s, 'trial', 'trial construction (main span)', refresh);
   panel.toggle(par, s, 'sideTrial', 'trial funicular (side span)', refresh);
+  panel.toggle(par, s, 'arr', 'show per-hanger load arrows', refresh);
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 1, 0.05, refresh);
+  panel.toggle(par, s, 'dims', 'show dimensions', refresh);
   panel.toggle(par, s, 'showPts', 'show points', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off): tower 1, tower 2, anchor H, anchor J, sag', 0, 5, 1, refresh);
