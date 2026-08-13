@@ -197,12 +197,12 @@ export function create(dw, panel, makePlayer) {
   // rays right -- the applet draws the pole rays dash10, and they stay)
   dw.seg('tf1a', { intro: 4, outro: 11, w: W_STR, color: PAL.grey });  // A-W8
   dw.seg('tf1b', { intro: 4, outro: 11, w: W_STR, color: PAL.grey });  // W8-B
-  dw.dashLine('tr1a', { intro: 4, dash: 0.7 });                        // S2-C9
-  dw.dashLine('tr1b', { intro: 4, dash: 0.7 });                        // A9-C9
+  dw.dashLine('tr1a', { intro: 4, outro: RESOLVE, dash: 0.7 });        // S2-C9 (b_4)
+  dw.dashLine('tr1b', { intro: 4, outro: RESOLVE, dash: 0.7 });        // A9-C9 (a_4)
   dw.seg('tf2a', { intro: 5, outro: 11, w: W_STR, color: PAL.grey });  // A-Z8
   dw.seg('tf2b', { intro: 5, outro: 11, w: W_STR, color: PAL.grey });  // Z8-B
-  dw.dashLine('tr2a', { intro: 5, dash: 0.7 });                        // A9-D9
-  dw.dashLine('tr2b', { intro: 5, dash: 0.7 });                        // U3-D9
+  dw.dashLine('tr2a', { intro: 5, outro: RESOLVE, dash: 0.7 });        // A9-D9 (n_3)
+  dw.dashLine('tr2b', { intro: 5, outro: RESOLVE, dash: 0.7 });        // U3-D9 (m_3)
   dw.link('tf1a', 'tr1a');
   dw.link('tf1b', 'tr1b');
   dw.link('tf2a', 'tr2a');
@@ -224,8 +224,8 @@ export function create(dw, panel, makePlayer) {
   // step 7: the pole o closes the parallelogram (grey dashed, stays); the
   // applet re-adds the component pair on the far sides (k_8 = o'2->o 'B1',
   // l_8 = o->o'1 'A2', grey th5, retired with the components)
-  dw.dashLine('par1', { intro: 7, dash: 0.7 });                        // C9-E9
-  dw.dashLine('par2', { intro: 7, dash: 0.7 });                        // E9-D9
+  dw.dashLine('par1', { intro: 7, outro: RESOLVE, dash: 0.7 });        // C9-E9 (i_4)
+  dw.dashLine('par2', { intro: 7, outro: RESOLVE, dash: 0.7 });        // E9-D9 (j_4)
   dw.link('par1', 'par2');
   dw.arrow('parB1', { intro: 7, outro: 9, ...ARROW, color: PAL.grey });
   dw.arrow('parA2', { intro: 7, outro: 9, ...ARROW, color: PAL.grey });
@@ -259,8 +259,8 @@ export function create(dw, panel, makePlayer) {
   for (const n of ['ofA1', 'ofA2', 'ofB1', 'ofB2']) {
     dw.dashLine(n, { intro: 9, when: noO2, dash: 0.4, color: PAL.black, flash: false });
   }
-  dw.dashLine('tanA', { intro: 9, dash: 0.7 });
-  dw.dashLine('tanB', { intro: 9, dash: 0.7 });
+  dw.dashLine('tanA', { intro: 9, outro: RESOLVE, dash: 0.7 });        // a_15
+  dw.dashLine('tanB', { intro: 9, outro: RESOLVE, dash: 0.7 });        // b_15
   dw.link('reacA', 'fA', 'lbl_reacA', 'lbl_fA');
   dw.link('reacB', 'fB', 'lbl_reacB', 'lbl_fB');
   dw.link('tanA', 'tanB');
@@ -291,18 +291,19 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_A9', { intro: 3, ...DERIVED, when: show });
   dw.disk('pt_V3', { intro: 4, ...HANDLE, when: show });
   dw.disk('pt_W8', { intro: 4, outro: 11, ...DERIVED, when: show });
-  dw.disk('pt_C9', { intro: 4, ...DERIVED, when: show });
+  dw.disk('pt_C9', { intro: 4, outro: RESOLVE, ...DERIVED, when: show });
   dw.disk('pt_Z8', { intro: 5, outro: 11, ...DERIVED, when: show });
-  dw.disk('pt_D9', { intro: 5, ...DERIVED, when: show });
-  dw.disk('pt_E9', { intro: 7, ...DERIVED, when: show });
-  dw.disk('pt_T11', { intro: 9, ...DERIVED, when: show });
+  dw.disk('pt_D9', { intro: 5, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_E9', { intro: 7, outro: RESOLVE, ...DERIVED, when: show });
+  dw.disk('pt_T11', { intro: 9, outro: RESOLVE, ...DERIVED, when: show });
   for (let k = 1; k <= NSTRIP; k++) {
     dw.disk(`pt_X${k}`, { intro: cabIntro(k - 1), r: 0.3, when: show });
   }
 
   const letters = {
-    A: ['A', 1], B: ['B', 1], V3: ['V₃', 4], W8: ['W₈', 4, 11], C9: ['o′₁', 4],
-    Z8: ['Z₈', 5, 11], D9: ['o′₂', 5], E9: ['o', 7], T11: ['T₁₁', 9],
+    A: ['A', 1], B: ['B', 1], V3: ['V₃', 4], W8: ['W₈', 4, 11],
+    C9: ['o′₁', 4, RESOLVE], Z8: ['Z₈', 5, 11], D9: ['o′₂', 5, RESOLVE],
+    E9: ['o', 7, RESOLVE], T11: ['T₁₁', 9, RESOLVE],
   };
   for (const [p, [text, intro, outro]] of Object.entries(letters)) {
     dw.label(`lbl_${p}`, text, { cls: 'point', intro, outro, when: show });
