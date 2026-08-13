@@ -30,7 +30,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 32 — Airport Hangar, P. L. Nervi',
   subtitle: 'one vault, three funiculars: parabola, catenary, and the arch under Q',
-  about: 'Nervi\'s airport hangar: the vault spans between two springings and must pass through the crown — a three-point funicular problem solved three times. Under a uniform load per unit span, half-span trial funiculars locate the division points and the pole o: the parabola. Measuring the true strip lengths with circles at the arch vertices corrects the load line (heavier near the springings) and gives the catenary-like arch that hugs the built section. An extra load Q on any strip re-poses the problem once more: the arch reshapes and resolves blue, in pure compression.',
+  about: 'Nervi\'s airport hangar: the vault spans between two springings and must pass through the crown — a three-point funicular problem solved three times. Under a uniform load per unit span, half-span trial funiculars locate the division points and the pole o: the parabola. Measuring the true strip lengths with circles at the arch vertices corrects the load line (heavier near the springings) and gives the catenary-like arch that hugs the built section. An extra load Q on any strip re-poses the problem once more: the arch reshapes under Q, drawn orange like the original.',
   frame: [[-14.4, -16.3], [82.5, 32.2]],
 };
 
@@ -91,7 +91,7 @@ const STEPS = [
   { t: 'The pole o₂', d: 'right: the divisions i₁, i₂ of the new load line (found with a trial as before); parallels to the crown chords meet at the pole o₂, with rays to every load point' },
   { t: 'The arch under Q', d: 'left: side by side, the funicular of R+Q: through the crown, onto the far springing — but reshaped by Q — right: its sides are parallel to the o₂ rays' },
   { t: 'Reactions', d: 'right: the polygon closes on the outer rays: A = o₂→top, B = bottom→o₂ — left: the thrusts push into the springings' },
-  { t: 'Compression', d: 'the arch under Q resolves blue = pure compression; the parabola stays for comparison (black); drag Q along the strips, or the sliders w_d, factorQ — click an arch node for its equilibrium' },
+  { t: 'Compression', d: 'the arch under Q stays orange like the original (it is in pure compression — the pipes show it); the parabola stays for comparison (black); drag Q along the strips, or the sliders w_d, factorQ — click an arch node for its equilibrium' },
 ];
 
 const cache = {};
@@ -313,15 +313,16 @@ export function create(dw, panel, makePlayer) {
   dw.label('lB2f', 'B', { cls: 'num', intro: 9, color: PAL.green, when: catW });
 
   // step 10 -- the extra load Q + the load line R+Q
-  dw.arrow('loadQ', { intro: QSTEP, ...ARROW, w: 0.16 });
-  dw.label('lQ', 'Q', { cls: 'num', intro: QSTEP, color: PAL.green });
+  // the applet's Q system is ORANGE (u, a_3, the positionQ strip, Text1_1)
+  dw.arrow('loadQ', { intro: QSTEP, ...ARROW, w: 0.16, color: PAL.orange });
+  dw.label('lQ', 'Q', { cls: 'num', intro: QSTEP, color: PAL.orange });
   dw.dashLine('qstrip', { intro: QSTEP, dash: 0.12, color: 0x666666 });
   for (let k = 0; k < DIV; k++) {
     dw.seg(`llb${k}`, { intro: QSTEP, w: 0.1, color: PAL.green });
   }
-  dw.seg('llbQ', { intro: QSTEP, w: 0.17, color: PAL.green });
+  dw.seg('llbQ', { intro: QSTEP, w: 0.17, color: PAL.orange });
   dw.arrow('llbHead', { intro: QSTEP, ...ARROW });
-  dw.label('lRQ', 'R+Q', { intro: QSTEP, color: PAL.green });
+  dw.label('lRQ', 'R+Q', { intro: QSTEP, color: PAL.orange });
   for (let k = 0; k <= DIV; k++) {
     dw.disk(`llb_${k}`, { intro: QSTEP, r: 0.08, face: 0x666666, edge: 0x666666,
             when: (st) => st.n4 });
@@ -338,9 +339,8 @@ export function create(dw, panel, makePlayer) {
   dw.label('lbl_pC', 'o₂', { cls: 'point', intro: 11 });
   dw.strokes('fan3', DIV + 1, { intro: 11, w: W_RAY, color: PAL.grey });
 
-  // step 12 -- the arch under Q
-  dw.strokes('arch3', DIV + 1, { intro: 12, w: W_BAR,
-    color: { pending: PAL.black, final: (dd) => dd.cA } });
+  // step 12 -- the arch under Q (the applet's a_3: persistently ORANGE)
+  dw.strokes('arch3', DIV + 1, { intro: 12, w: W_BAR, color: PAL.orange });
 
   // step 13 -- reactions
   dw.arrow('reacA3', { intro: 13, ...ARROW });
