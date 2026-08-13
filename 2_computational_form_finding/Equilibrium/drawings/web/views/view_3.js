@@ -273,6 +273,12 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('vLoad', { intro: 2, dash: 0.5 });
   dw.arrow('aload1', { intro: 2, ...ARROW });
   dw.arrow('aload2', { intro: 2, ...ARROW });
+  // the applet labels the loads on-canvas in BOTH diagrams (u/v captions
+  // F_2/F_1 on the form vectors, w_4/p_4 captions F_1/F_2 on the load line)
+  dw.label('lfF2', 'F₂', { cls: 'num', intro: 2, color: PAL.green });
+  dw.label('lfF1', 'F₁', { cls: 'num', intro: 2, color: PAL.green });
+  dw.label('lsF1', 'F₁', { cls: 'num', intro: 2, color: PAL.green });
+  dw.label('lsF2', 'F₂', { cls: 'num', intro: 2, color: PAL.green });
 
   // steps 4-6: trial rays (right) with the trial funicular sides (left),
   // all grey as in the applet
@@ -378,8 +384,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('cable3', 'force3', 'f3', 's3');
   dw.link('hang4', 'force4', 'f4', 's4');
   dw.link('hang1', 'force1', 'f1', 's1');
-  dw.link('loadL', 'aload2');
-  dw.link('loadM', 'aload1');
+  dw.link('loadL', 'aload2', 'lfF2', 'lsF2');
+  dw.link('loadM', 'aload1', 'lfF1', 'lsF1');
   dw.link('tf1', 'ray1');
   dw.link('tf2', 'ray2');
   dw.link('tf3', 'ray3');
@@ -491,6 +497,10 @@ export function create(dw, panel, makePlayer) {
     dw.setDashLine('vLoad', [[s.o1x, VY[0]], [s.o1x, VY[1]]]);
     dw.setArrow('aload1', ...bes(d.O1, d.P1));
     dw.setArrow('aload2', ...bes(d.P1, d.Q1));
+    dw.setLabel('lfF2', [s.l1x - 0.85, DECK_Y - s.sLS + 0.35]);
+    dw.setLabel('lfF1', [s.m1x + 0.85, DECK_Y - s.sLS + 0.35]);
+    dw.setLabel('lsF1', V.add(V.mid(...bes(d.O1, d.P1)), [1.05, 0]));
+    dw.setLabel('lsF2', V.add(V.mid(...bes(d.P1, d.Q1)), [1.05, 0]));
 
     dw.setDashLine('vR', [[d.R1[0], VY[0]], [d.R1[0], VY[1]]]);
     dw.setDashLine('vS', [[d.S1[0], VY[0]], [d.S1[0], VY[1]]]);
