@@ -55,6 +55,7 @@ const DEFAULTS = {
   trial: false,                     // full trial funicular apparatus (o_1)
   w2: null,                         // UDL thrust line (null = follow steps)
   o3: false,                        // M-parabola pole constructions
+  bow: false,                       // show Bow notation
   o1: true,                         // pipes
   sIF: 0.05,
   node: 0,
@@ -388,6 +389,16 @@ export function create(dw, panel, makePlayer) {
   // trial funicular (o_1 toggle): straight port of the two division parallels
   // through trial poles is already covered in Drawing 43; here the toggle
   // shows the hinge-chord layer permanently
+
+  // Bow notation (the applet's showBow): region letters around each of the
+  // three frames + the lowercase force-line letters a / g
+  const boww = (st) => st.bow;
+  const BOW = { qA: 'A', qB: 'B', qC: 'C', qD: 'D', qE: 'E', qF: 'F',
+                pA: 'A', pB: 'B', pC: 'C', pD: 'D', pE: 'E',
+                sA: 'A', sB: 'B', sC: 'C', sD: 'D', sE: 'E', sF: 'F', sG: 'G',
+                fa: 'a', fg: 'g' };
+  for (const [n, t] of Object.entries(BOW)) dw.label(`bow_${n}`, t, { when: boww, flash: false });
+
   // pipes
   const pipeW = (st) => st.o1 && st._k >= 7;
   for (const cse of CASES) {
@@ -469,6 +480,33 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lI', V.add(d.I, [0.05, 0.5]));
     dw.setLabel('lA', V.add(d.A, [-0.45, -0.4]));
     dw.setLabel('lC', V.add(d.C, [0.45, -0.4]));
+
+    // Bow notation letters (positions = the applet's Text anchors)
+    const cen4 = (a, b, c, e) => [(a[0] + b[0] + c[0] + e[0]) / 4, (a[1] + b[1] + c[1] + e[1]) / 4];
+    const mid2 = V.mid;
+    const bows = {
+      qA: V.add(d.B, [-2, 1]),
+      qB: V.add(mid2(mid2(d.B, d.I), mid2(d.I, d.D)), [0, 1]),
+      qC: V.add(d.D, [1, 1]),
+      qD: V.add(d.C, [1, -1.5]),
+      qE: cen4(d.A, d.B, d.D, d.C),
+      qF: V.add(d.A, [-2, -1.5]),
+      pA: V.add(mid2(d.AP, d.BP), [-2, 0]),
+      pB: V.add(mid2(d.BP, d.DP), [0, 1]),
+      pC: V.add(d.CP, [1, -1.5]),
+      pD: cen4(d.AP, d.BP, d.DP, d.CP),
+      pE: V.add(d.AP, [-2, -1.5]),
+      sA: V.add(d.BS, [-2, 1]),
+      sB: V.add(mid2(mid2(d.BS, d.IS), mid2(d.IS, d.DS)), [0, 1]),
+      sC: V.add(d.DS, [1, 1]),
+      sD: V.add(d.CS, [1, -1.5]),
+      sE: cen4(d.AS, d.BS, d.DS, d.CS),
+      sF: V.add(d.AS, [-2, -1.5]),
+      sG: V.add(mid2(d.AS, d.BS), [-2, 0]),
+      fa: V.add(d.LL0, [0.55, 0]),
+      fg: V.add(d.C4, [0.55, 0]),
+    };
+    for (const n of Object.keys(BOW)) dw.setLabel(`bow_${n}`, bows[n]);
     const railX = [0, d.l, d.xI, s.P, s.P + d.xI, s.P + d.l, s.S, s.S + d.xI];
     railX.forEach((x, i) => dw.setDashLine(`rail${i}`, [[x, s.yJ5], [x, -s.dM]]));
 
@@ -698,6 +736,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'F', 'F — point load (kN)', 10, 30, 1, refresh);
   panel.slider(par, s, 'fr', 'frame size l = h (m)', 2, 6, 0.1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 5, 20, 1, refresh);
+  panel.slider(par, s, 'sLS', 'scale load symbol', 0.2, 1, 0.1, refresh);
   panel.slider(par, s, 'sND', 'scale N diagram', 15, 50, 1, refresh);
   panel.slider(par, s, 'sVD', 'scale V diagram', 15, 50, 1, refresh);
   panel.slider(par, s, 'sMD', 'scale M diagram', 15, 100, 1, refresh);
@@ -708,6 +747,7 @@ export function create(dw, panel, makePlayer) {
   const thrProxy = { get w2() { return s.w2 === null ? s._k === 11 : s.w2; }, set w2(v) { s.w2 = v; } };
   panel.toggle(par, thrProxy, 'w2', 'show thrust line (q)', refresh);
   panel.toggle(par, s, 'o3', 'show parabola construction', refresh);
+  panel.toggle(par, s, 'bow', 'show Bow notation', refresh);
   panel.button(par, 'reset geometry', () => {
     const kp = { _k: s._k, node: s.node, w2: s.w2 };
     Object.assign(s, { ...DEFAULTS, ...kp });
