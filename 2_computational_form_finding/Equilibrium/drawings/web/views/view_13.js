@@ -92,7 +92,7 @@ const STEPS = [
   { t: 'The envelope', d: 'the chain always passes through F, E and I, but one-sided live load swings it between these two extremes around the dead-load shape' },
   { t: 'A point load Q', d: 'left: a wagon load Q = factor_Q·strip on hanger positionQ (drag it along the deck!) — right: Q on its own small load line' },
   { t: 'Q alone: the chord lines', d: 'left: alone, Q would hang as a triangle through F, E, I — its kink S on the chord lines extended (dashed) — right: the parallels give Q’s own little pole triangle' },
-  { t: 'Q joins the load line', d: 'right: the full load line again, with Q widening its strip’s gap (green) — left: Q stays on its hanger' },
+  { t: 'Q joins the load line', d: 'right: the full load line again, with Q widening its strip’s gap (orange, like the original) — left: Q stays on its hanger' },
   { t: 'Trial pole o′₁ again', d: 'right: a trial pole o′₁ with rays to the right-span loads (now including Q if it is there) — left: the trial funicular above the chain' },
   { t: 'Trial pole o′₂ again', d: 'right: the second trial pole o′₂ for the left-span loads — left: its trial funicular' },
   { t: 'Closings → i₁ and i₂', d: 'left: the dashed closings — and the span resultants’ lines of action — right: parallels through o′₁ / o′₂ cut the load line at i₁ and i₂' },
@@ -279,24 +279,24 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('bandO', 5, { intro: 2, w: 0.16, color: PAL.green });
   dw.label('lg1', 'g', { intro: 2, color: PAL.green });
   dw.label('lg2', 'g', { intro: 2, color: PAL.green });
-  dw.seg('llg', { intro: 2, w: 0.1, color: PAL.grey });
-  dw.strokes('ltg', 16, { intro: 2, w: 0.12, color: PAL.grey });
+  dw.seg('llg', { intro: 2, outro: 12, w: 0.1, color: PAL.grey });
+  dw.strokes('ltg', 16, { intro: 2, outro: 12, w: 0.12, color: PAL.grey });
 
   // ---- step 3: resultant R_g; step 4: the R1 / R2 split ----
-  dw.dashArrow('RgF', { intro: 3, ...RARROW });
+  dw.dashArrow('RgF', { intro: 3, outro: 4, ...RARROW });
   dw.dashArrow('RgL', { intro: 3, outro: 4, ...RARROW });
-  dw.label('lRgF', 'R_g', { intro: 3, color: PAL.green });
+  dw.label('lRgF', 'R_g', { intro: 3, outro: 4, color: PAL.green });
   dw.label('lRgL', 'R_g', { intro: 3, outro: 4, color: PAL.green });
   dw.dashLine('r1line', { intro: 4, outro: 12, dash: DASH, flash: false });
   dw.dashLine('r2line', { intro: 4, outro: 12, dash: DASH, flash: false });
-  dw.dashArrow('R1F', { intro: 4, ...RARROW });
-  dw.dashArrow('R2F', { intro: 4, ...RARROW });
-  dw.dashArrow('R2L', { intro: 4, ...RARROW });
-  dw.dashArrow('R1L', { intro: 4, ...RARROW });
-  dw.label('lR1F', 'R₁', { intro: 4, color: PAL.green });
-  dw.label('lR2F', 'R₂', { intro: 4, color: PAL.green });
-  dw.label('lR1L', 'R₁', { intro: 4, color: PAL.green });
-  dw.label('lR2L', 'R₂', { intro: 4, color: PAL.green });
+  dw.dashArrow('R1F', { intro: 4, outro: 12, ...RARROW });
+  dw.dashArrow('R2F', { intro: 4, outro: 12, ...RARROW });
+  dw.dashArrow('R2L', { intro: 4, outro: 12, ...RARROW });
+  dw.dashArrow('R1L', { intro: 4, outro: 12, ...RARROW });
+  dw.label('lR1F', 'R₁', { intro: 4, outro: 12, color: PAL.green });
+  dw.label('lR2F', 'R₂', { intro: 4, outro: 12, color: PAL.green });
+  dw.label('lR1L', 'R₁', { intro: 4, outro: 12, color: PAL.green });
+  dw.label('lR2L', 'R₂', { intro: 4, outro: 12, color: PAL.green });
 
   // ---- steps 5-8: dead-case trial -> divisions -> chords -> pole o ----
   dw.strokes('tfan1', 10, { intro: 5, outro: 12, w: W_RAY, color: PAL.grey });
@@ -311,7 +311,7 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('chordR', { intro: 8, color: ORANGE, dash: 1.4 });
   dw.dashLine('ppar1', { intro: 8, outro: 12, dash: DASH });
   dw.dashLine('ppar2', { intro: 8, outro: 12, dash: DASH });
-  dw.strokes('fanG', 16, { intro: 8, w: W_RAY, color: PAL.grey });
+  dw.strokes('fanG', 16, { intro: 8, outro: 12, w: W_RAY, color: PAL.grey });
 
   // ---- step 9: the dead chain (dash-dotted) ----
   const NDASH = 64;
@@ -343,45 +343,45 @@ export function create(dw, panel, makePlayer) {
   dw.poly('bandQ1', 4, { intro: 12, opacity: 0.16, color: ORANGE, flash: false });
   dw.strokes('bandQ1o', 4, { intro: 12, w: 0.16, color: ORANGE });
   dw.label('lq1', 'q₁', { intro: 12, color: ORANGE });
-  dw.seg('llq1', { intro: 12, w: 0.1, color: PAL.grey });
-  dw.strokes('ltq1', 17, { intro: 12, w: 0.12, color: PAL.grey });
-  dw.dashArrow('Rq1a', { intro: 12, ...RARROW });
-  dw.dashArrow('Rq1b', { intro: 12, ...RARROW });
-  dw.label('lRq1a', 'R₂ = R_g', { intro: 12, color: PAL.green });
-  dw.label('lRq1b', 'R₁ = R_g + R_q₁', { intro: 12, color: PAL.green });
+  dw.seg('llq1', { intro: 12, outro: 15, w: 0.1, color: PAL.grey });
+  dw.strokes('ltq1', 17, { intro: 12, outro: 15, w: 0.12, color: PAL.grey });
+  dw.dashArrow('Rq1a', { intro: 12, outro: 15, ...RARROW });
+  dw.dashArrow('Rq1b', { intro: 12, outro: 15, ...RARROW });
+  dw.label('lRq1a', 'R₂ = R_g', { intro: 12, outro: 15, color: PAL.green });
+  dw.label('lRq1b', 'R₁ = R_g + R_q₁', { intro: 12, outro: 15, color: PAL.green });
   dw.dashLine('pparQ1a', { intro: 13, outro: 15, dash: DASH });
   dw.dashLine('pparQ1b', { intro: 13, outro: 15, dash: DASH });
-  dw.strokes('fanQ1', 17, { intro: 13, w: W_RAY, color: PAL.grey });
+  dw.strokes('fanQ1', 17, { intro: 13, outro: 15, w: W_RAY, color: PAL.grey });
   dw.highlight('chordL', [13, 16, 25]);
   dw.highlight('chordR', [13, 16, 25]);
   dw.strokes('chainQ1', 16, { intro: 14, w: W_CH, color: PAL.black });
-  dw.arrow('reacAq1', { intro: 14, outro: 17, ...ARROW });
-  dw.arrow('reacBq1', { intro: 14, outro: 17, ...ARROW });
-  dw.arrow('reacAq1l', { intro: 14, outro: 17, ...ARROW, when: rfw });
-  dw.arrow('reacBq1l', { intro: 14, outro: 17, ...ARROW, when: rfw });
-  dw.label('lAq1', 'A', { intro: 14, outro: 17, color: PAL.green });
-  dw.label('lBq1', 'B', { intro: 14, outro: 17, color: PAL.green });
+  dw.arrow('reacAq1', { intro: 14, outro: 15, ...ARROW });
+  dw.arrow('reacBq1', { intro: 14, outro: 15, ...ARROW });
+  dw.arrow('reacAq1l', { intro: 14, outro: 15, ...ARROW, when: rfw });
+  dw.arrow('reacBq1l', { intro: 14, outro: 15, ...ARROW, when: rfw });
+  dw.label('lAq1', 'A', { intro: 14, outro: 15, color: PAL.green });
+  dw.label('lBq1', 'B', { intro: 14, outro: 15, color: PAL.green });
 
   // ---- steps 15-17: live load q2 ----
   dw.poly('bandQ2', 4, { intro: 15, opacity: 0.16, color: ORANGE, flash: false });
   dw.strokes('bandQ2o', 4, { intro: 15, w: 0.16, color: ORANGE });
   dw.label('lq2', 'q₂', { intro: 15, color: ORANGE });
-  dw.seg('llq2', { intro: 15, w: 0.1, color: PAL.grey });
-  dw.strokes('ltq2', 17, { intro: 15, w: 0.12, color: PAL.grey });
-  dw.dashArrow('Rq2a', { intro: 15, ...RARROW });
-  dw.dashArrow('Rq2b', { intro: 15, ...RARROW });
-  dw.label('lRq2a', 'R₂ = R_g + R_q₂', { intro: 15, color: PAL.green });
-  dw.label('lRq2b', 'R₁ = R_g', { intro: 15, color: PAL.green });
+  dw.seg('llq2', { intro: 15, outro: 19, w: 0.1, color: PAL.grey });
+  dw.strokes('ltq2', 17, { intro: 15, outro: 19, w: 0.12, color: PAL.grey });
+  dw.dashArrow('Rq2a', { intro: 15, outro: 19, ...RARROW });
+  dw.dashArrow('Rq2b', { intro: 15, outro: 19, ...RARROW });
+  dw.label('lRq2a', 'R₂ = R_g + R_q₂', { intro: 15, outro: 19, color: PAL.green });
+  dw.label('lRq2b', 'R₁ = R_g', { intro: 15, outro: 19, color: PAL.green });
   dw.dashLine('pparQ2a', { intro: 16, outro: 18, dash: DASH });
   dw.dashLine('pparQ2b', { intro: 16, outro: 18, dash: DASH });
-  dw.strokes('fanQ2', 17, { intro: 16, w: W_RAY, color: PAL.grey });
+  dw.strokes('fanQ2', 17, { intro: 16, outro: 19, w: W_RAY, color: PAL.grey });
   dw.strokes('chainQ2', 16, { intro: 17, w: W_CH, color: PAL.black });
-  dw.arrow('reacAq2', { intro: 17, outro: 27, ...ARROW });
-  dw.arrow('reacBq2', { intro: 17, outro: 27, ...ARROW });
-  dw.arrow('reacAq2l', { intro: 17, outro: 27, ...ARROW, when: rfw });
-  dw.arrow('reacBq2l', { intro: 17, outro: 27, ...ARROW, when: rfw });
-  dw.label('lAq2', 'A', { intro: 17, outro: 27, color: PAL.green });
-  dw.label('lBq2', 'B', { intro: 17, outro: 27, color: PAL.green });
+  dw.arrow('reacAq2', { intro: 17, outro: 19, ...ARROW });
+  dw.arrow('reacBq2', { intro: 17, outro: 19, ...ARROW });
+  dw.arrow('reacAq2l', { intro: 17, outro: 19, ...ARROW, when: rfw });
+  dw.arrow('reacBq2l', { intro: 17, outro: 19, ...ARROW, when: rfw });
+  dw.label('lAq2', 'A', { intro: 17, outro: 19, color: PAL.green });
+  dw.label('lBq2', 'B', { intro: 17, outro: 19, color: PAL.green });
 
   // ---- step 18: envelope (highlights only) ----
   dw.highlight('chainG', [18]);
@@ -390,10 +390,10 @@ export function create(dw, panel, makePlayer) {
 
   // ---- steps 19-21: the point load Q ----
   dw.dashLine('qline', { intro: 19, color: ORANGE, dash: DASH, flash: false });
-  dw.arrow('loadQ', { intro: 19, ...ARROW, w: 0.62, headW: 0.95 });
-  dw.label('lQ', 'Q', { intro: 19, color: PAL.green });
-  dw.arrow('qmini', { intro: 19, outro: 21, ...ARROW });
-  dw.label('lQm', 'Q', { intro: 19, outro: 21, color: PAL.green });
+  dw.arrow('loadQ', { intro: 19, ...ARROW, w: 0.62, headW: 0.95, color: ORANGE });
+  dw.label('lQ', 'Q', { intro: 19, color: ORANGE });
+  dw.arrow('qmini', { intro: 19, outro: 21, ...ARROW, color: ORANGE });
+  dw.label('lQm', 'Q', { intro: 19, outro: 21, color: ORANGE });
   dw.dashLine('rail', { intro: 20, outro: 21, dash: DASH });
   dw.dashLine('qaloneF', { intro: 20, outro: 21, color: ORANGE, dash: 1.4 });
   dw.dashLine('qaloneP1', { intro: 20, outro: 21, dash: DASH });
@@ -401,8 +401,8 @@ export function create(dw, panel, makePlayer) {
   dw.label('lS6', 'S', { intro: 20, outro: 21, cls: 'point' });
   dw.seg('llQ', { intro: 21, w: 0.1, color: PAL.grey });
   dw.strokes('ltQ', 16, { intro: 21, w: 0.12, color: PAL.grey });
-  dw.seg('segQ', { intro: 21, w: 0.55, color: PAL.green });
-  dw.label('lQl', 'Q', { intro: 21, color: PAL.green });
+  dw.seg('segQ', { intro: 21, w: 0.55, color: ORANGE });
+  dw.label('lQl', 'Q', { intro: 21, color: ORANGE });
   dw.dashArrow('RgQ', { intro: 21, ...RARROW });
   dw.label('lRgQ', 'R_g + Q', { intro: 21, color: PAL.green });
   dw.highlight('loadQ', [21]);
@@ -455,9 +455,9 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_ts2', { intro: 6, outro: 12, ...HANDLE, when: show });
   dw.disk('pt_i1', { intro: 7, outro: 12, ...DERIVED, when: show });
   dw.disk('pt_i2', { intro: 7, outro: 12, ...DERIVED, when: show });
-  dw.disk('pt_o', { intro: 8, ...DERIVED, when: show });
-  dw.disk('pt_o1', { intro: 13, ...DERIVED, when: show });
-  dw.disk('pt_o2', { intro: 16, ...DERIVED, when: show });
+  dw.disk('pt_o', { intro: 8, outro: 12, ...DERIVED, when: show });
+  dw.disk('pt_o1', { intro: 13, outro: 15, ...DERIVED, when: show });
+  dw.disk('pt_o2', { intro: 16, outro: 19, ...DERIVED, when: show });
   dw.disk('pt_S6', { intro: 20, outro: 21, ...DERIVED, when: show });
   dw.disk('pt_T6', { intro: 20, outro: 21, ...DERIVED, when: show });
   dw.disk('pt_q6', { intro: 19, outro: 21, ...HANDLE, when: show });
@@ -472,7 +472,7 @@ export function create(dw, panel, makePlayer) {
   const letters = {
     F: ['F', 1], E: ['E', 1], I: ['I', 1],
     tp1: ['o′₁', 5, 12], tp2: ['o′₂', 6, 12], i1: ['i₁', 7, 12], i2: ['i₂', 7, 12],
-    o: ['o', 8], o1: ['o₁', 13], o2: ['o₂', 16],
+    o: ['o', 8, 12], o1: ['o₁', 13, 15], o2: ['o₂', 16, 19],
     up1: ['o′₁', 22, 27], up2: ['o′₂', 23, 27], j1: ['i₁', 24, 27], j2: ['i₂', 24, 27],
     o3: ['o₃', 25],
   };
@@ -487,7 +487,7 @@ export function create(dw, panel, makePlayer) {
   // readouts
   for (let i = 0; i < 3; i++) {
     dw.label(`ro${i}`, '', { intro: RESOLVE, flash: false,
-              color: i < 2 ? PAL.green : PAL.red });
+              color: i < 2 ? PAL.green : ORANGE });
   }
 
   // node-equilibrium inspector
