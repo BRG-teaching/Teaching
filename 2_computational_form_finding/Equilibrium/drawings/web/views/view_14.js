@@ -42,7 +42,9 @@ const DEFAULTS = {
   // auxiliary pole O: the applet's baked position puts P off-frame (the aux
   // is hidden there by default); ours starts inside the canvas, still draggable
   ox: 95, oy: 47,
-  fQ: 3,                                 // F_Q [0, 10] (applet default 0 -- see notes)
+  fQ: 3,                                 // F_Q [0, 10]; applet+live default is 0, but the step
+                                         // narrative (load line M->N, residual C-Q) needs Q > 0 --
+                                         // at 0 steps 6-10 collapse to zero-length segments
   fC: 6,                                 // F_C [1, 10]
   sFD: 6.7,                              // scaleForceDiagram [0.5, 10]
   sIF: 0.055,                            // scaleInternalForces [0, 0.2]
@@ -143,7 +145,7 @@ export function create(dw, panel, makePlayer) {
 
   // step 6: the load Q
   dw.arrow('loadQ', { intro: 6, ...ARROW, color: qColor });
-  dw.label('lQ', 'Q', { intro: 6, color: PAL.green });
+  dw.label('lQ', 'Q', { intro: 6, color: qColor });
   dw.arrow('llQ', { intro: 6, ...ARROW, when: (st) => st.fQ > 0 });
   dw.label('lQf', 'Q', { intro: 6, color: PAL.green, when: (st) => st.fQ > 0 });
 
