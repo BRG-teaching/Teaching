@@ -298,7 +298,10 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i <= 10; i++) dw.link(`fun${i}`, `ray${i}`);
   dw.link('cs2', 'ga1');
   dw.link('mout', 'segH', 'lblH');
-  dw.ghostable('Rforce', 'segH');
+  // COMPLETE force-diagram ghost: R on the load line, H, the full pole fan
+  // and the offset reaction arrows (form-side V/M bands never ghost)
+  dw.ghostable('Rforce', 'segH', 'ofA', 'ofB',
+               ...Array.from({ length: 11 }, (_, i) => `ray${i}`));
 
   // ------------------------------------------------------------------
   // geometry refresh
