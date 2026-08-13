@@ -370,7 +370,11 @@ export function create(dw, panel, makePlayer) {
   dw.link('loaA', 'rdir', 'fA', 'lfA', 'reacA', 'lRA');
   dw.link('loadU', 'loadL', 'lQu', 'lQl', 'fQ', 'lfQ');
   dw.link('rhGP', 'rhPQ', 'rhPE', 'rhPF', 'reacB', 'lRB');
-  dw.ghostable('fCO', 'fOD', 'fA', 'fQ', 'fH');
+  // the COMPLETE force diagram must appear in the ghost preview: both chord
+  // force variants (le/gt cases -- their `when` gates pick the active one),
+  // all three force arrows AND the N_max dimension apparatus
+  dw.ghostable('fCO', 'fCOg', 'fOD', 'fODg', 'fA', 'fQ', 'fH',
+               'dimI', 'dimO', 'dlead', 'mlead');
 
   // ------------------------------------------------------------------
   // geometry refresh
