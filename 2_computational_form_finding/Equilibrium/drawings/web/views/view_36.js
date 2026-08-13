@@ -250,14 +250,14 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_Q', { intro: 5, outro: 8, ...HANDLE, when: show });
   dw.disk('pt_S', { intro: 5, outro: 8, ...DERIVED, when: show });
   dw.disk('pt_T', { intro: 5, outro: 8, ...DERIVED, when: show });
-  dw.disk('pt_U', { intro: 6, ...DERIVED, when: show });
+  dw.disk('pt_U', { intro: 6, outro: RESOLVE, ...DERIVED, when: show });  // applet hides i at step 0
   dw.disk('pt_V', { intro: 8, ...DERIVED, when: show });
   dw.disk('pt_W', { intro: 10, ...DERIVED, when: show });
   dw.disk('pt_Z', { intro: 11, ...DERIVED, when: show });
 
   const letters = {
     A: ['A', 1], B: ['B', 1], C: ['C', 1],
-    R: ['o′', 4, 8], U: ['i', 6],
+    R: ['o′', 4, 8], U: ['i', 6, RESOLVE],
     Q: ['Q', 5, 8], S: ['S', 5, 8], T: ['T', 5, 8],
   };
   for (const [p, [text, intro, outro]] of Object.entries(letters)) {
