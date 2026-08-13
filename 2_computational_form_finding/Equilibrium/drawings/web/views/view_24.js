@@ -67,6 +67,7 @@ const DEFAULTS = {
   sIF: 0.05,                   // scale internal forces
   o1: true,                    // show internal forces
   n4: true,                    // show points
+  lbl: true,                   // the applet's showLabels (its default is OFF; labels ON is the house default)
   rf: true,                    // show reaction forces in force diagram
   constr: true,                // show parabola construction (applet default OFF)
   dims: true,                  // show dimensions (applet default ON)
@@ -234,12 +235,13 @@ export function create(dw, panel, makePlayer) {
   dw.label('lbl_A', 'A', { cls: 'point', intro: 3, when: cWhen });
   dw.label('lbl_F', 'F', { cls: 'point', intro: 3, when: cWhen });
 
-  // step 4: loads + load line
+  // step 4: loads + load line (name labels behind the applet's showLabels)
+  const lblOn = (st) => st.lbl;
   for (let i = 1; i <= 6; i++) {
     dw.arrow(`loadF${i}`, { intro: 4, ...ARROW });
-    dw.label(`lF${i}`, `F${SUB[i]}`, { cls: 'num', intro: 4, color: PAL.green });
+    dw.label(`lF${i}`, `F${SUB[i]}`, { cls: 'num', intro: 4, color: PAL.green, when: lblOn });
     dw.arrow(`edge${i}`, { intro: 4, ...ARROW });
-    dw.label(`lFf${i}`, `F${SUB[i]}`, { cls: 'num', intro: 4, color: PAL.green });
+    dw.label(`lFf${i}`, `F${SUB[i]}`, { cls: 'num', intro: 4, color: PAL.green, when: lblOn });
   }
 
   // step 10: tangent through A (light, the applet's a_7)
@@ -249,8 +251,8 @@ export function create(dw, panel, makePlayer) {
   for (let k = 1; k <= 11; k++) {
     dw.seg(`mem${k}`, { intro: IK[k], w: W_BAR, color: memCol(k) });
     dw.seg(`fseg${k}`, { intro: IK[k], w: W_FSEG, color: memCol(k) });
-    dw.label(`n${k}f`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k) });
-    dw.label(`n${k}s`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k) });
+    dw.label(`n${k}f`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k), when: lblOn });
+    dw.label(`n${k}s`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k), when: lblOn });
   }
 
   // step 11: posts + roof sheet
@@ -267,8 +269,8 @@ export function create(dw, panel, makePlayer) {
     dw.dashLine(`conn${r}2`, { intro: 14, dash: 0.2, color: 0x006400, when: rWhen });
     dw.arrow(`reac${r}`, { intro: 14, ...REAC, when: rWhen });
     dw.arrow(`reac${r}form`, { intro: 14, ...REAC });
-    dw.label(`lbl${r}f`, r, { cls: 'num', intro: 14, color: PAL.green });
-    dw.label(`lbl${r}s`, r, { cls: 'num', intro: 14, color: PAL.green, when: rWhen });
+    dw.label(`lbl${r}f`, r, { cls: 'num', intro: 14, color: PAL.green, when: lblOn });
+    dw.label(`lbl${r}s`, r, { cls: 'num', intro: 14, color: PAL.green, when: (st) => st.lbl && st.rf });
   }
 
   // internal-force pipes
@@ -589,6 +591,7 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(par, s, 'rf', 'show reaction forces in force diagram', refresh);
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
+  panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'constr', 'show parabola construction', refresh);
   panel.toggle(par, s, 'dims', 'show dimensions', refresh);

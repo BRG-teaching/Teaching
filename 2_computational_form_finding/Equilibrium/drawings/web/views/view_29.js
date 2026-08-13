@@ -56,6 +56,7 @@ const DEFAULTS = {
   trial: false,                          // show trial funicular
   cyan: false,                           // show construction (cyan layer)
   n4: true,
+  lbl: true,                             // the applet's showLabels (its default is OFF; house default ON)
   node: 0,
 };
 
@@ -182,7 +183,7 @@ export function create(dw, panel, makePlayer) {
   for (let k = 0; k < 5; k++) {
     dw.dashLine(`al${k}`, { intro: 2, dash: 0.08 });
     dw.arrow(`ld${k}`, { intro: 2, ...ARROW });
-    dw.label(`lG${k}`, `G${'₁₂₃₄₅'[k]}`, { intro: 2, color: PAL.green });
+    dw.label(`lG${k}`, `G${'₁₂₃₄₅'[k]}`, { intro: 2, color: PAL.green, when: (st) => st.lbl });
     dw.arrow(`lv${k}`, { intro: 2, ...ARROW });
     dw.label(`lLL${k}`, '', { intro: 2, color: { final: () => (s.fQ !== 0 && Math.round(s.pQ) === 5 - k ? PAL.orange : PAL.green) } });
   }
@@ -195,12 +196,12 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('conI', { intro: 3, dash: 0.09, color: PAL.black });
   dw.arrow('rA', { intro: 3, ...ARROW });
   dw.arrow('rB', { intro: 3, ...ARROW });
-  dw.label('lrA', 'A', { intro: 3, color: PAL.green });
-  dw.label('lrB', 'B', { intro: 3, color: PAL.green });
+  dw.label('lrA', 'A', { intro: 3, color: PAL.green, when: (st) => st.lbl });
+  dw.label('lrB', 'B', { intro: 3, color: PAL.green, when: (st) => st.lbl });
   dw.arrow('fA', { intro: 3, ...ARROW });
   dw.arrow('fB', { intro: 3, ...ARROW });
-  dw.label('lfA', 'A', { intro: 3, color: PAL.green });
-  dw.label('lfB', 'B', { intro: 3, color: PAL.green });
+  dw.label('lfA', 'A', { intro: 3, color: PAL.green, when: (st) => st.lbl });
+  dw.label('lfB', 'B', { intro: 3, color: PAL.green, when: (st) => st.lbl });
   dw.disk('pt_i', { intro: 3, r: 0.055, when: (st) => st.n4 });
   dw.label('lp_i', 'i', { cls: 'point', intro: 3 });
 
@@ -239,18 +240,18 @@ export function create(dw, panel, makePlayer) {
 
   // member numbers, both diagrams
   for (let k = 0; k < 6; k++) {
-    dw.label(`nfC${k}`, `${NUM_C[k]}`, { cls: 'num', intro: IN_C[k], color: liveC('cC', k) });
-    dw.label(`nsC${k}`, `${NUM_C[k]}`, { cls: 'num', intro: IN_C[k], color: liveC('cC', k) });
-    dw.label(`nfA${k}`, `${NUM_A[k]}`, { cls: 'num', intro: IN_A[k], color: liveC('cA', k) });
-    dw.label(`nsA${k}`, `${NUM_A[k]}`, { cls: 'num', intro: IN_A[k], color: liveC('cA', k) });
+    dw.label(`nfC${k}`, `${NUM_C[k]}`, { cls: 'num', intro: IN_C[k], color: liveC('cC', k), when: (st) => st.lbl });
+    dw.label(`nsC${k}`, `${NUM_C[k]}`, { cls: 'num', intro: IN_C[k], color: liveC('cC', k), when: (st) => st.lbl });
+    dw.label(`nfA${k}`, `${NUM_A[k]}`, { cls: 'num', intro: IN_A[k], color: liveC('cA', k), when: (st) => st.lbl });
+    dw.label(`nsA${k}`, `${NUM_A[k]}`, { cls: 'num', intro: IN_A[k], color: liveC('cA', k), when: (st) => st.lbl });
   }
   for (let k = 0; k < 5; k++) {
-    dw.label(`nfV${k}`, `${NUM_V[k]}`, { cls: 'num', intro: IN_V[k], color: liveC('cV', k) });
-    dw.label(`nsV${k}`, `${NUM_V[k]}`, { cls: 'num', intro: IN_V[k], color: liveC('cV', k) });
+    dw.label(`nfV${k}`, `${NUM_V[k]}`, { cls: 'num', intro: IN_V[k], color: liveC('cV', k), when: (st) => st.lbl });
+    dw.label(`nsV${k}`, `${NUM_V[k]}`, { cls: 'num', intro: IN_V[k], color: liveC('cV', k), when: (st) => st.lbl });
   }
   for (let k = 0; k < 4; k++) {
-    dw.label(`nfD${k}`, `${NUM_D[k]}`, { cls: 'num', intro: 15, color: liveC('cD', k) });
-    dw.label(`nsD${k}`, `${NUM_D[k]}`, { cls: 'num', intro: 15, color: liveC('cD', k), when: (st) => st.fQ !== 0 });
+    dw.label(`nfD${k}`, `${NUM_D[k]}`, { cls: 'num', intro: 15, color: liveC('cD', k), when: (st) => st.lbl });
+    dw.label(`nsD${k}`, `${NUM_D[k]}`, { cls: 'num', intro: 15, color: liveC('cD', k), when: (st) => st.lbl && st.fQ !== 0 });
   }
 
   // hidden layers (instant): grey trial + cyan derivation
@@ -526,6 +527,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.05, 0.0025, refresh);
   panel.toggle(par, s, 'trial', 'show trial funicular', refresh);
   panel.toggle(par, s, 'cyan', 'show construction', refresh);
+  panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(s, { ...DEFAULTS });

@@ -50,6 +50,7 @@ const DEFAULTS = {
   sIF: 0.04,                             // scale internal forces
   o1: true,                              // show internal forces
   n4: true,                              // show points
+  lbl: true,                             // the applet's showLabels (default ON)
   node: 0,                               // node-equilibrium inspector (0 = off)
 };
 
@@ -180,20 +181,22 @@ export function create(dw, panel, makePlayer) {
   // step 2: the stay anchors + stay skeleton
   dw.strokes('skelStay', 6, { intro: 2, w: W_SKEL, color: PAL.grey });
 
-  // step 3: loads + the left load line
+  // step 3: loads + the left load line (labels behind the applet's showLabels)
+  const lblOn = (st) => st.lbl;
   for (let i = 1; i <= 6; i++) {
     dw.dashLine(`act${i}`, { intro: 3, dash: 0.3 });
     dw.arrow(`loadF${i}`, { intro: 3, ...ARROW });
-    dw.label(`lF${i}`, `F${SUB[i]}`, { cls: 'num', intro: 3, color: PAL.green });
+    dw.label(`lF${i}`, `F${SUB[i]}`, { cls: 'num', intro: 3, color: PAL.green, when: lblOn });
     dw.arrow(`edge${i}`, { intro: i <= 3 ? 3 : 11, ...ARROW });
-    dw.label(`lFf${i}`, `F${SUB[i]}`, { cls: 'num', intro: i <= 3 ? 3 : 11, color: PAL.green });
+    dw.label(`lFf${i}`, `F${SUB[i]}`, { cls: 'num', intro: i <= 3 ? 3 : 11, color: PAL.green, when: lblOn });
   }
 
   // members: each drawn (form, colored) at its joint step with its force segment
   for (let k = 1; k <= 16; k++) {
     dw.seg(`mem${k}`, { intro: IK[k], w: W_BAR, color: memCol(k) });
     dw.seg(`fseg${k}`, { intro: IK[k], w: W_FSEG, color: memCol(k) });
-    const wn = k === 14 ? (st, dd) => dd.len14 > 0.5 : k === 15 ? (st, dd) => dd.len15 > 0.5 : undefined;
+    const wn = k === 14 ? (st, dd) => st.lbl && dd.len14 > 0.5
+      : k === 15 ? (st, dd) => st.lbl && dd.len15 > 0.5 : lblOn;
     dw.label(`n${k}f`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k), when: wn });
     dw.label(`n${k}s`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k), when: wn });
   }
@@ -203,16 +206,16 @@ export function create(dw, panel, makePlayer) {
   dw.seg('h3', { intro: 13, w: 0.06, color: PAL.black, when: bw });
   dw.arrow('reacB', { intro: 13, ...ARROW, when: bw });
   dw.arrow('reacBform', { intro: 13, ...ARROW, when: bw });
-  dw.label('lblBf', 'B', { cls: 'num', intro: 13, color: PAL.green, when: bw });
-  dw.label('lblBs', 'B', { cls: 'num', intro: 13, color: PAL.green, when: bw });
+  dw.label('lblBf', 'B', { cls: 'num', intro: 13, color: PAL.green, when: (st, dd) => st.lbl && bw(st, dd) });
+  dw.label('lblBs', 'B', { cls: 'num', intro: 13, color: PAL.green, when: (st, dd) => st.lbl && bw(st, dd) });
 
   // step 14: the reaction A beside the load line
   dw.dashLine('q5', { intro: 14, dash: 0.35, color: 0x006400 });
   dw.dashLine('p5', { intro: 14, dash: 0.35, color: 0x006400 });
   dw.arrow('reacA', { intro: 14, ...ARROW });
   dw.arrow('reacAform', { intro: 14, ...ARROW });
-  dw.label('lblAf', 'A', { cls: 'num', intro: 14, color: PAL.green });
-  dw.label('lblAs', 'A', { cls: 'num', intro: 14, color: PAL.green });
+  dw.label('lblAf', 'A', { cls: 'num', intro: 14, color: PAL.green, when: lblOn });
+  dw.label('lblAs', 'A', { cls: 'num', intro: 14, color: PAL.green, when: lblOn });
 
   // internal-force pipes
   for (let k = 1; k <= 16; k++) {
@@ -424,6 +427,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'offR', 'offset loadline reaction forces', 0, 5, 0.25, refresh);
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.1, 0.005, refresh);
+  panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node',

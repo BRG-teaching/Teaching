@@ -81,6 +81,7 @@ const DEFAULTS = {
   sIF: 0.04,                   // scale internal forces
   o1: true,                    // show internal forces
   n4: true,                    // show points
+  lbl: true,                   // the applet's showLabels (default ON)
   dims: false,                 // show dimensions
   node: 0,                     // node-equilibrium inspector (0 = off)
 };
@@ -222,20 +223,21 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('skelStay', 5, { intro: 4, w: W_SKEL, color: PAL.grey });
   dw.strokes('skelBack', 1, { intro: 5, w: W_SKEL, color: PAL.grey });
 
-  // step 6: loads + load line
+  // step 6: loads + load line (name labels behind the applet's showLabels)
+  const lblOn = (st) => st.lbl;
   for (let i = 1; i <= 5; i++) {
     dw.arrow(`loadF${i}`, { intro: 6, ...ARROW });
-    dw.label(`lF${i}`, `F${SUB[i]}`, { cls: 'num', intro: 6, color: PAL.green });
+    dw.label(`lF${i}`, `F${SUB[i]}`, { cls: 'num', intro: 6, color: PAL.green, when: lblOn });
     dw.arrow(`edge${i}`, { intro: 6, ...ARROW });
-    dw.label(`lFf${i}`, `F${SUB[i]}`, { cls: 'num', intro: 6, color: PAL.green });
+    dw.label(`lFf${i}`, `F${SUB[i]}`, { cls: 'num', intro: 6, color: PAL.green, when: lblOn });
   }
 
   // members at their joint steps (mast = 11 drawn as a thin bar: two lines)
   for (let k = 1; k <= 12; k++) {
     dw.seg(`mem${k}`, { intro: IK[k], w: W_BAR, color: memCol(k) });
     dw.seg(`fseg${k}`, { intro: IK[k], w: W_FSEG, color: memCol(k) });
-    dw.label(`n${k}f`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k) });
-    dw.label(`n${k}s`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k) });
+    dw.label(`n${k}f`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k), when: lblOn });
+    dw.label(`n${k}s`, `${k}`, { cls: 'num', intro: IK[k], color: numCol(k), when: lblOn });
   }
   dw.seg('mastBar2', { intro: 12, w: W_BAR * 0.5, color: { pending: PAL.black, final: (dd) => dd.col[11] } });
 
@@ -246,8 +248,8 @@ export function create(dw, panel, makePlayer) {
     dw.dashLine(`conn${r}2`, { intro: 13, dash: 0.16, color: 0x006400 });
     dw.arrow(`reac${r}`, { intro: 13, ...REAC });
     dw.arrow(`reac${r}form`, { intro: 13, ...REAC });
-    dw.label(`lbl${r}f`, r, { cls: 'num', intro: 13, color: PAL.green });
-    dw.label(`lbl${r}s`, r, { cls: 'num', intro: 13, color: PAL.green });
+    dw.label(`lbl${r}f`, r, { cls: 'num', intro: 13, color: PAL.green, when: lblOn });
+    dw.label(`lbl${r}s`, r, { cls: 'num', intro: 13, color: PAL.green, when: lblOn });
   }
 
   // internal-force pipes (stays get the applet's double scale)
@@ -516,6 +518,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'offR', 'offset loadline reaction forces', 0, 0.3, 0.02, refresh);
   panel.toggle(par, s, 'o1', 'show internal forces', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.12, 0.005, refresh);
+  panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'dims', 'show dimensions', refresh);
   const nodeSec = panel.section('Node equilibrium');

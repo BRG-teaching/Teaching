@@ -68,6 +68,7 @@ const DEFAULTS = {
   act: false,                        // show actual load/support forces (hidden checkbox)
   sc: false,                         // show constraints (applet showHandles rails)
   n4: true,                          // show points
+  lbl: true,                         // the applet's showLabels (its default is OFF; house default ON)
   node: 0,                           // node-equilibrium inspector (0 = off)
 };
 
@@ -186,13 +187,14 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('railV', { intro: 6, dash: 0.15, when: (st) => st.sc });
   for (let k = 0; k < 8; k++) dw.seg(`mt${k}`, { intro: 1, w: W_BAR, color: liveT(k) });
 
-  // step 2: loads + load line
+  // step 2: loads + load line (name labels behind the applet's showLabels)
+  const lblOn = (st) => st.lbl;
   for (let k = 0; k < 9; k++) {
     dw.dashLine(`al${k}`, { intro: 2, dash: 0.09 });
     dw.arrow(`ldF${k}`, { intro: 2, ...ARROW });
-    dw.label(`lF${k}`, `F${'₁₂₃₄₅₆₇₈₉'[k]}`, { intro: 2, color: PAL.green });
+    dw.label(`lF${k}`, `F${'₁₂₃₄₅₆₇₈₉'[k]}`, { intro: 2, color: PAL.green, when: lblOn });
     dw.arrow(`ll${k}`, { intro: 2, ...ARROW });
-    dw.label(`lLL${k}`, `F${'₁₂₃₄₅₆₇₈₉'[k]}`, { intro: 2, color: PAL.green });
+    dw.label(`lLL${k}`, `F${'₁₂₃₄₅₆₇₈₉'[k]}`, { intro: 2, color: PAL.green, when: lblOn });
   }
 
   // step 3: reactions (division point i + offset chain + support arrows)
@@ -201,12 +203,12 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('conI', { intro: 3, dash: 0.1, color: PAL.black });
   dw.arrow('rB', { intro: 3, ...ARROW });
   dw.arrow('rA', { intro: 3, ...ARROW });
-  dw.label('lrA', 'A', { intro: 3, color: PAL.green });
-  dw.label('lrB', 'B', { intro: 3, color: PAL.green });
+  dw.label('lrA', 'A', { intro: 3, color: PAL.green, when: lblOn });
+  dw.label('lrB', 'B', { intro: 3, color: PAL.green, when: lblOn });
   dw.arrow('fA', { intro: 3, ...ARROW });
   dw.arrow('fB', { intro: 3, ...ARROW });
-  dw.label('lfA', 'A', { intro: 3, color: PAL.green });
-  dw.label('lfB', 'B', { intro: 3, color: PAL.green });
+  dw.label('lfA', 'A', { intro: 3, color: PAL.green, when: lblOn });
+  dw.label('lfB', 'B', { intro: 3, color: PAL.green, when: lblOn });
 
   // steps 4-5: rays parallel to the rafter members (retire with the applet)
   for (let k = 0; k < 8; k++) {
@@ -251,14 +253,14 @@ export function create(dw, panel, makePlayer) {
   const OS_T = [[17, -7], [19, -4], [19, -4], [16, -3], [52, 20], [52, 21], [51, 19], [50, 24]];
   const OS_H = [[-16, 6], [-17, 10], [-15, 13], [-25, 0], [-19, 0], [-20, 0], [-21, 1]];
   for (let k = 0; k < 8; k++) {
-    dw.label(`nfT${k}`, `${NUM_T[k]}`, { cls: 'num', intro: IN_T[k], color: { final: (dd) => dd.cT[k] } });
-    dw.label(`nsT${k}`, `${NUM_T[k]}`, { cls: 'num', intro: IN_T[k], color: { final: (dd) => dd.cT[k] } });
-    dw.label(`nfB${k}`, `${NUM_B[k]}`, { cls: 'num', intro: IN_B[k], color: { final: (dd) => dd.cB[k] } });
-    dw.label(`nsB${k}`, `${NUM_B[k]}`, { cls: 'num', intro: IN_B[k], color: { final: (dd) => dd.cB[k] } });
+    dw.label(`nfT${k}`, `${NUM_T[k]}`, { cls: 'num', intro: IN_T[k], color: { final: (dd) => dd.cT[k] }, when: lblOn });
+    dw.label(`nsT${k}`, `${NUM_T[k]}`, { cls: 'num', intro: IN_T[k], color: { final: (dd) => dd.cT[k] }, when: lblOn });
+    dw.label(`nfB${k}`, `${NUM_B[k]}`, { cls: 'num', intro: IN_B[k], color: { final: (dd) => dd.cB[k] }, when: lblOn });
+    dw.label(`nsB${k}`, `${NUM_B[k]}`, { cls: 'num', intro: IN_B[k], color: { final: (dd) => dd.cB[k] }, when: lblOn });
   }
   for (let k = 0; k < 7; k++) {
-    dw.label(`nfH${k}`, `${NUM_H[k]}`, { cls: 'num', intro: IN_H[k], color: { final: (dd) => dd.cH[k] } });
-    dw.label(`nsH${k}`, `${NUM_H[k]}`, { cls: 'num', intro: IN_H[k], color: { final: (dd) => dd.cH[k] } });
+    dw.label(`nfH${k}`, `${NUM_H[k]}`, { cls: 'num', intro: IN_H[k], color: { final: (dd) => dd.cH[k] }, when: lblOn });
+    dw.label(`nsH${k}`, `${NUM_H[k]}`, { cls: 'num', intro: IN_H[k], color: { final: (dd) => dd.cH[k] }, when: lblOn });
   }
 
   // points
@@ -564,6 +566,7 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(par, s, 'fun', 'show funicular polygon', refresh);
   panel.toggle(par, s, 'act', 'show actual load/support forces', refresh);
   panel.toggle(par, s, 'sc', 'show constraints', refresh);
+  panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.button(par, 'return to start', () => {
     Object.assign(s, { ...DEFAULTS });
