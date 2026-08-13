@@ -219,7 +219,7 @@ export function create(dw, panel, makePlayer) {
   dw.link('formC', 'reacC', 'lCf', 'lC');
   dw.link('para1', 'rays1'); dw.link('para2', 'rays2');
   dw.ghostable('edgeR1', 'edgeR2', 'reacA', 'reacB', 'reacC',
-               'rayH1', 'rayH2', 'rayV1', 'rayV2');
+               'rayH1', 'rayH2', 'rayV1', 'rayV2', 'rays1', 'rays2');
 
   // ------------------------------------------------------------------
   function pairs(pts) {

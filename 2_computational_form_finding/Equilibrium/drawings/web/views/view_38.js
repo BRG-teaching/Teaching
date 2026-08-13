@@ -385,7 +385,9 @@ export function create(dw, panel, makePlayer) {
   dw.link('rForm', 'rLine', 'lbl_rForm', 'lbl_rLine');
   for (let i = 0; i < 6; i++) dw.link(`tstr${i}`, `tray${i}`);
   dw.link('tclose', 'tpar');
-  dw.ghostable(...Array.from({ length: 21 }, (_, i) => `fs${i + 1}`));
+  dw.ghostable(...Array.from({ length: 21 }, (_, i) => `fs${i + 1}`),
+               ...Array.from({ length: 5 }, (_, i) => `fl${i}`),
+               'reacAf', 'reacBf');
 
   // re-flash joints' members: G1's at 8, P's at 9, P''s at 10
   dw.highlight('m1', [8, 9]);

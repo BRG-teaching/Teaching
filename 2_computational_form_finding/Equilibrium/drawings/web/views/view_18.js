@@ -456,7 +456,10 @@ export function create(dw, panel, makePlayer) {
   dw.link('arch2', 'fan3', 'oray3a', 'oray3b');
   dw.link('reacA', 'reacAf', 'lRA', 'lRA2');
   dw.link('reacB', 'reacBf', 'lRB', 'lRB2');
-  dw.ghostable('edgeG', 'edgeQa', 'edgeQb', 'segQ', 'reacAf', 'reacBf');
+  // edgeG retires at step 10 (outroed elements stay out of the ghost);
+  // fan3 + the two outer rays are the pole fan that persists to the end
+  dw.ghostable('edgeQa', 'edgeQb', 'segQ', 'reacAf', 'reacBf',
+               'fan3', 'oray3a', 'oray3b');
 
   // ------------------------------------------------------------------
   // geometry refresh

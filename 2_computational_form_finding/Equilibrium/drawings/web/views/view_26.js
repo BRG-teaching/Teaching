@@ -337,7 +337,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('mh3', 'tieC1', 'tieC2');
   dw.ghostable('ft0', 'ft1', 'ft2', 'ft3', 'ft4', 'ft5', 'ft6', 'ft7',
                'fb0', 'fb1', 'fb2', 'fb3', 'fb4', 'fb5', 'fb6', 'fb7',
-               'fh0', 'fh1', 'fh2', 'fh4', 'fh5', 'fh6', 'rA', 'rB');
+               'fh0', 'fh1', 'fh2', 'fh3', 'fh4', 'fh5', 'fh6', 'rA', 'rB',
+               ...[...Array(9)].map((_, k) => `ll${k}`));
 
   // ------------------------------------------------------------------
   // geometry refresh

@@ -407,7 +407,9 @@ export function create(dw, panel, makePlayer) {
   dw.link('rForm', 'rLine', 'lbl_rForm', 'lbl_rLine');
   for (let i = 0; i < 6; i++) dw.link(`tstr${i}`, `tray${i + 1}`);
   dw.link('tclose', 'tpar');
-  dw.ghostable(...Array.from({ length: 25 }, (_, i) => `fs${i + 1}`));
+  dw.ghostable(...Array.from({ length: 25 }, (_, i) => `fs${i + 1}`),
+               ...Array.from({ length: 7 }, (_, i) => `fl${i}`),
+               'reacAf', 'reacBf');
 
   // re-flash form members + loads at their joints' steps (both end nodes)
   function applyMode() {

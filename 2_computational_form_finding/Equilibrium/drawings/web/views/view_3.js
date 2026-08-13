@@ -395,7 +395,7 @@ export function create(dw, panel, makePlayer) {
   dw.link('arrS', 'aR3', 'lfB', 'lsB');
   dw.link('resArrow', 'resFormArrow', 'resGuide', 'lblRf', 'lblRm');
   dw.ghostable('force1', 'force2', 'force3', 'force4', 'force5', 'aload1', 'aload2',
-               'resArrow');
+               'resArrow', 'aR5', 'aR3');
 
   // final step: magnitude readout + optional internal forces
   dw.label('ro5', '', { intro: RESOLVE, flash: false, color: { final: (dd) => dd.c5 } });

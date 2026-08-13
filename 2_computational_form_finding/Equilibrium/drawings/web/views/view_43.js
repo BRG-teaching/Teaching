@@ -457,7 +457,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('rBV', 'fBV', 'lrBV', 'lfBV');
   dw.link('rBH', 'fBH', 'lrBH', 'lfBH');
   dw.link('thrLine', 'thrFan');
-  dw.ghostable('fR1', 'fR2', 'fAH', 'fAV', 'fBV', 'fBH');
+  dw.ghostable('fR1', 'fR2', 'fAH', 'fAV', 'fBV', 'fBH',
+               'polyT', 'polyB', 'thrFan');
 
   // ------------------------------------------------------------------
   // geometry refresh

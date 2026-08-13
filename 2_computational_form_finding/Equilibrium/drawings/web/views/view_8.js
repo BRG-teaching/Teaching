@@ -269,7 +269,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('closeAB', 'rayOI', 'locus');
   dw.link('reacA', 'reacAf', 'lblRA');
   dw.link('reacB', 'reacBf', 'lblRB');
-  dw.ghostable('edge0', 'edge1', 'edge2', 'edge3', 'fr0', 'fr1', 'fr2', 'fr3', 'fr4');
+  dw.ghostable('edge0', 'edge1', 'edge2', 'edge3', 'fr0', 'fr1', 'fr2', 'fr3', 'fr4',
+               'reacAf', 'reacBf', 'tr0', 'tr1', 'tr2', 'tr3', 'tr4');
 
   // ------------------------------------------------------------------
   // geometry refresh

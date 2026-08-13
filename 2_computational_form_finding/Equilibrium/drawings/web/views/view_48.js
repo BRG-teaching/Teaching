@@ -324,7 +324,9 @@ export function create(dw, panel, makePlayer) {
   dw.link('closing', 'ga1');
   dw.link('mbase', 'gi1');
   dw.link('mout', 'segHl', 'segHr', 'lblHl', 'lblHr');
-  dw.ghostable('Rforce', 'segHl', 'segHr');
+  dw.ghostable('Rforce', 'segHl', 'segHr', 'ofA', 'ofB',
+               ...[...Array(11)].map((_, k) => `ray${k}`),
+               ...[...Array(11)].map((_, k) => `rayB${k}`));
 
   // ------------------------------------------------------------------
   // geometry refresh

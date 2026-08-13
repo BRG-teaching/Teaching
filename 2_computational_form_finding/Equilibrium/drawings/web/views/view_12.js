@@ -390,7 +390,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('dP2', 'dimL', 'lblPlo', 'dropN1');
   dw.ghostable('fr0', 'fr1', 'fr2', 'fr3', 'fr4', 'fr5', 'fr6',
                'lr0', 'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6',
-               'edge0', 'edge1', 'edge2', 'edge3', 'edge4', 'edge5');
+               'edge0', 'edge1', 'edge2', 'edge3', 'edge4', 'edge5',
+               'vA', 'vB', 'vC', 'vD');
 
   // ------------------------------------------------------------------
   // geometry refresh

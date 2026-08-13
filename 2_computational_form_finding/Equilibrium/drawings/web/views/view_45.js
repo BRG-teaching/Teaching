@@ -402,7 +402,8 @@ export function create(dw, panel, makePlayer) {
   dw.ghostable('rLine', 'cAH', 'cAV', 'cBH', 'cBV',
                ...[...Array(19)].map((_, k) => `r${k}`),
                ...[...Array(18)].map((_, k) => `ll${k}`),
-               'subA1', 'subB1', 'subA2', 'subB2', 'reacAf', 'reacBf');
+               'subA1', 'subB1', 'subA2', 'subB2');
+  // reacAf/reacBf retire at step 10 -- outroed elements stay out of the ghost
 
   // ------------------------------------------------------------------
 

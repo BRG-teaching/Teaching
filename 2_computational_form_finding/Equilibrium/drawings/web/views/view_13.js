@@ -526,7 +526,7 @@ export function create(dw, panel, makePlayer) {
   dw.link('chainQ', 'fanQ', 'bstayQ');
   dw.link('reacAQ', 'reacAQl', 'lAQ', 'lAQl');
   dw.link('reacBQ', 'reacBQl', 'lBQ', 'lBQl');
-  dw.ghostable('RgQ', 'segQ', 'llQ', 'reacAQl', 'reacBQl', 'bstayQ');
+  dw.ghostable('RgQ', 'segQ', 'llQ', 'reacAQl', 'reacBQl', 'bstayQ', 'ltQ', 'fanQ');
 
   // ------------------------------------------------------------------
   // geometry refresh

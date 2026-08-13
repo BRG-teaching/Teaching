@@ -324,7 +324,7 @@ export function create(dw, panel, makePlayer) {
   }
 
   dw.ghostable(...[...Array(NSTRIP)].map((_, k) => `ll${k}`),
-               ...[...Array(NSTRIP + 1)].map((_, k) => `ray${k}`), 'fA', 'fB');
+               ...[...Array(NSTRIP + 1)].map((_, k) => `ray${k}`), 'fA', 'fB', 'rTs');
 
   // node-equilibrium inspector: free-body star of the selected node in an
   // inset + the same forces tip-to-tail on the node's sub-polygon of the

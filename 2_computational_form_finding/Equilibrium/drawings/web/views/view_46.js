@@ -296,7 +296,7 @@ export function create(dw, panel, makePlayer) {
   dw.link('fun2', 'ray2', 'n2f', 'n2o');
   dw.link('mbase', 'ga1');
   dw.link('mout', 'segH', 'lblH');
-  dw.ghostable('uF', 'segH', 'ray1', 'ray2');
+  dw.ghostable('uF', 'segH', 'ray1', 'ray2', 'trf', 'trg', 'ofAV', 'ofBV');
 
   // ------------------------------------------------------------------
   // geometry refresh

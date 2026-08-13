@@ -304,7 +304,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('chord', 'polePar');
   dw.link('arrE3', 'aR1', 'lblAf', 'lblAs');
   dw.link('arrG3', 'aR4', 'lblBf', 'lblBs');
-  dw.ghostable('fr0', 'fr1', 'fr2', 'fr3', 'edge0', 'edge1', 'edge2', 'resArrow');
+  dw.ghostable('fr0', 'fr1', 'fr2', 'fr3', 'edge0', 'edge1', 'edge2', 'resArrow',
+               'aR1', 'aR4', 'tr0', 'tr1', 'tr2', 'tr3');
 
   // ------------------------------------------------------------------
   // geometry refresh

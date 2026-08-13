@@ -306,7 +306,7 @@ export function create(dw, panel, makePlayer) {
   dw.link('tfPin', 'tclose1');
   dw.ghostable('fseg1', 'fseg2', 'fseg3', 'fseg4', 'fseg5', 'fseg6', 'fseg7',
                'fseg8', 'fseg9', 'fseg10', 'fseg11', 'edgeF1', 'edgeF2', 'edgeF3',
-               'freacAV', 'freacBV', 'freacBH', 'resR');
+               'freacAV', 'freacBV', 'freacBH', 'resR', 'resRchk');
 
   // ------------------------------------------------------------------
   // geometry refresh

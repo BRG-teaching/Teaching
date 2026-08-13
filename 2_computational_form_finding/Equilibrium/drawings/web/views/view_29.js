@@ -307,7 +307,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('fB', 'rB', 'lfB', 'lrB');
   dw.ghostable('fc0', 'fc1', 'fc2', 'fc3', 'fc4', 'fc5',
                'fa0', 'fa1', 'fa2', 'fa3', 'fa4', 'fa5',
-               'fv0', 'fv1', 'fv2', 'fv3', 'fv4', 'rA', 'rB');
+               'fv0', 'fv1', 'fv2', 'fv3', 'fv4', 'rA', 'rB',
+               'lv0', 'lv1', 'lv2', 'lv3', 'lv4', 'fd0', 'fd1', 'fd2', 'fd3');
 
   // ------------------------------------------------------------------
   // geometry refresh

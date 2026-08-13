@@ -367,7 +367,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('cmpE2', 'cmpW3I1', 'lblAHf', 'lblAHs');
   dw.link('cmpF1', 'cmpV2Z3', 'lblBHf', 'lblBHs');
   dw.link('cmpF2', 'cmpZ3P6', 'lblBVf', 'lblBVs');
-  dw.ghostable('fr0', 'fr1', 'fr2', 'fr3', 'fr4', 'edge0', 'edge1', 'edge2', 'edge3');
+  dw.ghostable('fr0', 'fr1', 'fr2', 'fr3', 'fr4', 'edge0', 'edge1', 'edge2', 'edge3',
+               'cmpV2Z3', 'cmpZ3P6', 'cmpP6W3', 'cmpW3I1');
 
   // node-equilibrium inspector: free-body star of the selected node in an
   // inset at the top + the same forces tip-to-tail on the node's sub-polygon

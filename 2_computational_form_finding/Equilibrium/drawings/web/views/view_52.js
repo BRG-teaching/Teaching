@@ -270,7 +270,9 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 10; i++) dw.link(`ld${i}`, `fl${i}`, `lblLd${i}`, `lblFl${i}`);
   dw.link('reacA', 'reacAf', 'lblA', 'lblAf');
   dw.link('reacB', 'reacBf', 'lblB', 'lblBf');
-  dw.ghostable(...Array.from({ length: 32 }, (_, i) => `fs${i + 1}`));
+  dw.ghostable(...Array.from({ length: 32 }, (_, i) => `fs${i + 1}`),
+               ...Array.from({ length: 10 }, (_, i) => `fl${i}`),
+               'reacAf', 'reacBf');
 
   // ------------------------------------------------------------------
 

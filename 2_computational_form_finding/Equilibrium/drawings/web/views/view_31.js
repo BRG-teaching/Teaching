@@ -384,7 +384,8 @@ export function create(dw, panel, makePlayer) {
   dw.ghostable('edgeQ1', 'edgeQ2', 'edgeQ3', 'edgeQ4', 'edgeQ5', 'edgeQ6',
                'fseg1', 'fseg2', 'fseg3', 'fseg4', 'fseg5', 'fseg6', 'fseg7',
                'fseg8', 'fseg9', 'fseg10', 'fseg11', 'fseg12', 'fseg13',
-               'fseg14', 'fseg15', 'fseg16', 'fseg17', 'reacA2', 'reacB2');
+               'fseg14', 'fseg15', 'fseg16', 'fseg17', 'reacA2', 'reacB2',
+               'pl1', 'pl2');
 
   // ------------------------------------------------------------------
   // geometry refresh

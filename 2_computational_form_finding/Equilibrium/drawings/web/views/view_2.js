@@ -300,7 +300,7 @@ export function create(dw, panel, makePlayer) {
   dw.link('load', 'aload', 'lfF1', 'lsF1');
   dw.link('arrV', 'a2', 'lfA', 'lsA');
   dw.link('arrW', 'a3', 'lfB', 'lsB');
-  dw.ghostable('force1', 'force2', 'force3', 'aload');
+  dw.ghostable('force1', 'force2', 'force3', 'aload', 'a2', 'a3');
 
   // final step: magnitude readout + optional internal forces
   dw.label('roN2', '', { intro: STEPS.length - 1, flash: false, color: { final: (dd) => dd.c2 } });

@@ -385,7 +385,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('reacA3', 'reacA3f', 'lA3', 'lA3f');
   dw.link('reacB3', 'reacB3f', 'lB3', 'lB3f');
   dw.link('loadQ', 'llbQ', 'lQ', 'lRQ', 'qstrip');
-  dw.ghostable('reacA3f', 'reacB3f', 'llbHead');
+  dw.ghostable('reacA3f', 'reacB3f', 'llbHead', 'llbQ', 'fan3',
+               ...[...Array(16)].map((_, k) => `llb${k}`));
 
   // ------------------------------------------------------------------
   // geometry refresh

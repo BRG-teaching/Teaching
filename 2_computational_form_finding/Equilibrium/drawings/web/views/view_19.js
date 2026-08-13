@@ -457,7 +457,9 @@ export function create(dw, panel, makePlayer) {
   dw.link('R2rf', 'lR2rf', 'R2r', 'lR2r');
   dw.link('Brf', 'lBrf', 'Br', 'lBr');
   dw.link('FRabut', 'lFRabut', 'FRr', 'lFRr');
-  dw.ghostable('LL1', 'LL2', 'Hf', 'Ff', 'Af', 'FLf', 'R12r', 'R2r', 'FRr', 'Br');
+  dw.ghostable('LL1', 'LL2', 'Hf', 'Ff', 'Af', 'FLf', 'R12r', 'R2r', 'FRr', 'Br',
+               'lt1', 'fan1', 'lt2', 'fan2', 'ext2', 'FLH', 'FLV',
+               'fanR', 'extR', 'ltR', 'FRV', 'FRH');
   dw.highlight('FLform', [11]);
 
   // ------------------------------------------------------------------

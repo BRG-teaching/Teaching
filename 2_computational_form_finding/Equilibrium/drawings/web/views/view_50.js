@@ -352,7 +352,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('mfun3', 'rayB3', 'n4f', 'n4o');
   dw.link('mfun4', 'rayBN');
   dw.link('ordy', 'segH', 'lbly', 'lblH');
-  dw.ghostable('llF1', 'llF2', 'llF3', 'vll', 'segH', 'rayB0', 'rayB1', 'rayB2', 'rayB3');
+  dw.ghostable('llF1', 'llF2', 'llF3', 'vll', 'segH', 'rayB0', 'rayB1', 'rayB2', 'rayB3',
+               'ray0', 'ray1', 'ray2', 'ray3', 'ofA', 'ofB');
 
   // ------------------------------------------------------------------
   // geometry refresh

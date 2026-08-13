@@ -324,7 +324,10 @@ export function create(dw, panel, makePlayer) {
   dw.link('mbase', 'reacBform', 'reacB', 'mB8', 'lblBf', 'lblBs');
   dw.ghostable('edge1', 'edge2', 'edge3', 'edge4', 'edge5', 'edge6', 'edge7', 'edge8',
                'fmem1', 'fmem2', 'fmem3', 'fmem4', 'fmem5', 'fmem6', 'fmem7',
-               'hoopf1', 'hoopf2', 'hoopf3', 'hoopf6', 'hoopf7', 'hoopf8', 'reacB');
+               'hoopf1', 'hoopf2', 'hoopf3', 'hoopf4', 'hoopf5', 'hoopf6', 'hoopf7',
+               'hoopf8', 'reacB',
+               ...[...Array(8)].map((_, i) => `dq${i + 1}`),
+               ...[...Array(8)].map((_, i) => `dr${i + 1}`));
 
   // ------------------------------------------------------------------
   // geometry refresh
