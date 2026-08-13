@@ -108,7 +108,7 @@ const STEPS = [
   { t: 'Crown chords → the pole o', d: 'left: the crown chords A–D and D–B (dashed) — right: through i₁ parallel to A–D and through i₂ parallel to D–B: the final pole o' },
   { t: 'The arch under Q', d: 'right: the fan from o — left: from A, side by side, the funicular of Rg + Q: through D, onto B, but reshaped by Q' },
   { t: 'Reactions', d: 'right: the polygon closes on the outer rays: A = from o back to the top, B = from the bottom up to o — left: the thrusts push into the springings' },
-  { t: 'Compression', d: 'the trial and no-Q constructions step back exactly like the applet ("show bounding geometry" brings them back) — the arch resolves blue = compression; drag Q, D, o′ or the sliders' },
+  { t: 'Compression', d: 'the trial and no-Q constructions step back exactly like the applet ("show bounding geometry" brings them back) — the arch under Q stays orange like the original (the pipes show its compression); drag Q, D, o′ or the sliders' },
 ];
 
 const cache = {};
@@ -320,13 +320,15 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   // step 9 -- the extra load Q (Q-alone chords + mini diagram -> pole o3)
   // ------------------------------------------------------------------
-  dw.arrow('loadQ', { intro: 9, ...ARROW, w: 0.085, headLen: 0.28, headW: 0.11 });
-  dw.label('lQ', 'Q', { intro: 9, color: PAL.green });
+  // the applet's Q system is ORANGE whenever visible (z_5 dynamic color,
+  // h_20, the positionQ strip on the load line) — not green/blue
+  dw.arrow('loadQ', { intro: 9, ...ARROW, w: 0.085, headLen: 0.28, headW: 0.11, color: PAL.orange });
+  dw.label('lQ', 'Q', { intro: 9, color: PAL.orange });
   dw.dashLine('qloa', { intro: 9, dash: 0.05, color: 0x999999 });
   dw.dashLine('qch0', { intro: 9, outro: 10, dash: 0.12 });
   dw.dashLine('qch1', { intro: 9, outro: 10, dash: 0.12 });
   dw.arrow('qedge', { intro: 9, outro: RESOLVE, ...ARROW });
-  dw.label('lQf', 'Q', { intro: 9, outro: RESOLVE, color: PAL.green });
+  dw.label('lQf', 'Q', { intro: 9, outro: RESOLVE, color: PAL.orange });
   dw.seg('qray0', { intro: 9, outro: RESOLVE, w: 0.02, color: PAL.grey });
   dw.seg('qray1', { intro: 9, outro: RESOLVE, w: 0.02, color: PAL.grey });
 
@@ -335,8 +337,8 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   dw.arrow('edgeQa', { intro: 10, ...ARROW });
   dw.arrow('edgeQb', { intro: 10, ...ARROW });
-  dw.seg('segQ', { intro: 10, w: 0.09, color: PAL.green });
-  dw.label('lQl', 'Q', { intro: 10, color: PAL.green });
+  dw.seg('segQ', { intro: 10, w: 0.09, color: PAL.orange });
+  dw.label('lQl', 'Q', { intro: 10, color: PAL.orange });
   dw.label('lRgQ', 'Rg + Q', { intro: 10, color: PAL.green });
   dw.highlight('loadQ', [10]);
 
@@ -358,7 +360,7 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('fan3', N_STRIP - 1, { intro: 14, w: W_RAY, color: PAL.grey });
   dw.seg('oray3a', { intro: 14, w: 0.028, color: PAL.grey });
   dw.seg('oray3b', { intro: 14, w: 0.028, color: PAL.grey });
-  dw.strokes('arch2', N_STRIP + 1, { intro: 14, w: W_BAR, color: memberColor });
+  dw.strokes('arch2', N_STRIP + 1, { intro: 14, w: W_BAR, color: PAL.orange });
 
   // step 15 -- reactions ON the outer rays + thrusts (applet 9); the trial
   // and no-Q constructions retire at 16 (RESOLVE)
@@ -426,7 +428,7 @@ export function create(dw, panel, makePlayer) {
   // readouts
   for (let i = 0; i < 3; i++) {
     dw.label(`ro${i}`, '', { intro: RESOLVE, flash: false,
-              color: i < 2 ? PAL.green : { final: (dd) => dd.cA } });
+              color: i < 2 ? PAL.green : PAL.orange });
   }
 
   // node-equilibrium inspector (free-body star + tip-to-tail sub-polygon)
