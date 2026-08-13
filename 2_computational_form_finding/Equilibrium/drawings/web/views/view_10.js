@@ -360,6 +360,15 @@ export function create(dw, panel, makePlayer) {
   dw.link('reacA1', 'reacFA1', 'lblRA1_form', 'lblRA1_force');
   dw.link('reacB1', 'reacFB1', 'lblRB1_form', 'lblRB1_force');
 
+  // COMPLETE force-diagram ghost: both load lines, both fans, both reaction
+  // pairs (retired trial elements ul*/mray* stay out -- the ghost previews
+  // the FINAL drawing only)
+  dw.ghostable('rayA', 'rayB', 'reacFA', 'reacFB', 'reacFA1', 'reacFB1',
+               ...Array.from({ length: 8 }, (_, i) => `pp${i}`),
+               ...Array.from({ length: 7 }, (_, i) => `iray${i}`),
+               ...Array.from({ length: 8 }, (_, i) => `cp${i}`),
+               ...Array.from({ length: 9 }, (_, i) => `cray${i}`));
+
   // ------------------------------------------------------------------
   // resolve: internal-force pipes + magnitude readouts
   // ------------------------------------------------------------------
