@@ -484,9 +484,12 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_W9', { intro: 3, ...HANDLE, when: tr });
   for (let i = 0; i < 30; i++) dw.disk(`pt_c${i}`, { intro: 2, ...TINY, when: show });
 
-  // ghost preview (arrows only — strokes have no ghost twins)
+  // ghost preview: the COMPLETE final force diagram (fans included — the
+  // lib grew strokes ghost twins) + all offset component chains
   dw.ghostable('R1force', 'R2force', 'Aforce', 'Bforce', 'Hforce', 'Cforce',
-               'Jforce', 'Dforce', 'tpC', 'tpA', 'tpE');
+               'Jforce', 'Dforce', 'tpC', 'tpA', 'tpE',
+               'rays', 'srays', 'AHforce', 'AVforce', 'BVforce', 'CHforce',
+               'DHforce', 'HHforce', 'HVforce');
 
   // ------------------------------------------------------------------
   // node-equilibrium inspector: 5 key nodes
