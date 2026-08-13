@@ -56,6 +56,8 @@ const DEFAULTS = {
   node: 0,                             // node-equilibrium inspector (0 = off)
   n4: true,                            // show points
   o4: false,                           // the applet's hidden "loadlines construction"
+  cls: false,                          // the applet's "cover left side" checkbox
+  lbl: true,                           // the applet's "showLabels" (o_1); house default ON
 };
 
 // every construction move happens on BOTH sides at once
@@ -213,21 +215,27 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('arcOut', 32, { intro: 1, w: W_RING, color: PAL.black });
   dw.dashLine('slcGuide', { intro: 1, dash: 0.18, color: PAL.grey });
 
+  // the applet's "cover left side" checkbox hides the mirrored half of the
+  // section (there it drops a white cover polygon; hiding is equivalent here)
+  const notCls = (st) => !st.cls;
+  // the applet's "showLabels" checkbox (o_1) gates every force/member label
+  const lblOn = (st) => st.lbl;
+
   // step 2: the radial joints of the 8 courses, both halves
   dw.strokes('jointsR', 8, { intro: 2, w: W_JOINT, color: PAL.black });
-  dw.strokes('jointsL', 7, { intro: 2, w: W_JOINT, color: PAL.black });
+  dw.strokes('jointsL', 7, { intro: 2, w: W_JOINT, color: PAL.black, when: notCls });
 
   // steps 3-4: lines of action, loads, plan arcs, load line
   for (let c = 1; c <= N_C; c++) {
     const intro = c === 1 ? 3 : 4;
     dw.dashLine(`act${c}`, { intro, dash: 0.22 });
-    dw.dashLine(`actm${c}`, { intro, dash: 0.22 });
+    dw.dashLine(`actm${c}`, { intro, dash: 0.22, when: notCls });
     dw.arrow(`load${c}`, { intro, ...ARROW });
     dw.strokes(`arc${c}`, 20, { intro, w: W_ARC, color: hoopCol(c) });
     dw.arrow(`edge${c}`, { intro, ...ARROW });
-    dw.label(`lF${c}`, `F${SUB[c]}`, { cls: 'num', intro, color: PAL.green });
-    dw.label(`lFf${c}`, `F${SUB[c]}`, { cls: 'num', intro, color: PAL.green });
-    dw.arrow(`mload${c}`, { intro: 4, ...ARROW, color: PAL.grey });
+    dw.label(`lF${c}`, `F${SUB[c]}`, { cls: 'num', intro, color: PAL.green, when: lblOn });
+    dw.label(`lFf${c}`, `F${SUB[c]}`, { cls: 'num', intro, color: PAL.green, when: lblOn });
+    dw.arrow(`mload${c}`, { intro: 4, ...ARROW, color: PAL.grey, when: notCls });
   }
   dw.instant('mload1', 'mload2', 'mload3', 'mload4', 'mload5', 'mload6', 'mload7', 'mload8');
 
@@ -243,16 +251,16 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('reacBform', { intro: 6, ...ARROW });
   dw.dashLine('mB8', { intro: 6, dash: 0.22 });
   dw.arrow('reacB', { intro: 6, ...ARROW });
-  dw.label('lblBf', 'B', { cls: 'num', intro: 6, color: PAL.green });
-  dw.label('lblBs', 'B', { cls: 'num', intro: 6, color: PAL.green });
+  dw.label('lblBf', 'B', { cls: 'num', intro: 6, color: PAL.green, when: lblOn });
+  dw.label('lblBs', 'B', { cls: 'num', intro: 6, color: PAL.green, when: lblOn });
 
   // members 7..1 + crown piece, each with its force segment
   const memIntro = [11, 11, 11, 11, 10, 9, 7];    // member k=1..7
   for (let k = 1; k <= 7; k++) {
     dw.seg(`mem${k}`, { intro: memIntro[k - 1], w: W_BAR, color: memCol(k) });
     dw.seg(`fmem${k}`, { intro: memIntro[k - 1], w: 0.05, color: PAL.blue });
-    dw.label(`ln${k}`, `${k}`, { cls: 'num', intro: memIntro[k - 1], color: { final: (dd) => dd.colH[k] } });
-    dw.label(`lnf${k}`, `${k}`, { cls: 'num', intro: memIntro[k - 1], color: PAL.blue });
+    dw.label(`ln${k}`, `${k}`, { cls: 'num', intro: memIntro[k - 1], color: { final: (dd) => dd.colH[k] }, when: lblOn });
+    dw.label(`lnf${k}`, `${k}`, { cls: 'num', intro: memIntro[k - 1], color: PAL.blue, when: lblOn });
   }
   dw.seg('mcrown', { intro: 11, w: W_BAR, color: PAL.blue });
 
@@ -262,8 +270,8 @@ export function create(dw, panel, makePlayer) {
     const intro = hoopIntro[c - 1];
     dw.arrow(`hoop${c}`, { intro, ...HARROW, color: hoopCol(c) });
     dw.arrow(`hoopf${c}`, { intro, ...HARROW, color: hoopCol(c) });
-    dw.label(`lH${c}`, `H${SUB[c]}`, { cls: 'num', intro, color: { final: (dd) => dd.colH[c - 1] } });
-    dw.label(`lHf${c}`, `H${SUB[c]}`, { cls: 'num', intro, color: { final: (dd) => dd.colH[c - 1] } });
+    dw.label(`lH${c}`, `H${SUB[c]}`, { cls: 'num', intro, color: { final: (dd) => dd.colH[c - 1] }, when: lblOn });
+    dw.label(`lHf${c}`, `H${SUB[c]}`, { cls: 'num', intro, color: { final: (dd) => dd.colH[c - 1] }, when: lblOn });
   }
   dw.dashLine('con8', { intro: 8, dash: 0.22 });
   dw.dashLine('con7', { intro: 9, dash: 0.22 });
@@ -277,8 +285,8 @@ export function create(dw, panel, makePlayer) {
     dw.arrow(`pr${c}`, { intro, ...HARROW, color: hoopCol(c) });
     dw.seg(`dq${c}`, { intro, w: 0.04, color: hoopCol(c) });
     dw.seg(`dr${c}`, { intro, w: 0.04, color: hoopCol(c) });
-    dw.label(`lNq${c}`, `N′${SUB[c]}`, { cls: 'num', intro, color: { final: (dd) => dd.colH[c - 1] } });
-    dw.label(`lNr${c}`, `N″${SUB[c]}`, { cls: 'num', intro, color: { final: (dd) => dd.colH[c - 1] } });
+    dw.label(`lNq${c}`, `N′${SUB[c]}`, { cls: 'num', intro, color: { final: (dd) => dd.colH[c - 1] }, when: lblOn });
+    dw.label(`lNr${c}`, `N″${SUB[c]}`, { cls: 'num', intro, color: { final: (dd) => dd.colH[c - 1] }, when: lblOn });
   }
 
   // points
@@ -292,15 +300,15 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_SP', { intro: 3, ...HANDLE });
   for (let c = 1; c <= N_C; c++) {
     dw.disk(`pt_c${c}`, { intro: c === 1 ? 3 : 4, ...DERIVED });
-    dw.disk(`pt_m${c}`, { intro: 4, r: 0.1, when: show });
+    dw.disk(`pt_m${c}`, { intro: 4, r: 0.1, when: (st) => st.n4 && !st.cls });
   }
   dw.disk('pt_R2', { intro: 5, ...DERIVED, when: show });
   dw.disk('pt_C5', { intro: 5, ...DERIVED, when: show });
 
   // readouts
-  dw.label('ro_B', '', { intro: RESOLVE, flash: false, color: PAL.green });
+  dw.label('ro_B', '', { intro: RESOLVE, flash: false, color: PAL.green, when: lblOn });
   for (let c = 1; c <= N_C; c++) {
-    dw.label(`ro_H${c}`, '', { intro: RESOLVE, flash: false, color: { final: (dd) => dd.colH[c - 1] } });
+    dw.label(`ro_H${c}`, '', { intro: RESOLVE, flash: false, color: { final: (dd) => dd.colH[c - 1] }, when: lblOn });
   }
 
   // node-equilibrium inspector (free-body star + tip-to-tail sub-polygon)
@@ -330,10 +338,12 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('sec_lbl', [7, 9]);
     dw.setLabel('plan_lbl', [7, 1]);
 
-    // section ring + plan wedge
-    dw.setStrokes('ringO', arcPairs([AX, AY], d.Rout, 0, Math.PI, 60));
-    dw.setStrokes('ringI', arcPairs([AX, AY], d.Rin, 0, Math.PI, 60));
-    dw.setStrokes('spring', [[[2 * AX - s.hr, AY], [2 * AX - s.ir, AY]], [[s.ir, AY], [s.hr, AY]]]);
+    // section ring + plan wedge ("cover left side" keeps only the right half)
+    const aEnd = s.cls ? Math.PI / 2 : Math.PI;
+    dw.setStrokes('ringO', arcPairs([AX, AY], d.Rout, 0, aEnd, 60));
+    dw.setStrokes('ringI', arcPairs([AX, AY], d.Rin, 0, aEnd, 60));
+    const springR = [[s.ir, AY], [s.hr, AY]];
+    dw.setStrokes('spring', [s.cls ? springR : [[2 * AX - s.hr, AY], [2 * AX - s.ir, AY]], springR]);
     dw.setDashLine('axisC', [[AX, AY], [s.hr, AY]]);
     dw.setDashLine('radGuide', [[HRMIN, AY], [HRMAX, AY]]);
     dw.setSeg('rayQ', d.PS, d.qTip);
@@ -372,7 +382,8 @@ export function create(dw, panel, makePlayer) {
     const o4 = [];
     for (let c = 1; c <= N_C; c++) {
       o4.push([[d.cent[c - 1][0], -0.44], [d.cent[c - 1][0], 25.4]]);
-      o4.push([[d.mirr[c - 1][0], -0.44], [d.mirr[c - 1][0], 25.4]]);
+      const xm = s.cls ? d.cent[c - 1][0] : d.mirr[c - 1][0];   // cover left side
+      o4.push([[xm, -0.44], [xm, 25.4]]);
     }
     dw.setStrokes('o4lines', o4);
 
@@ -504,6 +515,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 2, 0.1, refresh);
   panel.slider(par, s, 'oLL', 'offset loadline', 0, 5, 0.5, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
+  panel.toggle(par, s, 'lbl', 'show labels', refresh);
+  panel.toggle(par, s, 'cls', 'cover left side (only the analysed half)', refresh);
   panel.toggle(par, s, 'o4', 'show loadlines construction (applet layer)', refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'node (0 = off, 1 = base course … 8 = crown course)',
