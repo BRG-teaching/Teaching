@@ -31,7 +31,7 @@ export const meta = {
   frame: [[-37.5, -4.0], [48.0, 45.5]],
 };
 
-const RESOLVE = 15;
+const RESOLVE = 19;
 
 // ---------------------------------------------------------------------------
 // constants of the plate
@@ -85,11 +85,19 @@ const STEPS = [
     take: 'the book picks 8-9 in panel c and 16-17 in panel g — exactly the diagonals this reconstruction finds in tension' },
   { t: 'The stress in c-8 by moments', d: 'left: moment axis at the joint 0 (the intersection of diagonal 8-9 with the inner chord): the resultant PC on its string, times its arm, divided by the arm of c-8 — the book computes 35 250 lbs compression',
     detail: (d) => [`c-8 here: ${Math.round(Math.abs(d.force2))} lbs compression · the book: 35 250 lbs`] },
-  { t: 'The Maxwell diagram begins', d: 'right: the crown joint closes first: outer h-18 and inner 18-p meet the crown load and the reaction PI — the pole 18 is found (Fig. 3A of the plate)' },
-  { t: 'Panel by panel — g and f', d: 'right: joints gh, I9, fg, I8 close in turn: poles 16, 17 (they coincide — the strut gh-18 carries NOTHING), then 14, 15 — left: the members flash as their forces appear' },
-  { t: 'Panels e and d', d: 'right: joints ef, I7, de, I6 close: poles 10–13 take their places far left — the biggest tensions of the inner chord live here' },
-  { t: 'Panels c, b and the tall panel', d: 'right: joints cd, I5, bc, I4 close: poles 8–11 — the outer chord forces grow toward the springing' },
-  { t: 'Down the end post', d: 'right: B3, I3, the post joints and the feet close the diagram on the poles 1–7 and the space a — every polygon shuts: the Cremona check',
+  { t: 'The crown joint closes first', d: 'left: at the middle hinge only TWO members meet the crown load and the reaction PI — right: through H parallel to the outer chord h-18, through P… the polygon closes at the pole 18: both force segments drawn PARALLEL to their members, as the members flash',
+    detail: (d) => [`h-18 = ${Math.round(Math.abs(d.force['gh|C']))} C · 18-p = ${Math.round(Math.abs(d.force['I9|C']))} lbs`] },
+  { t: 'Panel g — joints gh and 18', d: 'left: the joint under load gh and its inner mate flash — right: their polygons close: chord g-16, the counter 16-17 and the inner chord 17-p drawn PARALLEL to their members; poles 16 and 17 COINCIDE: the strut gh-18 carries NOTHING',
+    detail: (d) => [`g-16 = ${Math.round(Math.abs(d.force['fg|gh']))} C · counter ${Math.round(Math.abs(d.force['I8|gh'] ?? 0))} T · strut 16-18 = 0`] },
+  { t: 'Panel f — joints fg and I8', d: 'left: the next pair flashes — right: chord f-14, the strut 15-17, the counter 14-15 and the inner chord close on the poles 14 and 15 — every segment parallel to its member on the left' },
+  { t: 'Panel e — joints ef and I7', d: 'left: pair by pair down the rib — right: poles 12 and 13; the inner chord pieces here carry the LARGEST tension of the whole arch',
+    detail: (d) => [`inner 15-p = ${Math.round(d.force['I7|I8'] ?? 0)} T · 13-p = ${Math.round(d.force['I6|I7'] ?? 0)} T lbs`] },
+  { t: 'Panel d — joints de and I6', d: 'left: the pressure line crosses the rib in these panels — the counters change family exactly here — right: poles 10 and 11 land far left' },
+  { t: 'Panel c — joints cd and 0', d: 'left: the joint 0 of the book’s moment method and its outer mate — right: poles 8 and 9; the chord c-8 closes at the force the book computed by moments',
+    detail: (d) => [`c-8 = ${Math.round(Math.abs(d.force2))} C (book: 35 250) · 8-9 = ${Math.round(Math.abs(d.force['bc|I5'] ?? d.force['I4|cd'] ?? 0))} T`] },
+  { t: 'Panel b — joints bc and I4', d: 'left: the last inclined panel — right: poles 6 and 7; the outer chord b-6 approaches its maximum' },
+  { t: 'The tall panel — B3 and I3', d: 'left: the joint ab under the biggest tributary and the 7-4 strut’s foot — right: poles 4 and 5; the counter of the tall panel and the member 7-4 close in one move' },
+  { t: 'Down the end post', d: 'left: the post joints and both feet flash — right: poles 1, 2, 3 close against the space a, and at the SUPPORT the last polygon shuts on the end reaction AP: the Cremona check',
     detail: (d) => [`closure of the diagram: ${d.closure.toExponential(1)} lbs`] },
   { t: 'Compression and tension', d: 'blue = compression (outer chord, post, struts), pink = tension (inner chord above the crossing, the working counters); pale = slack counters and the zero strut; pipes ∝ force — drag the sliders: wind off, and the arch calms; click any joint for its equilibrium',
     detail: (d) => [`extremes: outer ${Math.round(d.extremes[0])} C · inner ${Math.round(d.extremes[1])} T · checks 4-5 & 12-14 close to ${d.closure.toExponential(1)} lbs`],
@@ -464,28 +472,23 @@ export function create(dw, panel, makePlayer) {
     dw.seg('ray' + k, { intro: 7, w: 0.045, color: PAL.grey, when: (st) => st.press });
   }
   // member force segments, grouped by build steps 10..14
-  const MEM_STEP = (m) => {
-    const mk = key(m);
-    if (mk === 'gh|C' || mk === 'I9|C') return 10;
-    if (['fg|gh','gh|I9','I8|I9','ef|fg','fg|I8','I7|I8'].includes(mk)) return 11;
-    if (['de|ef','ef|I7','I6|I7','cd|de','de|I6','I5|I6'].includes(mk)) return 12;
-    if (['bc|cd','cd|I5','I4|I5','B3|bc','bc|I4','I3|I4'].includes(mk)) return 13;
-    return 14;
-  };
+  const JSTEP = { C: 10, gh: 11, I9: 11, fg: 12, I8: 12, ef: 13, I7: 13,
+                  de: 14, I6: 14, cd: 15, I5: 15, bc: 16, I4: 16,
+                  B3: 17, I3: 17, O2: 18, I2: 18, O1: 18, I1: 18, S: 18 };
+  const MEM_STEP = (m) => Math.min(JSTEP[m[0]] ?? 18, JSTEP[m[1]] ?? 18);
   for (const m of allAxial) {
     dw.seg('f_' + key(m), { intro: MEM_STEP(m), w: 0.1,
       color: { pending: PAL.black, final: colOf(key(m)) } });
   }
-  const DIAG_STEP = [14, 14, 13, 13, 12, 12, 11, 11];
   for (let k = 0; k < 8; k++) {
-    dw.seg('fdgA' + k, { intro: DIAG_STEP[k], w: 0.07,
+    dw.seg('fdgA' + k, { intro: 18 - k, w: 0.07,
       color: { pending: PAL.grey, final: (dd) => (dd.choice[k] === 0 ? PAL.red : PAL.zero) } });
-    dw.seg('fdgB' + k, { intro: DIAG_STEP[k], w: 0.07,
+    dw.seg('fdgB' + k, { intro: 18 - k, w: 0.07,
       color: { pending: PAL.grey, final: (dd) => (dd.choice[k] === 1 ? PAL.red : PAL.zero) } });
   }
-  const POLE_STEP = { 18: 10, 16: 11, 17: 11, 14: 11, 15: 11, 12: 12, 13: 12,
-                      10: 12, 11: 12, 8: 13, 9: 13, 6: 13, 7: 13,
-                      1: 14, 2: 14, 3: 14, 4: 14, 5: 14 };
+  const POLE_STEP = { 18: 10, 16: 11, 17: 11, 14: 12, 15: 12, 12: 13, 13: 13,
+                      10: 14, 11: 14, 8: 15, 9: 15, 6: 16, 7: 16,
+                      4: 17, 5: 17, 1: 18, 2: 18, 3: 18 };
   for (let sp = 1; sp <= 18; sp++) {
     dw.disk('po' + sp, { intro: POLE_STEP[sp], r: 0.22 });
     dw.label('pol' + sp, String(sp), { cls: 'point', intro: POLE_STEP[sp], flash: false, when: (st) => st.lbl });
@@ -506,6 +509,24 @@ export function create(dw, panel, makePlayer) {
     dw.link('dgA' + k, 'fdgA' + k);
     dw.link('dgB' + k, 'fdgB' + k);
   }
+
+  // form <-> force pairing: when a joint's polygon closes in the force
+  // diagram, the joint's members and its disk RE-FLASH on the form side —
+  // and the linked pairs animate simultaneously (house pairing rule)
+  for (const m of allAxial) {
+    const st = MEM_STEP(m);
+    dw.highlight('m_' + key(m), [st]);
+  }
+  for (let k = 0; k < 8; k++) {
+    dw.highlight('dgA' + k, [18 - k]);
+    dw.highlight('dgB' + k, [18 - k]);
+  }
+  for (const j of Object.keys(J)) {
+    if (JSTEP[j] !== undefined) dw.highlight('pt_' + j, [JSTEP[j]]);
+  }
+  for (let k = 0; k < 8; k++) dw.link('ld' + k, 'ldl' + k, 'fl' + k);
+  dw.link('reC', 'fre1');
+  dw.link('reS', 'fre2');
 
   dw.instant('plate', 'form_title', 'force_title', 'force_sub');
   dw.ghostable(...allAxial.map((m) => 'f_' + key(m)),

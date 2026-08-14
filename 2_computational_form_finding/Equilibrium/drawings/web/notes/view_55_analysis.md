@@ -63,11 +63,15 @@ H = 14 860, V = 9 900 and *plots* them to locate P.
 
 ## View design
 
-15 steps: rib → web+Bow spaces → loads & bent load line A..I → H,V → pole
+19 steps: rib → web+Bow spaces → loads & bent load line A..I → H,V → pole
 check funicular (i)(k)(a) → hinge reactions → LINE OF PRESSURE (heavy,
 the plate's signature) → counter selection (shears/moments) → c-8 by
-moments → Maxwell joint-by-joint in four panel groups → resolve with
-pipes. Sliders: dead ×400, wind ×600 (counters re-select live, the
+moments → then the Maxwell diagram JOINT BY JOINT, one panel pair per
+step (crown, g, f, e, d, c, b, tall panel, end post + support): at each
+step the joint's form members and its disk RE-FLASH while their force
+segments draw simultaneously and PARALLEL in the force diagram (house
+pairing rule; parallelism verified to 1.5e-5 degrees from the ops
+export) → resolve with pipes. Sliders: dead ×400, wind ×600 (counters re-select live, the
 Cremona rebuilds), sFD, sIF; toggles: pressure line, check funicular,
 labels, the 1903 plate overlay (aligned via 32 px/ft, hinge at plate px
 (1489.4, 1811.3)); node inspector on all 20 joints (force side = the
