@@ -67,11 +67,17 @@ H = 14 860, V = 9 900 and *plots* them to locate P.
 check funicular (i)(k)(a) → hinge reactions → LINE OF PRESSURE (heavy,
 the plate's signature) → counter selection (shears/moments) → c-8 by
 moments → then the Maxwell diagram JOINT BY JOINT, one panel pair per
-step (crown, g, f, e, d, c, b, tall panel, end post + support): at each
-step the joint's form members and its disk RE-FLASH while their force
-segments draw simultaneously and PARALLEL in the force diagram (house
-pairing rule; parallelism verified to 1.5e-5 degrees from the ops
-export) → resolve with pipes. Sliders: dead ×400, wind ×600 (counters re-select live, the
+step (crown, g, f, e, d, c, b, tall panel, end post + support). PAIRING
+(after a 2026-08-14 audit that rejected highlight-only pairing): the form
+side carries a thin grey SKELETON of every member from step 1/2, and each
+heavy coloured member is `when`-gated to appear at exactly the step its
+force segment lands in the Maxwell diagram (view_33's pattern) — so form
+and force are literally drawn together, and the tension/compression answer
+is not spoiled before the construction. Counters appear at step 8 (the
+pressure line picks the working one; black until its force resolves).
+Members highlight at BOTH their joints. Parallelism verified from the ops
+export: 28 member/force pairs, worst deviation 1.5e-5 degrees.
+→ resolve with pipes. Sliders: dead ×400, wind ×600 (counters re-select live, the
 Cremona rebuilds), sFD, sIF; toggles: pressure line, check funicular,
 labels, the 1903 plate overlay (aligned via 32 px/ft, hinge at plate px
 (1489.4, 1811.3)); node inspector on all 20 joints (force side = the

@@ -69,38 +69,38 @@ const DEFAULTS = {
 const STEPS = [
   { t: 'How to draw this scheme', d: 'a drawing from 1903, brought back to life — step through with the slider, press play, or use ←/→' },
   { t: 'Half of a three-hinged arch', d: 'left: the rib spans from the end hinge to the middle hinge at the crown — a vertical end post (5 + 6 + 8.05 ft), an outer chord straight at SLOPE 30°, and an inner chord: a 30-ft-radius arc rising into a straight parallel to the outer chord' },
-  { t: 'The web: posts and counters', d: 'left: struts perpendicular to the outer chord (the member 7-4 instead bisects the inner arc); every panel gets TWO thin diagonals — tension counters, only one of each pair can work; the spaces are numbered 1–18 in Bow’s notation, as on the plate' },
+  { t: 'The web: struts and counters', d: 'left: struts perpendicular to the outer chord (the member 7-4 instead bisects the inner arc); every panel gets TWO thin diagonals — tension counters, only one of each pair can work; the spaces are numbered 1–18 in Bow’s notation, as on the plate' },
   { t: 'Dead load and wind', d: 'left: dead load on the outer chord and wind normal to the right slope combine into one inclined load per joint — right: laid tip-to-tail they bend the load line A…I (the dead leg meets the wind leg)',
     detail: (d, st) => [`joint loads ab…h: ${d.loadMags.map((v) => Math.round(v)).join(' · ')} lbs`,
                         `Σ dead = ${Math.round(15240 * st.fd)} · Σ wind = ${Math.round(22860 * st.fw)} lbs`] },
-  { t: 'The middle hinge: H and V', d: 'the three-hinge condition (moments about each end hinge, the leeward rib carries dead load only) fixes the crown force — right: H and V plotted from I locate the pole P',
+  { t: 'The middle hinge: H and V', d: 'the three-hinge condition (moments about each end hinge, the leeward rib carries dead load only) fixes the crown force — left: it appears as the green thrust at the middle hinge — right: its components H and V, plotted from I, locate the pole P',
     detail: (d) => [`H = ${Math.round(Math.abs(d.F[0]))} · V = ${Math.round(Math.abs(d.F[1]))} lbs — the 1903 book: 14 860 · 9 900`],
     take: 'the hand-drawn plate and this exact reconstruction agree within a few percent — 1903 drafting was good' },
-  { t: 'Checking the pole', d: 'left: a funicular for the two RESULTANTS (dead, wind): string (i) through the crown ∥ PI, string (k) ∥ PK between the resultants — the closing string (a) runs ∥ PA exactly through the end hinge: P is right', take: 'the book: "when it is found that the closing string (k) is parallel to PK, thus checking the location of the pole"' },
+  { t: 'Checking the pole', d: 'left: a funicular for the two RESULTANTS (dead, wind): string (i) through the crown, string (k) between the resultants, closing string (a) — right: the three rays P–I, P–K, P–A they are drawn parallel to; the closing string lands EXACTLY on the end hinge, so P is right', take: 'the book: "when it is found that the closing string (k) is parallel to PK, thus checking the location of the pole"' },
   { t: 'The reactions of the hinges', d: 'right: P→I is the reaction at the middle hinge, A→P at the end hinge — left: the same two forces push at the hinges; with the loads they close one polygon P I H G F E D C B A P',
     detail: (d) => [`middle hinge: ${Math.round(Math.hypot(d.F[0], d.F[1]))} lbs · end hinge: ${Math.round(Math.hypot(d.R[0], d.R[1]))} lbs`] },
   { t: 'The LINE OF PRESSURE', d: 'left: the funicular polygon of the joint loads, drawn through the hinges (heavy): every string is the line of action of the resultant force on the rib to either side — right: its magnitude is the corresponding ray from P',
     take: 'the drawing’s signature move: the pressure line makes the flow of force through the arch VISIBLE' },
-  { t: 'Which counters work?', d: 'where the pressure line passes OUTSIDE the rib, the panel shear pulls one way; where it re-enters, the other — method of shears (panel g) and moments (panel c): the working diagonal of each pair resolves, its partner goes slack (pale)',
+  { t: 'Which counters work?', d: 'left: the pressure line decides — method of shears (panel g), of moments (panel c): the WORKING diagonal of every pair is drawn in, its partner stays pale and slack — right: the rays P–G and P–C whose strings carry those resultants',
     take: 'the book picks 8-9 in panel c and 16-17 in panel g — exactly the diagonals this reconstruction finds in tension' },
-  { t: 'The stress in c-8 by moments', d: 'left: moment axis at the joint 0 (the intersection of diagonal 8-9 with the inner chord): the resultant PC on its string, times its arm, divided by the arm of c-8 — the book computes 35 250 lbs compression',
+  { t: 'The stress in c-8 by moments', d: 'left: the moment arm from the joint 0 square onto the string c (dashed) — right: the ray P–C is that resultant’s magnitude; force × arm ÷ the arm of c-8 gives its stress — the book computes 35 250 lbs compression',
     detail: (d) => [`c-8 here: ${Math.round(Math.abs(d.force2))} lbs compression · the book: 35 250 lbs`] },
   { t: 'The crown joint closes first', d: 'left: at the middle hinge only TWO members meet the crown load and the reaction PI — right: through H parallel to the outer chord h-18, through P… the polygon closes at the pole 18: both force segments drawn PARALLEL to their members, as the members flash',
     detail: (d) => [`h-18 = ${Math.round(Math.abs(d.force['gh|C']))} C · 18-p = ${Math.round(Math.abs(d.force['I9|C']))} lbs`] },
-  { t: 'Panel g — joints gh and 18', d: 'left: the joint under load gh and its inner mate flash — right: their polygons close: chord g-16, the counter 16-17 and the inner chord 17-p drawn PARALLEL to their members; poles 16 and 17 COINCIDE: the strut gh-18 carries NOTHING',
-    detail: (d) => [`g-16 = ${Math.round(Math.abs(d.force['fg|gh']))} C · counter ${Math.round(Math.abs(d.force['I8|gh'] ?? 0))} T · strut 16-18 = 0`] },
-  { t: 'Panel f — joints fg and I8', d: 'left: the next pair flashes — right: chord f-14, the strut 15-17, the counter 14-15 and the inner chord close on the poles 14 and 15 — every segment parallel to its member on the left' },
-  { t: 'Panel e — joints ef and I7', d: 'left: pair by pair down the rib — right: poles 12 and 13; the inner chord pieces here carry the LARGEST tension of the whole arch',
+  { t: 'Panel g — joints gh and I₉', d: 'left: the joint under load gh and its inner mate close, their members drawn in — right: chord g-16, the counter and the inner chord 17-p appear PARALLEL to them; poles 17 and 18 COINCIDE, so the strut gh–I₉ carries NOTHING',
+    detail: (d) => [`g-16 = ${Math.round(Math.abs(d.force['fg|gh']))} C · counter ${Math.round(Math.abs(d.force['I8|gh'] ?? d.force['gh|I8'] ?? 0))} T · strut gh–I₉ = 0`] },
+  { t: 'Panel f — joints fg and I₈', d: 'left: the next pair of joints closes: chord, strut and counter drawn in — right: chord f-14, the strut 15-16, the counter and the inner chord close on the poles 14 and 15, every segment parallel to its member' },
+  { t: 'Panel e — joints ef and I₇', d: 'left: the joint under load ef and its inner mate I₇ close — right: poles 12 and 13; the inner chord pieces here carry the LARGEST tension of the whole arch',
     detail: (d) => [`inner 15-p = ${Math.round(d.force['I7|I8'] ?? 0)} T · 13-p = ${Math.round(d.force['I6|I7'] ?? 0)} T lbs`] },
-  { t: 'Panel d — joints de and I6', d: 'left: the pressure line crosses the rib in these panels — the counters change family exactly here — right: poles 10 and 11 land far left' },
-  { t: 'Panel c — joints cd and 0', d: 'left: the joint 0 of the book’s moment method and its outer mate — right: poles 8 and 9; the chord c-8 closes at the force the book computed by moments',
+  { t: 'Panel d — joints de and I₆', d: 'left: the joints de and I₆ close — the pressure line crosses the rib right here, which is where the counters change family — right: poles 10 and 11 land far left' },
+  { t: 'Panel c — joints cd and 0', d: 'left: the joint 0 of the book’s moment method (= I₅) and its outer mate cd close — right: poles 8 and 9; the chord c-8 closes at exactly the force the book computed by moments',
     detail: (d) => [`c-8 = ${Math.round(Math.abs(d.force2))} C (book: 35 250) · 8-9 = ${Math.round(Math.abs(d.force['bc|I5'] ?? d.force['I4|cd'] ?? 0))} T`] },
-  { t: 'Panel b — joints bc and I4', d: 'left: the last inclined panel — right: poles 6 and 7; the outer chord b-6 approaches its maximum' },
-  { t: 'The tall panel — B3 and I3', d: 'left: the joint ab under the biggest tributary and the 7-4 strut’s foot — right: poles 4 and 5; the counter of the tall panel and the member 7-4 close in one move' },
+  { t: 'Panel b — joints bc and I₄', d: 'left: the joints bc and I₄ close, the last inclined panel — right: poles 6 and 7; the outer chord b-6 approaches its maximum' },
+  { t: 'The tall panel — B₃ and I₃', d: 'left: the joint ab under the biggest tributary and I₃, the foot of the 7-4 strut — right: poles 4 and 5; the counter of the tall panel and the member 7-4 close in one move' },
   { t: 'Down the end post', d: 'left: the post joints and both feet flash — right: poles 1, 2, 3 close against the space a, and at the SUPPORT the last polygon shuts on the end reaction AP: the Cremona check',
     detail: (d) => [`closure of the diagram: ${d.closure.toExponential(1)} lbs`] },
   { t: 'Compression and tension', d: 'blue = compression (outer chord, post, struts), pink = tension (inner chord above the crossing, the working counters); pale = slack counters and the zero strut; pipes ∝ force — drag the sliders: wind off, and the arch calms; click any joint for its equilibrium',
-    detail: (d) => [`extremes: outer ${Math.round(d.extremes[0])} C · inner ${Math.round(d.extremes[1])} T · checks 4-5 & 12-14 close to ${d.closure.toExponential(1)} lbs`],
+    detail: (d) => [`extremes: outer ${Math.round(d.extremes[0])} C · inner ${Math.round(d.extremes[1])} T · every joint polygon closes to ${d.closure.toExponential(1)} lbs`],
     take: 'a 1903 plate, recomputed live: the drawing WAS the calculation — and it still is' },
 ];
 
@@ -402,18 +402,31 @@ export function create(dw, panel, makePlayer) {
   });
 
   // ---- form: chords, post, web -------------------------------------------
+  // The GEOMETRY is given from the start as a thin grey skeleton; each member
+  // is then DRAWN heavy, in its resolved colour, at exactly the step where its
+  // force segment appears in the Maxwell diagram (house pairing rule).
   const allAxial = [...CHORDS_IN, ...POST, ...CHORDS_OUT, ...STRUTS];
+  const MEM_STEP_OF = new Map();
+  dw.strokes('skelA', CHORDS_IN.length + POST.length + CHORDS_OUT.length,
+             { intro: 1, w: 0.075, color: PAL.grey });
+  dw.strokes('skelB', STRUTS.length + 16, { intro: 2, w: 0.055, color: PAL.grey });
   for (const m of allAxial) {
     dw.seg('m_' + key(m), {
-      intro: STRUTS.includes(m) ? 2 : 1, w: STRUTS.includes(m) ? 0.16 : W_BAR,
+      w: STRUTS.includes(m) ? 0.16 : W_BAR,
       color: { pending: PAL.black, final: colOf(key(m)) },
+      when: (st) => st._k >= (MEM_STEP_OF.get(key(m)) ?? 18),
     });
   }
+  // counters: the pressure line picks the working one at step 8 (drawn heavy,
+  // still black = "being determined"); it takes its tension colour when its
+  // force segment lands in the Cremona at step 18 - k
+  const CTR_STEP = (k) => 18 - k;
+  const ctrCol = (k, mine) => ({ pending: PAL.grey, final: () =>
+    (mine !== (d && d.choice[k]) ? PAL.zero
+      : (s._k >= CTR_STEP(k) ? PAL.red : PAL.black)) });
   for (let k = 0; k < 8; k++) {                    // both counters of each quad
-    dw.seg('dgA' + k, { intro: 2, w: W_THIN, color: { pending: PAL.grey, final: (dd) =>
-      (dd.choice[k] === 0 ? ((dd.force[key([QUADS[k][0], QUADS[k][2]])] ?? 0) > 1 ? PAL.red : PAL.zero) : PAL.zero) } });
-    dw.seg('dgB' + k, { intro: 2, w: W_THIN, color: { pending: PAL.grey, final: (dd) =>
-      (dd.choice[k] === 1 ? ((dd.force[key([QUADS[k][1], QUADS[k][3]])] ?? 0) > 1 ? PAL.red : PAL.zero) : PAL.zero) } });
+    dw.seg('dgA' + k, { w: W_THIN, color: ctrCol(k, 0), when: (st) => st._k >= 8 });
+    dw.seg('dgB' + k, { w: W_THIN, color: ctrCol(k, 1), when: (st) => st._k >= 8 });
   }
   // joints
   for (const j of Object.keys(J)) dw.disk('pt_' + j, { intro: 1, r: 0.38 });
@@ -439,10 +452,16 @@ export function create(dw, panel, makePlayer) {
              { cls: 'point', intro: 3, color: PAL.green, when: (st) => st.lbl });
   }
   // hinge reactions
-  dw.arrow('reC', { intro: 6, color: PAL.green, w: 0.18, headLen: 1.0, headW: 0.42 });
+  dw.arrow('reC', { intro: 4, color: PAL.green, w: 0.18, headLen: 1.0, headW: 0.42 });
   dw.arrow('reS', { intro: 6, color: PAL.green, w: 0.18, headLen: 1.0, headW: 0.42 });
   // line of pressure (heavy, like the plate)
   dw.strokes('press', 9, { intro: 7, w: 0.3, color: 0x232327, flash: true, when: (st) => st.press });
+  // step 9: the moment arm of the book's c-8 calculation (joint 0 -> string c)
+  dw.dashLine('marm', { intro: 9, color: 0x232327, dash: 0.5 });
+  dw.label('marmL', 'arm', { cls: 'point', intro: 9, flash: false, when: (st) => st.lbl });
+  // step 5: the three rays the check funicular is parallel to (P-I, P-K, P-A)
+  dw.strokes('chkRays', 3, { intro: 5, w: 0.05, color: PAL.grey, when: (st) => st.chk });
+
   // check funicular (i)(k)(a) + resultant lines
   dw.dashLine('chk', { intro: 5, color: PAL.grey, dash: 0.7, when: (st) => st.chk });
   dw.dashLine('chkD', { intro: 5, color: PAL.grey, dash: 0.35, when: (st) => st.chk });
@@ -514,8 +533,8 @@ export function create(dw, panel, makePlayer) {
   // diagram, the joint's members and its disk RE-FLASH on the form side —
   // and the linked pairs animate simultaneously (house pairing rule)
   for (const m of allAxial) {
-    const st = MEM_STEP(m);
-    dw.highlight('m_' + key(m), [st]);
+    MEM_STEP_OF.set(key(m), MEM_STEP(m));
+    dw.highlight('m_' + key(m), [JSTEP[m[0]] ?? 18, JSTEP[m[1]] ?? 18]);
   }
   for (let k = 0; k < 8; k++) {
     dw.highlight('dgA' + k, [18 - k]);
@@ -524,27 +543,38 @@ export function create(dw, panel, makePlayer) {
   for (const j of Object.keys(J)) {
     if (JSTEP[j] !== undefined) dw.highlight('pt_' + j, [JSTEP[j]]);
   }
-  for (let k = 0; k < 8; k++) dw.link('ld' + k, 'ldl' + k, 'fl' + k);
+  for (let k = 0; k < 8; k++) dw.link('ld' + k, 'ldl' + k, 'fl' + k, 'lda' + k);
   dw.link('reC', 'fre1');
   dw.link('reS', 'fre2');
+  dw.link('press', ...Array.from({ length: 8 }, (_, k) => 'ray' + k));
+  for (let sp = 1; sp <= 18; sp++) dw.link('sp' + sp, 'po' + sp, 'pol' + sp);
+  for (const [sp, L] of Object.entries({ a: 'A', b: 'B', c: 'C', d: 'D', e: 'E',
+                                         f: 'F', g: 'G', h: 'H', i: 'I' })) {
+    dw.link('spx_' + sp, 'fp' + L);
+  }
 
   dw.instant('plate', 'form_title', 'force_title', 'force_sub');
   dw.ghostable(...allAxial.map((m) => 'f_' + key(m)),
                ...Array.from({ length: 8 }, (_, k) => 'fl' + k),
                ...Array.from({ length: 8 }, (_, k) => 'fdgA' + k),
                ...Array.from({ length: 8 }, (_, k) => 'fdgB' + k),
+               ...Array.from({ length: 8 }, (_, k) => 'ray' + k),
                'fre1', 'fre2');
 
   // -------------------------------------------------------------------------
   let d = null;
   const NODES = Object.keys(J);
   function refresh() {
+    s._k = player.k;
     d = compute(s);
     dw.setLabel('form_title', [-16, -2.0]);
     dw.setLabel('force_title', [34, 37.2]);
     dw.setLabel('force_sub', [34, 35.9]);
     dw.setText('force_sub', `1 unit :: ${Math.round(s.sFD)} lbs`);
 
+    dw.setStrokes('skelA', [...CHORDS_IN, ...POST, ...CHORDS_OUT].map((m) => [J[m[0]], J[m[1]]]));
+    dw.setStrokes('skelB', [...STRUTS.map((m) => [J[m[0]], J[m[1]]]),
+      ...QUADS.flatMap((q) => [[J[q[0]], J[q[2]]], [J[q[1]], J[q[3]]]])]);
     for (const m of allAxial) {
       dw.setSeg('m_' + key(m), J[m[0]], J[m[1]]);
       const f = d.force[key(m)] ?? 0;
@@ -582,6 +612,16 @@ export function create(dw, panel, makePlayer) {
     dw.setArrow('reC', V.sub(GEO.CROWN, V.mul(V.unit(d.F), LSYM)), GEO.CROWN);
     dw.setArrow('reS', V.sub([0, 0], V.mul(V.unit(d.R), LSYM)), [0, 0]);
     dw.setStrokes('press', d.press.slice(0, -1).map((p, i) => [p, d.press[i + 1]]));
+    // string c = the 6th segment of the pressure line (spaces h,g,f,e,d,c,…)
+    const cA = d.press[5] ?? d.press[0], cB = d.press[6] ?? d.press[1];
+    const cu = V.unit(V.sub(cB, cA));
+    const t = V.dot(V.sub(J.I5, cA), cu);
+    const foot = V.add(cA, V.mul(cu, t));
+    dw.setDashLine('marm', [J.I5, foot]);
+    dw.setLabel('marmL', V.add(V.mid(J.I5, foot), [0.4, 0.6]));
+    // the three rays the check funicular is parallel to
+    const Pp = fd(d.poles.p);
+    dw.setStrokes('chkRays', [[Pp, fd(d.poles.i)], [Pp, fd(d.K)], [Pp, fd(d.poles.a)]]);
     dw.setDashLine('chk', d.chk);
     const q1 = d.chk[1] ?? [d.xbar, 38], q2 = d.chk[2] ?? q1;
     dw.setDashLine('chkD', [[d.xbar, Math.min(q1[1] + 7, 41)], [d.xbar, q1[1] - 5]]);
@@ -685,7 +725,7 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'plate', 'show the 1903 plate', refresh);
   const nodeSec = panel.section('Node equilibrium');
-  panel.slider(nodeSec, s, 'node', 'joint (0 = off)', 0, NODES.length, 1, refresh);
+  panel.slider(nodeSec, s, 'node', 'joint (0 = off, 1 = support, 2 = crown, 3–5 = post, 6–14 = inner, 15–20 = outer)', 0, NODES.length, 1, refresh);
 
   refresh();
   return player;
