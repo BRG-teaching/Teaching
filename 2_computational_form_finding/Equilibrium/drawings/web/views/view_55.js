@@ -38,12 +38,16 @@ const RESOLVE = 19;
 // ---------------------------------------------------------------------------
 const D30 = Math.PI / 6;
 const U30 = [-Math.cos(D30), Math.sin(D30)];          // up the 30° slope
-const I_FOOT = [-1.5, 0];
 const O_POST = [[1.25, 0], [1.25, 5], [1.25, 11], [1.25, 19.05]];  // foot,O1,O2,B3
 const CIN = [-31.5, 0];                                // inner arc centre
 const RIN = 30.0;                                      // "30' R."
 const PHI_END = Math.PI / 3;                           // arc sweeps 60°
 const ARC_END = [CIN[0] + RIN * Math.cos(PHI_END), RIN * Math.sin(PHI_END)];
+// The middle hinge is DESIGN DATA, not a derived point: on the plate BOTH
+// chords kink into it (the last outer division rises ~9 deg above the 30
+// slope, the inner chord turns ~20 deg up at I9). Digitised from the plate
+// (similarity fit over the 19 other joints, RMS 0.145 ft).
+const CROWN_PT = [-31.64, 36.33];
 const TRIB = [4.05, 6.55, 5, 5, 5, 5, 5, 2.5];         // tributary ft per joint
 const OUTER_DIVS = [8.05, 5, 5, 5, 5, 5];              // B3..gh along the slope
 const NWIND = (() => {                                 // roof normal (pushes in)
@@ -70,12 +74,12 @@ const STEPS = [
   { t: 'How to draw this scheme', d: 'a drawing from 1903, brought back to life — step through with the slider, press play, or use ←/→' },
   { t: 'Half of a three-hinged arch', d: 'left: the rib spans from the end hinge to the middle hinge at the crown — a vertical end post (5 + 6 + 8.05 ft), an outer chord straight at SLOPE 30°, and an inner chord: a 30-ft-radius arc rising into a straight parallel to the outer chord' },
   { t: 'The web: struts and counters', d: 'left: struts perpendicular to the outer chord (the member 7-4 instead bisects the inner arc); every panel gets TWO thin diagonals — tension counters, only one of each pair can work; the spaces are numbered 1–18 in Bow’s notation, as on the plate' },
-  { t: 'Dead load and wind', d: 'left: dead load on the outer chord and wind normal to the right slope combine into one inclined load per joint — right: laid tip-to-tail they bend the load line A…I (the dead leg meets the wind leg)',
+  { t: 'Dead load and wind', d: 'left: dead load on the outer chord and wind normal to the right slope combine into one inclined load per joint — right: laid tip-to-tail down the load line A…I — it is straight, because every joint carries dead and wind in the same 400:600 ratio; the BEND belongs to the two resultant legs I–K and K–A',
     detail: (d, st) => [`joint loads ab…h: ${d.loadMags.map((v) => Math.round(v)).join(' · ')} lbs`,
                         `Σ dead = ${Math.round(15240 * st.fd)} · Σ wind = ${Math.round(22860 * st.fw)} lbs`] },
   { t: 'The middle hinge: H and V', d: 'the three-hinge condition (moments about each end hinge, the leeward rib carries dead load only) fixes the crown force — left: it appears as the green thrust at the middle hinge — right: its components H and V, plotted from I, locate the pole P',
     detail: (d) => [`H = ${Math.round(Math.abs(d.F[0]))} · V = ${Math.round(Math.abs(d.F[1]))} lbs — the 1903 book: 14 860 · 9 900`],
-    take: 'the hand-drawn plate and this exact reconstruction agree within a few percent — 1903 drafting was good' },
+    take: 'within 1% of the numbers Sondericker printed in 1903 — his drafting was very good' },
   { t: 'Checking the pole', d: 'left: a funicular for the two RESULTANTS (dead, wind): string (i) through the crown, string (k) between the resultants, closing string (a) — right: the three rays P–I, P–K, P–A they are drawn parallel to; the closing string lands EXACTLY on the end hinge, so P is right', take: 'the book: "when it is found that the closing string (k) is parallel to PK, thus checking the location of the pole"' },
   { t: 'The reactions of the hinges', d: 'right: P→I is the reaction at the middle hinge, A→P at the end hinge — left: the same two forces push at the hinges; with the loads they close one polygon P I H G F E D C B A P',
     detail: (d) => [`middle hinge: ${Math.round(Math.hypot(d.F[0], d.F[1]))} lbs · end hinge: ${Math.round(Math.hypot(d.R[0], d.R[1]))} lbs`] },
@@ -87,19 +91,19 @@ const STEPS = [
     detail: (d) => [`c-8 here: ${Math.round(Math.abs(d.force2))} lbs compression · the book: 35 250 lbs`] },
   { t: 'The crown joint closes first', d: 'left: at the middle hinge only TWO members meet the crown load and the reaction PI — right: through H parallel to the outer chord h-18, through P… the polygon closes at the pole 18: both force segments drawn PARALLEL to their members, as the members flash',
     detail: (d) => [`h-18 = ${Math.round(Math.abs(d.force['gh|C']))} C · 18-p = ${Math.round(Math.abs(d.force['I9|C']))} lbs`] },
-  { t: 'Panel g — joints gh and I₉', d: 'left: the joint under load gh and its inner mate close, their members drawn in — right: chord g-16, the counter and the inner chord 17-p appear PARALLEL to them; poles 17 and 18 COINCIDE, so the strut gh–I₉ carries NOTHING',
-    detail: (d) => [`g-16 = ${Math.round(Math.abs(d.force['fg|gh']))} C · counter ${Math.round(Math.abs(d.force['I8|gh'] ?? d.force['gh|I8'] ?? 0))} T · strut gh–I₉ = 0`] },
+  { t: 'Panel g — joints gh and I₉', d: 'left: the joint under load gh and its inner mate close, their members drawn in — right: chord g-16, the counter and the inner chord 17-p appear PARALLEL to them; the strut gh–I₉ closes the gap between the poles 17 and 18',
+    detail: (d) => [`g-16 = ${Math.round(Math.abs(d.force['fg|gh']))} C · counter ${Math.round(Math.abs(d.force['I8|gh'] ?? d.force['gh|I8'] ?? 0))} T · strut gh–I₉ = ${Math.round(Math.abs(d.force['gh|I9']))} C`] },
   { t: 'Panel f — joints fg and I₈', d: 'left: the next pair of joints closes: chord, strut and counter drawn in — right: chord f-14, the strut 15-16, the counter and the inner chord close on the poles 14 and 15, every segment parallel to its member' },
   { t: 'Panel e — joints ef and I₇', d: 'left: the joint under load ef and its inner mate I₇ close — right: poles 12 and 13; the inner chord pieces here carry the LARGEST tension of the whole arch',
     detail: (d) => [`inner 15-p = ${Math.round(d.force['I7|I8'] ?? 0)} T · 13-p = ${Math.round(d.force['I6|I7'] ?? 0)} T lbs`] },
-  { t: 'Panel d — joints de and I₆', d: 'left: the joints de and I₆ close — the pressure line crosses the rib right here, which is where the counters change family — right: poles 10 and 11 land far left' },
+  { t: 'Panel d — joints de and I₆', d: 'left: the joints de and I₆ close — right: poles 10 and 11 land far left; between panels e and f the panel shear changes sign, and that — not the pressure line leaving the rib — is what makes the counters change family' },
   { t: 'Panel c — joints cd and 0', d: 'left: the joint 0 of the book’s moment method (= I₅) and its outer mate cd close — right: poles 8 and 9; the chord c-8 closes at exactly the force the book computed by moments',
     detail: (d) => [`c-8 = ${Math.round(Math.abs(d.force2))} C (book: 35 250) · 8-9 = ${Math.round(Math.abs(d.force['bc|I5'] ?? d.force['I4|cd'] ?? 0))} T`] },
   { t: 'Panel b — joints bc and I₄', d: 'left: the joints bc and I₄ close, the last inclined panel — right: poles 6 and 7; the outer chord b-6 approaches its maximum' },
   { t: 'The tall panel — B₃ and I₃', d: 'left: the joint ab under the biggest tributary and I₃, the foot of the 7-4 strut — right: poles 4 and 5; the counter of the tall panel and the member 7-4 close in one move' },
   { t: 'Down the end post', d: 'left: the post joints and both feet flash — right: poles 1, 2, 3 close against the space a, and at the SUPPORT the last polygon shuts on the end reaction AP: the Cremona check',
     detail: (d) => [`closure of the diagram: ${d.closure.toExponential(1)} lbs`] },
-  { t: 'Compression and tension', d: 'blue = compression (outer chord, post, struts), pink = tension (inner chord above the crossing, the working counters); pale = slack counters and the zero strut; pipes ∝ force — drag the sliders: wind off, and the arch calms; click any joint for its equilibrium',
+  { t: 'Compression and tension', d: 'blue = compression (outer chord, post, struts), pink = tension (inner chord above the crossing, the working counters); pale = the slack counter of each pair; pipes ∝ force — drag the sliders: wind off, and the arch calms; click any joint for its equilibrium',
     detail: (d) => [`extremes: outer ${Math.round(d.extremes[0])} C · inner ${Math.round(d.extremes[1])} T · every joint polygon closes to ${d.closure.toExponential(1)} lbs`],
     take: 'a 1903 plate, recomputed live: the drawing WAS the calculation — and it still is' },
 ];
@@ -107,15 +111,6 @@ const STEPS = [
 // ---------------------------------------------------------------------------
 // small numerics
 // ---------------------------------------------------------------------------
-function bisect(f, a, b, n = 80) {
-  let fa = f(a);
-  for (let i = 0; i < n; i++) {
-    const m = (a + b) / 2, fm = f(m);
-    if (fa * fm <= 0) b = m; else { a = m; fa = fm; }
-  }
-  return (a + b) / 2;
-}
-
 /** least squares solve of A x = b via normal equations + Gauss elimination */
 function lstsq(A, b) {
   const n = A[0].length, m = A.length;
@@ -150,13 +145,8 @@ const GEO = (() => {
   // outer chord polygon
   const OUT = [O_POST[3].slice()];
   for (const L of OUTER_DIVS) OUT.push(V.add(OUT[OUT.length - 1], V.mul(U30, L)));
-  const GH = OUT[OUT.length - 1];
   const nrm = [-U30[1], U30[0]];   // normal of the inner straight
-  const tLast = bisect((t) => {
-    const p = V.add(GH, [5 * Math.cos(t), 5 * Math.sin(t)]);
-    return V.dot(V.sub(p, ARC_END), nrm);
-  }, 150.001 * Math.PI / 180, 215 * Math.PI / 180);
-  OUT.push(V.add(GH, [5 * Math.cos(tLast), 5 * Math.sin(tLast)]));
+  OUT.push(CROWN_PT.slice());      // the last division kinks into the hinge
   const CROWN = OUT[OUT.length - 1];
 
   const innerHit = (p, dir) => {
@@ -178,7 +168,7 @@ const GEO = (() => {
       if (t > 0.1) {
         const q = V.add(p, V.mul(dir, t));
         const s2 = V.dot(V.sub(q, ARC_END), U30);
-        if (s2 >= -1e-6 && s2 <= V.dist(CROWN, ARC_END) + 1e-6) cands.push([t, q]);
+        if (s2 >= -1e-6 && s2 <= 40) cands.push([t, q]);
       }
     }
     cands.sort((x, y) => x[0] - y[0]);
@@ -198,7 +188,7 @@ const GEO = (() => {
   const J = { S: [0, 0], C: CROWN, O1: O_POST[1], O2: O_POST[2], B3: O_POST[3] };
   INNER.forEach((q, i) => { J['I' + (i + 1)] = q; });
   ['bc', 'cd', 'de', 'ef', 'fg', 'gh'].forEach((n, i) => { J[n] = OUT[i + 1]; });
-  return { OUT, CROWN, J, tLast };
+  return { OUT, CROWN, J };
 })();
 
 const J = GEO.J;
@@ -363,7 +353,7 @@ function compute(s) {
   const Wv = V.mul(NWIND, Ww);
   // wind resultant line: cross(r, Wv) = Mww -> point r0 with r0 = alpha*perp
   const perpW = V.unit([-Wv[1], Wv[0]]);
-  const r0 = V.mul(perpW, Mww / Math.max(Math.hypot(Wv[0], Wv[1]), 1e-9));
+  const r0 = V.mul(perpW, -Mww / Math.max(Math.hypot(Wv[0], Wv[1]), 1e-9));
   const K = [poles.i[0], poles.i[1] - Wd];        // between the two resultant legs
   const chk = [GEO.CROWN.slice()];
   let q1 = V.intersect(GEO.CROWN, V.sub(poles.i, poles.p), [xbar, 20], [0, 1]);

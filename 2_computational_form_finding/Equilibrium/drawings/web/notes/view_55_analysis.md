@@ -23,6 +23,13 @@ the origin, crown to the left):
 - INNER chord: "30' R." = a 30-ft-radius arc, centre (−31.5, 0), vertical
   tangent at the foot, sweeping 60° to slope 30°, then STRAIGHT (parallel
   to the outer chord) to the crown;
+- the MIDDLE HINGE (crown) is DESIGN DATA, digitised from the plate at
+  (−31.64, 36.33): BOTH chords kink into it (the last outer division rises
+  ~9° above the 30° slope, the inner chord turns ~20° up at I9). An earlier
+  reconstruction derived the crown as "5 ft from gh on the inner chord's
+  straight" — that rule made I8–I9–C collinear and invented a ZERO strut
+  gh–I9 which the plate visibly contradicts (its poles 17/18 are ~170 px
+  = ~5300 lbs apart). Corrected 2026-08-14 after a fidelity audit;
 - struts ⊥ to the outer chord; B3's strut (the book's member 7-4) instead
   bisects the inner arc between its neighbours; every quad panel carries
   TWO tension counters; Bow spaces 1..18 as printed on the plate
@@ -39,18 +46,39 @@ H = 14 860, V = 9 900 and *plots* them to locate P.
 
 ## Verification (tools/regress/v55_regress.py)
 
-- our three-hinge solve: H = 15 526, V = 9 676 (Δ 4.5% / 2.3% vs book);
-- member c-8 (outer chord division bc–cd): −34 231 lbs vs the book's
-  moment-method 35 250 C (Δ 2.9%);
+- our three-hinge solve: H = 14 995, V = 9 894 — Δ **0.9% / 0.06%** vs the
+  book's 14 860 / 9 900 (with the pre-audit crown it was 4.5% / 2.3%);
+- member c-8 (outer chord division bc–cd): −36 981 lbs vs the book's
+  moment-method 35 250 C (Δ 4.9%; this one moved the other way when the
+  crown was corrected — the plate's own drawn joints give ~35 300);
+- strut gh–I9: −5 137 lbs, matching the plate's Fig 3A pole 17→18 gap
+  (~5 200–5 400 lbs measured off its scale bar);
 - unique tension-consistent counter set = dropping family in quads 1–6,
   rising in 7–8; the plate's full-vs-dashed diagonals AGREE in every
   checkable panel, incl. the two the text argues (8-9 full in panel c —
   note 8-9 IS the bc–I5 diagonal there — and 16-17 full in panel g);
-- strut gh-I9 (the member 16-18) is the zero member: poles 17 ≡ 18,
-  visible on the plate as the two labels nearly coinciding;
 - Maxwell diagram built joint-by-joint (angular walk, hop = force vector;
   displayed orientation = the walk negated, matching Fig 3A: A at the
   bottom, P centre, poles 10..16 fanning upper-left); closure ~1e-11 lbs.
+
+## Audit fixes (2026-08-14, three verification agents)
+
+Two defects were found by BOTH the statics and the fidelity agent:
+1. the crown rule above (fixed — it was the dominant cause of the H/V gap
+   AND manufactured a zero member the plate does not have);
+2. a SIGN ERROR in the wind-resultant's line of action
+   (`r0 = perpW · Mww/|Wv|` gives cross(r0,Wv) = −Mww): it mirrored the
+   line through the origin, so the pole-check funicular's (k)–(a) vertex
+   landed 55 ft away, on top of the force diagram, and the closing string
+   only reached the end hinge because the code appended it. Fixed: the
+   closing string is now parallel to ray P–A to 0.0000° and passes through
+   the hinge genuinely — the step-5 check is real, not staged.
+Verified exact by the statics agent: global ΣF = 0, ΣM = 1.2e-10 lb-ft,
+worst joint residual 9.6e-11 lbs, the tension-only counter set is UNIQUE
+out of all 256 combinations and stays unique across a 1517-point slider
+sweep, Maxwell reciprocity to 6.1e-5° and 0.005 lbs. The fidelity agent's
+ink test on the plate confirms our active/slack counter choice in 8 of 8
+panels and a 0.145 ft RMS joint fit over 19 joints.
 
 ## Reconstruction deviations (stale-caption policy)
 

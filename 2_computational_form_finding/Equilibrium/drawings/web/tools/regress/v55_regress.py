@@ -23,18 +23,18 @@ T30 = np.array([-np.cos(np.deg2rad(30)), np.sin(np.deg2rad(30))])
 U30 = T30
 TH30 = np.deg2rad(150.0)
 
+# the middle hinge is DESIGN DATA digitised from the plate: BOTH chords kink
+# into it (the old rule "crown on the inner straight" invented a zero member
+# that the plate shows carrying ~5000 lbs -- audit 2026-08-14)
+CROWN_PT = np.array([-31.64, 36.33])
 OUT = [B3.copy()]
 for L in [8.05, 5, 5, 5, 5, 5]:
     OUT.append(OUT[-1] + L*U30)
 GH = OUT[-1]
-def _f(t):
-    p = GH + 5.0*np.array([np.cos(t), np.sin(t)])
-    n = np.array([-T30[1], T30[0]])
-    return np.dot(p - ARC_END, n)
-T_LAST = brentq(_f, np.deg2rad(150.001), np.deg2rad(215))
-OUT.append(GH + 5.0*np.array([np.cos(T_LAST), np.sin(T_LAST)]))
+OUT.append(CROWN_PT.copy())
 OUT = np.array(OUT)
 CROWN = OUT[-1]
+T_LAST = np.arctan2(*(CROWN - GH)[::-1])
 
 def inner_hit(p, d):
     f = p - CIN; b = np.dot(f, d); c = np.dot(f, f) - RIN*RIN
@@ -50,7 +50,7 @@ def inner_hit(p, d):
         t = np.dot(ARC_END - p, n)/den
         if t > 0.1:
             q = p + t*d; s2 = np.dot(q - ARC_END, T30)
-            if -1e-6 <= s2 <= np.linalg.norm(CROWN-ARC_END)+1e-6: cands.append((t, q))
+            if -1e-6 <= s2 <= 40: cands.append((t, q))
     return min(cands)[1]
 
 I1 = inner_hit(O1, np.array([-1., 0.])); I2 = inner_hit(O2, np.array([-1., 0.]))
