@@ -523,14 +523,17 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lblRA_force', V.add(V.mid(d.o, d.A), [0.62, 0.15]));
     dw.setLabel('lblRB_force', V.add(V.mid(d.o, d.lp[8]), [0.66, 0.1]));
 
-    // rulers + s_i readout
+    // rulers + s_i readout: clean dimension style — offset line with short
+    // symmetric end ticks (the old long connectors back to the cable formed
+    // harpoon-shaped collisions between neighbouring rulers)
     const rp = [];
+    const TICK = 0.16;
     for (let i = 0; i < 9; i++) {
       const [a, b, n] = d.rul[i];
-      // partial side connectors (the applet's H-apparatus stops short of the string)
-      rp.push([a, V.add(a, V.mul(V.sub(d.fun[i], a), 0.68))],
+      const t = V.mul(n, TICK);
+      rp.push([V.sub(a, t), V.add(a, t)],
               [a, b],
-              [b, V.add(b, V.mul(V.sub(d.fun[i + 1], b), 0.68))]);
+              [V.sub(b, t), V.add(b, t)]);
       dw.setLabel(`lbl_s${i}`, V.add(V.mid(a, b), V.mul(n, 0.5)));
       dw.setLabel(`ro_s${i}`, [20.4, 3.35 - 0.72 * i]);
       dw.setText(`ro_s${i}`, `s${SUB[i]} = ${d.sLen[i].toFixed(2)} m`);
