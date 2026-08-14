@@ -24,7 +24,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 9 — Parabola Construction',
   subtitle: 'the funicular of a uniform load, three ways to draw it',
-  about: 'A parabola through two supports A, B and the apex C — the funicular shape of a uniformly distributed load. The tangents at the supports meet on the centreline exactly 2h below the closing string; parallels to them through the ends of the load line locate the pole o. The midpoint rule (a parabola point lies midway between secant and tangent on any vertical) refines the funicular polygon from half-span to quarters to eighths, and dividing the two tangents into equal parts yields the enclosing tangent polygon of the same curve.',
+  about: 'A uniformly loaded cable hangs as a parabola — and this drawing builds that parabola three different ways through the same two supports A, B and apex C. First the MIDPOINT RULE: on any vertical the curve lies exactly midway between a secant and a tangent, so halving repeatedly gives the apex (h below the closing string, where the support tangents meet 2h below), then the quarter points, then the eighths. Second the FUNICULAR: parallels to the support tangents through the ends of the load line fix the pole o, and the rays hang a polygon through every one of those points. Third the TANGENT METHOD: divide the two support tangents into eight equal parts and join the k-th mark of one to the k-th of the other — every line touches the curve, which appears as the envelope of its own tangents.',
   frame: [[1.6221, -4.797], [49.0335, 18.9088]],
 };
 
@@ -62,12 +62,14 @@ const STEPS = [
   { t: 'Tangents at the supports → the pole o', d: 'left: tangents A and B through the mirror point — right: parallels to them through the ends of the load line intersect at the pole o' },
   { t: 'Reactions A and B', d: 'right: the outer rays are the two reactions — left: the same pulls at the supports, along the tangents' },
   { t: 'Secants to the apex — tangent at C', d: 'left: secants A–C and C–B, and the tangent at C parallel to the closing string — right: the mid ray o–F₃ is parallel to both and halves the load line' },
-  { t: 'Quarter points: the midpoint rule', d: 'left: on the quarter verticals the parabola passes midway (y = y) between secant and tangent — right: the load line splits into the node loads R' },
+  { t: 'The midpoint rule', d: 'left: THE rule that draws a parabola — on any vertical, the curve lies exactly MIDWAY between a secant and a tangent. Take the quarter verticals: the secant A–C and the tangent at A cut them; halve the black segment between the two marked points (y = y) and you have a parabola point — right: the load line splits into the node loads R',
+    take: 'the same halving that put C at h below the closing string, applied again — the construction is self-similar' },
   { t: 'A first funicular: quarters', d: 'right: rays from o to the quarter cuts — left: the strings A–C and C–B refine into four strings, each parallel to its ray' },
-  { t: 'Eighth points: the rule again', d: 'left: the midpoint rule on the eighth verticals gives four more parabola points — right: the load line splits into eight node loads R' },
+  { t: 'The rule again — eighth points', d: 'left: halve once more: secant and tangent on each eighth vertical, midway between them the curve — four more parabola points, nine in all — right: the load line splits into eight node loads R' },
   { t: 'The funicular polygon', d: 'right: rays from o to every cut — left: the funicular polygon 1…8 through all nine points, each member parallel to its ray' },
-  { t: 'Divide the tangents into 8', d: 'left: rulers l₁ and l₂ beside the tangents divide each into eight equal parts (the applet\'s tangent method)' },
-  { t: 'Connect matching points', d: 'left: joining the k-th point of one tangent to the k-th of the other — every connecting line is a tangent of the parabola, touching it at a funicular vertex' },
+  { t: 'A third way: the tangent method', d: 'left: forget the verticals — mark the two support tangents A–T and T–B in eight EQUAL parts each, numbered towards the meeting point and away from it' },
+  { t: 'Join 1 to 1, 2 to 2, …', d: 'left: join the k-th mark of one tangent to the k-th of the other: EVERY one of those lines touches the parabola — the curve appears as the envelope of its own tangents, without computing a single point',
+    take: 'three constructions, one curve: halving verticals, hanging a funicular, or enveloping tangents' },
   { t: 'The enclosing polygon', d: 'left: consecutive tangent intersections trace the enclosing polygon of the same parabola (the funicular polygon touches it from inside)' },
   { t: 'Tension', d: 'the construction retires — the funicular of the uniform load is the parabola through A, C and B, all members pink = tension',
     detail: (d) => [`A = ${d.NA.toFixed(1)} · B = ${d.NB.toFixed(1)} kN — segment forces N₁ = ${d.Ns[0].toFixed(1)} … N₈ = ${d.Ns[7].toFixed(1)} kN`],
@@ -257,34 +259,34 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   // step 7: secants + tangent at C (left), mid ray o-F3 (right)
   // ------------------------------------------------------------------
-  dw.dashLine('secAC', { intro: 7, outro: RESOLVE, dash: 0.4 });
-  dw.dashLine('secCB', { intro: 7, outro: RESOLVE, dash: 0.4 });
-  dw.dashLine('tanC', { intro: 7, outro: RESOLVE, dash: 0.4 });
+  dw.dashLine('secAC', { intro: 7, outro: 12, dash: 0.4 });
+  dw.dashLine('secCB', { intro: 7, outro: 12, dash: 0.4 });
+  dw.dashLine('tanC', { intro: 7, outro: 12, dash: 0.4 });
   dw.dashLine('midRay', { intro: 7, dash: 0.4 });
   dw.label('lbl_F3', 'F₃', { cls: 'point', intro: 7 });
 
   // ------------------------------------------------------------------
   // step 8: quarter points (midpoint rule) + quartered load line
   // ------------------------------------------------------------------
-  dw.dashLine('vx10', { intro: 8, dash: 0.3 });
-  dw.dashLine('vx18', { intro: 8, dash: 0.3 });
-  for (let i = 0; i < 4; i++) {
-    dw.seg(`dimL4_${i}`, { intro: 8, outro: 10, w: W_DIM, color: PAL.grey, flash: false });
-    dw.label(`lbl_l4_${i}`, 'l/4', { cls: 'point', intro: 8, outro: 10, flash: false, color: PAL.grey });
+  dw.dashLine('vx10', { intro: 8, outro: 12, dash: 0.3 });
+  dw.dashLine('vx18', { intro: 8, outro: 12, dash: 0.3 });
+  // the midpoint rule itself: on a vertical, the parabola lies MIDWAY between
+  // the secant and the tangent. Draw that segment black, and mark its two ends
+  // (secant point, tangent point) so the halving is visible, not implied.
+  dw.seg('mseg10', { intro: 8, outro: 12, w: 0.06, color: PAL.black });
+  dw.seg('mseg18', { intro: 8, outro: 12, w: 0.06, color: PAL.black });
+  for (const n of ['secL', 'tanL', 'secR', 'tanR']) {
+    dw.disk(`mk_${n}`, { intro: 8, outro: 12, r: 0.17, face: PAL.white, edge: 0x777777 });
   }
-  dw.strokes('tickL4', 10, { intro: 8, outro: 10, w: W_DIM, color: PAL.grey, flash: false });
-  dw.seg('mseg10', { intro: 8, outro: RESOLVE, w: W_STR, color: PAL.grey });
-  dw.seg('mseg18', { intro: 8, outro: RESOLVE, w: W_STR, color: PAL.grey });
+  dw.label('mk_secL', 'secant', { cls: 'point', intro: 8, outro: 10, flash: false, color: PAL.grey });
+  dw.label('mk_tanL', 'tangent', { cls: 'point', intro: 8, outro: 10, flash: false, color: PAL.grey });
   // 'y = y' and 'z = z' annotations (the applet's step-4 evidence)
   for (const n of ['ySeg1', 'ySeg2']) dw.seg(n, { intro: 8, outro: 10, w: W_DIM, color: PAL.grey });
-  for (const n of ['yCon1', 'yCon2', 'yCon3', 'zSeg1', 'zSeg2']) {
+  for (const n of ['yCon1', 'yCon2', 'yCon3']) {
     dw.seg(n, { intro: 8, outro: 10, w: 0.04, color: PAL.grey, flash: false });
   }
   dw.label('lbl_y1', 'y', { cls: 'point', intro: 8, outro: 10, color: PAL.grey });
   dw.label('lbl_y2', 'y', { cls: 'point', intro: 8, outro: 10, color: PAL.grey });
-  dw.label('lbl_z1', 'z', { cls: 'point', intro: 8, outro: 10, color: PAL.grey });
-  dw.label('lbl_z2', 'z', { cls: 'point', intro: 8, outro: 10, color: PAL.grey });
-  dw.strokes('tickZ', 6, { intro: 8, outro: 10, w: W_DIM, color: PAL.grey, flash: false });
   // load line quartered + node loads at x = 6, 10, 14, 18, 22
   for (let i = 0; i < 5; i++) {
     dw.arrow(`qv${i}`, { intro: 8, outro: 10, ...NARROW });
@@ -302,19 +304,19 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   for (let i = 0; i < 4; i++) {
     dw.seg(`qray${i}`, { intro: 9, outro: 10, w: W_RAY, color: PAL.grey });
-    dw.seg(`qstr${i}`, { intro: 9, outro: RESOLVE, w: W_STR, color: PAL.grey });
+    dw.seg(`qstr${i}`, { intro: 9, outro: 12, w: W_STR, color: PAL.grey });
     dw.link(`qstr${i}`, `qray${i}`);
   }
 
   // ------------------------------------------------------------------
   // step 10: eighth points + the load line in eighths
   // ------------------------------------------------------------------
-  for (const x of [8, 12, 16, 20]) dw.dashLine(`vx${x}`, { intro: 10, dash: 0.3 });
+  for (const x of [8, 12, 16, 20]) dw.dashLine(`vx${x}`, { intro: 10, outro: 12, dash: 0.3 });
   for (let i = 0; i < 8; i++) {
-    dw.seg(`dimL8_${i}`, { intro: 10, outro: RESOLVE, w: W_DIM, color: PAL.grey, flash: false });
-    dw.label(`lbl_l8_${i}`, 'l/8', { cls: 'point', intro: 10, outro: RESOLVE, flash: false, color: PAL.grey });
+    dw.seg(`dimL8_${i}`, { intro: 10, outro: 12, w: W_DIM, color: PAL.grey, flash: false });
+    dw.label(`lbl_l8_${i}`, 'l/8', { cls: 'point', intro: 10, outro: 12, flash: false, color: PAL.grey });
   }
-  dw.strokes('tickL8', 18, { intro: 10, outro: RESOLVE, w: W_DIM, color: PAL.grey, flash: false });
+  dw.strokes('tickL8', 18, { intro: 10, outro: 12, w: W_DIM, color: PAL.grey, flash: false });
   for (const n of ['mseg8', 'mseg12', 'mseg16', 'mseg20']) {
     dw.seg(n, { intro: 10, outro: RESOLVE, w: W_STR, color: PAL.grey });
   }
@@ -343,20 +345,17 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   // steps 12-14: tangent method (rulers, envelope, enclosing polygon)
   // ------------------------------------------------------------------
-  dw.seg('orgA', { intro: 12, outro: RESOLVE, w: 0.09, color: PAL.grey });
-  dw.seg('orgB', { intro: 12, outro: RESOLVE, w: 0.09, color: PAL.grey });
-  dw.label('lbl_o1', 'l₁', { intro: 12, outro: RESOLVE, color: PAL.grey });
-  dw.label('lbl_o2', 'l₂', { intro: 12, outro: RESOLVE, color: PAL.grey });
-  dw.label('lbl_o18', 'l₁/8', { cls: 'point', intro: 12, outro: RESOLVE, color: PAL.grey });
-  dw.label('lbl_o28', 'l₂/8', { cls: 'point', intro: 12, outro: RESOLVE, color: PAL.grey });
-  for (let i = 0; i < 4; i++) dw.dashLine(`endT${i}`, { intro: 12, outro: RESOLVE, dash: 0.25 });
+  // Dividing each tangent into 8 equal parts is a STATEMENT, not a drawing:
+  // the applet's auxiliary parallel-ruler apparatus is dropped and the eight
+  // equal parts are simply marked and ticked on the tangents themselves.
+  dw.strokes('divTicks', 14, { intro: 12, outro: RESOLVE, w: 0.05, color: PAL.grey, flash: false });
+  dw.label('lbl_o18', '8 equal parts', { cls: 'point', intro: 12, outro: RESOLVE, color: PAL.grey });
+  dw.label('lbl_o28', '8 equal parts', { cls: 'point', intro: 12, outro: RESOLVE, color: PAL.grey });
   for (let i = 0; i < 7; i++) {
-    dw.dashLine(`tickA${i}`, { intro: 12, outro: RESOLVE, dash: 0.25 });
-    dw.dashLine(`tickB${i}`, { intro: 12, outro: RESOLVE, dash: 0.25 });
-    dw.disk(`pt_dA${i}`, { intro: 12, outro: RESOLVE, r: 0.13, face: PAL.grey, edge: PAL.grey });
-    dw.disk(`pt_dB${i}`, { intro: 12, outro: RESOLVE, r: 0.13, face: PAL.grey, edge: PAL.grey });
-    dw.disk(`pt_tA${i}`, { intro: 12, outro: RESOLVE, r: 0.11, face: PAL.white, edge: 0x777777 });
-    dw.disk(`pt_tB${i}`, { intro: 12, outro: RESOLVE, r: 0.11, face: PAL.white, edge: 0x777777 });
+    dw.disk(`pt_tA${i}`, { intro: 12, outro: RESOLVE, r: 0.16, face: PAL.white, edge: 0x777777 });
+    dw.disk(`pt_tB${i}`, { intro: 12, outro: RESOLVE, r: 0.16, face: PAL.white, edge: 0x777777 });
+    dw.label(`lbl_kA${i}`, `${i + 1}`, { cls: 'point', intro: 12, outro: RESOLVE, flash: false, color: PAL.grey });
+    dw.label(`lbl_kB${i}`, `${7 - i}`, { cls: 'point', intro: 12, outro: RESOLVE, flash: false, color: PAL.grey });
     dw.dashLine(`env${i}`, { intro: 13, outro: RESOLVE, dash: 0.35 });
   }
   for (const x of [7, 9, 11, 13, 15, 17, 19, 21]) {
@@ -472,7 +471,6 @@ export function create(dw, panel, makePlayer) {
     dw.setStrokes('tickL', xTicks([[XA, 16], [XB, 16]]));
     dw.setStrokes('tickL2', xTicks([[XA, 15], [XC, 15], [XB, 15]]));
     dw.setStrokes('tickL2r', xTicks([[XA, 15], [XC, 15], [XB, 15]]));
-    dw.setStrokes('tickL4', xTicks([0, 1, 2, 3, 4].map((k) => [XA + 4 * k, 15])));
     dw.setStrokes('tickL8', xTicks([0, 1, 2, 3, 4, 5, 6, 7, 8].map((k) => [XA + 2 * k, 15])));
 
     // load strip + midspan resultant
@@ -525,11 +523,13 @@ export function create(dw, panel, makePlayer) {
     dw.setDashLine('vx10', [[10, VERT[1]], [10, VERT[0]]]);
     dw.setDashLine('vx18', [[18, VERT[1]], [18, VERT[0]]]);
     for (let i = 0; i < 4; i++) {
-      dw.setSeg(`dimL4_${i}`, [XA + 4 * i, 15], [XA + 4 * (i + 1), 15]);
-      dw.setLabel(`lbl_l4_${i}`, [XA + 4 * i + 2, 14.4]);
     }
     dw.setSeg('mseg10', d.E1, d.M1);
     dw.setSeg('mseg18', d.P1, d.O1);
+    dw.setDisk('mk_secL', d.E1); dw.setDisk('mk_tanL', d.M1);
+    dw.setDisk('mk_secR', d.P1); dw.setDisk('mk_tanR', d.O1);
+    dw.setLabel('mk_secL', V.add(d.E1, [-2.1, 0.1]));
+    dw.setLabel('mk_tanL', V.add(d.M1, [-2.3, -0.1]));
     // y = y (parabola midway between secant and tangent), z = z (equal spans)
     dw.setSeg('ySeg1', [N11X, d.O1[1]], [N11X, d.R1[1]]);
     dw.setSeg('ySeg2', [N11X, d.R1[1]], [N11X, d.P1[1]]);
@@ -538,11 +538,6 @@ export function create(dw, panel, makePlayer) {
     dw.setSeg('yCon3', d.P1, [N11X, d.P1[1]]);
     dw.setLabel('lbl_y1', [N11X + 0.45, (d.O1[1] + d.R1[1]) / 2]);
     dw.setLabel('lbl_y2', [N11X + 0.45, (d.R1[1] + d.P1[1]) / 2]);
-    dw.setSeg('zSeg1', [14, QZY], [18, QZY]);
-    dw.setSeg('zSeg2', [18, QZY], [22, QZY]);
-    dw.setLabel('lbl_z1', [16, QZY + 0.35]);
-    dw.setLabel('lbl_z2', [20, QZY + 0.35]);
-    dw.setStrokes('tickZ', xTicks([[14, QZY], [18, QZY], [22, QZY]]));
     const q4pts = [d.Q2, ...d.cut4, d.D3];
     for (let i = 0; i < 5; i++) {
       dw.setArrow(`qv${i}`, q4pts[i], q4pts[i + 1]);
@@ -598,23 +593,24 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`sn${i}`, V.add(rm, V.mul(pr, 0.5 * sg2)));
     }
 
-    // tangent method
-    dw.setSeg('orgA', d.orgA[0], d.orgA[1]);
-    dw.setSeg('orgB', d.orgB[0], d.orgB[1]);
-    dw.setLabel('lbl_o1', V.add(V.mid(d.orgA[0], d.orgA[1]), V.mul(d.dA, 0.75)));
-    dw.setLabel('lbl_o2', V.add(V.mid(d.orgB[0], d.orgB[1]), V.mul(d.dB, 0.75)));
-    dw.setLabel('lbl_o18', V.add(V.mid(d.divA[0], d.orgA[0]), V.mul(d.dA, 0.7)));
-    dw.setLabel('lbl_o28', V.add(V.mid(d.divB[6], d.orgB[1]), V.mul(d.dB, 0.7)));
-    for (let i = 0; i < 4; i++) dw.setDashLine(`endT${i}`, d.endT[i]);
+    // tangent method: the two tangents, marked in 8 equal parts, then the
+    // k-th point of one joined to the k-th (counted backwards) of the other
+    const tickN = (p0, dir) => {
+      const n = V.mul(V.unit(V.perp(dir)), 0.45);
+      return [V.sub(p0, n), V.add(p0, n)];
+    };
+    const dt = [];
     for (let i = 0; i < 7; i++) {
-      dw.setDashLine(`tickA${i}`, [d.tAp[i + 1], d.ftA[i]]);
-      dw.setDashLine(`tickB${i}`, [d.tBp[i + 1], d.ftB[i]]);
-      dw.setDisk(`pt_dA${i}`, d.divA[i]);
-      dw.setDisk(`pt_dB${i}`, d.divB[i]);
       dw.setDisk(`pt_tA${i}`, d.tAp[i + 1]);
       dw.setDisk(`pt_tB${i}`, d.tBp[i + 1]);
+      dw.setLabel(`lbl_kA${i}`, V.add(d.tAp[i + 1], V.mul(V.unit(V.perp(d.dA)), -0.95)));
+      dw.setLabel(`lbl_kB${i}`, V.add(d.tBp[i + 1], V.mul(V.unit(V.perp(d.dB)), 0.95)));
+      dt.push(tickN(d.tAp[i + 1], d.dA), tickN(d.tBp[i + 1], d.dB));
       dw.setDashLine(`env${i}`, [d.env[i][0], d.env[i][1]]);
     }
+    dw.setStrokes('divTicks', dt);
+    dw.setLabel('lbl_o18', V.add(V.mid(d.tAp[1], d.tAp[3]), V.mul(V.unit(V.perp(d.dA)), -3.4)));
+    dw.setLabel('lbl_o28', V.add(V.mid(d.tBp[4], d.tBp[6]), V.mul(V.unit(V.perp(d.dB)), 3.4)));
     for (const x of [7, 9, 11, 13, 15, 17, 19, 21]) {
       dw.setDashLine(`ox${x}`, [[x, VERT[1]], [x, VERT[0]]]);
     }

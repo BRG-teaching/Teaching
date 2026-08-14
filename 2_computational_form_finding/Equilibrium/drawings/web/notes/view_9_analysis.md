@@ -204,3 +204,36 @@ objects, flipped every boolean, swept mode 0/1/2 x step 0-8 with screenshots
 - The y-ticks appear ORANGE in the live applet only because they exist solely
   at their flash step (step 4); our grey staging over steps 8-9 is the
   platform's flash convention.
+
+
+## Redesign 2026-08-14 — "understand, don't copy" (user feedback)
+
+The user judged the parabola construction "really not clear ... instead of
+copying fully". Diagnosis: the applet's *measuring apparatus* had been
+ported verbatim, so three constructions accumulated on one canvas, all in
+the same grey dashed weight, and the IDEA of each was invisible.
+
+What the constructions actually are (now stated in the captions):
+1. MIDPOINT RULE — on any vertical a parabola lies exactly MIDWAY between a
+   secant and a tangent. (Check on y = x^2, chord x=0..2: at x=1 the chord
+   gives 2, either end tangent gives 0, the curve 1.) Applied recursively:
+   closing string A-B -> the support tangents meet 2h below the crossing,
+   the apex sits at h; then chords A-C, C-B give the quarter points; then
+   the eighths. The construction is self-similar — that is the point.
+2. FUNICULAR — pole o from parallels to the support tangents through the
+   ends of the load line; the rays hang the polygon through those points.
+3. TANGENT METHOD — divide both support tangents into 8 equal parts and
+   join the k-th mark of one to the k-th of the other; every such line is a
+   tangent, and the parabola appears as their ENVELOPE.
+
+Changes: the midpoint rule's segment is now drawn BLACK with disks marking
+its secant end and tangent end and "secant"/"tangent" labels, so the
+halving is visible rather than implied; the applet's z-dimension chain and
+the redundant l/4 chain were deleted; the tangent method's auxiliary
+parallel-ruler apparatus (orgA/orgB, tickA/tickB, pt_dA/pt_dB, endT) was
+deleted entirely and replaced by tick marks + numbered division points on
+the tangents themselves — dividing a segment into 8 equal parts is a
+STATEMENT, not a drawing that needs its own scaffolding; and all of method
+1's apparatus (secants, tangent at C, the verticals, the l/8 chain, the
+quarter strings) now RETIRES at step 12 so the envelope method gets a clean
+stage. Captions rewritten to teach the rule instead of narrating the moves.
