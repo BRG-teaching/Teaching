@@ -406,7 +406,7 @@ export function create(dw, panel, makePlayer) {
                if1: ['M1', 'D2', null, 'c1'] };
   for (const [n, [, , , ck]] of Object.entries(IF)) {
     dw.poly(n, 4, {
-      intro: RESOLVE, opacity: 0.45, flash: false,
+      intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd[ck] },
       when: (st) => st.o1,
     });

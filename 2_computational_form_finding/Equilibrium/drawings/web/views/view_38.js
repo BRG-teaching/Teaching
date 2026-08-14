@@ -369,7 +369,7 @@ export function create(dw, panel, makePlayer) {
 
   // ---- pipes + readouts ---------------------------------------------------
   for (let m = 1; m <= 21; m++) {
-    dw.poly(`if${m}`, 4, { intro: RESOLVE, opacity: 0.45, flash: false,
+    dw.poly(`if${m}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: () => d.col[m] },
       when: (st) => st.o1 });
   }

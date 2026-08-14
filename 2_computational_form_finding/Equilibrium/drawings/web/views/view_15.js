@@ -317,7 +317,7 @@ export function create(dw, panel, makePlayer) {
   // internal-force pipes (on by default)
   for (let k = 0; k <= NSTRIP; k++) {
     dw.poly(`if${k}`, 4, {
-      intro: RESOLVE, opacity: 0.45, flash: false,
+      intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: () => PAL.red },
       when: (st) => st.o1,
     });

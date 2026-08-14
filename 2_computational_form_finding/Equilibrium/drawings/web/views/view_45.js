@@ -304,7 +304,7 @@ export function create(dw, panel, makePlayer) {
   for (let k = 0; k <= 18; k++) {
     dw.dashLine(`th${k}`, { intro: 9, dash: 0.22, color: PAL.black });
     dw.link(`th${k}`, `r${k}`);
-    dw.poly(`if${k}`, 4, { intro: 9, opacity: 0.4, flash: false,
+    dw.poly(`if${k}`, 4, { intro: 9, opacity: 1.0, z: -0.18, flash: false,
                            color: { pending: PAL.grey, final: () => PAL.blue },
                            when: (st) => st.o1 });
   }

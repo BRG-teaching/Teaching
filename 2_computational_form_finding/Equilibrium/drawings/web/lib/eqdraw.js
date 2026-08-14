@@ -11,32 +11,37 @@
  *   - three.js scene: white background, ground grid, perspective camera + orbit
  *   - primitives drawn in the z=0 plane (quad "thick" segments, disks, arrows,
  *     dashed circles, fan polygons) + crisp DOM labels projected onto the canvas
- *   - the color scheme sampled from the reference video (data/6c07...MP4):
- *       blue = compression, red = tension, green = loads,
- *       pink = element added in the current step, grey = guides
- *   - the StepPlayer: step slider, play/pause, speed, captions; elements are
- *     drawn black until the final step resolves them into blue/red
+ *   - the color scheme (regraded 2026-08-14 to the reference video):
+ *       navy = compression, pink = tension, green = loads, grey = guides,
+ *       black = element(s) added in the current step
+ *   - the StepPlayer: step slider, play/pause, speed, caption card; elements
+ *     flash black while their step is current, then take their proper color
  *   - a Panel for sidebar widgets and GeoGebra-style dragging of control points
  */
 
 import * as THREE from 'three';
 import { OrbitControls } from './vendor/OrbitControls.js';
 
-// palette based on the reference video (blue softened per user preference)
+// palette regraded 2026-08-14 to the reference walkthrough video: calm deep
+// navy endstates, hairline weights (tension stays PINK -- the user's choice)
 export const PAL = {
-  blue: 0x2563eb,   // member in compression
+  blue: 0x1a1eb2,   // member in compression (deep navy)
   red: 0xce4095,    // member in tension (pink -- the user prefers pink over red)
-  green: 0x51923d,  // external loads
+  green: 0x3f9c20,  // external loads / reactions / resultants
   pink: 0x111111,   // element(s) being drawn are BLACK (they turn pink/blue after)
   pinkLight: 0xe8e8e8, // point fill while its step is current
   ghost: 0x9ed4c9,  // pale blue-green ghost of the final drawing
   yellow: 0xe8ac00, // hover highlight of dual form <-> force elements
   yellowLight: 0xf9e08a, // point fill while hover-highlighted
-  grey: 0xa0a0a0,   // guides / construction lines
+  grey: 0xaaaaaa,   // guides / construction lines
   orange: 0xe07a26, // node-equilibrium inspector (the applets' mode-2 orange)
   black: 0x111111,
   white: 0xffffff,
 };
+
+// global stroke regrade: every element width / arrowhead is multiplied by
+// this, thinning all 53 views to the video's hairline weight at once
+export const LINE_SCALE = 0.72;
 
 const cssHex = (hex) => `#${hex.toString(16).padStart(6, '0')}`;
 const lerp2 = (a, b, f) => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
@@ -219,7 +224,8 @@ export class Drawing {
 
   /** Apply an element's stored geometry, partially revealed while animF < 1. */
   _applyGeo(e) {
-    const wE0 = e.w, zE0 = e.z, hwE0 = e.headW;
+    const ls = e.noScale ? 1 : LINE_SCALE;
+    const wE0 = e.w * ls, zE0 = e.z, hwE0 = (e.headW ?? 0) * ls;
     const wE = e.ghostNow ? wE0 * 0.7 : wE0;
     const zE = e.ghostNow ? zE0 - 2 : zE0;
     const hwE = e.ghostNow ? hwE0 * 0.6 : hwE0;
@@ -242,7 +248,7 @@ export class Drawing {
       const dx = tp[0] - tail[0], dy = tp[1] - tail[1];
       const l = Math.hypot(dx, dy) || 1e-6;
       const ux = dx / l, uy = dy / l;
-      const hl = Math.min(e.headLen, 0.5 * l);
+      const hl = Math.min(e.headLen * ls, 0.5 * l);
       const bx = tp[0] - ux * hl, by = tp[1] - uy * hl;
       e.shaft.position.set((tail[0] + bx) / 2, (tail[1] + by) / 2, zE);
       e.shaft.rotation.z = Math.atan2(dy, dx);
@@ -257,7 +263,7 @@ export class Drawing {
       const dx = tp[0] - tail[0], dy = tp[1] - tail[1];
       const l = Math.hypot(dx, dy) || 1e-6;
       const ux = dx / l, uy = dy / l;
-      const hl = Math.min(e.headLen, 0.5 * l);
+      const hl = Math.min(e.headLen * ls, 0.5 * l);
       const shaft = l - hl;
       // fixed dash length in world units: identical pattern at any arrow length
       let period = e.dash / 0.62;
@@ -697,9 +703,14 @@ export class Drawing {
       }
       if (!e.visible || e.color === undefined) continue;
       if (e.kind === 'disk') {
-        e.mats[0].color.setHex(hovered ? PAL.yellowLight : flashing ? PAL.pinkLight : resolved);
+        // draggable control points render as solid pink handles (like the
+        // reference video) so interactivity is discoverable at a glance;
+        // detected automatically by probing the view's drag hit function
+        const handle = !hovered && !flashing && this._isHandle(e);
+        e.mats[0].color.setHex(hovered ? PAL.yellowLight : flashing ? PAL.pinkLight
+          : handle ? 0xce4095 : resolved);
         e.edgeMat.color.setHex(hovered ? PAL.yellow : flashing ? PAL.pink
-          : name === this._selDisk ? PAL.orange : e.edgeHex);
+          : name === this._selDisk ? PAL.orange : handle ? 0xa83179 : e.edgeHex);
         continue;
       }
       for (const m of e.mats) {
@@ -856,7 +867,16 @@ export class Drawing {
     this.setText('nq_lbl', title);
   }
 
+  /** A disk is a drag handle if the view's drag hit function claims a point
+      at its center (probed with a tiny tolerance so only the disk itself,
+      not a nearby draggable line, lights up). */
+  _isHandle(e) {
+    if (!this._dragHit || !e.geo) return false;
+    return !!this._dragHit(e.geo[0], e.geo[1], 1e-9);
+  }
+
   enableDrag(hit, onDrag) {
+    this._dragHit = hit;
     const el = this.renderer.domElement;
     let key = null;
     el.addEventListener('pointerdown', (ev) => {
@@ -972,7 +992,11 @@ export class Panel {
 
 export class StepPlayer {
   /**
-   * steps: [{t, d}] captions; index 0 = empty canvas / intro card.
+   * steps: [{t, d, detail, take}] captions; index 0 = empty canvas / intro
+   * card. t = title, d = main line, detail = extra monospace lines (array),
+   * take = highlighted takeaway line. d / detail / take may also be
+   * functions (d, state) => value so captions can carry live computed
+   * numbers -- they re-evaluate on every refresh (drag, slider, step).
    * refresh: the view's refresh() -- recomputes geometry, then calls apply().
    */
   constructor(dw, panel, steps, refresh) {
@@ -988,8 +1012,8 @@ export class StepPlayer {
 
     this.caption = document.createElement('div');
     this.caption.className = 'eq-caption';
-    this.caption.innerHTML = `<span class="pill"></span>
-      <div class="cap-body"><div class="cap-t"></div><div class="cap-d"></div></div>`;
+    this.caption.innerHTML = `<div class="cap-head"><div class="cap-t"></div><span class="pill"></span></div>
+      <div class="cap-d"></div><div class="cap-x"></div><div class="cap-take"></div>`;
     dw.container.appendChild(this.caption);
 
     // progress bar of the complete drawing (click / drag scrubs the steps)
@@ -1057,10 +1081,25 @@ export class StepPlayer {
   /** Called by the view's refresh() with the freshly computed geometry. */
   apply(d, state) {
     this.dw.applyStep(this.k, d, state);
-    const { t, d: desc } = this.steps[this.k];
-    this.caption.querySelector('.pill').textContent = `${this.k}/${this.steps.length - 1}`;
-    this.caption.querySelector('.cap-t').textContent = t;
-    this.caption.querySelector('.cap-d').textContent = desc;
+    const s = this.steps[this.k];
+    const live = (v) => (typeof v === 'function' ? v(d, state) : v);
+    this.caption.querySelector('.pill').textContent
+      = `step ${this.k}/${this.steps.length - 1}`;
+    this.caption.querySelector('.cap-t').textContent = live(s.t);
+    this.caption.querySelector('.cap-d').textContent = live(s.d) ?? '';
+    const det = live(s.detail);
+    const x = this.caption.querySelector('.cap-x');
+    x.textContent = '';
+    for (const line of det ?? []) {
+      const div = document.createElement('div');
+      div.textContent = line;
+      x.appendChild(div);
+    }
+    x.style.display = det?.length ? '' : 'none';
+    const take = live(s.take);
+    const tk = this.caption.querySelector('.cap-take');
+    tk.textContent = take ?? '';
+    tk.style.display = take ? '' : 'none';
     this.progress.querySelector('.fill').style.width
       = `${(100 * this.k) / (this.steps.length - 1)}%`;
   }

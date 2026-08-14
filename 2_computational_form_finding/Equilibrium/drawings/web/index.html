@@ -93,16 +93,15 @@
   .eq-label.flash { color: #111; font-weight: 700; }
   .eq-label.hover { color: #c99700; }
 
-  /* ---- step caption: what the current step means, at the bottom ----- */
+  /* ---- step caption card, top-left like the reference video --------- */
   .eq-caption {
-    position: absolute; bottom: 26px; left: 50%;
-    transform: translateX(-50%);
-    display: flex; gap: 10px; align-items: flex-start;
+    position: absolute; top: 14px; left: 18px;
     width: max-content;
-    max-width: min(640px, calc(100% - 32px));
-    padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.96);
-    border: 1px solid #111; border-radius: 0;
+    max-width: min(500px, calc(100% - 36px));
+    padding: 11px 15px 10px;
+    background: rgba(255, 255, 255, 0.97);
+    border: 1px solid #ececef; border-radius: 8px;
+    box-shadow: 0 2px 14px rgba(20, 20, 30, 0.09);
     pointer-events: none;
   }
 
@@ -118,16 +117,26 @@
     background: var(--pink);
     transition: width 0.25s ease;
   }
-  .eq-caption .pill {
-    flex: none; margin-top: 1px;
-    font: 650 11px/1 ui-monospace, Menlo, Consolas, monospace;
-    color: #fff; background: var(--pink);
-    padding: 4px 7px; border-radius: 99px;
+  .eq-caption .cap-head {
+    display: flex; gap: 18px; align-items: baseline; justify-content: space-between;
   }
-  .eq-caption .cap-t { font-weight: 650; font-size: 13px; }
-  .eq-caption .cap-d {
-    font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace;
-    color: var(--muted); margin-top: 2px;
+  .eq-caption .pill {
+    flex: none;
+    font: 650 11px/1 ui-monospace, Menlo, Consolas, monospace;
+    color: var(--pink);
+  }
+  .eq-caption .cap-t {
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 0.02em; text-transform: uppercase; color: #18181b;
+  }
+  .eq-caption .cap-d, .eq-caption .cap-x {
+    font: 12px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: #3f3f46; margin-top: 3px;
+  }
+  .eq-caption .cap-x { margin-top: 0; }
+  .eq-caption .cap-take {
+    font: 600 12px/1.45 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--pink); margin-top: 5px;
   }
 
   #error {

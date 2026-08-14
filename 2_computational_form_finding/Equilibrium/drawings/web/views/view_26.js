@@ -312,13 +312,13 @@ export function create(dw, panel, makePlayer) {
   dw.label('roB', '', { intro: RESOLVE, flash: false, color: PAL.red });
   dw.label('roR', '', { intro: RESOLVE, flash: false, color: PAL.green });
   for (let k = 0; k < 8; k++) {
-    dw.poly(`ipT${k}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ipT${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd.cT[k] }, when: (st) => st.o1 });
-    dw.poly(`ipB${k}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ipB${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd.cB[k] }, when: (st) => st.o1 });
   }
   for (let k = 0; k < 7; k++) {
-    dw.poly(`ipH${k}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ipH${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd.cH[k] }, when: (st) => st.o1 });
   }
 

@@ -47,7 +47,8 @@ const STEPS = [
   { t: 'Bar 2 — form and parallel', d: 'left: choose D, bar 2 = D–A — right: dashed parallel to bar 2 through the other end' },
   { t: 'Point H', d: 'the two parallels intersect at H: the polygon closes' },
   { t: 'Forces in bars 1 and 2', d: 'G–H is the force in bar 2, H–F4 in bar 1 — the bars flash on the left' },
-  { t: 'Compression / tension', d: 'closed polygon = equilibrium; blue = compression, pink = tension' },
+  { t: 'Compression / tension', d: 'closed polygon = equilibrium; blue = compression, pink = tension',
+    take: 'a CLOSED force polygon is the proof of equilibrium — each bar\'s force is its parallel edge' },
 ];
 
 let hCache = [82.19, 50.03]; // last valid H, reused if bars 1 and 2 become parallel
@@ -170,7 +171,7 @@ export function create(dw, panel, makePlayer) {
 
   for (const name of Object.keys(d.rects)) {                          // internal forces
     dw.poly(name, 4, {
-      intro: STEPS.length - 1, opacity: 0.45, flash: false,
+      intro: STEPS.length - 1, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => (V.isCompression(dd.rects[name][2]) ? PAL.blue : PAL.red) },
       when: (st, dd) => dd.rects[name][3],
     });

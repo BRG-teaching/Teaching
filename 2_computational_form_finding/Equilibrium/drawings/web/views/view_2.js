@@ -307,7 +307,7 @@ export function create(dw, panel, makePlayer) {
   dw.label('roN3', '', { intro: STEPS.length - 1, flash: false, color: { final: (dd) => dd.c3 } });
   for (const n of ['if1', 'if2', 'if3']) {
     dw.poly(n, 4, {
-      intro: STEPS.length - 1, opacity: 0.45, flash: false,
+      intro: STEPS.length - 1, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd[`c${n[2]}`] },
       when: (st) => st.o1,
     });

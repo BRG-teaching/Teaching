@@ -340,7 +340,7 @@ export function create(dw, panel, makePlayer) {
   // resolve: internal-force pipes + readouts
   for (let j = 0; j <= 20; j++) {
     dw.poly(`if${j}`, 4, {
-      intro: RESOLVE, opacity: 0.45, flash: false,
+      intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: () => PAL.blue },
       when: (st) => st.o1,
     });

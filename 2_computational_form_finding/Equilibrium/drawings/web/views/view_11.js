@@ -446,15 +446,15 @@ export function create(dw, panel, makePlayer) {
   // resolve: pipes + magnitude readouts (in P = one hanger load)
   // ------------------------------------------------------------------
   for (let i = 0; i < 30; i++) {
-    dw.poly(`ifm${i}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ifm${i}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
                             color: { pending: PAL.grey, final: () => PAL.red },
                             when: (st) => st.o1 });
   }
   for (let i = 0; i < 9; i++) {
-    dw.poly(`ifsL${i}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ifsL${i}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
                              color: { pending: PAL.grey, final: () => PAL.red },
                              when: (st) => st.o1 });
-    dw.poly(`ifsR${i}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ifsR${i}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
                              color: { pending: PAL.grey, final: () => PAL.red },
                              when: (st) => st.o1 });
   }

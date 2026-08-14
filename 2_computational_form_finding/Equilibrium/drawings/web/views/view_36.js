@@ -64,7 +64,10 @@ const STEPS = [
   { t: 'Member 1 — the bottom chord', d: 'left: the chord A–B — right: its force V–i closes the triangles at A and B with the parallel reactions' },
   { t: 'The roller at B', d: 'left: the roller can only push VERTICALLY — right: B_V runs from O′ straight down to W, level with i (∥ A–B); member 1 grows to V–W' },
   { t: 'Pin at A: A_V and A_H', d: 'right: the polygon closes over W→Z (A_V) and Z→O (A_H) — left: the same components at A' },
-  { t: 'Compression and tension', d: 'the trial apparatus is gone — legs 2 and 3 resolve blue = compression, the chord 1 pink = tension; drag C, N, A, B or O' },
+  { t: 'Compression and tension', d: 'the trial apparatus is gone — legs 2 and 3 resolve blue = compression, the chord 1 pink = tension; drag C, N, A, B or O',
+    detail: (d) => [`N₁ = ${d.Ns[0].toFixed(1)} · N₂ = ${d.Ns[1].toFixed(1)} · N₃ = ${d.Ns[2].toFixed(1)} kN`,
+                    `A_H = ${d.Rs[0].toFixed(1)} · A_V = ${d.Rs[1].toFixed(1)} · B_V = ${d.Rs[2].toFixed(1)} kN`],
+    take: 'the roller admits only a vertical reaction — that single condition fixes the whole force polygon' },
 ];
 
 const cache = {};
@@ -269,7 +272,7 @@ export function create(dw, panel, makePlayer) {
     dw.label(`ro${i}`, '', { intro: RESOLVE, flash: false, color: { final: (dd) => dd[cks[i]] } });
     dw.label(`rr${i}`, '', { intro: RESOLVE, flash: false, color: PAL.green });
     dw.poly(`if${i}`, 4, {
-      intro: RESOLVE, opacity: 0.45, flash: false,
+      intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd[cks[i]] },
       when: (st) => st.o1,
     });

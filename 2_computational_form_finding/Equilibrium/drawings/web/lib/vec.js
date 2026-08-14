@@ -51,8 +51,12 @@ export function ggbComponent(v) {
 /** Dynamic color (w - pi, 0, w): blue channel >= red channel means compression. */
 export const isCompression = (w) => ggbComponent(w) >= ggbComponent(w - Math.PI);
 
-/** Rectangle of the internalForce macro: along node->end, given half-width. */
+/** Rectangle of the internalForce macro: along node->end, given half-width.
+    Every call site is an internal-force pipe; PIPE_SCALE is the 2026-08-14
+    restyle's global width regrade -- pipes are now OPAQUE members thickened
+    ∝ |force| (video style), so the old translucent-halo widths are halved. */
+const PIPE_SCALE = 0.5;
 export function rectPoints(node, end, halfwidth) {
-  const off = mul(perp(unit(sub(end, node))), Math.max(halfwidth, 1e-4));
+  const off = mul(perp(unit(sub(end, node))), Math.max(halfwidth * PIPE_SCALE, 1e-4));
   return [sub(node, off), add(node, off), add(end, off), sub(end, off)];
 }

@@ -438,7 +438,7 @@ export function create(dw, panel, makePlayer) {
   // ---- internal-force pipes on the final chain (+ backstay) ----
   const pw = (st) => st.o1 && st._k >= RESOLVE;
   for (let k = 0; k < 17; k++) {
-    dw.poly(`if${k}`, 4, { intro: RESOLVE, opacity: 0.16, color: PAL.red, flash: false, when: pw });
+    dw.poly(`if${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, color: PAL.red, flash: false, when: pw });
   }
 
   // ---- points ----

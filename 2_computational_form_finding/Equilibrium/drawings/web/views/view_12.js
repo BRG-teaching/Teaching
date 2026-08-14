@@ -96,7 +96,8 @@ const STEPS = [
   { t: 'Lower cable 14', d: 'right: ray o₂ to the top of the load line — left: parallel to it — it lands exactly on F' },
   { t: 'Reactions C and D', d: 'left: the lower cable pulls on D and F — right: the same vectors close the lower polygon through o₂' },
   { t: 'The six ties', d: 'left: the ties link the cables, pulling them together — right: each tie\'s force IS its load-line edge F₁…F₆' },
-  { t: 'Tension everywhere', d: 'the trial construction disappears — prestress puts cables AND ties in pure tension (pink)' },
+  { t: 'Tension everywhere', d: 'the trial construction disappears — prestress puts cables AND ties in pure tension (pink)',
+    take: 'no compression anywhere: the two prestress forces alone hold the lens in shape' },
 ];
 
 const cache = {};
@@ -328,7 +329,7 @@ export function create(dw, panel, makePlayer) {
     const i = k < 7 ? k : k < 13 ? k - 7 : k - 13;
     const grp = k < 7 ? subU : k < 13 ? subTie : subL;
     dw.poly(`if${k}`, 4, {
-      intro: RESOLVE, opacity: 0.45, flash: false,
+      intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd[arr][i] },
       when: (st) => st.o1 && grp(st),
     });

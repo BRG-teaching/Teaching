@@ -280,7 +280,7 @@ export function create(dw, panel, makePlayer) {
   const IF = [['E3', 'H1'], ['H1', 'I1'], ['I1', 'J1'], ['J1', 'G3']];
   IF.forEach((pair, i) => {
     dw.poly(`if${i}`, 4, {
-      intro: RESOLVE, opacity: 0.45, flash: false,
+      intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd[cks[i]] },
       when: (st) => st.o1,
     });

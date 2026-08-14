@@ -57,7 +57,8 @@ const DEFAULTS = {
 const STEPS = [
   { t: 'How to draw this scheme', d: 'step through with the slider, press play, or use ←/→' },
   { t: 'Two supports', d: 'left: the supports A and B slide on the two walls — the funicular polygon must span between them' },
-  { t: 'The loads — in both diagrams', d: 'left: four vertical loads on the deck line with their lines of action — right: the same forces stacked tip-to-tail on the load line: F₁, F₂, F₃, F₄' },
+  { t: 'The loads — in both diagrams', d: 'left: four vertical loads on the deck line with their lines of action — right: the same forces stacked tip-to-tail on the load line: F₁, F₂, F₃, F₄',
+    detail: (d, st) => [`F₁ = ${st.F[0].toFixed(1)} · F₂ = ${st.F[1].toFixed(1)} · F₃ = ${st.F[2].toFixed(1)} · F₄ = ${st.F[3].toFixed(1)} kN — ΣF = ${(st.F[0] + st.F[1] + st.F[2] + st.F[3]).toFixed(1)} kN`] },
   { t: 'Trial pole o′', d: 'right: place a trial pole o′ anywhere, with rays to the five points of the load line' },
   { t: 'Trial string 1', d: 'left: start at K₁ anywhere on the left wall and draw parallel to the first ray, up to line of action 1' },
   { t: 'Trial string 2', d: 'left: continue parallel to the second ray to line of action 2' },
@@ -72,8 +73,11 @@ const STEPS = [
   { t: 'String 3 — form and force', d: 'right: the middle ray — left: continue parallel to it → node III' },
   { t: 'String 4 — form and force', d: 'right: the fourth ray — left: continue parallel to it → node IV' },
   { t: 'String 5 — form and force', d: 'right: the last ray — left: continue parallel to it: it lands exactly ON B' },
-  { t: 'Reactions A and B', d: 'right: i splits the load line: B = from below i to o, A = from o back to the top — left: the same pulls appear at the supports' },
-  { t: 'Tension', d: 'the funicular between A and B resolves pink = tension — the grey trial stays for comparison; drag o along its locus, the supports, or the loads' },
+  { t: 'Reactions A and B', d: 'right: i splits the load line: B = from below i to o, A = from o back to the top — left: the same pulls appear at the supports',
+    detail: (d) => [`A = ${d.Ns[0].toFixed(1)} kN · B = ${d.Ns[4].toFixed(1)} kN`] },
+  { t: 'Tension', d: 'the funicular between A and B resolves pink = tension — the grey trial stays for comparison; drag o along its locus, the supports, or the loads',
+    detail: (d) => [`string forces: N₁ = A = ${d.Ns[0].toFixed(1)} · N₂ = ${d.Ns[1].toFixed(1)} · N₃ = ${d.Ns[2].toFixed(1)} · N₄ = ${d.Ns[3].toFixed(1)} · N₅ = B = ${d.Ns[4].toFixed(1)} kN`],
+    take: 'any pole o on the locus through i spans BOTH supports — the flatter the funicular, the larger its forces' },
 ];
 
 const cache = {};
@@ -248,7 +252,7 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 5; i++) {
     dw.label(`ro${i}`, '', { intro: RESOLVE, flash: false, color: { final: (dd) => dd[cks[i]] } });
     dw.poly(`if${i}`, 4, {
-      intro: RESOLVE, opacity: 0.45, flash: false,
+      intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd[cks[i]] },
       when: (st) => st.o1,
     });

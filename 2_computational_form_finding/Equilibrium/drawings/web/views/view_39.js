@@ -205,7 +205,7 @@ export function create(dw, panel, makePlayer) {
 
   // resolve -- pipes
   for (let k = 1; k <= 17; k++) {
-    dw.poly(`if${k}`, 4, { intro: RESOLVE, opacity: 0.45, flash: false,
+    dw.poly(`if${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: () => KCOL[MEMBERS[k][4]] },
       when: (st) => st.o1 });
   }

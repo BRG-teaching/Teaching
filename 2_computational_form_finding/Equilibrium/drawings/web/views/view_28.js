@@ -298,7 +298,7 @@ export function create(dw, panel, makePlayer) {
 
   // step 11: pipes + warning
   for (let i = 0; i < 21; i++) {
-    dw.poly(`if${i}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`if${i}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => (dd.comp[i] ? PAL.blue : PAL.red) },
       when: (st) => st.o1 });
   }

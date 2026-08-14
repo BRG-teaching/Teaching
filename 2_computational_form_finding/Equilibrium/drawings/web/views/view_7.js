@@ -340,7 +340,7 @@ export function create(dw, panel, makePlayer) {
   const ifN = [0, 1, 2, 2, 3, 4];                   // member force index per pipe
   IF.forEach((pair, i) => {
     dw.poly(`if${i}`, 4, {
-      intro: RESOLVE, opacity: 0.45, flash: false,
+      intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd[cks[i]] },
       when: (st) => st.o1,
     });

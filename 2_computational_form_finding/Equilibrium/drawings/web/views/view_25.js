@@ -298,7 +298,7 @@ export function create(dw, panel, makePlayer) {
 
   // ---- step 9: internal-force pipes ---------------------------------------
   for (let m = 0; m < 22; m++) {
-    dw.poly(`if${m}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`if${m}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => (m >= 15 ? PAL.red : PAL.blue) },
       when: (st) => st.o1 });
   }

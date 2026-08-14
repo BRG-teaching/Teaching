@@ -436,9 +436,9 @@ export function create(dw, panel, makePlayer) {
 
   // internal-force pipes on the frame (house rule; the N widths)
   const pipeW = (st) => st.o1 && st._k >= 9;
-  dw.poly('pipeL', 4, { opacity: 0.28, flash: false, color: { pending: PAL.grey, final: () => PAL.blue }, when: pipeW });
-  dw.poly('pipeG', 4, { opacity: 0.28, flash: false, color: { pending: PAL.grey, final: () => PAL.blue }, when: pipeW });
-  dw.poly('pipeR', 4, { opacity: 0.28, flash: false, color: { pending: PAL.grey, final: () => PAL.blue }, when: pipeW });
+  dw.poly('pipeL', 4, { opacity: 1.0, z: -0.18, flash: false, color: { pending: PAL.grey, final: () => PAL.blue }, when: pipeW });
+  dw.poly('pipeG', 4, { opacity: 1.0, z: -0.18, flash: false, color: { pending: PAL.grey, final: () => PAL.blue }, when: pipeW });
+  dw.poly('pipeR', 4, { opacity: 1.0, z: -0.18, flash: false, color: { pending: PAL.grey, final: () => PAL.blue }, when: pipeW });
 
   // node inspector: A, B, I, D, C
   dw.nodeInspector(3, { when: (st) => st.node > 0, w: 1.5 * W_BAR, headLen: 0.4, headW: 0.16, r: 0.13 });

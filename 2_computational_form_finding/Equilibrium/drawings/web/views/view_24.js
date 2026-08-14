@@ -90,7 +90,10 @@ const STEPS = [
   { t: 'Left support — members 1 and 2, forces PRESCRIBED', d: 'right: backstay force A = 2074 kN and pylon force B = 1716 kN are chosen: circles from G and o meet at j — left: copying directions j–G and j–o through B₁₆ finds the ground anchor D and the pylon foot B₂' },
   { t: 'Right support — members 10 and 11, geometry chosen', d: 'left: the anchors E₂ and E₄ are picked on the terraces (drag them!) — right: parallels through g and o meet at i₇: forces C and D follow from the geometry', },
   { t: 'The reactions A, B, C, D', d: 'right: the four outer edges G–j, j–o, o–i₇, i₇–g of the closed diagram are the support forces, read beside them (dotted offsets) — left: green arrows at the anchor D, the feet B₂ and E₂, and the anchor E₄' },
-  { t: 'Tension and compression', d: 'cable, backstays and end posts resolve pink = tension, pylons and middle posts blue = compression (pipes ∝ force) — drag E₂, E₄ or G; click a node for its equilibrium' },
+  { t: 'Tension and compression', d: 'cable, backstays and end posts resolve pink = tension, pylons and middle posts blue = compression (pipes ∝ force) — drag E₂, E₄ or G; click a node for its equilibrium',
+    detail: (d) => [`max cable force N₉ = ${Math.round(d.Nmax)} kN`,
+                    `A = ${Math.round(d.NA)} · B = ${Math.round(d.NB)} kN (prescribed) — C = ${Math.round(d.NC)} · D = ${Math.round(d.ND)} kN`],
+    take: 'A and B are prescribed — those two pulls alone fix the ground points and every other force follows' },
 ];
 
 const cache = {};
@@ -275,7 +278,7 @@ export function create(dw, panel, makePlayer) {
 
   // internal-force pipes
   for (let k = 1; k <= 11; k++) {
-    dw.poly(`if${k}`, 4, { intro: RESOLVE, opacity: 0.45, flash: false,
+    dw.poly(`if${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd.col[k] }, when: (st) => st.o1 });
   }
 

@@ -403,7 +403,7 @@ export function create(dw, panel, makePlayer) {
   const pipeW = (st) => st.o1 && st._k >= 7;
   for (const cse of CASES) {
     for (const m of ['L', 'G', 'R']) {
-      dw.poly(`pipe${cse}${m}`, 4, { opacity: 0.26, flash: false, color: { pending: PAL.grey, final: () => PAL.blue }, when: pipeW });
+      dw.poly(`pipe${cse}${m}`, 4, { opacity: 1.0, z: -0.18, flash: false, color: { pending: PAL.grey, final: () => PAL.blue }, when: pipeW });
     }
   }
 

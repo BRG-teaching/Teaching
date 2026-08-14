@@ -279,17 +279,17 @@ export function create(dw, panel, makePlayer) {
     dw.label(nm, '', { intro: RESOLVE, flash: false, color: colr });
   }
   for (let k = 0; k < 6; k++) {
-    dw.poly(`ipC${k}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ipC${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd.cC[k] }, when: (st) => st.o1 });
-    dw.poly(`ipA${k}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ipA${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd.cA[k] }, when: (st) => st.o1 });
   }
   for (let k = 0; k < 5; k++) {
-    dw.poly(`ipV${k}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ipV${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd.cV[k] }, when: (st) => st.o1 });
   }
   for (let k = 0; k < 4; k++) {
-    dw.poly(`ipD${k}`, 4, { intro: RESOLVE, opacity: 0.4, flash: false,
+    dw.poly(`ipD${k}`, 4, { intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
       color: { pending: PAL.grey, final: (dd) => dd.cD[k] }, when: (st) => st.o1 && st.fQ !== 0 });
   }
 
