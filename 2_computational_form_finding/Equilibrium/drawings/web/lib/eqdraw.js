@@ -503,7 +503,7 @@ export class Drawing {
       transparent: true, opacity, depthWrite: false });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
     mesh.frustumCulled = false;
-    const e = this._register(name, { kind: 'image', objs: [mesh], mesh, mats: [mat],
+    const e = this._register(name, { kind: 'image', objs: [mesh], mesh, mats: [mat], url,
                                      z, intro, outro, when, flash: false, anim: false });
     if (corners) this.setImage(name, corners);
     return e;
@@ -887,6 +887,79 @@ export class Drawing {
   _isHandle(e) {
     if (!this._dragHit || !e.geo) return false;
     return !!this._dragHit(e.geo[0], e.geo[1], 1e-9);
+  }
+
+  /** Serialize the drawing as an ordered list of primitive operations at
+      the CURRENT (default) state — the source of the Python / COMPAS ops
+      database (tools/export_ops.py). Interactive machinery (node
+      inspector, ghost twins, hover/flash states) is not part of the
+      recipe; `when`-gated layers that are off in the default state are
+      skipped; widths are effective world units (LINE_SCALE applied). */
+  exportOps(meta, player) {
+    const la = this._lastApply ?? {};
+    const hex = (h) => `#${h.toString(16).padStart(6, '0')}`;
+    const pt = (p) => [+p[0].toFixed(6), +p[1].toFixed(6)];
+    const w = (v) => +(v * LINE_SCALE).toFixed(6);
+    const resolved = (c) => (c === undefined ? undefined
+      : typeof c === 'number' ? c
+      : c.final ? c.final(la.d) : c.pending);
+    const ops = [];
+    for (const [name, e] of this.elems) {
+      if (name.startsWith('nq') || name.startsWith('nf')) continue;   // node inspector
+      if (e.when && !e.when(la.state, la.d)) continue;   // off in the default state
+      if (!e.geo && e.kind !== 'label') continue;
+      const base = { name, step: e.intro };
+      if (e.outro !== undefined && e.outro !== Infinity) base.until = e.outro;
+      const color = resolved(e.color);
+      if (color !== undefined) base.color = hex(color);
+      if (e.kind === 'seg') {
+        ops.push({ op: 'segment', ...base, p: [pt(e.geo.p0), pt(e.geo.p1)], width: w(e.w) });
+      } else if (e.kind === 'arrow' || e.kind === 'darrow') {
+        const o = { op: 'arrow', ...base, p: [pt(e.geo.tail), pt(e.geo.tip)],
+                    width: w(e.w), head: [w(e.headLen), w(e.headW)] };
+        if (e.kind === 'darrow') o.dash = e.dash;
+        ops.push(o);
+      } else if (e.kind === 'strokes') {
+        e.geo.forEach(([a, b], i) => {
+          if (dist2(a, b) < 1e-9) return;
+          ops.push({ op: 'segment', ...base, name: `${name}[${i}]`,
+                     p: [pt(a), pt(b)], width: w(e.w) });
+        });
+      } else if (e.kind === 'dline') {
+        if (e.geo.length < 2) continue;
+        ops.push({ op: 'polyline', ...base, p: e.geo.map(pt), dash: e.mats[0].dashSize });
+      } else if (e.kind === 'circle' || e.kind === 'dcircle') {
+        const o = { op: 'circle', ...base, c: pt(e.geo.c), r: +e.geo.r.toFixed(6) };
+        if (e.kind === 'dcircle') o.dash = e.mats[0].dashSize;
+        ops.push(o);
+      } else if (e.kind === 'poly') {
+        ops.push({ op: 'polygon', ...base, p: e.geo.map(pt), opacity: e.targetOp });
+      } else if (e.kind === 'disk') {
+        ops.push({ op: 'point', ...base, c: pt(e.geo), r: e.r });
+      } else if (e.kind === 'label') {
+        const text = e.el.textContent;
+        if (!text || Math.abs(e.pos[1]) > 5e3) continue;   // never positioned
+        const cls = [...e.el.classList]
+          .filter((c) => !['eq-label', 'flash', 'hover'].includes(c)).join(' ');
+        const o = { op: 'label', ...base, text, at: pt(e.pos) };
+        if (cls) o.cls = cls;
+        ops.push(o);
+      } else if (e.kind === 'image') {
+        ops.push({ op: 'image', ...base, url: e.url,
+                   corners: [pt(e.geo.bl), pt(e.geo.br), pt(e.geo.tl)],
+                   opacity: e.mats[0].opacity });
+      }
+    }
+    ops.sort((a, b) => a.step - b.step);   // stable: declaration order within a step
+    const live = (v) => (typeof v === 'function' ? v(la.d, la.state) : v);
+    return {
+      view: parseInt(new URLSearchParams(location.search).get('view') ?? '0', 10),
+      title: meta.title,
+      about: meta.about ?? '',
+      frame: meta.frame,
+      steps: player.steps.map((s) => ({ title: live(s.t), caption: live(s.d) ?? '' })),
+      ops,
+    };
   }
 
   enableDrag(hit, onDrag) {

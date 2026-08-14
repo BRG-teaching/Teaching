@@ -1,0 +1,212 @@
+"""Drawing 39 — Constant force bottom chord truss: construction
+
+Auto-generated from ops/view_39.json — the drawing as literal COMPAS
+calls, one operation per line, in construction order. Regenerate with
+web/tools/export_ops.py; edit the web view, not this file.
+"""
+from compas.colors import Color
+from compas.geometry import Circle, Frame, Line, Point, Polygon, Polyline  # noqa: F401
+
+ops = []
+
+
+def add(step, kind, geometry, color=None, **style):
+    """One drawing operation; style: width, dash, opacity, text, head, until."""
+    ops.append({"step": step, "kind": kind, "geometry": geometry,
+                "color": color, **style})
+
+
+# step 0 — How to draw this scheme
+add(0, 'label', Point(0.2, 4.9, 0), text='Form Diagram')
+add(0, 'label', Point(12.6, 4.9, 0), text='Force Diagram')
+add(0, 'label', Point(12.6, 4.45, 0), text='1 unit :: 1.25 kN')
+
+# step 1 — A deck on two supports
+add(1, 'polyline', Polyline([(0.602151, -4.6, 0), (0.602151, 3.20685, 0)]), color=Color.from_hex("#afafaf"), dash=0.05)
+add(1, 'polyline', Polyline([(2.21505, -4.6, 0), (2.21505, 3.20685, 0)]), color=Color.from_hex("#afafaf"), dash=0.05)
+add(1, 'polyline', Polyline([(4.02151, -4.6, 0), (4.02151, 3.20685, 0)]), color=Color.from_hex("#afafaf"), dash=0.05)
+add(1, 'polyline', Polyline([(5.82796, -4.6, 0), (5.82796, 3.20685, 0)]), color=Color.from_hex("#afafaf"), dash=0.05)
+add(1, 'polyline', Polyline([(7.37634, -4.6, 0), (7.37634, 3.20685, 0)]), color=Color.from_hex("#afafaf"), dash=0.05)
+add(1, 'polyline', Polyline([(8.75269, -4.6, 0), (8.75269, 3.20685, 0)]), color=Color.from_hex("#afafaf"), dash=0.05)
+add(1, 'polyline', Polyline([(10.2796, -4.6, 0), (10.2796, 3.20685, 0)]), color=Color.from_hex("#afafaf"), dash=0.05)
+add(1, 'segment', Line((0.602151, 0.479452, 0), (10.2796, 0.479452, 0)), color=Color.from_hex("#aaaaaa"), width=0.01152)
+add(1, 'point', Point(0.602151, 0.479452, 0), color=Color.from_hex("#ffffff"), width=0.07)
+add(1, 'point', Point(10.2796, 0.479452, 0), color=Color.from_hex("#ffffff"), width=0.07)
+add(1, 'label', Point(0.322151, 0.659452, 0), text='R')
+add(1, 'label', Point(10.4396, 0.659452, 0), text='S')
+add(1, 'arrow', Line((2.21505, 2.60685, 0), (2.21505, 2.00685, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(1, 'label', Point(2.39505, 2.30685, 0), color=Color.from_hex("#3f9c20"), text='G₁')
+add(1, 'point', Point(2.21505, 0.479452, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(1, 'arrow', Line((4.02151, 2.60685, 0), (4.02151, 2.00685, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(1, 'label', Point(4.20151, 2.30685, 0), color=Color.from_hex("#3f9c20"), text='G₂')
+add(1, 'point', Point(4.02151, 0.479452, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(1, 'arrow', Line((5.82796, 2.60685, 0), (5.82796, 2.00685, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(1, 'label', Point(6.00796, 2.30685, 0), color=Color.from_hex("#3f9c20"), text='G₃')
+add(1, 'point', Point(5.82796, 0.479452, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(1, 'arrow', Line((7.37634, 2.60685, 0), (7.37634, 2.00685, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(1, 'label', Point(7.55634, 2.30685, 0), color=Color.from_hex("#3f9c20"), text='G₄')
+add(1, 'point', Point(7.37634, 0.479452, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(1, 'arrow', Line((8.75269, 2.60685, 0), (8.75269, 2.00685, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(1, 'label', Point(8.93269, 2.30685, 0), color=Color.from_hex("#3f9c20"), text='G₅')
+add(1, 'point', Point(8.75269, 0.479452, 0), color=Color.from_hex("#ffffff"), width=0.05)
+
+# step 2 — The load line
+add(2, 'arrow', Line((16.5806, 2.15, 0), (16.5806, 1.19, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'label', Point(16.8006, 1.67, 0), color=Color.from_hex("#3f9c20"), text='G₁')
+add(2, 'arrow', Line((16.5806, 1.19, 0), (16.5806, 0.23, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'label', Point(16.8006, 0.71, 0), color=Color.from_hex("#3f9c20"), text='G₂')
+add(2, 'arrow', Line((16.5806, 0.23, 0), (16.5806, -0.73, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'label', Point(16.8006, -0.25, 0), color=Color.from_hex("#3f9c20"), text='G₃')
+add(2, 'arrow', Line((16.5806, -0.73, 0), (16.5806, -1.69, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'label', Point(16.8006, -1.21, 0), color=Color.from_hex("#3f9c20"), text='G₄')
+add(2, 'arrow', Line((16.5806, -1.69, 0), (16.5806, -2.65, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'label', Point(16.8006, -2.17, 0), color=Color.from_hex("#3f9c20"), text='G₅')
+add(2, 'point', Point(16.5806, 2.15, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(2, 'point', Point(16.5806, 1.19, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(2, 'point', Point(16.5806, 0.23, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(2, 'point', Point(16.5806, -0.73, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(2, 'point', Point(16.5806, -1.69, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(2, 'point', Point(16.5806, -2.65, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(2, 'point', Point(16.5806, -0.25, 0), color=Color.from_hex("#111111"), width=0.055)
+add(2, 'label', Point(16.2006, -0.41, 0), text='U₁')
+add(2, 'arrow', Line((17.0806, -0.25, 0), (17.0806, 2.15, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'arrow', Line((17.0806, -2.65, 0), (17.0806, -0.25, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'label', Point(17.3006, 0.95, 0), color=Color.from_hex("#3f9c20"), text='A')
+add(2, 'label', Point(17.3006, -1.45, 0), color=Color.from_hex("#3f9c20"), text='B')
+add(2, 'arrow', Line((0.602151, -0.620548, 0), (0.602151, 0.329452, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'arrow', Line((10.2796, -0.620548, 0), (10.2796, 0.329452, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'label', Point(0.302151, -0.270548, 0), color=Color.from_hex("#3f9c20"), text='A')
+add(2, 'label', Point(10.4796, -0.270548, 0), color=Color.from_hex("#3f9c20"), text='B')
+
+# step 3 — One level per load point
+add(3, 'polyline', Polyline([(12.0806, 2.15, 0), (16.5806, 2.15, 0)]), color=Color.from_hex("#9a9a9a"), dash=0.1)
+add(3, 'polyline', Polyline([(12.0806, 1.19, 0), (16.5806, 1.19, 0)]), color=Color.from_hex("#9a9a9a"), dash=0.1)
+add(3, 'polyline', Polyline([(12.0806, 0.23, 0), (16.5806, 0.23, 0)]), color=Color.from_hex("#9a9a9a"), dash=0.1)
+add(3, 'polyline', Polyline([(12.0806, -0.73, 0), (16.5806, -0.73, 0)]), color=Color.from_hex("#9a9a9a"), dash=0.1)
+add(3, 'polyline', Polyline([(12.0806, -1.69, 0), (16.5806, -1.69, 0)]), color=Color.from_hex("#9a9a9a"), dash=0.1)
+add(3, 'polyline', Polyline([(12.0806, -2.65, 0), (16.5806, -2.65, 0)]), color=Color.from_hex("#9a9a9a"), dash=0.1)
+
+# step 4 — The designer’s choice
+add(4, 'polyline', Polyline([(20.1806, -0.25, 0), (20.1633, 0.102862, 0), (20.1115, 0.452325, 0), (20.0256, 0.795025, 0), (19.9066, 1.12766, 0), (19.7556, 1.44703, 0), (19.5739, 1.75005, 0), (19.3635, 2.03382, 0), (19.1262, 2.29558, 0), (18.8645, 2.53284, 0), (18.5807, 2.74329, 0), (18.2777, 2.92492, 0), (17.9583, 3.07597, 0), (17.6257, 3.19498, 0), (17.283, 3.28083, 0), (16.9335, 3.33266, 0), (16.5806, 3.35, 0), (16.2278, 3.33266, 0), (15.8783, 3.28083, 0), (15.5356, 3.19498, 0), (15.203, 3.07597, 0), (14.8836, 2.92492, 0), (14.5806, 2.74329, 0), (14.2968, 2.53284, 0), (14.0351, 2.29558, 0), (13.7978, 2.03382, 0), (13.5874, 1.75005, 0), (13.4057, 1.44703, 0), (13.2547, 1.12766, 0), (13.1357, 0.795025, 0), (13.0498, 0.452325, 0), (12.998, 0.102862, 0), (12.9806, -0.25, 0), (12.998, -0.602862, 0), (13.0498, -0.952325, 0), (13.1357, -1.29503, 0), (13.2547, -1.62766, 0), (13.4057, -1.94703, 0), (13.5874, -2.25005, 0), (13.7978, -2.53382, 0), (14.0351, -2.79558, 0), (14.2968, -3.03284, 0), (14.5806, -3.24329, 0), (14.8836, -3.42492, 0), (15.203, -3.57597, 0), (15.5356, -3.69498, 0), (15.8783, -3.78083, 0), (16.2278, -3.83266, 0), (16.5806, -3.85, 0), (16.9335, -3.83266, 0), (17.283, -3.78083, 0), (17.6257, -3.69498, 0), (17.9583, -3.57597, 0), (18.2777, -3.42492, 0), (18.5807, -3.24329, 0), (18.8645, -3.03284, 0), (19.1262, -2.79558, 0), (19.3635, -2.53382, 0), (19.5739, -2.25005, 0), (19.7556, -1.94703, 0), (19.9066, -1.62766, 0), (20.0256, -1.29503, 0), (20.1115, -0.952325, 0), (20.1633, -0.602862, 0), (20.1806, -0.25, 0)]), color=Color.from_hex("#9a9a9a"), dash=0.09, until=10)
+add(4, 'segment', Line((16.5806, -0.25, 0), (13.3033, -1.73969, 0)), color=Color.from_hex("#aaaaaa"), width=0.0216, until=6)
+add(4, 'label', Point(14.5487, -1.17361, 0), color=Color.from_hex("#aaaaaa"), text='F_bottomchord', until=6)
+
+# step 5 — The circle cut by the levels
+add(5, 'segment', Line((13.8974, 2.15, 0), (16.5806, 2.15, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(5, 'label', Point(15.239, 2.31, 0), color=Color.from_hex("#1a1eb2"), text='1')
+add(5, 'segment', Line((13.2812, 1.19, 0), (16.5806, 1.19, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(5, 'label', Point(14.9309, 1.35, 0), color=Color.from_hex("#1a1eb2"), text='4')
+add(5, 'segment', Line((13.0128, 0.23, 0), (16.5806, 0.23, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(5, 'label', Point(14.7967, 0.39, 0), color=Color.from_hex("#1a1eb2"), text='6')
+add(5, 'segment', Line((13.0128, -0.73, 0), (16.5806, -0.73, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(5, 'label', Point(14.7967, -0.57, 0), color=Color.from_hex("#1a1eb2"), text='9')
+add(5, 'segment', Line((13.2812, -1.69, 0), (16.5806, -1.69, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(5, 'label', Point(14.9309, -1.53, 0), color=Color.from_hex("#1a1eb2"), text='12')
+add(5, 'segment', Line((13.8974, -2.65, 0), (16.5806, -2.65, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(5, 'label', Point(15.239, -2.49, 0), color=Color.from_hex("#1a1eb2"), text='15')
+add(5, 'point', Point(13.8974, 2.15, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(5, 'point', Point(13.2812, 1.19, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(5, 'point', Point(13.0128, 0.23, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(5, 'point', Point(13.0128, -0.73, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(5, 'point', Point(13.2812, -1.69, 0), color=Color.from_hex("#ffffff"), width=0.045)
+add(5, 'point', Point(13.8974, -2.65, 0), color=Color.from_hex("#ffffff"), width=0.045)
+
+# step 6 — Six equal cable forces
+add(6, 'segment', Line((13.8974, 2.15, 0), (16.5806, -0.25, 0)), color=Color.from_hex("#ce4095"), width=0.02448)
+add(6, 'label', Point(15.339, 1.13, 0), color=Color.from_hex("#ce4095"), text='3')
+add(6, 'segment', Line((13.2812, 1.19, 0), (16.5806, -0.25, 0)), color=Color.from_hex("#ce4095"), width=0.02448)
+add(6, 'label', Point(15.0309, 0.65, 0), color=Color.from_hex("#ce4095"), text='5')
+add(6, 'segment', Line((13.0128, 0.23, 0), (16.5806, -0.25, 0)), color=Color.from_hex("#ce4095"), width=0.02448)
+add(6, 'label', Point(14.8967, 0.17, 0), color=Color.from_hex("#ce4095"), text='8')
+add(6, 'segment', Line((13.0128, -0.73, 0), (16.5806, -0.25, 0)), color=Color.from_hex("#ce4095"), width=0.02448)
+add(6, 'label', Point(14.8967, -0.31, 0), color=Color.from_hex("#ce4095"), text='11')
+add(6, 'segment', Line((13.2812, -1.69, 0), (16.5806, -0.25, 0)), color=Color.from_hex("#ce4095"), width=0.02448)
+add(6, 'label', Point(15.0309, -0.79, 0), color=Color.from_hex("#ce4095"), text='14')
+add(6, 'segment', Line((13.8974, -2.65, 0), (16.5806, -0.25, 0)), color=Color.from_hex("#ce4095"), width=0.02448)
+add(6, 'label', Point(15.339, -1.27, 0), color=Color.from_hex("#ce4095"), text='17')
+
+# step 7 — The web forces
+add(7, 'segment', Line((13.8974, 2.15, 0), (13.2812, 1.19, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(7, 'label', Point(13.3493, 1.67, 0), color=Color.from_hex("#1a1eb2"), text='2')
+add(7, 'segment', Line((13.2812, 1.19, 0), (13.0128, 0.23, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(7, 'label', Point(12.907, 0.71, 0), color=Color.from_hex("#1a1eb2"), text='7')
+add(7, 'segment', Line((13.0128, 0.23, 0), (13.0128, -0.73, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(7, 'label', Point(12.7728, -0.25, 0), color=Color.from_hex("#1a1eb2"), text='10')
+add(7, 'segment', Line((13.0128, -0.73, 0), (13.2812, -1.69, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(7, 'label', Point(12.907, -1.21, 0), color=Color.from_hex("#1a1eb2"), text='13')
+add(7, 'segment', Line((13.2812, -1.69, 0), (13.8974, -2.65, 0)), color=Color.from_hex("#1a1eb2"), width=0.02448)
+add(7, 'label', Point(13.3493, -2.17, 0), color=Color.from_hex("#1a1eb2"), text='16')
+
+# step 8 — The form: first panel
+add(8, 'segment', Line((0.602151, 0.479452, 0), (2.21505, 0.479452, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(8, 'label', Point(1.4086, 0.679452, 0), color=Color.from_hex("#1a1eb2"), text='1')
+add(8, 'segment', Line((2.21505, 0.479452, 0), (1.62681, -0.437032, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(8, 'label', Point(1.70093, 0.02121, 0), color=Color.from_hex("#1a1eb2"), text='2')
+add(8, 'segment', Line((0.602151, 0.479452, 0), (1.62681, -0.437032, 0)), color=Color.from_hex("#ce4095"), width=0.0324)
+add(8, 'label', Point(1.19448, -0.21879, 0), color=Color.from_hex("#ce4095"), text='3')
+add(8, 'point', Point(1.62681, -0.437032, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(8, 'label', Point(1.67681, -0.737032, 0), text='M₂')
+
+# step 9 — The cable walks across
+add(9, 'segment', Line((2.21505, 0.479452, 0), (4.02151, 0.479452, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(3.11828, 0.679452, 0), color=Color.from_hex("#1a1eb2"), text='4')
+add(9, 'segment', Line((1.62681, -0.437032, 0), (3.53271, -1.26883, 0)), color=Color.from_hex("#ce4095"), width=0.0324)
+add(9, 'label', Point(2.65976, -1.09293, 0), color=Color.from_hex("#ce4095"), text='5')
+add(9, 'segment', Line((4.02151, 0.479452, 0), (5.82796, 0.479452, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(4.92473, 0.679452, 0), color=Color.from_hex("#1a1eb2"), text='6')
+add(9, 'segment', Line((3.53271, -1.26883, 0), (4.02151, 0.479452, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(3.55711, -0.394691, 0), color=Color.from_hex("#1a1eb2"), text='7')
+add(9, 'segment', Line((3.53271, -1.26883, 0), (5.82796, -1.57763, 0)), color=Color.from_hex("#ce4095"), width=0.0324)
+add(9, 'label', Point(4.76033, -1.66323, 0), color=Color.from_hex("#ce4095"), text='8')
+add(9, 'segment', Line((5.82796, 0.479452, 0), (7.37634, 0.479452, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(6.60215, 0.679452, 0), color=Color.from_hex("#1a1eb2"), text='9')
+add(9, 'segment', Line((5.82796, 0.479452, 0), (5.82796, -1.57763, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(5.60796, -0.549086, 0), color=Color.from_hex("#1a1eb2"), text='10')
+add(9, 'segment', Line((5.82796, -1.57763, 0), (7.87449, -1.30229, 0)), color=Color.from_hex("#ce4095"), width=0.0324)
+add(9, 'label', Point(6.93123, -1.67996, 0), color=Color.from_hex("#ce4095"), text='11')
+add(9, 'segment', Line((7.37634, 0.479452, 0), (8.75269, 0.479452, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(8.06452, 0.679452, 0), color=Color.from_hex("#1a1eb2"), text='12')
+add(9, 'segment', Line((7.37634, 0.479452, 0), (7.87449, -1.30229, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(7.40542, -0.411421, 0), color=Color.from_hex("#1a1eb2"), text='13')
+add(9, 'segment', Line((7.87449, -1.30229, 0), (9.45387, -0.612997, 0)), color=Color.from_hex("#ce4095"), width=0.0324)
+add(9, 'label', Point(8.74418, -1.19765, 0), color=Color.from_hex("#ce4095"), text='14')
+add(9, 'segment', Line((8.75269, 0.479452, 0), (10.2796, 0.479452, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(9.51613, 0.679452, 0), color=Color.from_hex("#1a1eb2"), text='15')
+add(9, 'segment', Line((8.75269, 0.479452, 0), (9.45387, -0.612997, 0)), color=Color.from_hex("#1a1eb2"), width=0.0324)
+add(9, 'label', Point(8.88328, -0.066773, 0), color=Color.from_hex("#1a1eb2"), text='16')
+add(9, 'segment', Line((9.45387, -0.612997, 0), (10.2796, 0.479452, 0)), color=Color.from_hex("#ce4095"), width=0.0324)
+add(9, 'label', Point(9.94672, -0.306773, 0), color=Color.from_hex("#ce4095"), text='17')
+add(9, 'point', Point(3.53271, -1.26883, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(9, 'label', Point(3.58271, -1.56883, 0), text='N₂')
+add(9, 'point', Point(5.82796, -1.57763, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(9, 'label', Point(5.87796, -1.87763, 0), text='O₂')
+add(9, 'point', Point(7.87449, -1.30229, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(9, 'label', Point(7.9245, -1.6023, 0), text='P₂')
+add(9, 'point', Point(9.45387, -0.612997, 0), color=Color.from_hex("#ffffff"), width=0.05)
+add(9, 'label', Point(9.50387, -0.912997, 0), text='Q₂')
+
+# step 10 — Compression and tension
+add(10, 'polygon', Polygon([(0.602151, 0.57605, 0), (2.21505, 0.57605, 0), (2.21505, 0.382854, 0), (0.602151, 0.382854, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(2.24961, 0.45727, 0), (1.66137, -0.459215, 0), (1.59225, -0.41485, 0), (2.18049, 0.501634, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(0.688551, 0.57605, 0), (1.71321, -0.340434, 0), (1.54041, -0.53363, 0), (0.515751, 0.382854, 0)]), color=Color.from_hex("#ce4095"))
+add(10, 'polygon', Polygon([(2.21505, 0.598232, 0), (4.02151, 0.598232, 0), (4.02151, 0.360672, 0), (2.21505, 0.360672, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(1.67865, -0.318252, 0), (3.58455, -1.15005, 0), (3.48087, -1.38762, 0), (1.57497, -0.555813, 0)]), color=Color.from_hex("#ce4095"))
+add(10, 'polygon', Polygon([(4.02151, 0.607895, 0), (5.82796, 0.607895, 0), (5.82796, 0.351009, 0), (4.02151, 0.351009, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(3.49815, -1.25917, 0), (3.98694, 0.489115, 0), (4.05607, 0.46979, 0), (3.56727, -1.2785, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(3.54999, -1.14039, 0), (5.84524, -1.44918, 0), (5.81068, -1.70607, 0), (3.51543, -1.39728, 0)]), color=Color.from_hex("#ce4095"))
+add(10, 'polygon', Polygon([(5.82796, 0.607895, 0), (7.37634, 0.607895, 0), (7.37634, 0.351009, 0), (5.82796, 0.351009, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(5.86252, 0.479452, 0), (5.86252, -1.57763, 0), (5.7934, -1.57763, 0), (5.7934, 0.479452, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(5.81068, -1.44918, 0), (7.85722, -1.17385, 0), (7.89177, -1.43074, 0), (5.84524, -1.70607, 0)]), color=Color.from_hex("#ce4095"))
+add(10, 'polygon', Polygon([(7.37634, 0.598232, 0), (8.75269, 0.598232, 0), (8.75269, 0.360672, 0), (7.37634, 0.360672, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(7.4109, 0.489115, 0), (7.90906, -1.29263, 0), (7.83993, -1.31196, 0), (7.34178, 0.46979, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(7.82266, -1.18351, 0), (9.40203, -0.494217, 0), (9.50571, -0.731778, 0), (7.92633, -1.42108, 0)]), color=Color.from_hex("#ce4095"))
+add(10, 'polygon', Polygon([(8.75269, 0.57605, 0), (10.2796, 0.57605, 0), (10.2796, 0.382854, 0), (8.75269, 0.382854, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(8.78725, 0.501634, 0), (9.48843, -0.590815, 0), (9.41931, -0.63518, 0), (8.71813, 0.45727, 0)]), color=Color.from_hex("#1a1eb2"))
+add(10, 'polygon', Polygon([(9.35048, -0.534853, 0), (10.1762, 0.557597, 0), (10.383, 0.401307, 0), (9.55726, -0.691142, 0)]), color=Color.from_hex("#ce4095"))
+add(10, 'label', Point(17.6, 4.9, 0), color=Color.from_hex("#3f9c20"), text='G = 1.20 kN')
+add(10, 'label', Point(17.6, 4.45, 0), color=Color.from_hex("#3f9c20"), text='A = B = 3.00 kN')
+add(10, 'label', Point(17.6, 4, 0), color=Color.from_hex("#ce4095"), text='cable = 4.50 kN — constant')
+
+
+if __name__ == "__main__":
+    print("Drawing 39 — Constant force bottom chord truss: construction —", len(ops), "operations")
