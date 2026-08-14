@@ -28,7 +28,7 @@ const DEFAULTS = {
   sIF: 0.13,                               // scaleInternalForces   [0.01, 1]
   mode: 0,                                 // flips the force diagram
   n: false,                                // "1 & 2 symmetrical"
-  o1: false,                               // "show internal forces"
+  o1: true,                                // thickness ∝ force (default on)
   o2: false,                               // "hide external force in force diagram"
   n4: true,                                // "show points"
   node: 0,                                 // node-equilibrium inspector (0 = off)
@@ -253,7 +253,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'mode', 'mode (flip force diagram)', 0, 1, 1, refresh);
   panel.toggle(par, s, 'n', '1 & 2 symmetrical', refresh);
   panel.toggle(par, s, 'o2', 'hide external force in force diagram', refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0.01, 1, 0.01, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram', 1, 5, 0.1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 10, 0.1, refresh);

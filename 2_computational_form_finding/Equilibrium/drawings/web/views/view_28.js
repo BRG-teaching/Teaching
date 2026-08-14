@@ -75,7 +75,9 @@ const STEPS = [
   { t: 'The A-frame and the right stays', d: 'left: the blue legs 6 and 7, cable 8, strut 9, cables 10, 11, 12 — right: the chain of parallels continues through the pole points' },
   { t: 'The deck', d: 'left: the deck pieces 13–19 close every anchor node — right: their forces are the HORIZONTALS of the diagram: the deck is the compression chord' },
   { t: 'The foundations', d: 'left: the feet continue down as 20 and 21 (dashed) — right: their forces are exactly the reaction pieces B and A on the load line; the offset green chain re-reads all six loads' },
-  { t: 'Internal forces', d: 'pink = tension, blue = compression, pipe widths ∝ force; drag the junctions DOWN and the stays would go slack — the red warning appears; click any node (or use the slider) for its equilibrium' },
+  { t: 'Internal forces', d: 'pink = tension, blue = compression, pipe widths ∝ force; drag the junctions DOWN and the stays would go slack — the red warning appears; click any node (or use the slider) for its equilibrium',
+    detail: (d) => [`|A| = |N₂₁| = ${d.magA.toFixed(0)} kN · |B| = |N₂₀| = ${d.magB.toFixed(0)} kN`],
+    take: 'cables only PULL — drop the junctions below the ridge line and the stays would have to push: slack' },
 ];
 
 // members: [num, form pair (a() lazy), force pair keys, cableFlag]

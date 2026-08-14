@@ -99,7 +99,9 @@ const STEPS = [
   { t: 'The pole o₃', d: 'right: through i₁ ∥ E–I and through i₂ ∥ F–E: the pole o₃ of the full load, with its fan' },
   { t: 'The chain under g + Q', d: 'left: THE chain — through F, E and I, kinked under Q, over the saddle into the backstay anchor' },
   { t: 'Reactions', d: 'right: A = from below the load line to o₃, B = from o₃ back to the top — left: the chain pulls at the abutment F and along the backstay at I' },
-  { t: 'Pure tension', d: 'the trials step back; the chain resolves pink = tension (pipes ∝ force). Drag Q along the deck, drag E, F, I or the poles; play with the sliders' },
+  { t: 'Pure tension', d: 'the trials step back; the chain resolves pink = tension (pipes ∝ force). Drag Q along the deck, drag E, F, I or the poles; play with the sliders',
+    detail: (d, st) => [`A = ${d.NA.toFixed(1)} · B = ${d.NB.toFixed(1)} kN — live load Q = ${(d.w * st.fQ / st.sFD).toFixed(1)} kN`],
+    take: 'dead, one-sided and moving loads each re-shape the chain — the form diagram IS the load record' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -251,7 +253,7 @@ export function create(dw, panel, makePlayer) {
   const W_CH = 0.42, W_FIN = 0.62, W_RAY = 0.13, W_TRI = 0.26, W_GUIDE = 0.1;
   const ARROW = { w: 0.55, headLen: 2.1, headW: 0.85 };
   const RARROW = { w: 0.7, headLen: 2.4, headW: 0.95, dash: 1.35 };
-  const ORANGE = PAL.orange;
+  const ORANGE = PAL.green;   // the applet's live-load orange follows the load scheme now
   const chainColor = { pending: PAL.black, final: () => PAL.red };  // chain = tension
   const DASH = 1.1;
 
@@ -307,8 +309,8 @@ export function create(dw, panel, makePlayer) {
   dw.dashLine('tcl2', { intro: 7, outro: 12, dash: DASH });
   dw.dashLine('tdiv1', { intro: 7, outro: 12, dash: DASH });
   dw.dashLine('tdiv2', { intro: 7, outro: 12, dash: DASH });
-  dw.dashLine('chordL', { intro: 8, color: ORANGE, dash: 1.4 });
-  dw.dashLine('chordR', { intro: 8, color: ORANGE, dash: 1.4 });
+  dw.dashLine('chordL', { intro: 8, color: PAL.grey, dash: 1.4 });
+  dw.dashLine('chordR', { intro: 8, color: PAL.grey, dash: 1.4 });
   dw.dashLine('ppar1', { intro: 8, outro: 12, dash: DASH });
   dw.dashLine('ppar2', { intro: 8, outro: 12, dash: DASH });
   dw.strokes('fanG', 16, { intro: 8, outro: 12, w: W_RAY, color: PAL.grey });
@@ -330,14 +332,14 @@ export function create(dw, panel, makePlayer) {
   dw.label('lBgl', 'B', { intro: 10, outro: 14, color: PAL.green, when: rfw });
 
   // ---- step 11: superposition check (the applet's mode 2) ----
-  dw.dashLine('supF1', { intro: 11, outro: 12, color: ORANGE, dash: 1.4 });
-  dw.dashLine('supF2', { intro: 11, outro: 12, color: ORANGE, dash: 1.4 });
-  dw.dashLine('supL1', { intro: 11, outro: 12, color: ORANGE, dash: 1.4 });
-  dw.dashLine('supL2', { intro: 11, outro: 12, color: ORANGE, dash: 1.4 });
-  dw.dashLine('supC1', { intro: 11, outro: 12, color: ORANGE, dash: 1.4 });
-  dw.dashLine('supC2', { intro: 11, outro: 12, color: ORANGE, dash: 1.4 });
-  dw.label('lsup2', 'II', { intro: 11, outro: 12, color: ORANGE });
-  dw.label('lsup3', 'III', { intro: 11, outro: 12, color: ORANGE });
+  dw.dashLine('supF1', { intro: 11, outro: 12, color: PAL.grey, dash: 1.4 });
+  dw.dashLine('supF2', { intro: 11, outro: 12, color: PAL.grey, dash: 1.4 });
+  dw.dashLine('supL1', { intro: 11, outro: 12, color: PAL.grey, dash: 1.4 });
+  dw.dashLine('supL2', { intro: 11, outro: 12, color: PAL.grey, dash: 1.4 });
+  dw.dashLine('supC1', { intro: 11, outro: 12, color: PAL.grey, dash: 1.4 });
+  dw.dashLine('supC2', { intro: 11, outro: 12, color: PAL.grey, dash: 1.4 });
+  dw.label('lsup2', 'II', { intro: 11, outro: 12, color: PAL.grey });
+  dw.label('lsup3', 'III', { intro: 11, outro: 12, color: PAL.grey });
 
   // ---- steps 12-14: live load q1 ----
   dw.poly('bandQ1', 4, { intro: 12, opacity: 0.16, color: ORANGE, flash: false });
@@ -395,7 +397,7 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('qmini', { intro: 19, outro: 21, ...ARROW, color: ORANGE });
   dw.label('lQm', 'Q', { intro: 19, outro: 21, color: ORANGE });
   dw.dashLine('rail', { intro: 20, outro: 21, dash: DASH });
-  dw.dashLine('qaloneF', { intro: 20, outro: 21, color: ORANGE, dash: 1.4 });
+  dw.dashLine('qaloneF', { intro: 20, outro: 21, color: PAL.grey, dash: 1.4 });
   dw.dashLine('qaloneP1', { intro: 20, outro: 21, dash: DASH });
   dw.dashLine('qaloneP2', { intro: 20, outro: 21, dash: DASH });
   dw.label('lS6', 'S', { intro: 20, outro: 21, cls: 'point' });
@@ -487,7 +489,7 @@ export function create(dw, panel, makePlayer) {
   // readouts
   for (let i = 0; i < 3; i++) {
     dw.label(`ro${i}`, '', { intro: RESOLVE, flash: false,
-              color: i < 2 ? PAL.green : ORANGE });
+              color: PAL.green });
   }
 
   // node-equilibrium inspector
@@ -798,7 +800,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'pQ', 'position of Q (hanger)', 1, 15, 1, refresh);
   panel.slider(par, s, 'FDD', 'separate the four force diagrams', 0, 5, 0.1, refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.04, 0.001, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces (pipes)', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);
   panel.toggle(par, s, 'ph', 'show the bridge (the applet\u2019s etching)', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

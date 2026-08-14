@@ -88,7 +88,8 @@ const STEPS = [
   { t: 'The forces on the column head', d: 'left: the cable pulls back with A′, the back stay with C′, the pylon hanger hangs Q on the head, and the column weighs wCC — right: laid off tip-to-tail from H₅', },
   { t: 'The column force G', d: 'right: the polygon closes: G balances A′ + Q + wCC + C′ — left: the column axis (dashed) is drawn PARALLEL to G through D: reactions G and H at the feet' },
   { t: 'The concrete columns', d: 'left: Nervi\'s tapered columns built around the axes — lean them by dragging the sag Z₃ or the anchor W: the axis always follows G' },
-  { t: 'Tension and compression', d: 'cable, hangers, back stays and the tie deck resolve pink = tension; the columns blue = compression — click any node (or use the slider) for its equilibrium' },
+  { t: 'Tension and compression', d: 'cable, hangers, back stays and the tie deck resolve pink = tension; the columns blue = compression — click any node (or use the slider) for its equilibrium',
+    take: 'a suspension ROOF: the deck is the tie that swallows the horizontal — the leaning columns feel only their axis force' },
 ];
 
 function line_x(p, d, x) { return [x, p[1] + ((x - p[0]) / d[0]) * d[1]]; }

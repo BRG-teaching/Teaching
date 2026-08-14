@@ -63,7 +63,9 @@ const STEPS = [
   { t: 'The web forces', d: 'right: the chords between consecutive cuts are the WEB forces 2, 7, 10, 13, 16 — short near midspan, where the cable is flattest' },
   { t: 'The form: first panel', d: 'left: from R parallel to ray 3 — the first cable piece; from the panel point H₂ parallel to chord 2 — the first web: they meet at the kink M₂' },
   { t: 'The cable walks across', d: 'left: piece by piece — each cable segment parallel to its ray, each web parallel to its chord — through N₂, O₂, P₂, Q₂ … and the last piece lands EXACTLY on the support S: the check' },
-  { t: 'Compression and tension', d: 'the deck and the webs resolve blue = compression, the bottom chord pink = tension — the SAME force in all six pieces (pipes ∝ force); drag O₁, the sliders — click a joint for its equilibrium' },
+  { t: 'Compression and tension', d: 'the deck and the webs resolve blue = compression, the bottom chord pink = tension — the SAME force in all six pieces (pipes ∝ force); drag O₁, the sliders — click a joint for its equilibrium',
+    detail: (d, st) => [`G = ${st.loadG.toFixed(2)} kN — A = B = ${(2.5 * st.loadG).toFixed(2)} kN — cable = ${st.BC.toFixed(2)} kN, constant`],
+    take: 'the construction twin of drawing 29: a circle fixes the constant chord force, and the chord form-finds itself' },
 ];
 
 // members: [form-from, form-to, force-from, force-to, kind]
@@ -182,8 +184,8 @@ export function create(dw, panel, makePlayer) {
   // the applet hides the circle at its resolved state and the radius arm
   // as soon as the rays arrive (s5) -- mirror both retirements
   dw.dashLine('circle', { intro: 4, outro: RESOLVE, dash: 0.09, color: 0x9a9a9a, flash: false });
-  dw.seg('radius', { intro: 4, outro: 6, w: 0.03, color: PAL.orange });
-  dw.label('lbl_radius', 'F_bottomchord', { intro: 4, outro: 6, color: PAL.orange });
+  dw.seg('radius', { intro: 4, outro: 6, w: 0.03, color: PAL.grey });
+  dw.label('lbl_radius', 'F_bottomchord', { intro: 4, outro: 6, color: PAL.grey });
 
   // steps 5-7 -- deck forces, cable rays, web forces; 8-9 -- the form
   for (let k = 1; k <= 17; k++) {
@@ -366,7 +368,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 1, 0.01, refresh);
   panel.slider(par, s, 'oRF', 'offset reaction forces', 0, 1, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 0.5, 5, 0.1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.05, 0.001, refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'joint (0 = off; 1-7 deck, 8-12 cable)', 0, 12, 1, refresh);

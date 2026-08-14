@@ -65,12 +65,14 @@ const STEPS = [
   { t: 'The pole o', d: 'right: adding the component pairs tip-to-tail — through o′₁ parallel to the o′₂-rays, through o′₂ parallel to the o′₁-rays — the parallelogram closes at the pole o' },
   { t: 'The total load R', d: 'both sides at once: R = R₁ + R₂ fills the load line (right) and acts where the moments of R₁ and R₂ balance (left), dashed green' },
   { t: 'Reactions', d: 'left: the cable will hang along the support tangents, which meet exactly ON R’s line of action (three-force rule) — right: the reactions run from the pole o to the ends of the load line' },
-  { t: 'The coarse funicular', d: 'left: through V₃, parallel to the middle ray (orange) joining o to the division of the load line: with the two tangents this is the funicular of R₁ and R₂ alone' },
+  { t: 'The coarse funicular', d: 'left: through V₃, parallel to the middle ray (grey) joining o to the division of the load line: with the two tangents this is the funicular of R₁ and R₂ alone' },
   { t: 'The cable starts at A', d: 'left: from A parallel to the top ray, down to the first strip line — right: the top ray of the fan (the trial strings retire)' },
   { t: 'Across the q-zone', d: 'left: at every strip line the cable bends, each new segment parallel to the next ray — right: the rays to the heavy part of the load line' },
   { t: 'Across the g-zone', d: 'left: the bends flatten where the load is lighter — right: the rays to the light part of the load line' },
   { t: 'Landing at B', d: 'left: the last segment, parallel to the bottom ray, lands exactly on B' },
-  { t: 'Tension', d: 'the cable resolves pink = tension; the length of each ray is the force in its segment — the flattest segment carries the least, the supports the most' },
+  { t: 'Tension', d: 'the cable resolves pink = tension; the length of each ray is the force in its segment — the flattest segment carries the least, the supports the most',
+    detail: (d) => [`A = ${d.Ns[0].toFixed(1)} · B = ${d.Ns[NSTRIP].toFixed(1)} kN — H = ${d.H.toFixed(1)} kN · R = ${d.Rtot.toFixed(1)} kN`],
+    take: 'H is the same in every segment — only the vertical share changes along the cable' },
 ];
 
 // the construction (mirrors applet_0/geogebra.xml, evaluated live)
@@ -266,8 +268,8 @@ export function create(dw, panel, makePlayer) {
   dw.link('tanA', 'tanB');
 
   // step 10: coarse-funicular middle string (orange, helper -- no arrowheads)
-  dw.seg('ostr', { intro: 10, outro: RESOLVE, w: W_STR, color: PAL.orange });
-  dw.seg('oray', { intro: 10, outro: RESOLVE, w: W_RAY, color: PAL.orange });
+  dw.seg('ostr', { intro: 10, outro: RESOLVE, w: W_STR, color: PAL.grey });
+  dw.seg('oray', { intro: 10, outro: RESOLVE, w: W_RAY, color: PAL.grey });
   dw.link('ostr', 'oray');
 
   // steps 11-14: the cable, segment by segment WITH its ray of the fan
@@ -527,7 +529,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'lq', 'length of q (strips)', 1, 14, 1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.1, 1, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 5, 0.1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.04, 0.001, refresh);
   panel.slider(par, s, 'orf', 'offset reaction forces', 0, 2, 0.05, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

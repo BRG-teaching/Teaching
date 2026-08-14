@@ -79,7 +79,9 @@ const STEPS = [
   { t: 'The anchor force Fₗ', d: 'right: N₇ to the top of the reversed loads closes the polygon: Fₗ — left: the abutment anchors the band along its tangent' },
   { t: 'Components of Fₗ', d: 'right: the horizontal component of the anchor force is exactly H, the vertical rest is Fₗᵥ — the polygon H + A + Fₗ + R₂ + R₁/₂ closes' },
   { t: 'The right half by symmetry', d: 'both sides: the same construction mirrored in grey — reaction B at the right trestles, anchor Fᵣ at the right abutment' },
-  { t: 'The band resolves', d: 'the continuous band works in TENSION everywhere (pink) — H is constant through all fields; pipes show the force; drag the crown or the sliders' },
+  { t: 'The band resolves', d: 'the continuous band works in TENSION everywhere (pink) — H is constant through all fields; pipes show the force; drag the crown or the sliders',
+    detail: (d) => [`H = ${d.HkN.toFixed(1)} · A = ${d.AkN.toFixed(1)} · Fₗ = ${d.FLkN.toFixed(1)} kN`],
+    take: 'one continuous band over four fields — a single horizontal pull H threads through all of them' },
 ];
 
 // ------------------------------------------------------------------
@@ -707,7 +709,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'FG', 'F_G — one strip load (kN)', 5, 20, 1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (kN/20 units)', 50, 100, 10, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 3, 0.1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.012, 0.0005, refresh);
   panel.toggle(par, s, 'v4', 'show strip load arrows', refresh);
   panel.toggle(par, s, 'o4', 'show site drawing', refresh);

@@ -87,7 +87,9 @@ const STEPS = [
   { t: 'First tie joint', d: 'right: ray 22 = K₃→i and web chord 12 = N₂→K₃ — left: their parallels through H₃ and through the first top joint meet at the tie node L₃' },
   { t: 'Walk the span', d: 'left: tie members 23…31 ∥ their rays, web members 13…21 ∥ the chords between circle points — right: every tie force has the SAME length: the circle\'s radius' },
   { t: 'The closing member 32', d: 'left: from the last tie node ∥ the last ray — it lands EXACTLY on the support I₃: the construction closes — right: ray 32 = J₃→i' },
-  { t: 'Compression and tension', d: 'blue = compression (the freeform chord), pink = tension (the constant-force tie) — reshape with the sliders: the tie re-forms and still closes; click any joint to inspect it' },
+  { t: 'Compression and tension', d: 'blue = compression (the freeform chord), pink = tension (the constant-force tie) — reshape with the sliders: the tie re-forms and still closes; click any joint to inspect it',
+    detail: (d) => [`tie force 22…32 = ${d.magT.toFixed(2)} kN, constant — ΣF = 10.0 kN, A = B = 5.0 kN`],
+    take: 'draw ANY top chord — one circle in the force diagram form-finds a tie of constant force beneath it' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -387,7 +389,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sine', 'sine', 0, 1, 0.05, refresh);
   panel.slider(par, s, 'offR', 'offset reaction forces', 0, 1, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'load symbol', 0.1, 2, 0.05, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.08, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   const nodeSec = panel.section('Node equilibrium');

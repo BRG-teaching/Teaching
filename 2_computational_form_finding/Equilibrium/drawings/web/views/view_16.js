@@ -67,8 +67,8 @@ const STEPS = [
   { t: 'A semicircular masonry arch', d: 'left: an arch ring between intrados and extrados springs at an angle from the abutment line — drag the white handles for its radius and springing angle. The thrust line must stay inside the masonry for the arch to stand' },
   { t: 'Sixteen voussoirs', d: 'left: repeated angular bisection cuts the ring into 16 equal voussoirs, the joints on rays through the centre A; the crown joint D–E lies on the axis of symmetry' },
   { t: 'Weights and load line 1', d: 'left: every voussoir has the same weight w, acting on the vertical through its centroid — right: the 16 equal weights stacked tip-to-tail from the point a (drag it) form load line 1' },
-  { t: 'Maximum thrust: three points', d: 'the flattest thrust line still inside the masonry presses through the crown intrados D and the springing extrados F′ and its mirror — left: the chord from F′ to the crown point (orange dashed); drag the crown handle along the joint D–E' },
-  { t: 'Trial funicular 1', d: 'right: a trial pole o′₁ sends rays to load line 1 — left: from M₅ on the vertical through F′ a trial funicular hangs strip by strip to V₅ on the crown axis; M₅–V₅ is its closing string (orange)' },
+  { t: 'Maximum thrust: three points', d: 'the flattest thrust line still inside the masonry presses through the crown intrados D and the springing extrados F′ and its mirror — left: the chord from F′ to the crown point (grey dashed); drag the crown handle along the joint D–E' },
+  { t: 'Trial funicular 1', d: 'right: a trial pole o′₁ sends rays to load line 1 — left: from M₅ on the vertical through F′ a trial funicular hangs strip by strip to V₅ on the crown axis; M₅–V₅ is its closing string (grey)' },
   { t: 'Division point W₄ → pole o₁', d: 'right: through o′₁ parallel to the closing string to the division point W₄ on the load line; through W₄ parallel to the chord — the true pole o₁ lies where this line meets the horizontal through the middle of the load line (the crown horizontal)' },
   { t: 'Thrust line 1: up to the crown', d: 'left: from F′, each side parallel to its ray of o₁, bending on every centroid line, arrives exactly at the chosen crown point — right: the rays from o₁ to the upper half of load line 1' },
   { t: '…and down to the far springing', d: 'left: past the crown the sides mirror, landing exactly on the springing extrados — right: the rays of o₁ to the lower half of load line 1' },
@@ -79,7 +79,9 @@ const STEPS = [
   { t: 'Thrust line 2: tangent at the crown', d: 'left: from L₄, sides parallel to the rays of o₂ across the strips between the springings — the crown side runs straight through E, tangent to the extrados — right: the rays of o₂ to the upper half of load line 2' },
   { t: '…and down to the springing intrados', d: 'left: the mirrored half lands exactly on the springing point — right: the remaining rays of o₂' },
   { t: 'Reactions of thrust line 2', d: 'right: the same total weight W on load line 2; the steeper reactions A₂ and B₂ meet at the pole o₂ — left: the two thrusts at L₄ and at the springing' },
-  { t: 'Minimum and maximum thrust', d: 'the trial constructions retire (toggle "show construction polygons" to bring them back); both thrust lines are compression (blue). Every funicular inside the masonry is a possible equilibrium — the arch\'s horizontal thrust can only lie between H_min and H_max' },
+  { t: 'Minimum and maximum thrust', d: 'the trial constructions retire (toggle "show construction polygons" to bring them back); both thrust lines are compression (blue). Every funicular inside the masonry is a possible equilibrium — the arch\'s horizontal thrust can only lie between H_min and H_max',
+    detail: (d) => [`W = ${d.W.toFixed(1)} kN — H_max = ${d.Hmax.toFixed(2)} · H_min = ${d.Hmin.toFixed(2)} kN`],
+    take: 'a masonry arch has no single thrust — ANY line inside the stone is an equilibrium, bracketed by H_min and H_max' },
 ];
 
 const xline = (p, dir, x) => V.intersect(p, dir, [x, 0], [0, 1]) || p;
@@ -241,19 +243,19 @@ export function create(dw, panel, makePlayer) {
   }
 
   // step 4: the maximum-thrust prescription -- crown handle + chord (orange)
-  dw.dashLine('chord1', { intro: 4, color: PAL.orange, dash: 0.45, when: trialW });
+  dw.dashLine('chord1', { intro: 4, color: PAL.grey, dash: 0.45, when: trialW });
 
   // step 5: trial 1 -- pole o'1 + rays (right), trial funicular + closing (left)
   dw.dashLine('vertM5', { intro: 5, dash: 0.5, when: trialW });
   dw.dashLine('axisCr', { intro: 5, dash: 0.5, when: trialW });
   dw.strokes('tray1', 9, { intro: 5, w: W_TRR, color: PAL.grey, when: trialW });
   dw.strokes('tch1', 9, { intro: 5, w: W_TRS, color: PAL.grey, when: trialW });
-  dw.dashLine('close1', { intro: 5, color: PAL.orange, dash: 0.45, when: trialW });
+  dw.dashLine('close1', { intro: 5, color: PAL.grey, dash: 0.45, when: trialW });
   dw.link('tch1', 'tray1', 'close1');
 
   // step 6: division point W4 -> pole o1 on the crown horizontal
-  dw.dashLine('par1', { intro: 6, color: PAL.orange, dash: 0.45, when: trialW });
-  dw.dashLine('par1b', { intro: 6, color: PAL.orange, dash: 0.45, when: trialW });
+  dw.dashLine('par1', { intro: 6, color: PAL.grey, dash: 0.45, when: trialW });
+  dw.dashLine('par1b', { intro: 6, color: PAL.grey, dash: 0.45, when: trialW });
   dw.dashLine('crownH', { intro: 6, dash: 0.5 });
   dw.link('par1', 'par1b');
 
@@ -352,9 +354,9 @@ export function create(dw, panel, makePlayer) {
   }
 
   const letters = {
-    A: ['A', 1], Fp: ['F′', 4, PAL.black], L5: ['o′₁', 5, PAL.orange, trialW],
-    M5: ['M₅', 5, PAL.orange, trialW], V5: ['V₅', 5, PAL.orange, trialW],
-    W4: ['W₄', 6, PAL.orange, trialW], D5: ['o₁', 6, PAL.black],
+    A: ['A', 1], Fp: ['F′', 4, PAL.black], L5: ['o′₁', 5, PAL.grey, trialW],
+    M5: ['M₅', 5, PAL.grey, trialW], V5: ['V₅', 5, PAL.grey, trialW],
+    W4: ['W₄', 6, PAL.grey, trialW], D5: ['o₁', 6, PAL.black],
     E: ['E', 10, PAL.black], L4: ['L₄', 10, PAL.black],
     A5: ['o′₂', 11, CYAN, trialW], M4: ['M₄', 11, CYAN, trialW],
     V4: ['V₄', 11, CYAN, trialW], Z4: ['Z₄', 12, CYAN, trialW],
@@ -597,7 +599,7 @@ export function create(dw, panel, makePlayer) {
   const par = panel.section('Parameters');
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.3, 1, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 2, 0.1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.1, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'sh', 'show handles', refresh);

@@ -77,7 +77,9 @@ const STEPS = [
   { t: 'Hoop forces H₅ … H₁', d: 'right: the horizontal jumps walk back to the start of the load line: ΣH = 0 — left: near the crown the rings PUSH the slice outward: hoop compression' },
   { t: 'Ring forces N′, N″ — tension', d: 'below: in the top view each hoop force is the resultant of the two tangential ring forces on the slice edges — the outer three rings pull away from the edges — right: H₆, H₇, H₈ split parallel to the edge tangents' },
   { t: 'Ring forces N′, N″ — compression', d: 'below: the inner five rings press onto the slice edges — right: H₁ … H₅ split the same way at crown level' },
-  { t: 'Hoop compression and hoop tension', d: 'blue = ring compression (upper courses), pink = ring tension (lower courses — plain masonry cracks there!); drag the radii, the slice angle or the sliders; click a course centroid for its node equilibrium' },
+  { t: 'Hoop compression and hoop tension', d: 'blue = ring compression (upper courses), pink = ring tension (lower courses — plain masonry cracks there!); drag the radii, the slice angle or the sliders; click a course centroid for its node equilibrium',
+    detail: (d, st) => [`B = ${d.B.toFixed(1)} kN — hoop forces H₁ = ${(Math.abs(d.H[0]) / st.sFD).toFixed(2)} … H₅ = ${(Math.abs(d.H[4]) / st.sFD).toFixed(2)} kN`],
+    take: 'near the crown the rings PUSH, below ~52° they must PULL — where plain masonry cracks' },
 ];
 
 /** Area centroid of a polygon. */

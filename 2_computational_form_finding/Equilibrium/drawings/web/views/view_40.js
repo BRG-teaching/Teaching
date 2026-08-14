@@ -61,7 +61,9 @@ const STEPS = [
   { t: 'Eight strips per span', d: 'right: each resultant divides into eight strip loads with rays to its pole — left: the strip funicular walks station by station, inscribed in the tent: the true parabola of the distributed load' },
   { t: 'The moment diagram', d: 'left: mirror the parabolas across the beam line (red): the bending-moment diagram — sagging in the spans, and the hogging spike over the middle support B' },
   { t: 'The symmetric check', d: 'right: mirror the whole force diagram across the load line (red): the same construction read from the right — B appears twice, once per reading: the symmetry closes' },
-  { t: 'Done', d: 'drag the apex, the sag I, the load-line anchor or the R1 slider — the tent, the poles, B and the moment diagram follow; click a support or apex for its equilibrium' },
+  { t: 'Done', d: 'drag the apex, the sag I, the load-line anchor or the R1 slider — the tent, the poles, B and the moment diagram follow; click a support or apex for its equilibrium',
+    detail: (d, st) => [`A_V = C = ${d.Aval.toFixed(1)} kN · B = ${d.Bval.toFixed(1)} kN — R₁ = R₂ = ${st.R1.toFixed(0)} kN`],
+    take: 'a continuous beam read as a tent: the middle reaction is the distance between the two poles' },
 ];
 
 function inter2(p1, d1, p2, d2) { return V.intersect(p1, d1, p2, d2) || p1; }

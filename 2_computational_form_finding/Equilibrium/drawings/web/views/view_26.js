@@ -87,7 +87,9 @@ const STEPS = [
   { t: 'Walking the left bay', d: 'left: struts 6, 9 and chord members 7, 10 reach the crown — right: gaps 2–3, 3–4 and rays 3→i, 4→i' },
   { t: 'The apex tie 12', d: 'left: the tie from the apex to the crown — right: its force is the long gap 4–5, drawn on a parallel offset line for clarity: the tie hangs the kink of the roof' },
   { t: 'Walking the right bay', d: 'left: struts 15, 18, 21 and members 13, 16, 19, 22 — right: the last ray 8→i closes exactly on the support B' },
-  { t: 'Compression and tension', d: 'rafters and struts resolve blue = compression, bottom chord and apex tie pink = tension; every strut carries exactly F — drag A, B, the apex, a or v' },
+  { t: 'Compression and tension', d: 'rafters and struts resolve blue = compression, bottom chord and apex tie pink = tension; every strut carries exactly F — drag A, B, the apex, a or v',
+    detail: (d) => [`top chord = ${d.NT[0].toFixed(2)} kN (constant) — struts = F = ${d.NH[0].toFixed(2)} kN — bottom chord = ${Math.min(...d.NB).toFixed(2)}…${Math.max(...d.NB).toFixed(2)} kN`],
+    take: 'shape the bottom chord as the funicular of the rafter line and the WHOLE top chord carries one constant force' },
 ];
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
@@ -562,7 +564,7 @@ export function create(dw, panel, makePlayer) {
   const par = panel.section('Parameters');
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.3, 0.5, 0.01, refresh);
   panel.slider(par, s, 'off', 'offset loadline reaction forces', 0, 0.5, 0.05, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.05, 0.0025, refresh);
   panel.toggle(par, s, 'fun', 'show funicular polygon', refresh);
   panel.toggle(par, s, 'act', 'show actual load/support forces', refresh);

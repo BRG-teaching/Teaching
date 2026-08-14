@@ -68,7 +68,9 @@ const STEPS = [
   { t: 'Cable 3', d: 'right: through N parallel to cable 3, to the vertical through S → T; N–T is cable 3’s force' },
   { t: 'The tie closes the polygon', d: 'right: T–S is vertical: the tie’s force, the RESIDUAL prestress C − Q (green). Q eats prestress, not cable force' },
   { t: 'Reactions A and B', d: 'right: A = S→M, B = N→T close the polygon — left: the anchors pull along the cables (green)' },
-  { t: 'Pure tension', d: 'everything resolves pink = tension (pipes ∝ force). Drag F_Q up: A and B stay frozen until Q = C — then the tie goes slack and the polygon becomes the plain V' },
+  { t: 'Pure tension', d: 'everything resolves pink = tension (pipes ∝ force). Drag F_Q up: A and B stay frozen until Q = C — then the tie goes slack and the polygon becomes the plain V',
+    detail: (d, st) => [`A = ${d.NA.toFixed(1)} · B = ${d.NB.toFixed(1)} kN — ${d.taut ? `tie N₁ = ${d.N1.toFixed(1)} kN` : 'tie slack: N₁ = 0'} (Q = ${st.fQ.toFixed(1)}, C = ${st.fC.toFixed(1)} kN)`],
+    take: 'prestress at work: the anchors feel NOTHING of Q until it exceeds the prestress force C' },
 ];
 
 function compute(s) {
@@ -341,7 +343,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'fC', 'F_C — the prestress C (kN)', 1, 10, 0.1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 10, 0.1, refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.2, 0.005, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces (pipes)', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.toggle(par, s, 'aux', 'auxiliary construction', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

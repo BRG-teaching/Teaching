@@ -85,7 +85,9 @@ const STEPS = [
   { t: 'Panel 2: bottom chord', d: 'left: chord 17 from P′ — right: its force through i closes joint P′; the equal shares f₂ mark the chords\' vertical components' },
   { t: 'Repeat for every panel', d: 'left: chords 3–6 and 18–21 with verticals 9, 11, 13, 15 — right: the whole Cremona: every web point on ONE vertical (constant horizontal force), every vertical force = half its load' },
   { t: 'The diagonals carry nothing', d: 'left: diagonals 8, 10, 12, 14 complete the truss — right: their forces are POINTS (zero) — the lens was shaped so the uniform load needs no diagonals' },
-  { t: 'Compression and tension', d: 'blue = compression (top chord + verticals), pink = tension (bottom chord) — drag P, then raise factorQ: the extra load Q wakes the diagonals up' },
+  { t: 'Compression and tension', d: 'blue = compression (top chord + verticals), pink = tension (bottom chord) — drag P, then raise factorQ: the extra load Q wakes the diagonals up',
+    detail: (d) => [`ΣG = ${d.magR.toFixed(2)} kN — A = ${d.magA.toFixed(2)} · B = ${d.magB.toFixed(2)} kN`],
+    take: 'the lens is form-found from its force diagram: constant-force web, and the diagonals sleep until Q' },
 ];
 
 const cache = {};
@@ -162,7 +164,7 @@ function compute(s) {
   for (const [m, [pn, qn, rn, sn]] of Object.entries(MEM)) {
     const fd = V.sub(pts[sn], pts[rn]);
     mag[m] = V.len(fd) / s.sFD;
-    if (mag[m] < 1e-9) { col[m] = PAL.black; comp[m] = false; continue; }
+    if (mag[m] < 1e-9) { col[m] = PAL.zero; comp[m] = false; continue; }
     comp[m] = V.isCompression(V.ggbAngle(V.sub(pts[qn], pts[pn]), fd));
     col[m] = comp[m] ? PAL.blue : PAL.red;
   }
@@ -251,12 +253,12 @@ export function create(dw, panel, makePlayer) {
     dw.arrow(`ld${i}`, { intro: 2, ...ARR });
     dw.label(`lblLd${i}`, `G${'₁₂₃₄₅'[i]}`, { intro: 2, color: PAL.green });
     dw.arrow(`fl${i}`, { intro: 2, ...ARR,
-      color: { final: () => (s.fq > 0 && s.pq === i + 1 ? PAL.orange : PAL.green) } });
+      color: PAL.green });
     dw.label(`lblFl${i}`, '', { intro: 2,
-      color: { final: () => (s.fq > 0 && s.pq === i + 1 ? PAL.orange : PAL.green) } });
+      color: PAL.green });
   }
-  dw.arrow('qArrow', { intro: 2, ...ARR, color: PAL.orange, when: (st) => st.fq > 0 });
-  dw.label('lblQ', 'Q', { intro: 2, color: PAL.orange, when: (st) => st.fq > 0 });
+  dw.arrow('qArrow', { intro: 2, ...ARR, color: PAL.green, when: (st) => st.fq > 0 });
+  dw.label('lblQ', 'Q', { intro: 2, color: PAL.green, when: (st) => st.fq > 0 });
   dw.disk('pt_LL0', { intro: 2, r: 0.08 });
   dw.label('lbl_LL0', 'LL₀', { cls: 'point', intro: 2, when: (st) => st.n4 });
   for (let i = 1; i <= 5; i++) {
@@ -609,7 +611,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'pq', 'position Q (panel point)', 1, 5, 1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 1.5, 0.05, refresh);
   panel.slider(par, s, 'offR', 'offset reaction forces', 0, 1, 0.05, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.1, 0.005, refresh);
   panel.toggle(par, s, 'sc', 'show construction (form-finding fan)', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

@@ -87,7 +87,8 @@ const STEPS = [
   { t: 'The V diagram', d: 'below: the shear — on the girder a straight line from +A_V to −B_V through zero, on the columns the constant ∓A_H' },
   { t: 'The M diagram', d: 'below: corner moments M₄ = M₅ = H·h swing from the columns onto the girder (quarter-circle arcs); between them the parabola hangs from its own pole E₅ through zero at the hinge; M_max = q·l²/8 spans closing line to girder' },
   { t: 'The thrust line', d: 'right: rays from every load-line division to I₁ — below: their funicular through the feet is the ideal thrust line (dashed); at any x (drag L!) the moment is M_x = H·y_x — thrust times the distance between thrust line and frame' },
-  { t: 'Done', d: 'buttons show N / V / M; toggles: trial funicular, three-force construction, parabola construction, thrust line, Bow notation; drag I, A, the poles, L — and click a node (A, B, I, D, C)' },
+  { t: 'Done', d: 'buttons show N / V / M; toggles: trial funicular, three-force construction, parabola construction, thrust line, Bow notation; drag I, A, the poles, L — and click a node (A, B, I, D, C)',
+    take: 'one frame, four readings: N, V, M and the thrust line all come from the SAME force diagram' },
 ];
 
 function inter(p1, d1, p2, d2) {
@@ -757,7 +758,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sVD', 'scale V diagram (kN/unit)', 15, 50, 1, refresh);
   panel.slider(par, s, 'sMD', 'scale M diagram (kNm/unit)', 15, 100, 1, refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces (pipes)', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.toggle(par, s, 'o1t', 'keep trial funicular construction', refresh);
   panel.toggle(par, s, 'j2', 'show three-force construction', refresh);
   panel.toggle(par, s, 'bow', 'show Bow notation', refresh);

@@ -50,7 +50,9 @@ const STEPS = [
   { t: 'The upper share d₀', d: 'd₀ = distance from the line of action of F₀ down to the reference line' },
   { t: 'The lower share dᵤ', d: 'dᵤ = distance from the reference line down to the line of action of Fᵤ' },
   { t: 'M = F₀·d₀ + Fᵤ·dᵤ', d: 'each force contributes its lever about the reference line — and the sum is ALWAYS F·d: drag J, the split changes, the moment does not' },
-  { t: 'Independence of the reference', d: 'push J below the pair (button dᵤ = −1): the lower share turns negative, d₀ − dᵤ = d, and M stays F·d — a couple has the same moment about every point' },
+  { t: 'Independence of the reference', d: 'push J below the pair (button dᵤ = −1): the lower share turns negative, d₀ − dᵤ = d, and M stays F·d — a couple has the same moment about every point',
+    detail: (d, st) => [`M = F·d = ${(st.F * d.d).toFixed(1)} kNm — about EVERY reference point`],
+    take: 'a force pair has no resultant, only a moment — and that moment is the same everywhere' },
 ];
 
 function compute(s) {

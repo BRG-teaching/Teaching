@@ -78,7 +78,8 @@ const STEPS = [
   { t: 'Where it strays, it bends: d = H·y/T', d: 'left: the bending measure d = H·y/T (choose T in the panel) is plotted from the arch axis SQUARE to the axis (right angle to the tangent), on the side away from the thrust line' },
   { t: '…at the next strip', d: 'left: the same at strip 11: offset y₂ between thrust line and axis → measure d₂ = H·y₂/T square to the axis' },
   { t: 'All 18 ordinates', d: 'left: the ordinates d = H·y/T at every division point — zero where the thrust line crosses the arch axis (the springings and M)' },
-  { t: 'The bending line', d: 'the red line connects the ordinates: the arch\'s bending diagram; the arch resolves blue. Reshape it, drag M, or load a preset — a shape whose thrust line hugs the axis barely bends ("show construction" brings the apparatus back)' },
+  { t: 'The bending line', d: 'the red line connects the ordinates: the arch\'s bending diagram; the arch resolves blue. Reshape it, drag M, or load a preset — a shape whose thrust line hugs the axis barely bends ("show construction" brings the apparatus back)',
+    take: 'where the thrust line strays from the axis, the arch must bend: d = H·y/T — good form-finding keeps y small' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -226,8 +227,8 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_M', { intro: 3, r: 0.11 });
   dw.label('lbl_M', 'M', { cls: 'point', intro: 3 });
   dw.dashLine('splitM', { intro: 3, dash: 0.075, color: 0x707070, flash: false });
-  dw.dashLine('vertR1', { intro: 3, dash: 0.12, color: PAL.orange, when: constr });
-  dw.dashLine('vertR2', { intro: 3, dash: 0.12, color: PAL.orange, when: constr });
+  dw.dashLine('vertR1', { intro: 3, dash: 0.12, color: PAL.grey, when: constr });
+  dw.dashLine('vertR2', { intro: 3, dash: 0.12, color: PAL.grey, when: constr });
   dw.arrow('r1Line', { intro: 3, ...ARR, when: constr }); // R1 ON the load line
   dw.arrow('r2Line', { intro: 3, ...ARR, when: constr });
   dw.label('lbl_R1l', 'R₁', { intro: 3, color: PAL.green, when: constr });
@@ -235,8 +236,8 @@ export function create(dw, panel, makePlayer) {
   dw.disk('pt_LLM', { intro: 3, r: 0.065, when: ptsConstr });
 
   // ---- step 4: the left part (R1) on its strings --------------------------
-  dw.dashLine('strA1', { intro: 4, dash: 0.16, color: PAL.orange, when: constr });  // B1-P
-  dw.dashLine('strA2', { intro: 4, dash: 0.16, color: PAL.orange, when: constr });  // P-B5 (thru M)
+  dw.dashLine('strA1', { intro: 4, dash: 0.16, color: PAL.grey, when: constr });  // B1-P
+  dw.dashLine('strA2', { intro: 4, dash: 0.16, color: PAL.grey, when: constr });  // P-B5 (thru M)
   dw.disk('pt_P', { intro: 4, r: 0.07, when: ptsConstr });
   dw.label('lbl_P', 'P', { cls: 'point', intro: 4, when: ptsConstr });
   dw.arrow('r1Form', { intro: 4, ...ARR, when: constr }); // R1 hangs at P
@@ -253,8 +254,8 @@ export function create(dw, panel, makePlayer) {
   dw.label('lbl_fB1', 'B₁', { intro: 4, color: PAL.green, when: constr });
 
   // ---- step 5: the right part (R2) ----------------------------------------
-  dw.dashLine('strB1', { intro: 5, dash: 0.16, color: PAL.orange, when: constr });  // B1-Q (thru M)
-  dw.dashLine('strB2', { intro: 5, dash: 0.16, color: PAL.orange, when: constr });  // Q-B5
+  dw.dashLine('strB1', { intro: 5, dash: 0.16, color: PAL.grey, when: constr });  // B1-Q (thru M)
+  dw.dashLine('strB2', { intro: 5, dash: 0.16, color: PAL.grey, when: constr });  // Q-B5
   dw.disk('pt_Q', { intro: 5, r: 0.07, when: ptsConstr });
   dw.label('lbl_Q', 'Q', { cls: 'point', intro: 5, when: ptsConstr });
   dw.arrow('r2Form', { intro: 5, ...ARR, when: constr }); // R2 hangs at Q
@@ -271,8 +272,8 @@ export function create(dw, panel, makePlayer) {
   dw.label('lbl_fB2', 'B₂', { intro: 5, color: PAL.green, when: constr });
 
   // ---- step 6: pole + rays ------------------------------------------------
-  dw.dashLine('parP', { intro: 6, dash: 0.15, color: PAL.orange, when: constr });  // R'-o
-  dw.dashLine('parQ', { intro: 6, dash: 0.15, color: PAL.orange, when: constr });  // o-S
+  dw.dashLine('parP', { intro: 6, dash: 0.15, color: PAL.grey, when: constr });  // R'-o
+  dw.dashLine('parQ', { intro: 6, dash: 0.15, color: PAL.grey, when: constr });  // o-S
   dw.disk('pt_pole', { intro: 6, r: 0.08 });
   dw.label('lbl_pole', 'o', { cls: 'point', intro: 6 });
   for (let k = 0; k <= 18; k++) {
@@ -655,7 +656,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram', 0.1, 1, 0.05, refresh);
   panel.slider(par, s, 'T', 'T (ordinate scale d = H·y/T)', 10, 30, 1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 2, 0.1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.1, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'sh', 'show handles', refresh);

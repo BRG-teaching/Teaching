@@ -71,7 +71,9 @@ const STEPS = [
   { t: 'Chords → the true pole o₁', d: 'left: the real chords 1 (ap 1–ap 2), 3 (ap 1–ap 3), 2 (ap 3–ap 2) — right: parallels to them through i₂, i₁, i₃ meet in one point: the pole o₁' },
   { t: 'The catenary', d: 'right: rays from o₁ to every cut — left: members 1…9, each parallel to its ray, through the same three points' },
   { t: 'Reactions A′ and B′', d: 'right: the outer rays o₁–a₁ and i₁–o₁ — left: the same pulls at the supports; the catenary pulls harder than the parabola' },
-  { t: 'Parabola v. catenary', d: 'the trial retires — under its true weight the cable is a catenary (orange, like the original; it is in pure tension), slightly fuller than the parabola (black); both pass through ap 1, ap 2, ap 3' },
+  { t: 'Parabola v. catenary', d: 'the trial retires — under its true weight the cable is a catenary (pink = tension), slightly fuller than the parabola (black); both pass through ap 1, ap 2, ap 3',
+    detail: (d) => [`parabola: A = B = ${d.NA.toFixed(1)} kN — catenary: A′ = B′ = ${d.NA1.toFixed(1)} kN`],
+    take: 'same span, same three points — the catenary hangs fuller and pulls HARDER than the parabola' },
 ];
 
 const cache = {};
@@ -171,7 +173,7 @@ export function create(dw, panel, makePlayer) {
   // the applet draws the WHOLE catenary system orange (h_14, rays g_13..q_13,
   // loads w_2..u_6 + texts, reactions u_12/v_12/w_10/u_11) to set it apart
   // from the black parabola -- match it (the cable is in tension throughout)
-  const memberColor = () => ({ pending: PAL.black, final: () => PAL.orange });
+  const memberColor = () => ({ pending: PAL.black, final: () => PAL.red });
   const W_BAR = 0.15, W_RAY = 0.07, W_STR = 0.11, W_DIM = 0.05;
   const ARROW = { w: 0.18, headLen: 0.62, headW: 0.24 };     // big green vectors
   const NARROW = { w: 0.13, headLen: 0.42, headW: 0.18 };    // loads / pieces
@@ -267,10 +269,10 @@ export function create(dw, panel, makePlayer) {
   //         + catenary load line a_1..i_1 (right)
   // ------------------------------------------------------------------
   for (let i = 0; i < 8; i++) {
-    dw.arrow(`cl${i}`, { intro: 7, ...NARROW, color: PAL.orange });
-    dw.label(`lbl_cl${i}`, `R${SUB[i]}`, { cls: 'point', intro: 7, color: PAL.orange });
-    dw.arrow(`cp${i}`, { intro: 7, ...NARROW, color: PAL.orange });
-    dw.label(`lbl_cp${i}`, `R${SUB[i]}`, { cls: 'point', intro: 7, color: PAL.orange });
+    dw.arrow(`cl${i}`, { intro: 7, ...NARROW, color: PAL.green });
+    dw.label(`lbl_cl${i}`, `R${SUB[i]}`, { cls: 'point', intro: 7, color: PAL.green });
+    dw.arrow(`cp${i}`, { intro: 7, ...NARROW, color: PAL.green });
+    dw.label(`lbl_cp${i}`, `R${SUB[i]}`, { cls: 'point', intro: 7, color: PAL.green });
     dw.link(`cl${i}`, `cp${i}`, `lbl_cl${i}`, `lbl_cp${i}`);
   }
   dw.highlight('qedge', [7]);
@@ -341,22 +343,22 @@ export function create(dw, panel, makePlayer) {
     dw.seg(`cray${i}`, { intro: 11, w: i === 0 || i === 8 ? W_STR : W_RAY,
                          color: memberColor(i) });
     dw.seg(`mem${i}`, { intro: 11, w: W_BAR, color: memberColor(i) });
-    dw.label(`fn${i}`, `${i + 1}`, { cls: 'num', intro: 11, color: PAL.orange });
-    dw.label(`sn${i}`, `${i + 1}`, { cls: 'num', intro: 11, color: PAL.orange });
+    dw.label(`fn${i}`, `${i + 1}`, { cls: 'num', intro: 11, color: PAL.red });
+    dw.label(`sn${i}`, `${i + 1}`, { cls: 'num', intro: 11, color: PAL.red });
     dw.link(`mem${i}`, `cray${i}`, `fn${i}`, `sn${i}`);
   }
 
   // ------------------------------------------------------------------
   // step 12: reactions A', B' — green, both diagrams
   // ------------------------------------------------------------------
-  dw.arrow('reacFA1', { intro: 12, ...ARROW, color: PAL.orange, when: rf });    // o_1 -> a_1  A'
-  dw.arrow('reacFB1', { intro: 12, ...ARROW, color: PAL.orange, when: rf });    // i_1 -> o_1  B'
-  dw.arrow('reacA1', { intro: 12, ...ARROW, color: PAL.orange });
-  dw.arrow('reacB1', { intro: 12, ...ARROW, color: PAL.orange });
-  dw.label('lblRA1_form', 'A′', { cls: 'num', intro: 12, color: PAL.orange });
-  dw.label('lblRB1_form', 'B′', { cls: 'num', intro: 12, color: PAL.orange });
-  dw.label('lblRA1_force', 'A′', { cls: 'num', intro: 12, color: PAL.orange, when: rf });
-  dw.label('lblRB1_force', 'B′', { cls: 'num', intro: 12, color: PAL.orange, when: rf });
+  dw.arrow('reacFA1', { intro: 12, ...ARROW, color: PAL.green, when: rf });    // o_1 -> a_1  A'
+  dw.arrow('reacFB1', { intro: 12, ...ARROW, color: PAL.green, when: rf });    // i_1 -> o_1  B'
+  dw.arrow('reacA1', { intro: 12, ...ARROW, color: PAL.green });
+  dw.arrow('reacB1', { intro: 12, ...ARROW, color: PAL.green });
+  dw.label('lblRA1_form', 'A′', { cls: 'num', intro: 12, color: PAL.green });
+  dw.label('lblRB1_form', 'B′', { cls: 'num', intro: 12, color: PAL.green });
+  dw.label('lblRA1_force', 'A′', { cls: 'num', intro: 12, color: PAL.green, when: rf });
+  dw.label('lblRB1_force', 'B′', { cls: 'num', intro: 12, color: PAL.green, when: rf });
   dw.link('reacA1', 'reacFA1', 'lblRA1_form', 'lblRA1_force');
   dw.link('reacB1', 'reacFB1', 'lblRB1_form', 'lblRB1_force');
 
@@ -375,13 +377,13 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 9; i++) {
     dw.poly(`if${i}`, 4, {
       intro: RESOLVE, opacity: 1.0, z: -0.18, flash: false,
-      color: { pending: PAL.grey, final: () => PAL.orange },
+      color: { pending: PAL.grey, final: () => PAL.red },
       when: (st) => st.o1,
     });
-    dw.label(`ro_N${i}`, '', { intro: RESOLVE, flash: false, color: PAL.orange });
+    dw.label(`ro_N${i}`, '', { intro: RESOLVE, flash: false, color: PAL.red });
   }
   dw.label('ro_AB', '', { intro: RESOLVE, flash: false, color: PAL.green });
-  dw.label('ro_AB1', '', { intro: RESOLVE, flash: false, color: PAL.orange });
+  dw.label('ro_AB1', '', { intro: RESOLVE, flash: false, color: PAL.red });
 
   // ------------------------------------------------------------------
   // points + letters
@@ -674,7 +676,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sLS', 'scale load symbol', 0.5, 2, 0.05, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram', 0.5, 2, 0.05, refresh);
   panel.slider(par, s, 'sRS', 'scale reaction symbol', 1, 2, 0.05, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.06, 0.002, refresh);
   panel.toggle(par, s, 'showPts', 'show points', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);

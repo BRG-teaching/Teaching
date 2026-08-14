@@ -34,6 +34,7 @@ export const PAL = {
   yellow: 0xe8ac00, // hover highlight of dual form <-> force elements
   yellowLight: 0xf9e08a, // point fill while hover-highlighted
   grey: 0xaaaaaa,   // guides / construction lines
+  zero: 0xb9b9bd,   // zero-force members ("asleep" -- neither blue nor pink)
   orange: 0xe07a26, // node-equilibrium inspector (the applets' mode-2 orange)
   black: 0x111111,
   white: 0xffffff,
@@ -471,14 +472,13 @@ export class Drawing {
     this._applyGeo(e);
   }
 
-  /** Filled convex polygon with a fixed vertex count (fan triangulated). */
+  /** Filled simple polygon with a fixed vertex count. Triangulated by ear
+      clipping in setPoly, so concave outlines (ground hatches, rock banks,
+      wedges) render correctly — a fan from vertex 0 spills outside them. */
   poly(name, count, { z = Z.rect, intro = 0, when, color = PAL.grey, flash = true, opacity = 1.0 } = {}) {
     const mat = this._mat(color, opacity);
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
-    const index = [];
-    for (let i = 1; i < count - 1; i++) index.push(0, i, i + 1);
-    geo.setIndex(index);
     const mesh = new THREE.Mesh(geo, mat);
     mesh.frustumCulled = false;
     return this._register(name, { kind: 'poly', objs: [mesh], mesh, mats: [mat], z, intro, when,
@@ -488,6 +488,7 @@ export class Drawing {
   setPoly(name, pts) {
     const e = this.elems.get(name);
     e.geo = pts;
+    e.mesh.geometry.setIndex(earClip(pts));
     this._applyGeo(e);
   }
 
@@ -680,7 +681,7 @@ export class Drawing {
       const flashing = !!(e.visible && e.flash && current && k > 0);
       const hovered = !!(e.visible && this._hover !== null
                          && this._linkOf.get(name) === this._hover);
-      if (advance && e.visible && e.intro === k) newly.push(e);
+      if (advance && e.visible && e.intro === k) newly.push({ name, e });
 
       // color: yellow while hover-linked, pink while being drawn,
       // its proper color otherwise
@@ -719,14 +720,27 @@ export class Drawing {
     }
 
     if (advance && this.animEnabled && k > 0 && newly.length) {
-      const per = Math.min(1000, 1800 / newly.length);
+      // form + force counterparts (same link group) draw SIMULTANEOUSLY so
+      // the student sees that one side corresponds to the other; unlinked
+      // elements keep their own slot, groups follow one another
+      const seq = [];
+      const slotOf = new Map();
+      for (const { name, e } of newly) {
+        const g = this._linkOf.get(name);
+        if (g === undefined) { seq.push([e]); continue; }
+        if (!slotOf.has(g)) { slotOf.set(g, seq.length); seq.push([]); }
+        seq[slotOf.get(g)].push(e);
+      }
+      const per = Math.min(1000, 1800 / seq.length);
       const t0 = performance.now();
-      newly.forEach((e, i) => {
-        if (e.kind === 'poly' && !e.mats[0].transparent) return;   // opaque fills pop in
-        if (e.anim === false) return;   // background/site elements appear instantly
-        e.animF = 0;
-        this._applyGeo(e);
-        this._anims.push({ e, start: t0 + i * per * 0.8, dur: per });
+      seq.forEach((grp, i) => {
+        for (const e of grp) {
+          if (e.kind === 'poly' && !e.mats[0].transparent) continue; // opaque fills pop in
+          if (e.anim === false) continue;  // background/site elements appear instantly
+          e.animF = 0;
+          this._applyGeo(e);
+          this._anims.push({ e, start: t0 + i * per * 0.8, dur: per });
+        }
       });
     }
     this._lastStep = k;
@@ -903,6 +917,49 @@ export class Drawing {
 
 function dist2(a, b) {
   return Math.hypot(b[0] - a[0], b[1] - a[1]);
+}
+
+/** Ear-clipping triangulation of a simple polygon (either winding).
+    Returns a flat index array into pts; falls back to a fan for whatever
+    a degenerate outline leaves unclipped. */
+function earClip(pts) {
+  const n = pts.length;
+  if (n < 3) return [];
+  const cross = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  let area = 0;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    area += pts[i][0] * pts[j][1] - pts[j][0] * pts[i][1];
+  }
+  const idx = [...Array(n).keys()];
+  if (area < 0) idx.reverse();               // normalize to CCW
+  const inTri = (p, a, b, c) => cross(a, b, p) >= -1e-12 && cross(b, c, p) >= -1e-12
+    && cross(c, a, p) >= -1e-12;
+  const tris = [];
+  let guard = n * n + 8;
+  while (idx.length > 3 && guard-- > 0) {
+    let clipped = false;
+    for (let i = 0; i < idx.length; i++) {
+      const i0 = idx[(i + idx.length - 1) % idx.length];
+      const i1 = idx[i];
+      const i2 = idx[(i + 1) % idx.length];
+      const a = pts[i0], b = pts[i1], c = pts[i2];
+      if (cross(a, b, c) <= 1e-12) continue;   // reflex / degenerate corner
+      let ear = true;
+      for (const j of idx) {
+        if (j === i0 || j === i1 || j === i2) continue;
+        if (inTri(pts[j], a, b, c)) { ear = false; break; }
+      }
+      if (!ear) continue;
+      tris.push(i0, i1, i2);
+      idx.splice(i, 1);
+      clipped = true;
+      break;
+    }
+    if (!clipped) break;
+  }
+  for (let i = 1; i < idx.length - 1; i++) tris.push(idx[0], idx[i], idx[i + 1]);
+  return tris;
 }
 
 // ============================================================================

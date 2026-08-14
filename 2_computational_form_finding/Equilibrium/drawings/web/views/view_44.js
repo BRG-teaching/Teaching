@@ -32,7 +32,7 @@ export const meta = {
 
 const DIV = 20;
 const RESOLVE = 12;
-const ORANGE = 0xe07a26;
+const ORANGE = PAL.green;   // the applet's F-load orange follows the load scheme now
 
 const DEFAULTS = {
   fr: 5.4,                          // frame size l = h [2, 6]
@@ -75,7 +75,8 @@ const STEPS = [
   { t: 'The V diagrams add', d: 'row three: the shear diagrams — the q-line shifts by the constant F-shear' },
   { t: 'The M diagrams add', d: 'row four: corner moments M₄ = M₅ swing onto the girder (arcs); the q-parabola plus the F-triangle give the tilted parabola of q + F (M_max off the closing line)' },
   { t: 'The thrust line of q', d: 'rays from the load-line divisions to I₁ hang the ideal thrust line through the feet of the M copy (dashed) — moment = thrust × distance' },
-  { t: 'Done', d: 'drag I, A₃, C₄, LL0, the sliders q and F; toggles: trial funicular, chord construction, thrust line, parabola construction — click a node (feet and hinges of all three frames)' },
+  { t: 'Done', d: 'drag I, A₃, C₄, LL0, the sliders q and F; toggles: trial funicular, chord construction, thrust line, parabola construction — click a node (feet and hinges of all three frames)',
+    take: 'superposition made visible: the q-frame plus the F-frame IS the q+F frame — vectors and diagrams simply add' },
 ];
 
 function inter(p1, d1, p2, d2) {
@@ -745,7 +746,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sMD', 'scale M diagram', 15, 100, 1, refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
   panel.toggle(par, s, 'switchN', 'switch N side', refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces (pipes)', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.toggle(par, s, 'o1t', 'keep chord constructions', refresh);
   const thrProxy = { get w2() { return s.w2 === null ? s._k === 11 : s.w2; }, set w2(v) { s.w2 = v; } };
   panel.toggle(par, thrProxy, 'w2', 'show thrust line (q)', refresh);

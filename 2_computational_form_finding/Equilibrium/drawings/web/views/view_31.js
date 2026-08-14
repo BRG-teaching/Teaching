@@ -85,7 +85,9 @@ const STEPS = [
   { t: 'Storey 4 — members 12, 13, 14', d: 'left: Q₄ enters at E₂: brace 12, legs 13 and 14 — right: W₁–Z₁ = Q₄/2; the legs lean more the higher the storey' },
   { t: 'The apex — members 15, 16, 17', d: 'left: brace 15 (= Q₅/2), then both legs meet at the apex where Q₆ enters — right: the triangle D₁–A₂–E₁ closes the tip' },
   { t: 'The polygon closes', d: 'right: the reactions A and B return beside the outer rays: loads + A + B close the force polygon — left: the whole tower stands in equilibrium on A and B' },
-  { t: 'Tension and compression', d: 'behind: the photograph of the built tower — the windward leg resolves pink = tension, the leeward leg and the braces blue = compression (pipes ∝ force); drag B, C, W, the loads — or click a node for its equilibrium' },
+  { t: 'Tension and compression', d: 'behind: the photograph of the built tower — the windward leg resolves pink = tension, the leeward leg and the braces blue = compression (pipes ∝ force); drag B, C, W, the loads — or click a node for its equilibrium',
+    detail: (d, st) => [`wind R = ${(6 * st.Q).toFixed(1)} kN — A = ${d.RA.toFixed(1)} · B = ${d.RB.toFixed(1)} kN`],
+    take: 'Eiffel\'s profile IS the funicular of the wind: storey by storey, the legs follow the wind\'s pressure line' },
 ];
 
 const cache = {};
@@ -608,7 +610,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sLS', 'scale load symbol', 0.2, 2.5, 0.05, refresh);
   panel.slider(par, s, 'oR', 'offset resultant', 0, 1.2, 0.05, refresh);
   panel.slider(par, s, 'oRF', 'offset reaction forces', 0, 3, 0.05, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.01, 0.0005, refresh);
   panel.toggle(par, s, 'lab', 'show labels (member numbers)', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

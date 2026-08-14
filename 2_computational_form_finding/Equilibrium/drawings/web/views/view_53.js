@@ -75,7 +75,9 @@ const STEPS = [
   { t: 'The cable and its triangle', d: 'left: the parabola through C, F, D (the arc) — right: through G parallel to E′–D, through N parallel to C–E′: the pole O closes the triangle: A below, B above (offset arrows beside)' },
   { t: 'The pull walks into the wall', d: 'left: the cable force A′ continues along the chord into the wall at Q₁ — right: translated to Z₁: the wall\'s force polygon begins with A′' },
   { t: 'The wall block', d: 'left: inside the wall the thrust kinks at B: the diagonal 1 runs to the toe, the inner edge 2 stays vertical — right: A′ splits into 1 (parallel to the diagonal) and 2 (vertical): the wall\'s weight D and the ground bearing C close the block\'s equilibrium' },
-  { t: 'Compression and tension', d: 'the diagonal 1 resolves blue = compression (the thrust reaches the toe), the inner edge 2 pink = the edge that wants tension — the wall\'s weight keeps it shut; drag F, R, R₂, Z₁ or the sliders — click C, D or the wall for its equilibrium' },
+  { t: 'Compression and tension', d: 'the diagonal 1 resolves blue = compression (the thrust reaches the toe), the inner edge 2 pink = the edge that wants tension — the wall\'s weight keeps it shut; drag F, R, R₂, Z₁ or the sliders — click C, D or the wall for its equilibrium',
+    detail: (d, st) => [`A = ${d.Aq.toFixed(1)} · B = ${d.Bq.toFixed(1)} kN — R = ${(st.Rlen * d.kN).toFixed(1)} kN`],
+    take: 'the canopy\'s pull wants to open the wall — its own weight closes the joint and walks the thrust to the toe' },
 ];
 
 function inter2(p1, d1, p2, d2) { return V.intersect(p1, d1, p2, d2) || p1; }

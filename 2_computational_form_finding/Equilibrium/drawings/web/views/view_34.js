@@ -72,7 +72,8 @@ const STEPS = [
   { t: 'Horizontal and vertical components', d: 'split every arch reaction: A_Hc = B_H = C_H = D_Hc = H_c — the walls are pushed OUTWARD and the column strut must carry the full H between the arches; the verticals go down the supports' },
   { t: 'The cable pole', d: 'left: a trial over ALL eight loads from U₁ finds the division i_t; the full chord H₁–A₁ (dashed red) — right: the parallel through i_t meets the H_t vertical at o_t (drawn offset, with the offset copy of the load line)' },
   { t: 'The cable', d: 'right: rays from o_t — left: the full-span tension cable through all eight loads; its ends pull A_Ht INWARD at the walls — equal and opposite to the arch push: the horizontals CANCEL' },
-  { t: 'The strut and the foundations', d: 'left: the strut I–I′ carries H between the arches; the wall pieces carry down; at the bases only VERTICALS remain: A_V = A_Vc + A_Vt, B_V, C_V — the Supersam principle' },
+  { t: 'The strut and the foundations', d: 'left: the strut I–I′ carries H between the arches; the wall pieces carry down; at the bases only VERTICALS remain: A_V = A_Vc + A_Vt, B_V, C_V — the Supersam principle',
+    take: 'arch pushes out, cable pulls in — proportioned so the horizontals CANCEL and the ground feels only verticals' },
 ];
 
 function funi(start, pole, lls, xs) {

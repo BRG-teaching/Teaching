@@ -77,6 +77,7 @@ const DEFAULTS = {
   mx: 16.306518692334002, my: 1.9650250871004993,   // trial pole o'
   ny: 5.653926166228851,                 // trial start N on the left wall
   g: 0.1,                                // g [0.1, 1]
+  o1: true, sIF: 0.05,                   // internal-force pipes on the final arch
   fQ: 4,                                 // factor_Q [1, 5]
   pQ: 8,                                 // positionQ [1, 30] (strip carrying Q)
   sFD: 1.3,                              // scaleForceDiagram [0.5, 2]
@@ -108,7 +109,9 @@ const STEPS = [
   { t: 'Crown chords → the pole o', d: 'left: the crown chords A–D and D–B (dashed) — right: through i₁ parallel to A–D and through i₂ parallel to D–B: the final pole o' },
   { t: 'The arch under Q', d: 'right: the fan from o — left: from A, side by side, the funicular of Rg + Q: through D, onto B, but reshaped by Q' },
   { t: 'Reactions', d: 'right: the polygon closes on the outer rays: A = from o back to the top, B = from the bottom up to o — left: the thrusts push into the springings' },
-  { t: 'Compression', d: 'the trial and no-Q constructions step back exactly like the applet ("show bounding geometry" brings them back) — the arch under Q stays orange like the original (the pipes show its compression); drag Q, D, o′ or the sliders' },
+  { t: 'Compression', d: 'the trial and no-Q constructions step back exactly like the applet ("show bounding geometry" brings them back) — the arch under Q resolves blue = compression (the pipes show it); drag Q, D, o′ or the sliders',
+    detail: (d, st) => [`A = ${d.RA.toFixed(2)} · B = ${d.RB.toFixed(2)} kN — live load Q = ${(st.fQ * st.g).toFixed(2)} kN`],
+    take: 'the moving load Q re-poses the whole problem — drag it and watch the arch change shape under it' },
 ];
 
 const cache = {};
@@ -322,13 +325,13 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   // the applet's Q system is ORANGE whenever visible (z_5 dynamic color,
   // h_20, the positionQ strip on the load line) — not green/blue
-  dw.arrow('loadQ', { intro: 9, ...ARROW, w: 0.085, headLen: 0.28, headW: 0.11, color: PAL.orange });
-  dw.label('lQ', 'Q', { intro: 9, color: PAL.orange });
+  dw.arrow('loadQ', { intro: 9, ...ARROW, w: 0.085, headLen: 0.28, headW: 0.11, color: PAL.green });
+  dw.label('lQ', 'Q', { intro: 9, color: PAL.green });
   dw.dashLine('qloa', { intro: 9, dash: 0.05, color: 0x999999 });
   dw.dashLine('qch0', { intro: 9, outro: 10, dash: 0.12 });
   dw.dashLine('qch1', { intro: 9, outro: 10, dash: 0.12 });
   dw.arrow('qedge', { intro: 9, outro: RESOLVE, ...ARROW });
-  dw.label('lQf', 'Q', { intro: 9, outro: RESOLVE, color: PAL.orange });
+  dw.label('lQf', 'Q', { intro: 9, outro: RESOLVE, color: PAL.green });
   dw.seg('qray0', { intro: 9, outro: RESOLVE, w: 0.02, color: PAL.grey });
   dw.seg('qray1', { intro: 9, outro: RESOLVE, w: 0.02, color: PAL.grey });
 
@@ -337,8 +340,8 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   dw.arrow('edgeQa', { intro: 10, ...ARROW });
   dw.arrow('edgeQb', { intro: 10, ...ARROW });
-  dw.seg('segQ', { intro: 10, w: 0.09, color: PAL.orange });
-  dw.label('lQl', 'Q', { intro: 10, color: PAL.orange });
+  dw.seg('segQ', { intro: 10, w: 0.09, color: PAL.green });
+  dw.label('lQl', 'Q', { intro: 10, color: PAL.green });
   dw.label('lRgQ', 'Rg + Q', { intro: 10, color: PAL.green });
   dw.highlight('loadQ', [10]);
 
@@ -360,7 +363,12 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('fan3', N_STRIP - 1, { intro: 14, w: W_RAY, color: PAL.grey });
   dw.seg('oray3a', { intro: 14, w: 0.028, color: PAL.grey });
   dw.seg('oray3b', { intro: 14, w: 0.028, color: PAL.grey });
-  dw.strokes('arch2', N_STRIP + 1, { intro: 14, w: W_BAR, color: PAL.orange });
+  dw.strokes('arch2', N_STRIP + 1, { intro: 14, w: W_BAR, color: PAL.blue });
+  // internal-force pipes: each arch piece thickened by its o-ray force
+  for (let k = 0; k <= N_STRIP; k++) {
+    dw.poly(`if${k}`, 4, { intro: 14, opacity: 1.0, z: -0.18, flash: false,
+      color: { pending: PAL.grey, final: (dd) => dd.cA }, when: (st) => st.o1 });
+  }
 
   // step 15 -- reactions ON the outer rays + thrusts (applet 9); the trial
   // and no-Q constructions retire at 16 (RESOLVE)
@@ -428,7 +436,7 @@ export function create(dw, panel, makePlayer) {
   // readouts
   for (let i = 0; i < 3; i++) {
     dw.label(`ro${i}`, '', { intro: RESOLVE, flash: false,
-              color: i < 2 ? PAL.green : PAL.orange });
+              color: PAL.green });
   }
 
   // node-equilibrium inspector (free-body star + tip-to-tail sub-polygon)
@@ -588,6 +596,10 @@ export function create(dw, panel, makePlayer) {
     dw.setSeg('oray3a', d.C9, d.O7);
     dw.setSeg('oray3b', d.C9, d.Q7);
     dw.setStrokes('arch2', pairs(d.arch2));
+    pairs(d.arch2).forEach(([a2, b2], k) => {
+      const N = V.dist(d.C9, d.pts2[Math.min(k, N_STRIP)]) / s.sFD;
+      dw.setPoly(`if${k}`, V.rectPoints(a2, b2, s.sIF * N));
+    });
 
     // final reactions: ON the outer rays (right), thrusts into the springings
     const [ra0, ra1] = reacSide(d.C9, d.O7);
@@ -686,6 +698,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'fQ', 'factor Q (Q = factor·g)', 1, 5, 0.1, refresh);
   panel.slider(par, s, 'pQ', 'position of Q (strip)', 1, 30, 1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 2, 0.05, refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.1, 0.005, refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);
   panel.toggle(par, s, 'sbg', 'show bounding geometry (funiculars without Q)', refresh);
   panel.toggle(par, s, 'o2', 'show points funicular (trial vertices)', refresh);

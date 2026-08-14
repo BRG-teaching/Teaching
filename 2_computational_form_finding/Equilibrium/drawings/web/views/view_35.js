@@ -72,7 +72,9 @@ const STEPS = [
   { t: 'Joint E — members 5 and 6', d: 'left: at E the load F₂ meets members 2, 3, 5, 6 — right: from Q parallel to 6, from J₁ parallel to 5 → K₁' },
   { t: 'Joint D closes — member 7', d: 'left: at D the inclined F₃ meets members 6 and 7 — right: K₁ → S is parallel to member 7: the last joint closes exactly on S (the check at G is automatic)' },
   { t: 'The check: R₁₂₃ again', d: 'right: O → S re-appears — loads, reactions and all eleven member forces circulate in one closed diagram — left: the line of action still passes through the same Z' },
-  { t: 'Compression and tension', d: 'members resolve blue = compression (the fan 1, 3, 5, 7 and the long diagonals) and pink = tension (top chord pieces 2, 6, the tie 4, the deck 11) — pipes ∝ force; drag H, A, O, T, the sliders — click a joint for its equilibrium' },
+  { t: 'Compression and tension', d: 'members resolve blue = compression (the fan 1, 3, 5, 7 and the long diagonals) and pink = tension (top chord pieces 2, 6, the tie 4, the deck 11) — pipes ∝ force; drag H, A, O, T, the sliders — click a joint for its equilibrium',
+    detail: (d, st) => [`A_V = ${d.aV.toFixed(0)} kN — B_V = ${(V.dist(d.E1, d.C1) * st.sFD).toFixed(0)} · B_H = ${(V.dist(d.S, d.E1) * st.sFD).toFixed(0)} kN`],
+    take: 'an inclined load on a truss: the three-force rule splits it at the pin, then the Cremona walks joint by joint' },
 ];
 
 const cache = {};
@@ -276,9 +278,9 @@ export function create(dw, panel, makePlayer) {
     dw.label(`lbl_${nm}`, txt, { cls: 'point', intro: at, when: (st) => st.n4 });
   }
   // the applet's orange zero-verdict (shown whenever |member 10| < 0.05 units)
-  dw.label('zero10', '10 = 0', { intro: 9, color: PAL.orange, when: zeroW });
-  dw.label('zero11', '11 = 0', { intro: 9, color: PAL.orange, when: zeroW });
-  dw.label('zeroAV', 'A_V = 0', { intro: 9, color: PAL.orange, when: zeroW });
+  dw.label('zero10', '10 = 0', { intro: 9, color: PAL.zero, when: zeroW });
+  dw.label('zero11', '11 = 0', { intro: 9, color: PAL.zero, when: zeroW });
+  dw.label('zeroAV', 'A_V = 0', { intro: 9, color: PAL.zero, when: zeroW });
 
   // step 14 -- the R123 check
   dw.dashArrow('resRchk', { intro: 14, ...ARROW, dash: 0.55 });
@@ -502,7 +504,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 50, 100, 1, refresh);
   panel.slider(par, s, 'oRF', 'offset reaction forces', 0, 10, 0.1, refresh);
   panel.slider(par, s, 'lsym', 'load symbol', 1, 10, 0.1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.002, 0.00005, refresh);
   const nodeSec = panel.section('Node equilibrium');
   panel.slider(nodeSec, s, 'node', 'joint (0 = off; 1–7 = A B C D E F G)', 0, 7, 1, refresh);

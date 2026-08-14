@@ -490,7 +490,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'F', 'F (kN)', 1, 10, 0.1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 2, 0.05, refresh);
   panel.slider(par, s, 'off', 'offset force diagram', 0, 0.5, 0.05, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.2, 0.005, refresh);
   panel.toggle(par, s, 'sc', 'show constraints', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

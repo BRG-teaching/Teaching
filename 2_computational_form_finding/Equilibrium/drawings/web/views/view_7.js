@@ -79,7 +79,9 @@ const STEPS = [
   { t: 'Segment 6 — form and force', d: 'right: o–V₂ — left: parallel to it — it lands exactly on F' },
   { t: 'Reactions', d: 'right: the polygon closes with V₂→o and o→I₁ — left: the same pulls appear at F and E' },
   { t: 'Reaction components', d: 'both sides: each reaction splits into a horizontal and a vertical component' },
-  { t: 'Tension', d: 'the trial constructions disappear — the funicular through E, N and F resolves pink = tension' },
+  { t: 'Tension', d: 'the trial constructions disappear — the funicular through E, N and F resolves pink = tension',
+    detail: (d) => [`N₁ = ${d.Ns[0].toFixed(1)} · N₂ = ${d.Ns[1].toFixed(1)} · N₃ = N₄ = ${d.Ns[2].toFixed(1)} · N₅ = ${d.Ns[3].toFixed(1)} · N₆ = ${d.Ns[4].toFixed(1)} kN`],
+    take: 'three prescribed points need two spans and two trials — but ONE pole serves the whole funicular' },
 ];
 
 const cache = {};
@@ -566,7 +568,7 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 4; i++) panel.slider(par, s.F, i, `F${i + 1} (kN)`, 1, 5, 0.1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 1, 2, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 5, 0.5, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.4, 0.01, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);

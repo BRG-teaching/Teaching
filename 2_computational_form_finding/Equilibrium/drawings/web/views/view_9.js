@@ -69,7 +69,9 @@ const STEPS = [
   { t: 'Divide the tangents into 8', d: 'left: rulers l₁ and l₂ beside the tangents divide each into eight equal parts (the applet\'s tangent method)' },
   { t: 'Connect matching points', d: 'left: joining the k-th point of one tangent to the k-th of the other — every connecting line is a tangent of the parabola, touching it at a funicular vertex' },
   { t: 'The enclosing polygon', d: 'left: consecutive tangent intersections trace the enclosing polygon of the same parabola (the funicular polygon touches it from inside)' },
-  { t: 'Tension', d: 'the construction retires — the funicular of the uniform load is the parabola through A, C and B, all members pink = tension' },
+  { t: 'Tension', d: 'the construction retires — the funicular of the uniform load is the parabola through A, C and B, all members pink = tension',
+    detail: (d) => [`A = ${d.NA.toFixed(1)} · B = ${d.NB.toFixed(1)} kN — segment forces N₁ = ${d.Ns[0].toFixed(1)} … N₈ = ${d.Ns[7].toFixed(1)} kN`],
+    take: 'a uniform load hangs as a PARABOLA — the support tangents meet on the centreline exactly 2h below the closing string' },
 ];
 
 const cache = {};
@@ -341,18 +343,18 @@ export function create(dw, panel, makePlayer) {
   // ------------------------------------------------------------------
   // steps 12-14: tangent method (rulers, envelope, enclosing polygon)
   // ------------------------------------------------------------------
-  dw.seg('orgA', { intro: 12, outro: RESOLVE, w: 0.09, color: PAL.orange });
-  dw.seg('orgB', { intro: 12, outro: RESOLVE, w: 0.09, color: PAL.orange });
-  dw.label('lbl_o1', 'l₁', { intro: 12, outro: RESOLVE, color: PAL.orange });
-  dw.label('lbl_o2', 'l₂', { intro: 12, outro: RESOLVE, color: PAL.orange });
-  dw.label('lbl_o18', 'l₁/8', { cls: 'point', intro: 12, outro: RESOLVE, color: PAL.orange });
-  dw.label('lbl_o28', 'l₂/8', { cls: 'point', intro: 12, outro: RESOLVE, color: PAL.orange });
+  dw.seg('orgA', { intro: 12, outro: RESOLVE, w: 0.09, color: PAL.grey });
+  dw.seg('orgB', { intro: 12, outro: RESOLVE, w: 0.09, color: PAL.grey });
+  dw.label('lbl_o1', 'l₁', { intro: 12, outro: RESOLVE, color: PAL.grey });
+  dw.label('lbl_o2', 'l₂', { intro: 12, outro: RESOLVE, color: PAL.grey });
+  dw.label('lbl_o18', 'l₁/8', { cls: 'point', intro: 12, outro: RESOLVE, color: PAL.grey });
+  dw.label('lbl_o28', 'l₂/8', { cls: 'point', intro: 12, outro: RESOLVE, color: PAL.grey });
   for (let i = 0; i < 4; i++) dw.dashLine(`endT${i}`, { intro: 12, outro: RESOLVE, dash: 0.25 });
   for (let i = 0; i < 7; i++) {
     dw.dashLine(`tickA${i}`, { intro: 12, outro: RESOLVE, dash: 0.25 });
     dw.dashLine(`tickB${i}`, { intro: 12, outro: RESOLVE, dash: 0.25 });
-    dw.disk(`pt_dA${i}`, { intro: 12, outro: RESOLVE, r: 0.13, face: PAL.orange, edge: PAL.orange });
-    dw.disk(`pt_dB${i}`, { intro: 12, outro: RESOLVE, r: 0.13, face: PAL.orange, edge: PAL.orange });
+    dw.disk(`pt_dA${i}`, { intro: 12, outro: RESOLVE, r: 0.13, face: PAL.grey, edge: PAL.grey });
+    dw.disk(`pt_dB${i}`, { intro: 12, outro: RESOLVE, r: 0.13, face: PAL.grey, edge: PAL.grey });
     dw.disk(`pt_tA${i}`, { intro: 12, outro: RESOLVE, r: 0.11, face: PAL.white, edge: 0x777777 });
     dw.disk(`pt_tB${i}`, { intro: 12, outro: RESOLVE, r: 0.11, face: PAL.white, edge: 0x777777 });
     dw.dashLine(`env${i}`, { intro: 13, outro: RESOLVE, dash: 0.35 });
@@ -666,7 +668,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.2, 0.6, 0.01, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 5, 0.1, refresh);
   panel.slider(par, s, 'off', 'offset — tangent rulers', 1, 10, 0.1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.2, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);

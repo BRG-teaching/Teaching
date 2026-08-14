@@ -85,7 +85,9 @@ const STEPS = [
   { t: 'The right side span', d: 'left: mirrored about midspan: cable, hangers and R₂ — right: the mirrored pole o₂ gives the forces D (backstay) and J (anchor pull)' },
   { t: 'Tower equilibrium: E and F', d: 'right: tip-to-tail, A and C (and mirrored B and D) sum to a vertical: E = A_V + C_V, F = B_V + D_V — left: the towers push up under the deck' },
   { t: 'Anchor forces', d: 'both: the anchor blocks resist the cable pulls with the components H_H, H_V and J_H, J_V — the horizontal pull H_H equals H again' },
-  { t: 'Tension and compression', d: 'the cables and hangers resolve pink = tension, the towers blue = compression; forces in units of the hanger load P on the right' },
+  { t: 'Tension and compression', d: 'the cables and hangers resolve pink = tension, the towers blue = compression; forces in units of the hanger load P on the right',
+    detail: (d) => [`A = ${d.P(d.vA).toFixed(1)} · B = ${d.P(d.vB).toFixed(1)} · C = ${d.P(d.vC).toFixed(1)} · D = ${d.P(d.vD).toFixed(1)} P — H = ${d.P(d.vH).toFixed(1)} P`],
+    take: 'the towers must stand PLUMB: both backstays and main cable share one horizontal pull H' },
 ];
 
 const cache = {};
@@ -782,7 +784,7 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(par, s, 'trial', 'trial construction (main span)', refresh);
   panel.toggle(par, s, 'sideTrial', 'trial funicular (side span)', refresh);
   panel.toggle(par, s, 'arr', 'show per-hanger load arrows', refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 1, 0.05, refresh);
   panel.toggle(par, s, 'dims', 'show dimensions', refresh);
   panel.toggle(par, s, 'showPts', 'show points', refresh);

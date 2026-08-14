@@ -82,7 +82,8 @@ const STEPS = [
   { t: 'The moment funicular', d: 'right: thin rays from the load line to o — left: from the baseline start, strings parallel to them; the polygon returns to the baseline at the right support' },
   { t: 'Ordinates y on the trial', d: 'left: measure the ordinate y between the grey trial funicular and its closing line at every station' },
   { t: 'M = H · y', d: 'left: each ordinate scaled by H (× the force scale) and hung from the baseline: the red M-diagram (1 unit :: 1 kNm) — the black funicular is the SAME curve at scale M/H' },
-  { t: 'Superposition', d: 'slide F₁ and F₂ along the stations, change their size, q stays — one construction updates reactions, V and M at once; click a kink of the moment funicular for its equilibrium' },
+  { t: 'Superposition', d: 'slide F₁ and F₂ along the stations, change their size, q stays — one construction updates reactions, V and M at once; click a kink of the moment funicular for its equilibrium',
+    take: 'point loads and line load share ONE funicular — superposition happens inside the force diagram itself' },
 ];
 
 function interX(p, dir, x) {

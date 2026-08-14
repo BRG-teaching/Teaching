@@ -413,7 +413,7 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 4; i++) panel.slider(par, s.F, i, `F${i + 1} (kN)`, 1, 5, 0.1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 1, 5, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 5, 0.5, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.2, 0.005, refresh);
   panel.toggle(par, s, 'sc', 'show constraints (load rails)', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

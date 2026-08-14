@@ -72,7 +72,9 @@ const STEPS = [
   { t: 'The arch sag', d: 'left: the last mirror: the draggable G on the crown guide → G_p, tangents F–G_p and G_p–H' },
   { t: 'The arch thrust', d: 'right: the pole M₃ sits on N’s vertical (the chain again) with its fan — left: the arch walks F → H over the vault' },
   { t: 'Into the ground', d: 'left: the legs F–I and H–J take the springing forces straight down (drag I along the ground!) — the ground answers with the two reactions (green)' },
-  { t: 'The cathedral stands', d: 'the three thrust lines hang in one chain: roof → flyer → buttress → arch → ground; drag B, D, G, the sags, I or the load-line anchor K — click C, E, F, H, I or J for its equilibrium' },
+  { t: 'The cathedral stands', d: 'the three thrust lines hang in one chain: roof → flyer → buttress → arch → ground; drag B, D, G, the sags, I or the load-line anchor K — click C, E, F, H, I or J for its equilibrium',
+    detail: (d, st) => [`R₁ = ${st.R1.toFixed(1)} · R₂ = ${d.R2.toFixed(2)} · R₃ = ${d.R3.toFixed(2)}`],
+    take: 'one load line, three funiculars chained: every stone of the cross-section rides a single flow of force' },
 ];
 
 function inter2(p1, d1, p2, d2) { return V.intersect(p1, d1, p2, d2) || p1; }

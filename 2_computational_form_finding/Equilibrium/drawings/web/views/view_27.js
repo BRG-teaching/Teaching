@@ -77,8 +77,10 @@ const STEPS = [
   { t: 'Strut 15, chord 16', d: 'right: drop C₁→B₁ = G₄ and e–C₁ — left: strut 15' },
   { t: 'Cable member 18', d: 'right: D₁→i — left: member 18' },
   { t: 'Strut 19, chord 20 — member 21 closes', d: 'right: drop D₁→E₁ = G₅, f–E₁, and E₁→i lands exactly on the reaction B — left: strut 19 and the last cable member 21 close on the support' },
-  { t: 'The silent diagonals', d: 'left: diagonals 5, 9, 13, 17 in black — under uniform load their forces are the ZERO gaps U=V, W=Z, A₁=B₁, C₁=D₁: they carry nothing' },
-  { t: 'Compression, tension — and Q', d: 'chord + struts blue = compression, cable pink = tension; raise factor Q and move position Q: i shifts, the chords differ, and the diagonals wake up — drag a, the dimension, or the sliders' },
+  { t: 'The silent diagonals', d: 'left: diagonals 5, 9, 13, 17 in pale grey — under uniform load their forces are the ZERO gaps U=V, W=Z, A₁=B₁, C₁=D₁: they carry nothing' },
+  { t: 'Compression, tension — and Q', d: 'chord + struts blue = compression, cable pink = tension; raise factor Q and move position Q: i shifts, the chords differ, and the diagonals wake up — drag a, the dimension, or the sliders',
+    detail: (d) => [`cable = ${Math.min(...d.NB).toFixed(2)}…${Math.max(...d.NB).toFixed(2)} kN`],
+    take: 'the top-chord force is YOURS to choose — the cable form-finds itself, and under uniform load the diagonals stay silent' },
 ];
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -157,7 +159,7 @@ function compute(s) {
   for (let k = 0; k < 4; k++) {
     ND.push(V.dist(DPAIR[k][0], DPAIR[k][1]) / s.sFD);
     cD.push(s.fQ === 0 || ND[k] < 1e-9
-      ? PAL.black
+      ? PAL.zero
       : col(V.sub(DFORM[k][1], DFORM[k][0]), V.sub(DPAIR[k][1], DPAIR[k][0])));
   }
 
@@ -191,10 +193,10 @@ export function create(dw, panel, makePlayer) {
     dw.arrow(`ld${k}`, { intro: 2, ...ARROW });
     dw.label(`lG${k}`, `G${'₁₂₃₄₅'[k]}`, { intro: 2, color: PAL.green, when: (st) => st.lbl });
     dw.arrow(`lv${k}`, { intro: 2, ...ARROW });
-    dw.label(`lLL${k}`, '', { intro: 2, color: { final: (dd) => (s.fQ !== 0 && Math.round(s.pQ) === k + 1 ? PAL.orange : PAL.green) } });
+    dw.label(`lLL${k}`, '', { intro: 2, color: { final: (dd) => (s.fQ !== 0 && Math.round(s.pQ) === k + 1 ? PAL.green : PAL.green) } });
   }
-  dw.arrow('qArr', { intro: 2, ...ARROW, color: PAL.orange, when: (st) => st.fQ !== 0, flash: false });
-  dw.label('lQ', 'Q', { intro: 2, color: PAL.orange, when: (st) => st.fQ !== 0, flash: false });
+  dw.arrow('qArr', { intro: 2, ...ARROW, color: PAL.green, when: (st) => st.fQ !== 0, flash: false });
+  dw.label('lQ', 'Q', { intro: 2, color: PAL.green, when: (st) => st.fQ !== 0, flash: false });
   for (let k = 0; k < 6; k++) {
     dw.disk(`pt_${'abcdef'[k]}`, { intro: 2, r: k ? 0.055 : 0.075, when: (st) => st.n4 });
     dw.label(`lp_${'abcdef'[k]}`, 'abcdef'[k], { cls: 'point', intro: 2, when: (st) => st.n4 });
@@ -537,7 +539,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'off', 'offset loadline reaction forces', 0, 1, 0.05, refresh);
   panel.slider(par, s, 'fQ', 'factor Q (Q = factor × G)', 0, 4, 0.1, refresh);
   panel.slider(par, s, 'pQ', 'position Q (node 1–5)', 1, 5, 1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.05, 0.0025, refresh);
   panel.toggle(par, s, 'trial', 'show trial funicular', refresh);
   panel.toggle(par, s, 'cyan', 'show construction', refresh);

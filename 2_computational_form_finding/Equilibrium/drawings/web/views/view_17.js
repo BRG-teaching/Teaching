@@ -81,7 +81,9 @@ const STEPS = [
   { t: 'Down the right half', d: 'left: the right half of the thrust line descends to the spread support — right: the rays of o to the lower load line' },
   { t: 'Reactions', d: 'right: the total weight W runs down the load line; reactions A and B close the triangle through o — left: the same thrusts push into the ground at the two exit points' },
   { t: 'Spread the supports!', d: 'drag the white support handle to the right: the hinges rotate, the crown sinks, o wanders and the thrust line flattens — the arch STANDS as long as its thrust line stays inside the masonry' },
-  { t: 'Stable — or collapsed', d: 'the construction lines retire; the thrust line is compression (blue). When the right exit passes outside the support edge, the thrust line leaves the masonry: YOUR ARCH JUST COLLAPSED (red). Drag back to save it' },
+  { t: 'Stable — or collapsed', d: 'the construction lines retire; the thrust line is compression (blue). When the right exit passes outside the support edge, the thrust line leaves the masonry: YOUR ARCH JUST COLLAPSED (red). Drag back to save it',
+    detail: (d) => [`W = ${d.W.toFixed(1)} kN — H = ${d.Hthrust.toFixed(2)} kN`],
+    take: 'three hinges make the spreading arch determinate — it stands exactly as long as the thrust line stays inside the masonry' },
 ];
 
 const cen4 = (p) => {
@@ -617,7 +619,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'dx', 'support spread', 0, 5.78, 0.02, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 1, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 10, 0.25, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.1, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'sh', 'show handles', refresh);

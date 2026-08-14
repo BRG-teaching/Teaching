@@ -71,7 +71,9 @@ const STEPS = [
   { t: 'The funicular ordinates y', d: 'left: the ordinate y(x) between the closing line and the funicular polygon, measured at ten stations — right: every string was drawn under the pole distance H' },
   { t: 'M = H · y', d: 'left: each ordinate is scaled by H (× the force scale) and mirrored below the baseline: the bending moment M(x) = H · y(x), drawn on the tension side' },
   { t: 'The M-diagram', d: 'left: connecting the scaled ordinates gives the bending-moment diagram: linear on both sides of the load, maximum right under it — M_max = A_V · |AC|' },
-  { t: 'Internal forces from the funicular', d: 'drag C, B, o′, D, the pole o or the sliders — the V- and M-diagrams follow; click a funicular node (or use the node slider) to read its equilibrium' },
+  { t: 'Internal forces from the funicular', d: 'drag C, B, o′, D, the pole o or the sliders — the V- and M-diagrams follow; click a funicular node (or use the node slider) to read its equilibrium',
+    detail: (d) => [`A_V = ${d.AVkn.toFixed(1)} · B_V = ${d.BVkn.toFixed(1)} kN — M_max = ${d.Mmax.toFixed(1)} kNm`],
+    take: 'V and M are not new machinery — both fall straight out of the funicular polygon of the load' },
 ];
 
 // the construction (mirrors applet_0/geogebra.xml, evaluated live)

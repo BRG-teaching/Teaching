@@ -72,7 +72,9 @@ const STEPS = [
   { t: 'Point 6 — the third diagonal', d: 'diagonal 5 and its chord partner → point 6' },
   { t: 'Point 7 — the last panel', d: 'vertical 3 and top chord 1 close the joint before the tip → point 7' },
   { t: 'The tip closes the diagram', d: 'left: the last chord piece 2 — right: its force must run from point 7 exactly back to the load-line end: the Cremona diagram closes (the check!)' },
-  { t: 'Tension and compression', d: 'members resolve pink = tension (top chord, verticals) and blue = compression (bottom chord, diagonals) — FLIP THE DIAGONALS and watch them swap; pipes ∝ force; click a joint for its equilibrium' },
+  { t: 'Tension and compression', d: 'members resolve pink = tension (top chord, verticals) and blue = compression (bottom chord, diagonals) — FLIP THE DIAGONALS and watch them swap; pipes ∝ force; click a joint for its equilibrium',
+    detail: (d) => [`A = ${d.RA.toFixed(2)} · B_H = ${d.BH.toFixed(2)} · B_V = ${d.BV.toFixed(2)} kN`],
+    take: 'flip the diagonals and web forces swap sign — but the wall reactions A and B never change' },
 ];
 
 const cache = {};
@@ -505,7 +507,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 1.5, 0.05, refresh);
   panel.slider(par, s, 'oRF', 'offset reaction forces', 0, 1, 0.05, refresh);
   panel.slider(par, s, 'lsym', 'load symbol (R arrow)', 0.5, 2, 0.05, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.1, 0.005, refresh);
   panel.toggle(par, s, 'lab', 'show labels (member numbers)', refresh);
   panel.toggle(par, s, 'n4', 'show points (Bow letters + 1-7)', refresh);

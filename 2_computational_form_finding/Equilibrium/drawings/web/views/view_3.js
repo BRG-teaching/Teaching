@@ -151,7 +151,9 @@ const STEPS = [
   { t: 'Cable 3 — form and force', d: 'right: o–O₁ — left: D₂–S₁ closes the funicular, parallel to it — the outer cables extended also meet on R\'s line of action' },
   { t: 'Hangers 4 and 1', d: 'left: hang the deck: C₂–L₁ (4), D₂–M₁ (1) — right: their forces are the load segments P₁–Q₁ (4), O₁–P₁ (1)' },
   { t: 'Reactions', d: 'left: the cable pulls the anchors outward — right: the same vectors Q₁→o and o→O₁ close the polygon' },
-  { t: 'Tension', d: 'the trial construction disappears — closed polygon = equilibrium, cable and hangers resolve pink = tension' },
+  { t: 'Tension', d: 'the trial construction disappears — closed polygon = equilibrium, cable and hangers resolve pink = tension',
+    detail: (d) => [`A = N₅ = ${d.N5.toFixed(1)} · N₂ = ${d.N2.toFixed(1)} · B = N₃ = ${d.N3.toFixed(1)} kN`],
+    take: 'the trial funicular only finds the division point — the true pole then makes the cable pass through both anchors' },
 ];
 
 const cache = {
@@ -638,7 +640,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 0.5, 5, 0.25, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 3, 0.1, refresh);
   panel.slider(par, s, 'sOff', 'scale offset (green arrows)', 0.05, 1, 0.05, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
   panel.toggle(par, s, 'fractured', 'show fractured rock', refresh);
   panel.toggle(par, s, 'dims', 'show dimensions', refresh);

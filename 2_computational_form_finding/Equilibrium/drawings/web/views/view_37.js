@@ -12,7 +12,7 @@
  * The HP slider ("Howe / Pratt") flips the diagonals AND the whole Cremona
  * chain; both chains are regression-checked against the baked XML and the
  * live applet (default + dragged states) to ~3e-14.
- * Zero members: Howe 2, 13, 22 -- Pratt 4, 24 (labelled "n=0", black).
+ * Zero members: Howe 2, 13, 22 -- Pratt 4, 24 (labelled "n=0", pale grey).
  */
 
 import { PAL } from '../lib/eqdraw.js';
@@ -105,7 +105,9 @@ const STEPS = [
   { t: 'Last web member', d: 'Howe: joint G — diagonal 23 closes it; chord 22 carries nothing (Pratt: joint M — diagonal 23 closes over 20, 21 and 24 = 0)' },
   { t: 'The far support', d: 'Howe: joint N — post 25 = F₇ returns on the load line and the reaction B closes the joint (Pratt: joint H — post 25 carries the whole of B down to the support)' },
   { t: 'The last joint is the check', d: 'every side of its polygon is already drawn — Howe: joint H (Pratt: joint N) closes for free: the Cremona diagram is complete' },
-  { t: 'Compression and tension', d: 'blue = compression, pink = tension — Howe: diagonals push, verticals tie; Pratt: diagonals tie, posts push. Toggle Howe ↔ Pratt, drag A, Z or the loads, click any joint to inspect its equilibrium' },
+  { t: 'Compression and tension', d: 'blue = compression, pink = tension — Howe: diagonals push, verticals tie; Pratt: diagonals tie, posts push. Toggle Howe ↔ Pratt, drag A, Z or the loads, click any joint to inspect its equilibrium',
+    detail: (d) => [`ΣF = ${d.magR.toFixed(1)} kN — A = B = ${d.magA.toFixed(1)} kN`],
+    take: 'same loads, same chords — only the web direction decides who pushes and who pulls' },
 ];
 
 const cache = {};
@@ -195,7 +197,7 @@ function compute(s) {
   const inc = INC[hp];
   const col = {}, mag = {}, comp = {};
   for (let k = 1; k <= 25; k++) {
-    if (ZEROS[hp].has(k)) { col[k] = PAL.black; mag[k] = 0; comp[k] = false; continue; }
+    if (ZEROS[hp].has(k)) { col[k] = PAL.zero; mag[k] = 0; comp[k] = false; continue; }
     const [pn, qn] = inc[k];
     const md = V.sub(P[qn], P[pn]);
     const fd = V.sub(segs[k][1], segs[k][0]);
@@ -587,7 +589,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sLS', 'load symbol', 0.5, 2, 0.1, refresh);
   panel.slider(par, s, 'offL', 'offset loads', 0, 1, 0.01, refresh);
   panel.slider(par, s, 'offR', 'offset reaction forces', 0, 1, 0.01, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.05, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
 

@@ -74,7 +74,9 @@ const STEPS = [
   { t: 'String ∥ ray o′–L₁', d: 'left: continue to line of action 5' },
   { t: 'String ∥ ray o′–M₁', d: 'left: continue to line of action 6' },
   { t: 'Close the funicular', d: 'left: extend the last string (∥ o′–N₁) and the first string — dashed — they intersect at T₂' },
-  { t: 'The resultant — in both diagrams', d: 'right: R runs from the polygon start to its end — left: through T₂, parallel to it: the six forces reduce to R, dashed in both diagrams' },
+  { t: 'The resultant — in both diagrams', d: 'right: R runs from the polygon start to its end — left: through T₂, parallel to it: the six forces reduce to R, dashed in both diagrams',
+    detail: (d) => [`R = ${d.Rkn.toFixed(1)} kN`],
+    take: 'six scattered forces reduce to ONE: the polygon gives R\'s size and direction, the funicular its line of action' },
 ];
 
 const cache = {};
@@ -152,15 +154,15 @@ export function create(dw, panel, makePlayer) {
   const whenC = (st) => st.c;
   for (let i = 0; i < N; i++) {
     dw.arrow(`act${i}`, { intro: i + 1, outro: 7, when: whenC, color: PAL.grey, ...ARROW });
-    dw.dashLine(`clT${i}`, { intro: i + 1, outro: i + 2, when: whenC, color: PAL.orange, dash: 0.9, flash: false });
-    dw.dashLine(`clH${i}`, { intro: i + 1, outro: i + 2, when: whenC, color: PAL.orange, dash: 0.9, flash: false });
+    dw.dashLine(`clT${i}`, { intro: i + 1, outro: i + 2, when: whenC, color: PAL.grey, dash: 0.9, flash: false });
+    dw.dashLine(`clH${i}`, { intro: i + 1, outro: i + 2, when: whenC, color: PAL.grey, dash: 0.9, flash: false });
   }
   // 'Parallelzeichen' (o_3): parallel marks on the line of action and on the
   // matching polygon edge, only at that force's step
   const whenO3 = (st) => st.o3;
   for (let i = 0; i < N; i++) {
-    dw.seg(`pmF${i}`, { intro: i + 1, outro: i + 2, when: whenO3, w: 0.5, z: 0.25, color: PAL.orange, flash: false });
-    dw.seg(`pmS${i}`, { intro: i + 1, outro: i + 2, when: whenO3, w: 0.5, z: 0.25, color: PAL.orange, flash: false });
+    dw.seg(`pmF${i}`, { intro: i + 1, outro: i + 2, when: whenO3, w: 0.5, z: 0.25, color: PAL.black, flash: false });
+    dw.seg(`pmS${i}`, { intro: i + 1, outro: i + 2, when: whenO3, w: 0.5, z: 0.25, color: PAL.black, flash: false });
   }
   // 'show constraints': dashed arcs the direction handles ride on
   for (let i = 0; i < N; i++) {

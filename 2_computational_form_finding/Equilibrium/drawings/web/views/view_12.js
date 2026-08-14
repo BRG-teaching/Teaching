@@ -278,17 +278,17 @@ export function create(dw, panel, makePlayer) {
   // upper cable down (v_4..a_5) and the lower cable up (n_5..b_6); on the
   // load line the same forces span their edges (b_5..m_5 / d_6..i_6)
   for (let k = 0; k < 6; k++) {
-    dw.arrow(`subUF${k}`, { ...ARROW, color: PAL.orange, flash: false,
+    dw.arrow(`subUF${k}`, { ...ARROW, color: PAL.black, flash: false,
                             when: () => SUB() === 1 });
-    dw.arrow(`subLF${k}`, { ...ARROW, color: PAL.orange, flash: false,
+    dw.arrow(`subLF${k}`, { ...ARROW, color: PAL.black, flash: false,
                             when: () => SUB() === 2 });
-    dw.arrow(`subUS${k}`, { ...ARROW, color: PAL.orange, flash: false,
+    dw.arrow(`subUS${k}`, { ...ARROW, color: PAL.black, flash: false,
                             when: () => SUB() === 1 });
-    dw.arrow(`subLS${k}`, { ...ARROW, color: PAL.orange, flash: false,
+    dw.arrow(`subLS${k}`, { ...ARROW, color: PAL.black, flash: false,
                             when: () => SUB() === 2 });
-    dw.label(`subUFl${k}`, `F${SUBD[k + 1]}`, { cls: 'num', color: PAL.orange,
+    dw.label(`subUFl${k}`, `F${SUBD[k + 1]}`, { cls: 'num', color: PAL.black,
                                                 when: () => SUB() === 1 });
-    dw.label(`subLFl${k}`, `F${SUBD[k + 1]}`, { cls: 'num', color: PAL.orange,
+    dw.label(`subLFl${k}`, `F${SUBD[k + 1]}`, { cls: 'num', color: PAL.black,
                                                 when: () => SUB() === 2 });
     dw.instant(`subUF${k}`, `subLF${k}`, `subUS${k}`, `subLS${k}`);
   }
@@ -585,7 +585,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'Q', 'Q — extra point load (kN)', -8, 8, 0.1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 2, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 5, 10, 0.5, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.12, 0.005, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reactions in force diagram', refresh);

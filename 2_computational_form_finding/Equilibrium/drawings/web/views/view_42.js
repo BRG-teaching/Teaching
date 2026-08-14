@@ -69,7 +69,8 @@ const STEPS = [
   { t: 'Reaction A = Q + H', d: 'right: the diagonal A₁→R₂ is the reaction A; its vertical part is the half-load Q, its horizontal part the thrust H — λ compares Q with the h = 1 reference' },
   { t: 'The quadrilateral closes', d: 'right: the midspan-side forces — parallel to G–O through R₂ and to O–Q₂ through A₁ (at h = 1 they are vertical and vanish into Q; move the slider!); the lower Nₘₐₓ dimension spans the polygon' },
   { t: 'The right half mirrors', d: 'left: on the right half the same resultants run through P (drawn black, as in the original) — the force polygon would be the mirror image' },
-  { t: 'The optimum h = 2', d: 'λ grows with h up to λ = 2 at h = 2 — corner and midspan chord forces equal — then decays: try the buttons h = 1 / 2 / 100, the "h = ∞" toggle, drag A, B, C, D, R₂, and click a node (A, B, O, P)' },
+  { t: 'The optimum h = 2', d: 'λ grows with h up to λ = 2 at h = 2 — corner and midspan chord forces equal — then decays: try the buttons h = 1 / 2 / 100, the "h = ∞" toggle, drag A, B, C, D, R₂, and click a node (A, B, O, P)',
+    take: 'the best frame height is where corner and midspan chord forces are EQUAL — λ peaks exactly at h = 2' },
 ];
 
 function inter(p1, d1, p2, d2) {
@@ -584,7 +585,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram', 1, 2.5, 0.01, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 0.8, 2, 0.1, refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.toggle(par, s, 'pts', 'show points', refresh);
   panel.toggle(par, s, 'sh', 'show handles', refresh);
   panel.button(par, 'reset geometry', () => {

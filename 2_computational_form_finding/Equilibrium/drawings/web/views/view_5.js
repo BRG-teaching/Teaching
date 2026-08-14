@@ -64,7 +64,9 @@ const STEPS = [
   { t: 'Segment 2 — form and force', d: 'right: K–o — left: parallel to it → node II' },
   { t: 'Segment 3 — form and force', d: 'right: J–o — left: parallel to it → node III' },
   { t: 'Segment 4 — form and force', d: 'right: I–o — left: parallel to it from III — it lands exactly on G₃' },
-  { t: 'Tension', d: 'the funicular through E₃ and G₃ resolves pink = tension (the grey trial stays as a record of the construction)' },
+  { t: 'Tension', d: 'the funicular through E₃ and G₃ resolves pink = tension (the grey trial stays as a record of the construction)',
+    detail: (d) => [`N₁ = ${d.Ns[0].toFixed(1)} · N₂ = ${d.Ns[1].toFixed(1)} · N₃ = ${d.Ns[2].toFixed(1)} · N₄ = ${d.Ns[3].toFixed(1)} kN`],
+    take: 'any pole on the parallel to the chord through the division point i spans BOTH prescribed points' },
 ];
 
 const cache = {};
@@ -468,7 +470,7 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 3; i++) panel.slider(par, s.F, i, `F${i + 1} (kN)`, 1, 5, 0.1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 4, 6, 0.1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 10, 0.5, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.4, 0.01, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);

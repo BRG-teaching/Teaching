@@ -101,7 +101,9 @@ const STEPS = [
   { t: 'Joint B₁₁ — members 9 and 10', d: 'right: parallel to stay 9 through G₁, parallel to the deck through R → H₁: piece 10 ends at the TOP of the load line' },
   { t: 'The fan node closes — members 11 and 12', d: 'right: parallel to the mast through H₁, parallel to the backstay through W → I₁: all five stays, the mast and the backstay balance at D₂' },
   { t: 'The rock reactions A, B, C', d: 'right: deck thrust A = H₁→R, mast force B = I₁→H₁, anchor pull C = W→I₁, read beside members 10, 11, 12 (dotted offsets) — left: A at the deck end, B under the mast, C at the anchor — loads and reactions form ONE closed polygon' },
-  { t: 'Tension and compression', d: 'stays and backstay resolve pink = tension, deck and mast blue = compression (pipes ∝ force) — drag A₆, D₂, K or R; click a node for its equilibrium' },
+  { t: 'Tension and compression', d: 'stays and backstay resolve pink = tension, deck and mast blue = compression (pipes ∝ force) — drag A₆, D₂, K or R; click a node for its equilibrium',
+    detail: (d) => [`Q_d = ${d.Qd.toFixed(1)} kN/node — A = ${d.Amag.toFixed(0)} · B = ${d.Bmag.toFixed(0)} · C = ${d.Cmag.toFixed(0)} kN`],
+    take: 'deck thrust, mast force and anchor pull close ONE polygon with the loads — the rock feels all three' },
 ];
 
 const cache = {};
@@ -516,7 +518,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 25, 100, 1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 0.5, 2, 0.1, refresh);
   panel.slider(par, s, 'offR', 'offset loadline reaction forces', 0, 0.3, 0.02, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.12, 0.005, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

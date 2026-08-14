@@ -30,7 +30,7 @@ import * as V from '../lib/vec.js';
 export const meta = {
   title: 'Drawing 32 — Airport Hangar, P. L. Nervi',
   subtitle: 'one vault, three funiculars: parabola, catenary, and the arch under Q',
-  about: 'Nervi\'s airport hangar: the vault spans between two springings and must pass through the crown — a three-point funicular problem solved three times. Under a uniform load per unit span, half-span trial funiculars locate the division points and the pole o: the parabola. Measuring the true strip lengths with circles at the arch vertices corrects the load line (heavier near the springings) and gives the catenary-like arch that hugs the built section. An extra load Q on any strip re-poses the problem once more: the arch reshapes under Q, drawn orange like the original.',
+  about: 'Nervi\'s airport hangar: the vault spans between two springings and must pass through the crown — a three-point funicular problem solved three times. Under a uniform load per unit span, half-span trial funiculars locate the division points and the pole o: the parabola. Measuring the true strip lengths with circles at the arch vertices corrects the load line (heavier near the springings) and gives the catenary-like arch that hugs the built section. An extra load Q on any strip re-poses the problem once more: the arch reshapes under Q — the final arch, blue = compression.',
   frame: [[-14.4, -16.3], [82.5, 32.2]],
 };
 
@@ -66,6 +66,7 @@ const DEFAULTS = {
   yb: 26.520261102834468,                 // trial start FPb8 on the crown line
   o1p: [77.05230008212244, 24.755723035599075],   // trial pole o1'
   o2p: [76.66018051162567, 16.227122377294695],   // trial pole o2'
+  o1: true, sIF: 0.02,                    // internal-force pipes on the final arch
   n4: true,                               // show points (applet w_2, default false)
   o3: true,                               // show points 2 (LC ticks, applet default true)
   o4: false,                              // show vectors (LC edge arrows)
@@ -91,7 +92,9 @@ const STEPS = [
   { t: 'The pole o₂', d: 'right: the divisions i₁, i₂ of the new load line (found with a trial as before); parallels to the crown chords meet at the pole o₂, with rays to every load point' },
   { t: 'The arch under Q', d: 'left: side by side, the funicular of R+Q: through the crown, onto the far springing — but reshaped by Q — right: its sides are parallel to the o₂ rays' },
   { t: 'Reactions', d: 'right: the polygon closes on the outer rays: A = o₂→top, B = bottom→o₂ — left: the thrusts push into the springings' },
-  { t: 'Compression', d: 'the arch under Q stays orange like the original (it is in pure compression — the pipes show it); the parabola stays for comparison (black); drag Q along the strips, or the sliders w_d, factorQ — click an arch node for its equilibrium' },
+  { t: 'Compression', d: 'the arch under Q resolves blue = pure compression (the pipes show it); the parabola stays for comparison (black); drag Q along the strips, or the sliders w_d, factorQ — click an arch node for its equilibrium',
+    detail: (d) => [`R+Q = ${d.Rtot.toFixed(1)} kN — A = ${d.RA.toFixed(1)} · B = ${d.RB.toFixed(1)} kN`],
+    take: 'the vault is the funicular of its OWN measured strip weights — not of a uniform load' },
 ];
 
 const cache = {};
@@ -314,15 +317,15 @@ export function create(dw, panel, makePlayer) {
 
   // step 10 -- the extra load Q + the load line R+Q
   // the applet's Q system is ORANGE (u, a_3, the positionQ strip, Text1_1)
-  dw.arrow('loadQ', { intro: QSTEP, ...ARROW, w: 0.16, color: PAL.orange });
-  dw.label('lQ', 'Q', { cls: 'num', intro: QSTEP, color: PAL.orange });
+  dw.arrow('loadQ', { intro: QSTEP, ...ARROW, w: 0.16, color: PAL.green });
+  dw.label('lQ', 'Q', { cls: 'num', intro: QSTEP, color: PAL.green });
   dw.dashLine('qstrip', { intro: QSTEP, dash: 0.12, color: 0x666666 });
   for (let k = 0; k < DIV; k++) {
     dw.seg(`llb${k}`, { intro: QSTEP, w: 0.1, color: PAL.green });
   }
-  dw.seg('llbQ', { intro: QSTEP, w: 0.17, color: PAL.orange });
+  dw.seg('llbQ', { intro: QSTEP, w: 0.17, color: PAL.green });
   dw.arrow('llbHead', { intro: QSTEP, ...ARROW });
-  dw.label('lRQ', 'R+Q', { intro: QSTEP, color: PAL.orange });
+  dw.label('lRQ', 'R+Q', { intro: QSTEP, color: PAL.green });
   for (let k = 0; k <= DIV; k++) {
     dw.disk(`llb_${k}`, { intro: QSTEP, r: 0.08, face: 0x666666, edge: 0x666666,
             when: (st) => st.n4 });
@@ -340,7 +343,12 @@ export function create(dw, panel, makePlayer) {
   dw.strokes('fan3', DIV + 1, { intro: 11, w: W_RAY, color: PAL.grey });
 
   // step 12 -- the arch under Q (the applet's a_3: persistently ORANGE)
-  dw.strokes('arch3', DIV + 1, { intro: 12, w: W_BAR, color: PAL.orange });
+  dw.strokes('arch3', DIV + 1, { intro: 12, w: W_BAR, color: PAL.blue });
+  // internal-force pipes: each arch piece thickened by its o2-ray force
+  for (let k = 0; k <= DIV; k++) {
+    dw.poly(`if${k}`, 4, { intro: 12, opacity: 1.0, z: -0.18, flash: false,
+      color: { pending: PAL.grey, final: (dd) => dd.cA }, when: (st) => st.o1 });
+  }
 
   // step 13 -- reactions
   dw.arrow('reacA3', { intro: 13, ...ARROW });
@@ -515,6 +523,10 @@ export function create(dw, panel, makePlayer) {
 
     // the arch under Q
     dw.setStrokes('arch3', pairs(d.FPC));
+    pairs(d.FPC).forEach(([a, b], k) => {
+      const N = V.dist(d.pC, d.LLB[Math.min(k, DIV)]) / s.sFD;
+      dw.setPoly(`if${k}`, V.rectPoints(a, b, s.sIF * N));
+    });
 
     // reactions
     const uA3 = V.unit(V.sub(d.FPC[1], FP0)), uB3 = V.unit(V.sub(d.FPC[16], B));
@@ -587,6 +599,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'fQ', 'factor Q (Q = factor·P_d)', 0, 2, 0.05, refresh);
   panel.slider(par, s, 'pQ', 'position of Q (strip)', 1, 16, 1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 0.5, 2, 0.05, refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.04, 0.002, refresh);
   panel.toggle(par, s, 'ph', 'show image (built section)', refresh);
   panel.toggle(par, s, 'kc', 'keep the catenary construction', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

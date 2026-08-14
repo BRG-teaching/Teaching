@@ -90,7 +90,9 @@ const STEPS = [
   { t: 'Strings 2 and 3', d: 'right: rays to the next two levels — left: strings 2 and 3 parallel to them, across the F₂ vertical to the roller vertical' },
   { t: 'String 4 closes at the free tip', d: 'right: ray from O″ to the top level — left: string 4 parallel to it returns to the baseline EXACTLY at the free tip: the closed polygon is the M-diagram' },
   { t: 'M = y · H', d: 'left: the red ordinate y under F₁, times the pole distance H, is the bending moment there — M = y · H, like the applet’s readout' },
-  { t: 'Play with it', d: 'drag the roller B, the tip load F₃, the loads, C₁, N₁, N₂, T₂, the poles O′ and O″, even the cascade arrows — everything follows; click a trial-funicular kink (or use the node slider) for its equilibrium' },
+  { t: 'Play with it', d: 'drag the roller B, the tip load F₃, the loads, C₁, N₁, N₂, T₂, the poles O′ and O″, even the cascade arrows — everything follows; click a trial-funicular kink (or use the node slider) for its equilibrium',
+    detail: (d) => [`A = ${d.Akn.toFixed(2)} kN — M under F₁ = y·H = ${d.yv.toFixed(2)} · ${d.H.toFixed(2)} = ${d.Mval.toFixed(2)} kNm`],
+    take: 'even with a cantilever the rule holds: the moment anywhere is the funicular ordinate times H' },
 ];
 
 function interX(p, dir, x) {

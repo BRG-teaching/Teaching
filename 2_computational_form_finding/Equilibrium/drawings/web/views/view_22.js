@@ -67,7 +67,9 @@ const STEPS = [
   { t: 'Joints O and P — pieces 2 and 1', d: 'right: W–S and V–R complete the mast; the gaps Z→W and W→V are the weights F₆ at O and F₇ at P' },
   { t: 'Joint Q closes the polygon', d: 'right: at the mast top Q only stay 12, piece 1 and a weight meet — the last gap V→LL0 is exactly F₈ and the Cremona diagram closes' },
   { t: 'The reaction A', d: 'right: the whole stack A₁→LL₄ = F₁ + … + F₈, read beside the load line (dotted offset) — left: the reaction A pushes up under the bearing' },
-  { t: 'Compression and tension', d: 'the stays resolve pink = tension, deck and mast blue = compression (pipes ∝ force): the mast weights balance the deck, an Alamillo-type bridge needs no backstays — drag H or B, click a node for its equilibrium' },
+  { t: 'Compression and tension', d: 'the stays resolve pink = tension, deck and mast blue = compression (pipes ∝ force): the mast weights balance the deck, an Alamillo-type bridge needs no backstays — drag H or B, click a node for its equilibrium',
+    detail: (d) => [`mast weights F₅ = F₆ = F₇ = F₈ = ${d.F5mag.toFixed(1)} kN — A = ΣFᵢ = ${d.Amag.toFixed(1)} kN`],
+    take: 'no backstays: the mast\'s OWN leaning weight balances the whole cantilevered deck' },
 ];
 
 const cache = {};
@@ -409,7 +411,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 50, 100, 1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 5, 0.25, refresh);
   panel.slider(par, s, 'offR', 'offset loadline reaction forces', 0, 6, 0.25, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.05, 0.0025, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

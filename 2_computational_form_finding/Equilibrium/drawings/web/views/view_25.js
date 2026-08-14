@@ -43,7 +43,8 @@ const STEPS = [
   { t: 'The canopy ties', d: 'left: ties 8, 9, 10 close the four-branch canopy — right: each tie force runs from its load-line division to a pole (9 reuses the old tie force)' },
   { t: 'Eight branches', d: 'left: four more forks on the branch axes; leaves 8–15 reach all eight roof points, R/8 each — right: four new poles, forces 8–15 fan between the old ones' },
   { t: 'The roof is the tie', d: 'left: the tie chain 16–22 IS the roof: every piece between two hangers goes red — right: forces 16–22, each from a load-line division to its pole, all roof-parallel' },
-  { t: 'Internal forces', d: 'blue = compression (branches), pink = tension (the roof ties); pipe widths ∝ member force; the loads take their final names F₁…F₈ — click any node (or use the slider) for its equilibrium' },
+  { t: 'Internal forces', d: 'blue = compression (branches), pink = tension (the roof ties); pipe widths ∝ member force; the loads take their final names F₁…F₈ — click any node (or use the slider) for its equilibrium',
+    take: 'one trunk forks into a canopy: every fork is a node in equilibrium, and the roof line doubles as the tie' },
 ];
 
 const R2_END = 5;                         // step-2 tree retires (applet step ≟ 2)

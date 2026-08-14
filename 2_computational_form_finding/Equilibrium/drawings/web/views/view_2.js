@@ -145,7 +145,9 @@ const STEPS = [
   { t: 'Point B₁', d: 'the two parallels intersect at B₁: the force triangle closes' },
   { t: 'Cable forces', d: 'A₁–B₁ is the force in cable 2, B₁–Z in cable 3 — the cables flash on the left' },
   { t: 'Follow the arrows', d: 'tip-to-tail round the triangle — the same vectors act at C₂, V and W in the form diagram' },
-  { t: 'Tension', d: 'closed triangle = node C₃ in equilibrium; the cables resolve pink = tension' },
+  { t: 'Tension', d: 'closed triangle = node C₃ in equilibrium; the cables resolve pink = tension',
+    detail: (d) => [`A = N₂ = ${d.N2.toFixed(1)} kN · B = N₃ = ${d.N3.toFixed(1)} kN`],
+    take: 'the V-cable node is a pure three-force problem — one closed triangle gives both anchor forces' },
 ];
 
 let b1Cache = [33.5185, 17.151];   // last valid B1, reused if the cables align
@@ -479,7 +481,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'F', 'F (load, kN)', 5, 20, 0.2, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (kN/unit)', 0.2, 2, 0.1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 4, 0.1, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
   panel.toggle(par, s, 'fractured', 'show fractured rock', refresh);
   panel.toggle(par, s, 'dims', 'show dimensions', refresh);

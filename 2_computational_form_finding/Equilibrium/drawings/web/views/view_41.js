@@ -70,7 +70,9 @@ const STEPS = [
   { t: 'Superposition: H internal = 0', d: 'the red H_tension and blue H_compression pieces on the rail are EQUAL by construction (mirror across the load line): the internal horizontals cancel — A_V = A_V₁ − uplift, B = B₁ + B₂' },
   { t: 'Eight strips per span', d: 'right: each resultant divides into strips with rays to its pole (H for the back span, L₅ for the cantilever) — left: the true funicular a₁ + f₉ walks in, kinking at B by exactly the reaction' },
   { t: 'The moment diagram', d: 'left: mirror the funicular across the A″ level (red): the M-diagram hangs on the tension side — sagging in the span, hogging over the roller — right: the whole force diagram mirrors across the load line' },
-  { t: 'Done', d: 'drag B (the cantilever grows), A″, P₁ or FD₀; toggles: show R, show temporary items, parabola handles — click A, B or the apex for its equilibrium' },
+  { t: 'Done', d: 'drag B (the cantilever grows), A″, P₁ or FD₀; toggles: show R, show temporary items, parabola handles — click A, B or the apex for its equilibrium',
+    detail: (d) => [`A_V = ${(d.AV * d.kN).toFixed(1)} · B = ${(d.Bv * d.kN).toFixed(1)} kN — uplift A_V₂ = ${(d.AV2 * d.kN).toFixed(1)} kN`],
+    take: 'the cantilever lifts the back of the beam: superposing two funiculars shows where H_internal cancels to zero' },
 ];
 
 function inter2(p1, d1, p2, d2) { return V.intersect(p1, d1, p2, d2) || p1; }
@@ -219,7 +221,7 @@ export function create(dw, panel, makePlayer) {
 
   // step 5 -- subsystem 1 (temporary: retires at 7, comes back with 'o')
   const sub1W = tmpW((st) => st._k >= 5 && st._k < 7);
-  dw.poly('band1', 4, { intro: 5, opacity: 0.12, color: PAL.orange, flash: false, when: sub1W });
+  dw.poly('band1', 4, { intro: 5, opacity: 0.12, color: PAL.green, flash: false, when: sub1W });
   dw.seg('s1a', { intro: 5, w: W_STR, color: PAL.blue });
   dw.seg('s1b', { intro: 5, w: W_STR, color: PAL.blue });
   dw.disk('pt_H', { intro: 5, r: 0.05, when: (st) => st.n4 });
@@ -235,7 +237,7 @@ export function create(dw, panel, makePlayer) {
 
   // step 6 -- subsystem 2 (temporary likewise)
   const sub2W = tmpW((st) => st._k >= 6 && st._k < 7);
-  dw.poly('band2', 4, { intro: 6, opacity: 0.12, color: PAL.orange, flash: false, when: sub2W });
+  dw.poly('band2', 4, { intro: 6, opacity: 0.12, color: PAL.green, flash: false, when: sub2W });
   dw.seg('s2a', { intro: 6, w: W_STR, color: PAL.blue });      // B''-H1 (persists)
   dw.seg('closeL', { intro: 6, w: W_STR, color: RED });                     // A''-H1-C1' stays
   dw.disk('pt_H1', { intro: 6, r: 0.05, when: (st) => st.n4 });

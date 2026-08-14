@@ -592,7 +592,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sLS', 'scale load symbol', 0.5, 2, 0.1, refresh);
   panel.slider(par, s, 'offR', 'offset reaction forces', 0, 0.3, 0.02, refresh);
   panel.toggle(par, s, 'rf', 'show reaction forces in force diagram', refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.15, 0.005, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

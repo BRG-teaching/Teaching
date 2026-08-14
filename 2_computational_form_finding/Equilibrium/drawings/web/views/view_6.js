@@ -25,7 +25,7 @@ export const meta = {
 
 const CLIP_Y = [76.0106, 17.1975];       // guide lines span these two horizontals
 const RESOLVE = 16;
-const ORANGE = 0xe07a26;                 // the applet's construction-helper orange
+const HELPER = PAL.grey;                 // construction helpers follow the grey guide scheme
 
 const DEFAULTS = {
   px: [13, 21, 39], py: [54, 50, 54],               // load points Z2, A3, B3
@@ -67,7 +67,9 @@ const STEPS = [
   { t: 'Segment 2 — form and force', d: 'right: K–o — left: parallel to it → node II' },
   { t: 'Segment 3 — form and force', d: 'right: J–o — left: parallel to it → node III' },
   { t: 'Segment 4 — form and force', d: 'right: I–o — left: parallel to it from III — it lands exactly on G₃, and strings 1, 4 extended pass through M₁' },
-  { t: 'Tension', d: 'the funicular through E₃ and G₃ resolves pink = tension (the grey trial stays as a record of the construction)' },
+  { t: 'Tension', d: 'the funicular through E₃ and G₃ resolves pink = tension (the grey trial stays as a record of the construction)',
+    detail: (d) => [`N₁ = ${d.Ns[0].toFixed(1)} · N₂ = ${d.Ns[1].toFixed(1)} · N₃ = ${d.Ns[2].toFixed(1)} · N₄ = ${d.Ns[3].toFixed(1)} kN`],
+    take: 'the same two-point problem solved through the resultant: split R at M₁ and the pole follows' },
 ];
 
 const cache = {};
@@ -182,15 +184,15 @@ export function create(dw, panel, makePlayer) {
 
   // step 10: chord + the orange single-load funicular chords (M1 chosen at 9)
   dw.dashLine('chord', { intro: 10, color: PAL.black, dash: 1.1 });
-  dw.dashLine('chE', { intro: 10, outro: 12, color: ORANGE, dash: 1.1 });
-  dw.dashLine('chG', { intro: 10, outro: 12, color: ORANGE, dash: 1.1 });
+  dw.dashLine('chE', { intro: 10, outro: 12, color: HELPER, dash: 1.1 });
+  dw.dashLine('chG', { intro: 10, outro: 12, color: HELPER, dash: 1.1 });
 
   // step 11: orange parallels through L and I intersect at the pole o.
   // flash: false — they are visible ONLY at step 11 (the applet's c_2/d_2
   // retire when the funicular starts), so they must appear orange at once,
   // never black. Orange lines never carry arrowheads.
-  dw.dashLine('parL', { intro: 11, outro: 12, color: ORANGE, dash: 1.1, flash: false });
-  dw.dashLine('parI', { intro: 11, outro: 12, color: ORANGE, dash: 1.1, flash: false });
+  dw.dashLine('parL', { intro: 11, outro: 12, color: HELPER, dash: 1.1, flash: false });
+  dw.dashLine('parI', { intro: 11, outro: 12, color: HELPER, dash: 1.1, flash: false });
 
   // steps 12-15: each funicular segment (left) with its pole ray (right)
   const cks = ['c1', 'c2', 'c3', 'c4'];
@@ -459,7 +461,7 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 3; i++) panel.slider(par, s.F, i, `F${i + 1} (kN)`, 1, 5, 0.1, refresh);
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 4, 6, 0.1, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 10, 0.5, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.4, 0.01, refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);
   panel.toggle(par, s, 'hideRF', 'hide reaction forces in force diagram', refresh);

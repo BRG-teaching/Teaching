@@ -71,7 +71,9 @@ const STEPS = [
   { t: 'Joints deck4, deck5 — members 10, 12', d: 'right: each remaining deck node closes its polygon with one new deck force' },
   { t: 'Joint deck6 — the anchor force B', d: 'right: the last polygon closes over the gap O–LF₇ = the force in the deck extension = anchor reaction B (zero here — incline the MAST to see it appear) — left: B acts along the deck at the anchor' },
   { t: 'The reaction A', d: 'right: the mast force 16 = everything the bridge carries, drawn beside the load line (dotted offset): reaction A — left: A pushes up the mast base' },
-  { t: 'Tension and compression', d: 'the stays resolve pink = tension, deck and mast blue = compression (pipes ∝ force); drag the anchors or use the fan / semifan / harp buttons; click a node for its equilibrium' },
+  { t: 'Tension and compression', d: 'the stays resolve pink = tension, deck and mast blue = compression (pipes ∝ force); drag the anchors or use the fan / semifan / harp buttons; click a node for its equilibrium',
+    detail: (d) => [`A = ${d.Amag.toFixed(1)} kN · deck-anchor B = ${d.Bmag.toFixed(2)} kN`],
+    take: 'fan, semifan or harp — sliding the tower anchors morphs the system, and the Cremona diagram follows' },
 ];
 
 const cache = {};
@@ -425,7 +427,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'sFD', 'scale force diagram (units/kN)', 1, 2, 0.05, refresh);
   panel.slider(par, s, 'sLS', 'scale load symbol', 1, 4.5, 0.1, refresh);
   panel.slider(par, s, 'offR', 'offset loadline reaction forces', 0, 5, 0.25, refresh);
-  panel.toggle(par, s, 'o1', 'show internal forces', refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
   panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.1, 0.005, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   panel.toggle(par, s, 'n4', 'show points', refresh);

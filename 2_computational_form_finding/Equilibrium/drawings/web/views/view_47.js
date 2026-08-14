@@ -83,7 +83,9 @@ const STEPS = [
   { t: 'Ordinates y between funicular and closing', d: 'left: at the ten stations and at BOTH supports, measure the ordinate y between the closing polygon and the funicular (grey)' },
   { t: 'M = H · y', d: 'left: each ordinate scaled by H (× the force scale) and mirrored about the baseline: hogging (closing above funicular) plots UP — the tension side' },
   { t: 'The M-diagram', d: 'left: connecting the scaled ordinates gives the bending-moment diagram: parabolic sag between the stations, peaks over the supports — try dragging them!' },
-  { t: 'Internal forces from the funicular', d: 'drag the supports, o′, FP₀, N or the load line, tune q and H — everything follows; click a funicular kink (or use the node slider) to read a strip node\'s equilibrium' },
+  { t: 'Internal forces from the funicular', d: 'drag the supports, o′, FP₀, N or the load line, tune q and H — everything follows; click a funicular kink (or use the node slider) to read a strip node\'s equilibrium',
+    detail: (d, st) => [`q = ${st.q.toFixed(2)} kN/m`],
+    take: 'a line load is just many strips: the funicular smooths into the parabola and M = H·y at every x' },
 ];
 
 function interX(p, dir, x) {
