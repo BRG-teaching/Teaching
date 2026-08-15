@@ -114,14 +114,16 @@ const KEYF = [null, 0.571, 0.343, 0.190];   // f as the key draws it
 const KEYV = 4.849;                          // a)'s vertex depth as drawn
 const NFUN = 96;                             // samples along the funicular
 
-// Laid out against `occlusion.py --cards` for this frame: the caption card owns
-// x < -11.24 above y = 5.60, the RESULT card owns x < -3.72 below y = -12.58.
-const MU = 1.85, FX0 = -26.5, FY0 = 1.0;
+// Laid out against `occlusion.py --cards` for this frame. Registering the view
+// in exercises.json pinned the sheet's task across the top and pushed the
+// caption card 76 px down with it: the caption now owns x < -11.24 above
+// y = 2.01, and the RESULT card owns x < -3.72 below y = -13.66.
+const MU = 1.85, FX0 = -26.5, FY0 = -1.6;
 const YBAR = 3.0, YTIP = 1.2;   // load arrows above the chord, in units
-const YTIT = -11.0;             // the form diagram's title line
+const YTIT = -12.4;             // the form diagram's title line
 const LX = 4, LY0 = 11;         // the load line
 const FDL = 15;                 // its drawn length at the reference load
-const RLEN = 3.4;               // reaction arrows: DIRECTION is what is asked
+const RLEN = 2.7;               // reaction arrows: DIRECTION is what is asked
 
 const TAG = ['a)', 'b)', 'c)', 'd)'];
 const NAME = ['a single point load F at l/3',
@@ -322,14 +324,17 @@ export const meta = {
   subtitle: 'Structural Design I · sheet EX X “Additional Exercises”, page 5, cases a)–d)',
   about: 'Task 4 let the pole go free. Task 5 takes it back: the cable has to pass through a marked point, and that one extra condition fixes the horizontal thrust. The neat part is where the condition bites — the last third of the span is unloaded in all four cases and the given point sits at its left end, so the final segment’s direction is settled by geometry alone, at exactly 45°, before any statics happens. A known direction at B is a known reaction at B, and that is the pole. The sheet prints no magnitudes and no scale for this task, in either language and in the solution too, and this view treats that as the point rather than an omission: everything is worked as a multiple of F (or R_q = q·l/3) and of l, the load slider changes the force diagram while the form stands still, and the sag f is checked against the value the official key dimensions in b), c) and d).',
   result: (d) => [
-    `${d.tag} ${d.name} — the sheet prints NO magnitudes and no scale for task 5, so every force below is a multiple of ${d.unit} (working value ${d.U.toFixed(1)} kN) and every length a multiple of l`,
-    `the given point (2l/3, ${d.pd.toFixed(6)}·l below A) pins the pole: H = B_v/(1 + d/l) = ${d.H.toFixed(4)} kN = ${(d.H / d.U).toFixed(5)}·${d.unit}, and the segment P–B is at ${(Math.atan(d.slopeB) * 180 / Math.PI).toFixed(2)}°`,
-    `A = ${d.TA.toFixed(3)} kN = ${(d.TA / d.U).toFixed(5)}·${d.unit} at ${d.angA.toFixed(2)}° · B = ${d.TB.toFixed(3)} kN = ${(d.TB / d.U).toFixed(5)}·${d.unit} at ${d.angB.toFixed(2)}° — both outwards, cable all in tension`,
+    `${d.tag} ${d.name} — no magnitudes and no scale are printed`,
+    `so forces are multiples of ${d.unit} (working value ${d.U.toFixed(1)} kN), lengths multiples of l`,
+    `given point (2l/3, ${d.pd.toFixed(6)}·l below A) → H = ${d.H.toFixed(4)} kN = ${(d.H / d.U).toFixed(5)}·${d.unit}`,
+    `H = B_v/(1 + d/l), and the segment P–B is at ${(Math.atan(d.slopeB) * 180 / Math.PI).toFixed(2)}°`,
+    `A ${d.TA.toFixed(3)} kN = ${(d.TA / d.U).toFixed(5)}·${d.unit} at ${d.angA.toFixed(2)}° · B ${d.TB.toFixed(3)} kN = ${(d.TB / d.U).toFixed(5)}·${d.unit} at ${d.angB.toFixed(2)}°`,
+    `both outwards; the cable is all in tension`,
     d.par
       ? `sag f = ${d.par.f.toFixed(5)} (tangent triangle 2f = ${(2 * d.par.f).toFixed(5)})` +
         (d.atSheet ? ` — the official key dimensions ${d.keyF.toFixed(3)}, agreement to 0.${Math.abs(d.par.f - d.keyF) < 0.001 ? '1' : '2'} %` : ' — off the sheet’s through-point / ratio')
       : `vertex under F at ${(-d.yThird).toFixed(4)} below A` +
-        (d.atSheet ? ` — the official key draws ${KEYV.toFixed(3)}, agreement to three decimals` : ' — off the sheet’s through-point'),
+        (d.atSheet ? ` — the key draws ${KEYV.toFixed(3)} ✓` : ' — off the sheet’s through-point'),
   ],
   frame: [[-28, -24], [26, 18]],
 };

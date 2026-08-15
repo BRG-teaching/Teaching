@@ -106,7 +106,15 @@
  *   read      per member: the force READ BACK off the finished diagram, signed.
  *             Compare it with res.forces — that comparison is the proof.
  *   err       the largest |read − forces| anywhere. Must be ~1e-12.
- *   spaceAt   per joint: the spaces touching it (for labelling)
+ *   spaceAt   per joint: the spaces touching it
+ *   at, nrm   where to WRITE a space's name in the form diagram, in the form
+ *             diagram's own coordinates: `at` is the spot, `nrm` a unit normal
+ *             pointing away from the structure (zero for an interior face) so
+ *             the view can push an outer label clear of the drawing
+ *   uOf       each member's unit vector, i → j
+ *
+ * Everything a view needs to draw the figure is here; nothing here knows about
+ * the view's scale, its colours or its steps.
  */
 
 /**
@@ -170,7 +178,6 @@ function externalsAt(i, loads, reactions) {
 export function cremona(model, res) {
   const { nodes, members, loads = {} } = model;
   const reactions = res.reactions || {};
-  const nm = members.length;
   const E = embed(model);
 
   const uOf = members.map(([i, j]) => {
@@ -191,12 +198,15 @@ export function cremona(model, res) {
   if (start < 0) throw new Error('cremona: the structure carries no external forces');
 
   const spaceOfHalf = new Map();       // outer half-edge -> outer space index
+  const runs = new Map();              // outer space -> its boundary run, IN ORDER
   const ext = [];                      // external forces, in order round the outside
   const outerPts = [[0, 0]];           // the load line, laid tip to tail
   let cur = 0;
   for (let n = 0; n < M; n++) {
     const h = ring0[(start + 1 + n) % M];
     spaceOfHalf.set(h, cur);
+    if (!runs.has(cur)) runs.set(cur, []);
+    runs.get(cur).push(h);
     const v = E.head(h);
     const here = extAt[v];
     if (!here.length) continue;
@@ -351,12 +361,6 @@ export function cremona(model, res) {
   });
   // an outer space sits against a RUN of boundary edges: write its name at the
   // middle of that run by arc length, pushed out along the run's mean normal
-  const runs = new Map();
-  for (const h of ring0) {
-    const s = spaceOfHalf.get(h);
-    if (!runs.has(s)) runs.set(s, []);
-    runs.get(s).push(h);
-  }
   for (const [s, hs] of runs) {
     const seg2 = hs.map((h) => {
       const a = nodes[E.tail(h)], b = nodes[E.head(h)];

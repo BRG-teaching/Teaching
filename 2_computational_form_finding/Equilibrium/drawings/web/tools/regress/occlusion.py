@@ -13,7 +13,8 @@ Cheap enough to run over all 60+ views after any layout change.
 Two modes.
 
   offline (default)  reads the exported ops database and tests against card
-                     rectangles measured once from screenshots. Fast, and good
+                     rectangles measured once from screenshots. It knows about
+                     the two side cards only, not the task banner. Fast, and good
                      enough to catch gross mistakes -- but the caption card is
                      as tall as its text, so a view with a long final caption
                      is judged against a card smaller than the one it will
@@ -104,7 +105,11 @@ def report(path):
 LIVE_PROBE = """(() => {
   const dw = window.__dw, cam = dw.camera;
   const cv = dw.renderer.domElement.getBoundingClientRect();
-  const cards = ['.eq-caption', '.eq-result'].map((sel) => {
+  // THREE overlays, not two. `.eq-task` is pinned across the top of the canvas
+  // whenever a view is registered in exercises.json, and it is just as opaque
+  // as the other two — it was quietly eating force-diagram titles in seven
+  // views while this tool reported them clean.
+  const cards = ['.eq-caption', '.eq-result', '.eq-task'].map((sel) => {
     const el = document.querySelector(sel);
     if (!el || el.offsetParent === null) return null;
     const r = el.getBoundingClientRect();
@@ -191,7 +196,7 @@ CARD_PROBE = """(() => {
             cam.position.y + (ny * (cam.top - cam.bottom)) / 2 / cam.zoom];
   };
   const out = {};
-  for (const sel of ['.eq-caption', '.eq-result']) {
+  for (const sel of ['.eq-caption', '.eq-result', '.eq-task']) {
     const el = document.querySelector(sel);
     if (!el || el.offsetParent === null) continue;
     const r = el.getBoundingClientRect();
@@ -234,6 +239,10 @@ def run_cards(views):
                 print(f"   → a caption under the form diagram needs "
                       f"y > {boxes['.eq-result'][3]:.2f} "
                       f"or x > {boxes['.eq-result'][2]:.2f}")
+            if ".eq-task" in boxes:
+                print(f"   → nothing at all may go above y = "
+                      f"{boxes['.eq-task'][1]:.2f} (the task banner spans the "
+                      f"full width)")
             if ".eq-caption" in boxes:
                 print(f"   → the top of the form diagram needs "
                       f"y < {boxes['.eq-caption'][1]:.2f} "

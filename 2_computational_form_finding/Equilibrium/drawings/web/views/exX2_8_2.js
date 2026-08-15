@@ -227,7 +227,7 @@ export const { meta, create } = makeJointTrussView({
   at: { form: 1, load: 1, reac: 2, mem: 3, poly: 4 },
   steps: STEPS,
   formTitle: (d) => `${d.tag} — Form diagram 1:100`,
-  titlePos: { form: [-14, -14.6], force: [16, 21.4], sub: [16, 19.8],
+  titlePos: { form: [-14, -14.6], force: [16, 20.0], sub: [16, 18.4],
               note: [-14, -16.3], zero: [-14, -18.0] },
 
   declare: (dw) => {

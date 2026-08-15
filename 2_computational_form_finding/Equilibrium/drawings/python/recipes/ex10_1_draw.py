@@ -18,7 +18,7 @@ def add(step, kind, geometry, color=None, **style):
 
 # step 0 — The exercise
 add(0, 'label', Point(10, 14.6, 0), text='the six layouts of the sheet')
-add(0, 'label', Point(-29.6, -7.7, 0), text='panel e) — enlarged')
+add(0, 'label', Point(-29.6, -10.2, 0), text='panel e) — enlarged')
 
 # step 1 — The six layouts
 add(1, 'segment', Line((-2, 1, 0), (4, 1, 0)), color=Color.from_hex("#111111"), width=0.06696)
@@ -67,33 +67,33 @@ add(1, 'polygon', Polygon([(16.2, -9, 0), (16.2, -3, 0), (16, -3, 0), (16, -9, 0
 add(1, 'polygon', Polygon([(22, -15, 0), (22, -9, 0), (21.8, -9, 0), (21.8, -15, 0)]), color=Color.from_hex("#111111"))
 
 # step 2 — One panel, enlarged
-add(2, 'segment', Line((-33, -6.2, 0), (-26.2, -6.2, 0)), color=Color.from_hex("#111111"), width=0.077584)
-add(2, 'segment', Line((-26.2, -6.2, 0), (-26.2, 7.4, 0)), color=Color.from_hex("#111111"), width=0.077584)
-add(2, 'segment', Line((-26.2, 7.4, 0), (-33, 7.4, 0)), color=Color.from_hex("#111111"), width=0.077584)
-add(2, 'segment', Line((-33, 7.4, 0), (-33, -6.2, 0)), color=Color.from_hex("#111111"), width=0.077584)
-add(2, 'polygon', Polygon([(-33, 0.486667, 0), (-26.2, 0.486667, 0), (-26.2, 0.713333, 0), (-33, 0.713333, 0)]), color=Color.from_hex("#111111"))
-add(2, 'polygon', Polygon([(-31.8483, 7.18066, 0), (-27.4691, 4.52866, 0), (-27.3517, 4.72254, 0), (-31.7309, 7.37454, 0)]), color=Color.from_hex("#111111"))
-add(2, 'polygon', Polygon([(-31.7309, -6.17454, 0), (-27.3517, -3.52254, 0), (-27.4691, -3.32866, 0), (-31.8483, -5.98066, 0)]), color=Color.from_hex("#111111"))
-add(2, 'point', Point(-29.6, 0.6, 0), color=Color.from_hex("#ffffff"), width=0.36704)
-add(2, 'point', Point(-29.6, 5.9516, 0), color=Color.from_hex("#ffffff"), width=0.36704)
-add(2, 'point', Point(-29.6, -4.7516, 0), color=Color.from_hex("#ffffff"), width=0.36704)
-add(2, 'label', Point(-29.6, -10.3, 0), text='drag any pink handle — the verdict recomputes')
+add(2, 'segment', Line((-33, -8.7, 0), (-26.2, -8.7, 0)), color=Color.from_hex("#111111"), width=0.077584)
+add(2, 'segment', Line((-26.2, -8.7, 0), (-26.2, 4.9, 0)), color=Color.from_hex("#111111"), width=0.077584)
+add(2, 'segment', Line((-26.2, 4.9, 0), (-33, 4.9, 0)), color=Color.from_hex("#111111"), width=0.077584)
+add(2, 'segment', Line((-33, 4.9, 0), (-33, -8.7, 0)), color=Color.from_hex("#111111"), width=0.077584)
+add(2, 'polygon', Polygon([(-33, -2.01333, 0), (-26.2, -2.01333, 0), (-26.2, -1.78667, 0), (-33, -1.78667, 0)]), color=Color.from_hex("#111111"))
+add(2, 'polygon', Polygon([(-31.8483, 4.68066, 0), (-27.4691, 2.02866, 0), (-27.3517, 2.22254, 0), (-31.7309, 4.87454, 0)]), color=Color.from_hex("#111111"))
+add(2, 'polygon', Polygon([(-31.7309, -8.67454, 0), (-27.3517, -6.02254, 0), (-27.4691, -5.82866, 0), (-31.8483, -8.48066, 0)]), color=Color.from_hex("#111111"))
+add(2, 'point', Point(-29.6, -1.9, 0), color=Color.from_hex("#ffffff"), width=0.36704)
+add(2, 'point', Point(-29.6, 3.4516, 0), color=Color.from_hex("#ffffff"), width=0.36704)
+add(2, 'point', Point(-29.6, -7.2516, 0), color=Color.from_hex("#ffffff"), width=0.36704)
+add(2, 'label', Point(-29.6, -12.8, 0), text='drag any pink handle — the verdict recomputes')
 
 # step 3 — Extend the axes
-add(3, 'polyline', Polyline([(-40, 0.6, 0), (-14.5, 0.6, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
-add(3, 'polyline', Polyline([(-32.9825, 8, 0), (-14.5, -3.19281, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
-add(3, 'polyline', Polyline([(-33.3127, -7, 0), (-14.5, 4.39281, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
+add(3, 'polyline', Polyline([(-40, -1.9, 0), (-14.5, -1.9, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
+add(3, 'polyline', Polyline([(-32.1568, 5, 0), (-14.5, -5.69281, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
+add(3, 'polyline', Polyline([(-33.4779, -9.6, 0), (-14.5, 1.89281, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
 
 # step 4 — They all meet — it does not hold
-add(4, 'point', Point(-20.763, 0.6, 0), color=Color.from_hex("#ffffff"), width=0.52762)
-add(4, 'label', Point(-20.763, 1.9, 0), color=Color.from_hex("#ce4095"), text='pole (1.80, 0.50)')
-add(4, 'segment', Line((-26.2, -0.42, 0), (-20.763, -0.42, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
-add(4, 'segment', Line((-26.2, 0.6, 0), (-26.2, -0.675, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
-add(4, 'segment', Line((-20.763, 0.6, 0), (-20.763, -0.675, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
-add(4, 'segment', Line((-26.4404, -0.660416, 0), (-25.9596, -0.179584, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
-add(4, 'segment', Line((-21.0034, -0.660416, 0), (-20.5226, -0.179584, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
-add(4, 'label', Point(-23.4815, -1.372, 0), color=Color.from_hex("#aaaaaa"), text='0.80 panel-widths off the edge')
-add(4, 'label', Point(-29.6, -9, 0), color=Color.from_hex("#ce4095"), text='✗ the bracing does NOT work')
+add(4, 'point', Point(-20.763, -1.9, 0), color=Color.from_hex("#ffffff"), width=0.52762)
+add(4, 'label', Point(-20.763, -0.6, 0), color=Color.from_hex("#ce4095"), text='pole (1.80, 0.50)')
+add(4, 'segment', Line((-26.2, -2.92, 0), (-20.763, -2.92, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
+add(4, 'segment', Line((-26.2, -1.9, 0), (-26.2, -3.175, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
+add(4, 'segment', Line((-20.763, -1.9, 0), (-20.763, -3.175, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
+add(4, 'segment', Line((-26.4404, -3.16042, 0), (-25.9596, -2.67958, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
+add(4, 'segment', Line((-21.0034, -3.16042, 0), (-20.5226, -2.67958, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
+add(4, 'label', Point(-23.4815, -3.872, 0), color=Color.from_hex("#aaaaaa"), text='0.80 panel-widths off the edge')
+add(4, 'label', Point(-29.6, -11.5, 0), color=Color.from_hex("#ce4095"), text='✗ the bracing does NOT work')
 
 # step 5 — Now all six
 add(5, 'polyline', Polyline([(3.901, -0.56, 0), (3.901, 14.56, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.1829)

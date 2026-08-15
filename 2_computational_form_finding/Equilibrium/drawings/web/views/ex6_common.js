@@ -219,9 +219,16 @@ export function makeTrussView(cfg) {
         const v = d.reactions[+k] || [0, 0];
         const mag = Math.hypot(v[0], v[1]);
         const u = mag > 1e-6 ? V.unit(v) : [0, 1];
-        // stop short of the joint, or the disk swallows the arrowhead
-        dw.setArrow(`re${k}`, V.sub(q, V.mul(u, 4.0)), V.sub(q, V.mul(u, 1.0)));
-        dw.setLabel(`lre${k}`, V.add(V.sub(q, V.mul(u, 3.7)), cfg.reacLabelOff(+k)));
+        // Stop short of the joint, or the disk swallows the arrowhead. `reacOff`
+        // steps a reaction aside when its line of action runs along a member,
+        // and `reacFlip` hangs it off the far side of the joint instead of
+        // approaching from behind — same direction, so it stays the same force,
+        // but it no longer has to be drawn through the structure.
+        const ro = cfg.reacOff ? cfg.reacOff(+k) : [0, 0];
+        const fl = !!(cfg.reacFlip && cfg.reacFlip(+k));
+        const at = (t) => V.add(V.add(q, V.mul(u, fl ? t : -t)), ro);
+        dw.setArrow(`re${k}`, at(fl ? 1.0 : 4.0), at(fl ? 4.0 : 1.0));
+        dw.setLabel(`lre${k}`, V.add(at(3.7), cfg.reacLabelOff(+k)));
         dw.setText(`lre${k}`, `${nodeName(+k)} = ${mag.toFixed(1)}`);
       });
       const nz = d.zero.filter(Boolean).length;

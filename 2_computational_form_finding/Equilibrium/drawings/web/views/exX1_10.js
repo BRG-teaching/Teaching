@@ -377,8 +377,8 @@ export function create(dw, panel, makePlayer) {
     dw.setStrokes('sect', SECT.map((q) => [[q[0], q[1]], [q[2], q[3]]]));
     dw.setSeg('ground', [3.8, GY], [15.6, GY]);
     dw.setStrokes('ghatch', V.hatch([3.8, GY], [15.6, GY], -1, 0.62, 16));
-    dw.setLabel('t_form', [4.2, 3.5]);
-    dw.setLabel('t_force', [19.2, 3.5]);
+    dw.setLabel('t_form', [4.2, 1.8]);
+    dw.setLabel('t_force', [19.2, 1.8]);
 
     for (const [n, p, o] of [['A', A, [-0.9, -0.85]], ['B', B, [-0.8, 0.6]],
                              ['C', C, [-0.15, 0.75]], ['D', D, [0.90, -0.60]],

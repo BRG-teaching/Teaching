@@ -18,8 +18,8 @@ def add(step, kind, geometry, color=None, **style):
 
 # step 0 — The exercise
 add(0, 'label', Point(-14, -16.4, 0), text='a) — Form diagram 1:100')
-add(0, 'label', Point(17, 21.4, 0), text='Force diagram — the closing triangle')
-add(0, 'label', Point(17, 19.8, 0), text='1 unit ≙ 8.33 kN — the sheet asks for 1 cm ≙ 10 kN and gives no load')
+add(0, 'label', Point(17, 20.6, 0), text='Force diagram — the closing triangle')
+add(0, 'label', Point(17, 19.35, 0), text='1 unit ≙ 8.33 kN — the sheet asks for 1 cm ≙ 10 kN and gives no load')
 add(0, 'label', Point(-14, -18.2, 0), color=Color.from_hex("#aaaaaa"), text='three hinges: two pins and the crown — statically determinate')
 
 # step 1 — The number that is missing
@@ -52,9 +52,9 @@ add(1, 'segment', Line((-3.9608, -13.6, 0), (-4.63255, -12.9282, 0)), color=Colo
 add(1, 'segment', Line((-3.2408, -13.6, 0), (-3.91255, -12.9282, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
 add(1, 'segment', Line((-2.5208, -13.6, 0), (-3.19255, -12.9282, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
 add(1, 'label', Point(-1.7208, -14.6, 0), text='B')
-add(1, 'arrow', Line((-15.0104, 4.1352, 0), (-15.0104, -1.8648, 0)), color=Color.from_hex("#3f9c20"), width=0.169632, head=(0.584784, 0.225878))
-add(1, 'label', Point(-8.4104, 2.3352, 0), color=Color.from_hex("#3f9c20"), text='G_d = 100 kN')
-add(1, 'polyline', Polyline([(-15.0104, 5.1352, 0), (-15.0104, -15.8, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
+add(1, 'arrow', Line((-15.0104, 1.5352, 0), (-15.0104, -1.8648, 0)), color=Color.from_hex("#3f9c20"), width=0.169632, head=(0.584784, 0.225878))
+add(1, 'label', Point(-8.4104, 0.5352, 0), color=Color.from_hex("#3f9c20"), text='G_d = 100 kN')
+add(1, 'polyline', Polyline([(-15.0104, 2.3352, 0), (-15.0104, -15.8, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
 
 # step 2 — Three hinges make it determinate
 add(2, 'arrow', Line((-29.4212, -16.6324, 0), (-26.5589, -13.8382, 0)), color=Color.from_hex("#3f9c20"), width=0.122314, head=(0.39551, 0.169632))

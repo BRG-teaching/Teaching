@@ -140,7 +140,7 @@ add(1, 'label', Point(-14.2399, 3.20176, 0), color=Color.from_hex("#1a1eb2"), te
 add(1, 'segment', Line((26.9596, -1.40116, 0), (25.88, 2.25801, 0)), color=Color.from_hex("#1a1eb2"), width=0.136512)
 add(1, 'label', Point(27.1198, 0.528427, 0), color=Color.from_hex("#1a1eb2"), text='5')
 add(1, 'point', Point(-13, 5, 0), color=Color.from_hex("#ffffff"), width=0.444)
-add(1, 'label', Point(-13.75, 5.55, 0), text='II')
+add(1, 'label', Point(-12, 4, 0), text='II')
 add(1, 'point', Point(25.88, 2.25801, 0), color=Color.from_hex("#ffffff"), width=0.444)
 add(1, 'label', Point(26.63, 2.80802, 0), text='III')
 add(1, 'point', Point(-16.3704, 2.93531, 0), color=Color.from_hex("#ffffff"), width=0.333)

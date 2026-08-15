@@ -18,7 +18,7 @@ def add(step, kind, geometry, color=None, **style):
 
 # step 0 — The exercise
 add(0, 'label', Point(8, 23.2, 0), text='top view 1:200')
-add(0, 'label', Point(-31, 7.4, 0), text='force diagrams  1 cm ≙ 10 kN')
+add(0, 'label', Point(-31, 5, 0), text='force diagrams  1 cm ≙ 10 kN')
 add(0, 'label', Point(20, -5, 0), text='form diagrams  1:100')
 
 # step 1 — The plan
@@ -96,15 +96,15 @@ add(6, 'arrow', Line((4.5, 7.05, 0), (2.5, 7.05, 0)), color=Color.from_hex("#3f9
 add(6, 'label', Point(3.5, 6, 0), color=Color.from_hex("#3f9c20"), text='C = 50.00 kN')
 
 # step 7 — The force diagram
-add(7, 'arrow', Line((-41, 5, 0), (-21, 5, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
-add(7, 'segment', Line((-21, 5, 0), (-31, -1.59091, 0)), color=Color.from_hex("#1a1eb2"), width=0.085248)
-add(7, 'segment', Line((-31, -1.59091, 0), (-41, 5, 0)), color=Color.from_hex("#1a1eb2"), width=0.085248)
-add(7, 'label', Point(-31, 5.95, 0), color=Color.from_hex("#3f9c20"), text='F = 100.0 kN = 10.00 cm')
-add(7, 'label', Point(-42.6, 3.8, 0), text='node N')
-add(7, 'segment', Line((-41, -9, 0), (-31, -2.40909, 0)), color=Color.from_hex("#1a1eb2"), width=0.085248)
-add(7, 'segment', Line((-31, -2.40909, 0), (-41, -2.40909, 0)), color=Color.from_hex("#ce4095"), width=0.085248)
-add(7, 'segment', Line((-41, -2.40909, 0), (-41, -9, 0)), color=Color.from_hex("#ce4095"), width=0.085248)
-add(7, 'label', Point(-28.6, -2.00909, 0), text='node P₁')
+add(7, 'arrow', Line((-41, 2.6, 0), (-21, 2.6, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
+add(7, 'segment', Line((-21, 2.6, 0), (-31, -3.99091, 0)), color=Color.from_hex("#1a1eb2"), width=0.085248)
+add(7, 'segment', Line((-31, -3.99091, 0), (-41, 2.6, 0)), color=Color.from_hex("#1a1eb2"), width=0.085248)
+add(7, 'label', Point(-31, 3.55, 0), color=Color.from_hex("#3f9c20"), text='F = 100.0 kN = 10.00 cm')
+add(7, 'label', Point(-42.6, 1.4, 0), text='node N')
+add(7, 'segment', Line((-41, -11.4, 0), (-31, -4.80909, 0)), color=Color.from_hex("#1a1eb2"), width=0.085248)
+add(7, 'segment', Line((-31, -4.80909, 0), (-41, -4.80909, 0)), color=Color.from_hex("#ce4095"), width=0.085248)
+add(7, 'segment', Line((-41, -4.80909, 0), (-41, -11.4, 0)), color=Color.from_hex("#ce4095"), width=0.085248)
+add(7, 'label', Point(-28.6, -4.40909, 0), text='node P₁')
 
 # step 9 — Each wall, unfolded
 add(9, 'segment', Line((0, -14, 0), (10, -14, 0)), color=Color.from_hex("#111111"), width=0.133632)

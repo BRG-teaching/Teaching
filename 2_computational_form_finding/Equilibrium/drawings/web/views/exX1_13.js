@@ -378,7 +378,7 @@ export function create(dw, panel, makePlayer) {
 
     dw.setLabel('t_form', [AX - 1.0, -3.0]);
     dw.setLabel('t_force', [KX - 5.0, KY - 21.0]);
-    dw.setLabel('t_mode', [AX + (d.span / 2) * MPU, 20.4]);
+    dw.setLabel('t_mode', [AX + (d.span / 2) * MPU, 19.2]);
     dw.setText('t_mode', d.bmode
       ? 'b) the bottom-chord force made constant — the struts have tilted'
       : `a) the bottom chord found with the force diagram · mid-span depth ${d.sag.toFixed(2)} m · H = ${d.H.toFixed(2)} kN`);

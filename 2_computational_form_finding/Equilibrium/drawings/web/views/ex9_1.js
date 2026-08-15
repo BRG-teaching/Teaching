@@ -397,7 +397,7 @@ export function create(dw, panel, makePlayer) {
   // the big plate lives to the RIGHT of both UI cards; the index thumbnails
   // run along the top, clear of the caption card's right edge
   const BOX = { cx: 13.5, cy: -7.0, w: 25.0, h: 19.5 };
-  const THY = 11.6, THX0 = -5.5, THW = 6.8, THH = 4.4;
+  const THY = 10.2, THX0 = -5.5, THW = 6.8, THH = 4.4;
 
   let d = null;
   let M = 1, OX = 0, OY = 0;                    // plate → world mapping

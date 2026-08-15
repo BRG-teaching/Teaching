@@ -174,7 +174,7 @@ export function create(dw, panel, makePlayer) {
     d = compute(s);
 
     dw.setLabel('t_sec', [-17, -15.6]);
-    dw.setLabel('t_chart', [16, 21.4]);
+    dw.setLabel('t_chart', [16, 20.0]);
     dw.setLabel('t_sub', [16, 19.8]);
     dw.setText('t_sub', `S235: f_tk = ${FTK} N/mm², γ_M = ${GAM_M} → f_td = ${FTD.toFixed(4)} N/mm²`);
     dw.setLabel('note', [-17, -17.4]);

@@ -18,8 +18,8 @@ def add(step, kind, geometry, color=None, **style):
 
 # step 0 — The exercise
 add(0, 'label', Point(-11, -19.8, 0), text='b) θ = 47.12° — form diagram')
-add(0, 'label', Point(17, 21.4, 0), text='Force diagram — the three-force triangle')
-add(0, 'label', Point(17, 19.8, 0), text='every length is a multiple of the load F · F drawn as 10 units')
+add(0, 'label', Point(17, 20.6, 0), text='Force diagram — the three-force triangle')
+add(0, 'label', Point(17, 19.35, 0), text='every length is a multiple of the load F · F drawn as 10 units')
 add(0, 'label', Point(15, -4, 0), color=Color.from_hex("#aaaaaa"), text='all six support symbols on the sheet are pins — only the arrows differ')
 add(0, 'label', Point(15, -6.4, 0), color=Color.from_hex("#aaaaaa"), text='the concurrency point is inside the beam')
 
@@ -47,9 +47,9 @@ add(1, 'segment', Line((-3.0552, -14.6, 0), (-3.72695, -13.9282, 0)), color=Colo
 add(1, 'segment', Line((-2.3352, -14.6, 0), (-3.00695, -13.9282, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
 add(1, 'segment', Line((-1.6152, -14.6, 0), (-2.28695, -13.9282, 0)), color=Color.from_hex("#aaaaaa"), width=0.046872)
 add(1, 'label', Point(-1.0152, -15.6, 0), text='B')
-add(1, 'arrow', Line((-13.9856, 4.8108, 0), (-13.9856, -0.6892, 0)), color=Color.from_hex("#3f9c20"), width=0.169632, head=(0.584784, 0.225878))
-add(1, 'label', Point(-11.3856, 3.2108, 0), color=Color.from_hex("#3f9c20"), text='F')
-add(1, 'polyline', Polyline([(-13.9856, 5.2108, 0), (-13.9856, -19.6, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
+add(1, 'arrow', Line((-13.9856, 1.9108, 0), (-13.9856, -0.6892, 0)), color=Color.from_hex("#3f9c20"), width=0.169632, head=(0.584784, 0.225878))
+add(1, 'label', Point(-11.5856, 0.9108, 0), color=Color.from_hex("#3f9c20"), text='F')
+add(1, 'polyline', Polyline([(-13.9856, 2.3108, 0), (-13.9856, -19.6, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
 
 # step 2 — Three forces must be concurrent
 add(2, 'polyline', Polyline([(-25.9568, -15.5074, 0), (-13.9856, -2.61892, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)

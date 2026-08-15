@@ -106,7 +106,9 @@ const RN = ['I', 'II', 'III'];
 
 // ------------------------------------------------------------ the layout ---
 
-const FA = [-24.0, -1.5];                     // where support A is drawn
+// the form diagram has to sit between the step caption (down to y ≈ 2.97)
+// and the RESULT card (up to y ≈ -12.7), so support A is well below centre
+const FA = [-24.0, -4.2];                     // where support A is drawn
 const MPU = 3.2;                              // drawing units per metre
 const LLP = [13.0, 7.0];                      // top of the load line
 const LLH = 10.9;                             // the load line is ALWAYS this tall:
@@ -203,11 +205,12 @@ export const meta = {
   subtitle: 'Structural Design I · sheet EX X “Additional Exercises”, task 3 a)–c)',
   about: 'One 120 kN load, and three structures that carry it between the same two supports at three different depths — a shallow cable, a deep cable and an arch. Their forces are wildly different, from 44 to 190 kN of thrust. But two things in the force diagram do not budge. The point i, where the closing line cuts the load line, sits at the simple-beam reaction and cannot see the depth at all; and every pole lands on the line through i parallel to that structure’s closing line. Situation a) holds the closing line still and the three poles line up on it. Situation b) swings the closing line by moving support B, and the poles scatter — yet every one of the new closing lines still runs through the very same i. Drag the depth slider and watch what stays put. Note that in the printed solution of 3a) the pole labels o₁ and o₂ are swapped.',
   result: (d) => [
-    `${d.tag} span ${d.span.toFixed(3)} m, F₁ = ${d.F1.toFixed(0)} kN at ${d.S.xF.toFixed(3)} m from A → A_v = ${d.Av.toFixed(2)}, B_v = ${d.Bv.toFixed(2)} kN and M = ${d.M.toFixed(3)} kNm — the same for all three structures`,
-    d.sheet.map((x, k) => `${RN[k]}: d = ${x.d >= 0 ? '+' : ''}${x.d.toFixed(3)} m → H = ${Math.abs(x.H).toFixed(2)}, members ${Math.abs(x.nA).toFixed(2)} / ${Math.abs(x.nB).toFixed(2)} kN ${kind(x.nA).slice(0, 4)}`).join('   ·   '),
-    `your structure: d = ${d.live.d.toFixed(3)} m → H = ${d.live.H.toFixed(2)} kN, members ${Math.abs(d.live.nA).toFixed(2)} / ${Math.abs(d.live.nB).toFixed(2)} kN — and its pole is still on the closing line through i`,
-    `c) i stays at ${d.Av.toFixed(2)} kN below the top of the load line whatever the depth, because it is the simple-beam reaction; and every pole lands on the line through i parallel to that structure’s closing line`,
-    d.sitIdx === 0 ? 'NOTE: the key’s force diagram for a) swaps the pole labels o₁ and o₂ — o₁ belongs to structure I (H = 82.56 kN), o₂ to structure II (H = 43.98 kN)' : 'in b) nothing is blue: every member of all three structures is in tension'],
+    `${d.tag} span ${d.span.toFixed(3)} m: A_v ${d.Av.toFixed(2)}, B_v ${d.Bv.toFixed(2)} kN, M ${d.M.toFixed(3)} kNm, F₁ at ${d.S.xF.toFixed(3)} m`,
+    ...d.sheet.map((x, k) => `${RN[k]}: d ${x.d >= 0 ? '+' : ''}${x.d.toFixed(3)} m → H ${Math.abs(x.H).toFixed(2)} · ${Math.abs(x.nA).toFixed(2)}/${Math.abs(x.nB).toFixed(2)} kN ${kind(x.nA).slice(0, 4)}`),
+    `yours: d ${d.live.d.toFixed(3)} m → H ${d.live.H.toFixed(2)} kN, members ${Math.abs(d.live.nA).toFixed(2)}/${Math.abs(d.live.nB).toFixed(2)} kN`,
+    `c) i sits at A_v ${d.Av.toFixed(2)} kN below the load line's top, whatever the depth`,
+    `   and every pole lands on the line through i parallel to its closing line`,
+    d.sitIdx === 0 ? 'NOTE: the key’s a) swaps o₁ and o₂ — o₁ is structure I (H 82.56), o₂ is II (H 43.98)' : 'in b) nothing is blue: every member of all three is in tension'],
   frame: [[-27, -22], [32, 17]],
 };
 
@@ -413,7 +416,7 @@ export function create(dw, panel, makePlayer) {
     put('lsupA', V.add(Ap, [-1.6, -1.1]), 'A', { fixed: true, on: !!s.lbl });
     dw.setStrokes('hatA', V.hatch([Ap[0] - 1.5, Ap[1] - 0.5], [Ap[0] + 1.5, Ap[1] - 0.5],
       -1, 0.85, 5));
-    const vtop = 4.6, vbot = -8.8;
+    const vtop = 1.9, vbot = -11.2;
     dw.setDashLine('vA', [[Ap[0], vbot], [Ap[0], vtop]]);
     dw.setDashLine('vB', [[FA[0] + S.Bx * MPU, vbot], [FA[0] + S.Bx * MPU, vtop]]);
     dw.setDashLine('vF', [[FA[0] + S.xF * MPU, vbot], [FA[0] + S.xF * MPU, vtop]]);
@@ -456,7 +459,7 @@ export function create(dw, panel, makePlayer) {
     // the statical depth, dimensioned from the closing line down to the node
     const sx = FA[0] + S.xF * MPU;
     dw.setSeg('dimD', [sx, FA[1] + L.yS * MPU], [sx, CLp[1]]);
-    put('ldimD', [FA[0] + 2.2, 3.4], `statical depth d = ${L.d.toFixed(3)} m`, { fixed: true });
+    put('ldimD', [FA[0] + 2.2, 0.7], `statical depth d = ${L.d.toFixed(3)} m`, { fixed: true });
 
     // the load, on its line of action, and the two live reactions
     dw.setArrow('fLoad', [CLp[0], CLp[1] + 3.4], [CLp[0], CLp[1] + 0.8]);
@@ -465,7 +468,7 @@ export function create(dw, panel, makePlayer) {
     for (const [n, at, R] of [['A', ALp, L.RA], ['B', BLp, L.RB]]) {
       const u = V.unit(R);
       dw.setArrow(`re${n}`, at, V.add(at, V.mul(u, 2.4)));
-      put(`lre${n}`, V.add(at, V.mul(u, 3.9)), `${n} = ${V.len(R).toFixed(1)}`);
+      put(`lre${n}`, V.add(at, V.mul(u, 3.2)), `${n} = ${V.len(R).toFixed(1)}`);
     }
 
     // ================================================= force diagram =========

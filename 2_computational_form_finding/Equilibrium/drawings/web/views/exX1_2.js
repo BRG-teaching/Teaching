@@ -98,7 +98,9 @@ const ROWS = ['γ_M', 'f_tk', 'f_td', 'f_ck', 'f_cd'];
 
 // the table, top right
 const TX = [0.6, 8.6, 16.6, 24.6];            // row label, then the three materials
-const TY0 = 15.8, TDY = 1.62;                 // header row, row pitch
+// the task strip is an opaque bar across the top of the canvas, reaching
+// down to y ≈ 15.8, so the table's own title has to start below that
+const TY0 = 13.0, TDY = 1.62;                 // header row, row pitch
 const TW = 30.6;                              // how far the rules run
 
 // the three squares, standing on one baseline
@@ -107,7 +109,9 @@ const BY = -12.6;
 const SQH = 9.4;                              // the biggest square is always this tall
 
 // the stress-strain panel, in the free band on the left
-const GX = -26.0, GY = -7.4, GW = 18.0, GH = 8.2;
+// the σ–ε graph is in the left column, between the step caption (down to
+// y ≈ 2.15) and the RESULT card (up to y ≈ -15)
+const GX = -26.0, GY = -9.0, GW = 18.0, GH = 8.2;
 // The strain axis is BROKEN, and it has to be: concrete cracks at 0.05 per
 // mille and steel is still stretching at 260, a range of five thousand to one.
 // The first 2 per mille get 60 % of the width, the remaining 298 get the rest.
@@ -160,11 +164,12 @@ export const meta = {
   subtitle: 'Structural Design I · sheet EX X “Additional Exercises”, task 2 a)–e)',
   about: 'No statics on this page at all — just one division, done six times, and then looking at what comes out. Twelve kilonewtons of tension needs eight millimetres of steel and a hundred and ten of concrete, and the three squares drawn here at one scale are the whole answer to part d): concrete cannot be asked to pull. Turn the same load round into compression and the concrete square shrinks to thirty millimetres, because f_ck/f_tk = 13.3 — and reinforced concrete is nothing more than that ratio, acted on. Part e) is the other half of the story: the stress–strain curves show that concrete not only fails early, it fails without warning, while steel deforms for two hundred times as long before it goes. Every characteristic value here was checked cell by cell against the compendium formulary, and all fifteen of the key’s table entries are right.',
   result: (d) => [
-    `a) f_td = ${d.m.map((x) => `${x.name.slice(0, 2)} ${nice(x.ftd)}`).join(' · ')} N/mm² · f_cd = ${d.m.map((x) => `${x.name.slice(0, 2)} ${nice(x.fcd)}`).join(' · ')} N/mm²  (${d.exact ? 'exact, f_d = f_k/γ_M' : 'the key’s rounded values'})`,
-    `b) tension, N_d = ${d.Nd} kN: A_req = ${d.m.map((x) => `${x.At.toFixed(1)}`).join(' / ')} mm² → a = ${d.m.map((x) => `${x.atUp}`).join(' / ')} mm (timber / steel / concrete, rounded up)`,
-    `c) compression, N_d = ${d.Nd} kN: A_req = ${d.m.map((x) => `${x.Ac.toFixed(1)}`).join(' / ')} mm² → a = ${d.m.map((x) => `${x.acUp}`).join(' / ')} mm`,
-    `d) concrete in tension needs ${d.rAreaTC.toFixed(0)}× the AREA of steel and ${d.rSideTC.toFixed(1)}× the side; and ${d.rConc.toFixed(1)}× its own compression square — so put the steel where the tension is`,
-    `e) most brittle ${d.order[0].name.toLowerCase()} (fails at ≈${d.order[0].epsU.toFixed(2)} ‰), most ductile ${d.order[2].name.toLowerCase()} (yields at ${d.order[2].epsY.toFixed(2)} ‰ and runs to ≈${d.order[2].epsU.toFixed(0)} ‰)`],
+    `a) f_td ${d.m.map((x) => nice(x.ftd)).join('/')} · f_cd ${d.m.map((x) => nice(x.fcd)).join('/')} N/mm² (Ti/St/Co, ${d.exact ? 'exact' : 'key’s'})`,
+    `b) tension ${d.Nd} kN: A ${d.m.map((x) => `${x.At.toFixed(1)}`).join('/')} mm² → a ${d.m.map((x) => `${x.atUp}`).join('/')} mm (rounded up)`,
+    `c) compression ${d.Nd} kN: A ${d.m.map((x) => `${x.Ac.toFixed(1)}`).join('/')} mm² → a ${d.m.map((x) => `${x.acUp}`).join('/')} mm`,
+    `d) concrete in tension needs ${d.rAreaTC.toFixed(0)}× steel's AREA, ${d.rSideTC.toFixed(1)}× its side,`,
+    `   and ${d.rConc.toFixed(1)}× its own compression square — put steel where tension is`,
+    `e) brittlest ${d.order[0].name.toLowerCase()} (≈${d.order[0].epsU.toFixed(2)} ‰), most ductile ${d.order[2].name.toLowerCase()} (${d.order[2].epsY.toFixed(2)} → ≈${d.order[2].epsU.toFixed(0)} ‰)`],
   frame: [[-27, -22], [32, 17]],
 };
 

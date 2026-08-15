@@ -78,9 +78,11 @@ const NPAR = 48;                   // samples along a drawn parabola
 // Form diagram, left; force diagram, right. Laid out against
 // `occlusion.py --cards`: the caption card owns x < -11.24 above y = 5.60, the
 // RESULT card owns x < -3.72 below y = -12.58.
-const MU = 2.4, FX0 = -28.5, FY0 = 2.0; // drawing units per metre, and A
+// the form diagram sits between the step caption (down to y ≈ 2.0) and the
+// RESULT card (up to y ≈ -16), so the support chord is just below centre
+const MU = 2.4, FX0 = -28.5, FY0 = -0.85; // drawing units per metre, and A
 const YBAR = 2.4, YTIP = 0.8;           // load arrows, above the chord (units)
-const YTIT = -10.8;                     // the form diagram's title line
+const YTIT = -13.65;                    // the form diagram's title line
 const LX = -2, LY0 = 10, SFD = 0.15;    // the load line
 const ARS = 0.024;                      // drawing units per kN for a reaction
 
@@ -251,16 +253,19 @@ export const meta = {
   subtitle: 'Structural Design I · sheet EX X “Additional Exercises”, page 4, cases a)–d)',
   about: 'The same 120 kN on the same 6 metre span, split one, two, three ways and finally smeared out as 20 kN/m. The sheet asks for “a possible” funicular, and that word is the exercise: the pole is free, so every case has a one-parameter family of answers and the reader has to choose one. Drag the thrust H and the whole cable reflows; the vertical reactions never move, and neither does the largest cable force, because both belong to the load and not to the shape. The official key quietly used the same pole, H = 72 kN, in all four of its force diagrams — which is what makes the four drawings comparable, and which this view reproduces to three decimals. The last step drags the number of loads up to show a), b) and c) converging on the parabola of d).',
   result: (d) => [
-    `${d.tag} ${d.name} — R = ${d.W.toFixed(2)} kN, A_v = B_v = ${d.Av.toFixed(2)} kN (same in all four cases)`,
-    `the pole is FREE: at H = ${d.H.toFixed(2)} kN the sag is f = M_max/H = ${d.Mmax.toFixed(1)}/${d.H.toFixed(2)} = ${d.f.toFixed(4)} m` +
-      (d.udl ? ` (parabola; tangent triangle ${(2 * d.f).toFixed(4)} m)` : `, node depths ${d.depths.map((y) => y.toFixed(3)).join(' / ')} m`),
+    `${d.tag} ${d.name} — R ${d.W.toFixed(2)}, A_v = B_v ${d.Av.toFixed(2)} kN`,
+    `the pole is FREE: H ${d.H.toFixed(2)} kN → f = M_max/H = ${d.Mmax.toFixed(1)}/${d.H.toFixed(2)} = ${d.f.toFixed(4)} m` +
+      (d.udl ? ` (parabola)` : `, depths ${d.depths.map((y) => y.toFixed(3)).join('/')} m`),
     (d.udl
-      ? `cable ${d.Nmax.toFixed(2)} kN at the supports falling smoothly to H = ${d.H.toFixed(2)} kN at the crown, all tension`
-      : `cable ${d.N.map((v) => v.toFixed(2)).join(' · ')} kN, all tension`) +
-      ` · A = B = ${d.Nmax.toFixed(3)} kN at ${d.ang.toFixed(2)}° — the same maximum in a)–d)`,
+      ? `cable ${d.Nmax.toFixed(2)} kN at the supports, falling to H ${d.H.toFixed(2)} kN at the crown`
+      : `cable ${d.N.map((v) => v.toFixed(2)).join(' · ')} kN, all tension`),
+    `A = B = ${d.Nmax.toFixed(3)} kN at ${d.ang.toFixed(2)}° — the same maximum in a)–d)`,
     d.atKey
-      ? `H = 72.00 kN is the pole the official key drew in all four force diagrams (measured 71.96–71.98 kN); every depth here matches the drawn one to three decimals`
-      : `the key drew H = 72.00 kN (f = ${(d.Mmax / HKEY).toFixed(4)} m here). 72 kN is a choice, not an answer — any H gives a valid funicular`],
+      ? `H = 72.00 kN is the pole the key drew in all four force diagrams`
+      : `the key drew H = 72.00 kN (f = ${(d.Mmax / HKEY).toFixed(4)} m here) — a choice, not an answer`,
+    d.atKey
+      ? `(it measures 71.96–71.98); every depth here matches it to three decimals`
+      : `any H gives a valid funicular; the vertical reactions never move`],
   frame: [[-28, -24], [26, 18]],
 };
 

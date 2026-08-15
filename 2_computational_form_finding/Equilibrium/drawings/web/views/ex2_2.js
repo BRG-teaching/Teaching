@@ -186,7 +186,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [8, -31.5]);
+    dw.setLabel('form_title', [8, -24.2]);
     dw.setLabel('force_title', [24, -31.5]);
     dw.setLabel('force_sub', [24, -33.1]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);

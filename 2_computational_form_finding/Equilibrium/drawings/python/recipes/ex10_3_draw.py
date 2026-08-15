@@ -18,7 +18,7 @@ def add(step, kind, geometry, color=None, **style):
 
 # step 0 — The exercise
 add(0, 'label', Point(5, 23.4, 0), text='top view 1:200')
-add(0, 'label', Point(-28, 8.4, 0), text='force diagram  1 cm ≙ 10 kN')
+add(0, 'label', Point(-28, 4.4, 0), text='force diagram  1 cm ≙ 10 kN')
 add(0, 'label', Point(20, -5, 0), text='form diagrams 1:100 — a vertical over the roller, a diagonal to the pin')
 
 # step 1 — The plan
@@ -92,16 +92,16 @@ add(6, 'arrow', Line((17.15, 11.9872, 0), (17.15, 10.5, 0)), color=Color.from_he
 add(6, 'label', Point(19.95, 11.2436, 0), color=Color.from_hex("#3f9c20"), text='C = 37.18 kN')
 
 # step 7 — The force diagram
-add(7, 'arrow', Line((-38, -2, 0), (-18, -2, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
-add(7, 'arrow', Line((-18, -2, 0), (-18, 5.4359, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
-add(7, 'arrow', Line((-18, 5.4359, 0), (-38, 5.4359, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
-add(7, 'arrow', Line((-38, 5.4359, 0), (-38, -2, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
-add(7, 'segment', Line((-38, -2, 0), (-18, 5.4359, 0)), color=Color.from_hex("#1a1eb2"), width=0.182016)
-add(7, 'label', Point(-28, -3.1, 0), color=Color.from_hex("#3f9c20"), text='F 10.00 cm')
-add(7, 'label', Point(-15.6, 1.71795, 0), color=Color.from_hex("#3f9c20"), text='A 3.718')
-add(7, 'label', Point(-28, 6.5359, 0), color=Color.from_hex("#3f9c20"), text='B 10.00 cm')
-add(7, 'label', Point(-40.4, 1.71795, 0), color=Color.from_hex("#3f9c20"), text='C 3.718')
-add(7, 'label', Point(-27.4, 0.417949, 0), color=Color.from_hex("#1a1eb2"), text='S 10.669 cm')
+add(7, 'arrow', Line((-38, -6, 0), (-18, -6, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
+add(7, 'arrow', Line((-18, -6, 0), (-18, 1.4359, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
+add(7, 'arrow', Line((-18, 1.4359, 0), (-38, 1.4359, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
+add(7, 'arrow', Line((-38, 1.4359, 0), (-38, -6, 0)), color=Color.from_hex("#3f9c20"), width=0.157824, head=(0.510336, 0.21888))
+add(7, 'segment', Line((-38, -6, 0), (-18, 1.4359, 0)), color=Color.from_hex("#1a1eb2"), width=0.182016)
+add(7, 'label', Point(-28, -7.1, 0), color=Color.from_hex("#3f9c20"), text='F 10.00 cm')
+add(7, 'label', Point(-15.6, -2.28205, 0), color=Color.from_hex("#3f9c20"), text='A 3.718')
+add(7, 'label', Point(-28, 2.5359, 0), color=Color.from_hex("#3f9c20"), text='B 10.00 cm')
+add(7, 'label', Point(-40.4, -2.28205, 0), color=Color.from_hex("#3f9c20"), text='C 3.718')
+add(7, 'label', Point(-27.4, -3.58205, 0), color=Color.from_hex("#1a1eb2"), text='S 10.669 cm')
 
 # step 8 — The couple, checked both ways
 add(8, 'segment', Line((4, 14, 0), (4, 19.8, 0)), color=Color.from_hex("#3f9c20"), width=0.06048)

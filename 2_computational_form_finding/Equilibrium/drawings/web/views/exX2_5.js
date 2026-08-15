@@ -82,7 +82,10 @@ const DRAWN = 36.97;
 // A_y changes sign where tanθ = 1.013 / 7.733
 const AFLIP = (Math.atan2(P1[1], B[0] - P1[0]) * 180) / Math.PI;
 
-const MPU = 2.0, ORG = [-26, -8], SFD = 14;
+// ORG sits 1.4 units lower than the drawing wants, so that the resultant R —
+// laid off backwards along its line of action, above the truss — and its label
+// clear the step-caption card, whose lowest edge is y = 2.06
+const MPU = 2.0, ORG = [-26, -9.4], SFD = 14;
 
 const load = (s) => {
   const r = (s.ang * Math.PI) / 180;
@@ -184,10 +187,7 @@ export const { meta, create } = makeJointTrussView({
     // R itself, laid off backwards from P1 so it does not sit on top of F2
     dw.setArrow('rArr', [q[0] - u[0] * 11, q[1] - u[1] * 11],
                         [q[0] - u[0] * 4.2, q[1] - u[1] * 4.2]);
-    // below the line of action, not above it: above puts the label into the
-    // step-caption card, whose lowest edge sits at y = 2.06
-    dw.setLabel('lR', [q[0] - u[0] * 11 + u[1] * 2.6 - 0.8,
-                       q[1] - u[1] * 11 - u[0] * 2.6 - 0.2]);
+    dw.setLabel('lR', [q[0] - u[0] * 11.5 - 1.0, q[1] - u[1] * 11.5 + 1.6]);
     dw.setText('lR', `R = ${d.R.toFixed(2)} kN`);
   },
   controls: (panel, s, refresh) => {
