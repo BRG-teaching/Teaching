@@ -737,6 +737,9 @@ export class Drawing {
     }
 
     if (advance && this.animEnabled && k > 0 && newly.length) {
+      // the draw-in must FIT the step interval, otherwise the next step
+      // clears the queue and the late elements snap to full length instead
+      // of growing (animBudget is set by the player from its speed)
       // form + force counterparts (same link group) draw SIMULTANEOUSLY so
       // the student sees that one side corresponds to the other; unlinked
       // elements keep their own slot, groups follow one another
@@ -748,7 +751,13 @@ export class Drawing {
         if (!slotOf.has(g)) { slotOf.set(g, seq.length); seq.push([]); }
         seq[slotOf.get(g)].push(e);
       }
-      const per = Math.min(1000, 1800 / seq.length);
+      // each element grows for `per`; the starts are spread over the rest of
+      // the budget, so however many elements a step introduces the whole
+      // cascade finishes before the next step arrives
+      const n = seq.length;
+      const budget = this.animBudget ?? 1800;
+      const per = Math.max(180, Math.min(900, budget * 0.45));
+      const stagger = n > 1 ? Math.max(0, budget - per) / (n - 1) : 0;
       const t0 = performance.now();
       seq.forEach((grp, i) => {
         for (const e of grp) {
@@ -756,7 +765,7 @@ export class Drawing {
           if (e.anim === false) continue;  // background/site elements appear instantly
           e.animF = 0;
           this._applyGeo(e);
-          this._anims.push({ e, start: t0 + i * per * 0.8, dur: per });
+          this._anims.push({ e, start: t0 + i * stagger, dur: per });
         }
       });
     }
@@ -1185,10 +1194,14 @@ export class StepPlayer {
 
     this.cam = false;
     this.ghostPreview = true;
+    // how long a draw-in may take: a step lasts 3400/speed ms, leave a margin
+    const setBudget = () => { dw.animBudget = (3400 / this.speed) * 0.82; };
+    setBudget();
     const sec = panel.section('Construction steps');
     this._slider = panel.slider(sec, this, 'k', 'step', 0, steps.length - 1, 1,
                                 () => this.set(this.k));
     panel.slider(sec, this, 'speed', 'speed', 0.5, 5, 0.5, () => {
+      setBudget();
       if (this._timer) { this._stop(); this._start(); }
     }, (v) => `${v.toFixed(1)}x`);
     panel.toggle(sec, this, 'cam', 'cam — camera follows the steps', () => {
