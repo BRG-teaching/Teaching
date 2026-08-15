@@ -67,6 +67,7 @@ const STEPS = [
     take: 'a body standing free is stable only while the resultant of its weight lands inside the contact patch' },
 ];
 
+let OFF = 1;
 function compute(s) {
   const Fs = [s.F1, s.F2, s.F3];
   const bx = [s.b1x, s.b2x, s.b3x];
@@ -88,12 +89,13 @@ function compute(s) {
   const foot = [boxes[2].x0, boxes[2].x1];
   const stable = xbar >= foot[0] && xbar <= foot[1];
   const margin = stable ? 0 : Math.min(Math.abs(xbar - foot[0]), Math.abs(xbar - foot[1]));
-  const off = [3.2, 0];        // the resultant sits BESIDE the load line
+  const off = [OFF, 0];        // perpendicular to the vertical load line
   return { boxes, cx, Fs, tot, xbar, L, o, A, S, foot, stable, margin, R: tot, off };
 }
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
+  OFF = dw.W.off;
   const W_RAY = dw.W.ray, W_STR = dw.W.str;
   const ARR = dw.W.arrow;
 

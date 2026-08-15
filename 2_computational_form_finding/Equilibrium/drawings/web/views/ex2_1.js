@@ -41,6 +41,7 @@ const CASES = [
 
 const DEFAULTS = {
   F: 100,                            // kN, the node load
+  o1: true, sIF: 0.011,              // thickness ∝ force
   ha: 10.63, hb: 5.31,               // the two sags (h and h/2), draggable
   lbl: true,
   _k: 99,
@@ -95,6 +96,8 @@ export function create(dw, panel, makePlayer) {
     dw.label(`ck${k}`, `${k})`, { cls: 'num', intro: 1, flash: false });
     // the cable, drawn in tension colour once its node is solved
     for (const i of [1, 2]) {
+      dw.poly(`if${k}${i}`, 4, { intro: 3, opacity: 1.0, z: -0.18, flash: false,
+        color: { pending: PAL.grey, final: () => PAL.red }, when: (st) => st.o1 });
       dw.seg(`m${k}${i}`, { intro: 1, w: dw.W.bar,
         color: { pending: PAL.black, final: () => PAL.red } });
       dw.seg(`p${k}${i}`, { intro: ns, w: dw.W.bar,
@@ -143,6 +146,8 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`ck${k}`, [c.ax - 3.5, c.ay + 3.4]);
       dw.setSeg(`m${k}1`, x.A, x.I);
       dw.setSeg(`m${k}2`, x.I, x.B);
+      dw.setPoly(`if${k}1`, V.rectPoints(x.A, x.I, s.sIF * x.N));
+      dw.setPoly(`if${k}2`, V.rectPoints(x.I, x.B, s.sIF * x.N));
       dw.setDisk(`ndI${k}`, x.I);
       dw.setDisk(`ndA${k}`, x.A);
       dw.setDisk(`ndB${k}`, x.B);
@@ -174,7 +179,7 @@ export function create(dw, panel, makePlayer) {
       // in the force diagram they are the SAME two vectors — so draw them
       // offset beside the polygon (house rule), otherwise they simply cover
       // the cable forces and the student cannot tell the two apart
-      const ro = [-2.6, 0];
+      const ro = V.mul(V.unit(V.perp(V.sub(x.P1, x.P0))), dw.W.off);
       dw.setArrow(`fr${k}A`, V.add(x.Pm, ro), V.add(x.P0, ro));
       dw.setArrow(`fr${k}B`, V.add(x.P1, ro), V.add(x.Pm, ro));
       dw.setLabel(`lH${k}`, [x.P0[0] - x.H / SFD / 2, x.P0[1] + 1.6]);
@@ -204,6 +209,8 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'F', 'F₁ (kN)', 20, 200, 5, refresh);
   panel.slider(par, s, 'ha', 'sag of a)', 2, 18, 0.25, refresh);
   panel.slider(par, s, 'hb', 'sag of b)', 1, 18, 0.25, refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.03, 0.001, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
 
   refresh();

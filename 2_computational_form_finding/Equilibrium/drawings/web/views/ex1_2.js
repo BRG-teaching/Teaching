@@ -68,6 +68,7 @@ const STEPS = [
     take: 'the trial funicular is “trial” because the pole is free — every choice gives the same resultant' },
 ];
 
+let OFF = 1;                        // set from dw.W.off once the view exists
 function compute(s) {
   const Fs = [s.F1, s.F2, s.F3, s.F4];
   const lines = BASE.map((b, i) => {
@@ -93,12 +94,13 @@ function compute(s) {
   const S = V.intersect(A[0], first, A[3], last) || A[0];
   // the resultant is drawn OFFSET beside the load line (house rule): on the
   // load line itself it would cover the very load vectors it sums up
-  const off = V.mul(V.unit(V.perp(V.sub(L[4], L[0]))), -2.8);
+  const off = V.mul(V.unit(V.perp(V.sub(L[4], L[0]))), -OFF);
   return { lines, L, o, A, S, Rv, R, ang, uR: V.unit(Rv), first, last, off };
 }
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
+  OFF = dw.W.off;
   const W_RAY = dw.W.ray, W_STR = dw.W.str;
   const ARR = dw.W.arrow;
 

@@ -67,12 +67,16 @@ add(1, 'point', Point(-6, -16, 0), color=Color.from_hex("#ffffff"), width=0.6156
 
 # step 2 — a) and b) — the load between the members
 add(2, 'label', Point(5.5, 10.2, 0), text='a)')
+add(2, 'polygon', Polygon([(-37.5875, 5.71447, 0), (-38.4125, 4.28553, 0), (-44.4747, 7.78553, 0), (-43.6497, 9.21447, 0)]), color=Color.from_hex("#ce4095"))
+add(2, 'polygon', Polygon([(-37.5875, 4.28553, 0), (-38.4125, 5.71447, 0), (-32.3503, 9.21447, 0), (-31.5253, 7.78553, 0)]), color=Color.from_hex("#ce4095"))
 add(2, 'arrow', Line((11, 9, 0), (11, -0.375, 0)), color=Color.from_hex("#3f9c20"), width=0.205171, head=(0.663437, 0.284544))
 add(2, 'segment', Line((11, -0.375, 0), (2.88101, 4.3125, 0)), color=Color.from_hex("#ce4095"), width=0.236621)
 add(2, 'segment', Line((2.88101, 4.3125, 0), (11, 9, 0)), color=Color.from_hex("#ce4095"), width=0.236621)
 add(2, 'label', Point(6.94051, 0.36875, 0), color=Color.from_hex("#ce4095"), text='30')
 add(2, 'label', Point(6.94051, 8.25625, 0), color=Color.from_hex("#ce4095"), text='30')
 add(2, 'label', Point(22.5, 10.2, 0), text='b)')
+add(2, 'polygon', Polygon([(-22.4125, 5.71447, 0), (-21.5875, 4.28553, 0), (-27.6497, 0.785529, 0), (-28.4747, 2.21447, 0)]), color=Color.from_hex("#1a1eb2"))
+add(2, 'polygon', Polygon([(-22.4125, 4.28553, 0), (-21.5875, 5.71447, 0), (-15.5253, 2.21447, 0), (-16.3503, 0.785529, 0)]), color=Color.from_hex("#1a1eb2"))
 add(2, 'arrow', Line((28, 9, 0), (28, -0.375, 0)), color=Color.from_hex("#3f9c20"), width=0.205171, head=(0.663437, 0.284544))
 add(2, 'segment', Line((28, -0.375, 0), (36.119, 4.3125, 0)), color=Color.from_hex("#1a1eb2"), width=0.236621)
 add(2, 'segment', Line((36.119, 4.3125, 0), (28, 9, 0)), color=Color.from_hex("#1a1eb2"), width=0.236621)
@@ -81,6 +85,8 @@ add(2, 'label', Point(32.0595, 8.25625, 0), color=Color.from_hex("#1a1eb2"), tex
 
 # step 3 — c) — one inclined, one horizontal
 add(3, 'label', Point(39.5, 10.2, 0), text='c)')
+add(3, 'polygon', Polygon([(-5.175, 6.42894, 0), (-6.825, 3.57106, 0), (-12.8872, 7.07106, 0), (-11.2372, 9.92894, 0)]), color=Color.from_hex("#ce4095"))
+add(3, 'polygon', Polygon([(-6, 3.57106, 0), (-6, 6.42894, 0), (1, 6.42894, 0), (1, 3.57106, 0)]), color=Color.from_hex("#ce4095"))
 add(3, 'arrow', Line((45, 9, 0), (45, -0.375, 0)), color=Color.from_hex("#3f9c20"), width=0.205171, head=(0.663437, 0.284544))
 add(3, 'segment', Line((45, -0.375, 0), (28.762, 9, 0)), color=Color.from_hex("#ce4095"), width=0.236621)
 add(3, 'segment', Line((28.762, 9, 0), (45, 9, 0)), color=Color.from_hex("#ce4095"), width=0.236621)
@@ -89,6 +95,8 @@ add(3, 'label', Point(36.881, 10.6, 0), color=Color.from_hex("#ce4095"), text='5
 
 # step 4 — d) — both members on one side
 add(4, 'label', Point(5.5, -10.8, 0), text='d)')
+add(4, 'polygon', Polygon([(-38.4125, -16.7145, 0), (-37.5875, -15.2855, 0), (-31.5253, -18.7855, 0), (-32.3503, -20.2145, 0)]), color=Color.from_hex("#1a1eb2"))
+add(4, 'polygon', Polygon([(-37.5875, -16.7145, 0), (-38.4125, -15.2855, 0), (-32.3503, -11.7855, 0), (-31.5253, -13.2145, 0)]), color=Color.from_hex("#ce4095"))
 add(4, 'arrow', Line((11, -12, 0), (11, -21.375, 0)), color=Color.from_hex("#3f9c20"), width=0.205171, head=(0.663437, 0.284544))
 add(4, 'segment', Line((11, -21.375, 0), (2.88101, -16.6875, 0)), color=Color.from_hex("#1a1eb2"), width=0.236621)
 add(4, 'segment', Line((2.88101, -16.6875, 0), (11, -12, 0)), color=Color.from_hex("#ce4095"), width=0.236621)
@@ -97,6 +105,8 @@ add(4, 'label', Point(6.94051, -12.7438, 0), color=Color.from_hex("#ce4095"), te
 
 # step 5 — e) — no solution
 add(5, 'label', Point(22.5, -10.8, 0), text='e)')
+add(5, 'polygon', Polygon([(-22, -16.0001, 0), (-22, -15.9999, 0), (-15, -15.9999, 0), (-15, -16.0001, 0)]), color=Color.from_hex("#b9b9bd"))
+add(5, 'polygon', Polygon([(-22, -15.9999, 0), (-22, -16.0001, 0), (-29, -16.0001, 0), (-29, -15.9999, 0)]), color=Color.from_hex("#b9b9bd"))
 add(5, 'arrow', Line((28, -12, 0), (28, -21.375, 0)), color=Color.from_hex("#3f9c20"), width=0.205171, head=(0.663437, 0.284544))
 add(5, 'segment', Line((28, -21.375, 0), (33, -21.375, 0)), color=Color.from_hex("#b9b9bd"), width=0.236621)
 add(5, 'segment', Line((28, -12, 0), (23, -12, 0)), color=Color.from_hex("#b9b9bd"), width=0.236621)
@@ -105,6 +115,8 @@ add(5, 'polyline', Polyline([(28, -12, 0), (28, -21.375, 0)]), color=Color.from_
 
 # step 6 — f) — the same as d)
 add(6, 'label', Point(39.5, -10.8, 0), text='f)')
+add(6, 'polygon', Polygon([(-6.4125, -16.7145, 0), (-5.5875, -15.2855, 0), (0.474678, -18.7855, 0), (-0.350322, -20.2145, 0)]), color=Color.from_hex("#1a1eb2"))
+add(6, 'polygon', Polygon([(-5.5875, -16.7145, 0), (-6.4125, -15.2855, 0), (-0.350322, -11.7855, 0), (0.474678, -13.2145, 0)]), color=Color.from_hex("#ce4095"))
 add(6, 'arrow', Line((45, -12, 0), (45, -21.375, 0)), color=Color.from_hex("#3f9c20"), width=0.205171, head=(0.663437, 0.284544))
 add(6, 'segment', Line((45, -21.375, 0), (36.881, -16.6875, 0)), color=Color.from_hex("#1a1eb2"), width=0.236621)
 add(6, 'segment', Line((36.881, -16.6875, 0), (45, -12, 0)), color=Color.from_hex("#ce4095"), width=0.236621)

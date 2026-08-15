@@ -17,7 +17,7 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-2, -20.5, 0), text='Form Diagram')
+add(0, 'label', Point(-8, -20.5, 0), text='Form Diagram')
 add(0, 'label', Point(24, -20.5, 0), text='Force Diagram')
 add(0, 'label', Point(24, -22.1, 0), text='1 unit :: 5 kN')
 
@@ -61,10 +61,13 @@ add(3, 'label', Point(35.2844, 4.4, 0), color=Color.from_hex("#aaaaaa"), text='H
 add(4, 'segment', Line((40.5687, -9.55227, 0), (30, -7, 0)), color=Color.from_hex("#aaaaaa"), width=0.076723)
 
 # step 5 — The three cable forces
+add(5, 'polygon', Polygon([(-19.3166, 3.68294, 0), (-18.6834, 4.31706, 0), (-3.27543, -11.0669, 0), (-3.90857, -11.7011, 0)]), color=Color.from_hex("#ce4095"))
 add(5, 'segment', Line((30, 1, 0), (40.5687, -9.55227, 0)), color=Color.from_hex("#ce4095"), width=0.163814)
 add(5, 'label', Point(35.2844, -2.87614, 0), color=Color.from_hex("#ce4095"), text='74.7')
+add(5, 'polygon', Polygon([(-3.66857, -11.7011, 0), (-3.51543, -11.0669, 0), (5.61657, -13.2722, 0), (5.46343, -13.9064, 0)]), color=Color.from_hex("#ce4095"))
 add(5, 'segment', Line((30, -7, 0), (40.5687, -9.55227, 0)), color=Color.from_hex("#ce4095"), width=0.163814)
 add(5, 'label', Point(35.2844, -9.67614, 0), color=Color.from_hex("#ce4095"), text='54.4')
+add(5, 'polygon', Polygon([(5.70343, -13.9064, 0), (5.37657, -13.2722, 0), (19.1766, -6.15894, 0), (19.5034, -6.79306, 0)]), color=Color.from_hex("#ce4095"))
 add(5, 'segment', Line((30, -15, 0), (40.5687, -9.55227, 0)), color=Color.from_hex("#ce4095"), width=0.163814)
 add(5, 'label', Point(35.2844, -10.8761, 0), color=Color.from_hex("#ce4095"), text='59.5')
 

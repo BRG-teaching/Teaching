@@ -49,7 +49,7 @@ const CASES = [
 const CELL = [[-38, 5], [-22, 5], [-6, 5], [-38, -16], [-22, -16], [-6, -16]];
 const FCELL = [[11, 9], [28, 9], [45, 9], [11, -12], [28, -12], [45, -12]];
 
-const DEFAULTS = { F: 30, lbl: true, _k: 99 };
+const DEFAULTS = { F: 30, o1: true, sIF: 0.055, lbl: true, _k: 99 };
 
 const STEPS = [
   { t: 'The exercise', d: 'EX 1 task 4: six subsystems, each a single node with two members carrying F = 30 kN — close each force polygon and read off the two member forces' },
@@ -109,6 +109,10 @@ export function create(dw, panel, makePlayer) {
     dw.label(`fk${i}`, `${c.k})`, { cls: 'num', intro: st, flash: false });
     dw.dashLine(`lv${i}`, { intro: 1, color: PAL.grey, dash: dw.W.dash });
     // the two members, drawn in their resolved colour when the case is solved
+    dw.poly(`if${i}a`, 4, { intro: st, opacity: 1.0, z: -0.18, flash: false,
+      color: colN(i, 1), when: (x) => x.o1 });
+    dw.poly(`if${i}b`, 4, { intro: st, opacity: 1.0, z: -0.18, flash: false,
+      color: colN(i, 2), when: (x) => x.o1 });
     dw.seg(`m${i}a`, { intro: 1, w: W_BAR, color: colN(i, 1) });
     dw.seg(`m${i}b`, { intro: 1, w: W_BAR, color: colN(i, 2) });
     dw.arrow(`fl${i}`, { intro: 1, color: PAL.green, ...NARR });
@@ -151,6 +155,8 @@ export function create(dw, panel, makePlayer) {
       dw.setDashLine(`lv${i}`, [[n[0], n[1] + 8], [n[0], n[1] - 9]]);
       dw.setSeg(`m${i}a`, n, V.add(n, V.mul(x.u1, LEN)));
       dw.setSeg(`m${i}b`, n, V.add(n, V.mul(x.u2, LEN)));
+      dw.setPoly(`if${i}a`, V.rectPoints(n, V.add(n, V.mul(x.u1, LEN)), s.sIF * Math.abs(x.N1)));
+      dw.setPoly(`if${i}b`, V.rectPoints(n, V.add(n, V.mul(x.u2, LEN)), s.sIF * Math.abs(x.N2)));
       // the load: drawn hanging below the node, except f) where it comes from above
       const above = c.k === 'f';
       const tail = above ? [n[0], n[1] + LEN] : n;
@@ -191,6 +197,8 @@ export function create(dw, panel, makePlayer) {
   const player = makePlayer(STEPS, refresh);
   const par = panel.section('Given');
   panel.slider(par, s, 'F', 'F (kN)', 5, 60, 1, refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.12, 0.005, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
 
   refresh();

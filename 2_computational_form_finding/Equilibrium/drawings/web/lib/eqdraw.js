@@ -103,6 +103,7 @@ export class Drawing {
       dim: 0.00105 * fw,        // a dimension line
       dash: 0.00590 * fw,       // dash length of a guide
       disk: 0.00740 * fw,       // a joint marker
+      off: 0.01830 * fw,        // how far an offset vector chain steps aside
       arrow: { w: 0.00380 * fw, headLen: 0.01310 * fw, headW: 0.00506 * fw },
       narrow: { w: 0.00274 * fw, headLen: 0.00886 * fw, headW: 0.00380 * fw },
     };

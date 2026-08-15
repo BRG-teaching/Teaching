@@ -56,7 +56,7 @@ const SAG1 = pt(453.3, 467.0)[1];       // the drawn depth of the first node
 const LL = [30, 1];                     // top of the load line
 const STEEL = { S235: 235, S355: 355 }, GM = 1.05;
 
-const DEFAULTS = { F: 40, d1: 18, grade: 1, lbl: true, _k: 99 };
+const DEFAULTS = { F: 40, d1: 18, grade: 1, o1: true, sIF: 0.012, lbl: true, _k: 99 };
 
 const STEPS = [
   { t: 'The exercise', d: 'EX 2 task 2: a cable bridge whose shape is GIVEN — find the biggest cable force, then dimension the cable for it' },
@@ -132,6 +132,8 @@ export function create(dw, panel, makePlayer) {
     dw.dashLine(`tow${n}`, { intro: 1, color: PAL.grey, dash: dw.W.dash });
   }
   for (let i = 0; i < 3; i++) {
+    dw.poly(`if${i}`, 4, { intro: 5, opacity: 1.0, z: -0.18, flash: false,
+      color: { pending: PAL.grey, final: (dd) => CAB(i).final(dd) }, when: (st) => st.o1 });
     dw.seg(`cab${i}`, { intro: 1, w: dw.W.bar, color: CAB(i) });
     dw.seg(`ray${i}`, { intro: i === 1 ? 4 : 3, w: dw.W.ray, color: PAL.grey });
     dw.seg(`fc${i}`, { intro: 5, w: dw.W.bar, color: CAB(i) });
@@ -163,7 +165,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-2, -20.5]);
+    dw.setLabel('form_title', [-8, -20.5]);
     dw.setLabel('force_title', [24, -20.5]);
     dw.setLabel('force_sub', [24, -22.1]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
@@ -173,7 +175,10 @@ export function create(dw, panel, makePlayer) {
                                 [[DECK[1], DECK_Y], [DECK[1], DECK_Y - 1.1]]]);
     const nodes = [d.n1, d.n2];
     const pts = [A, d.n1, d.n2, B];
-    for (let i = 0; i < 3; i++) dw.setSeg(`cab${i}`, pts[i], pts[i + 1]);
+    for (let i = 0; i < 3; i++) {
+      dw.setSeg(`cab${i}`, pts[i], pts[i + 1]);
+      dw.setPoly(`if${i}`, V.rectPoints(pts[i], pts[i + 1], s.sIF * d.N[i]));
+    }
     dw.setDisk('anA', A); dw.setDisk('anB', B);
     dw.setLabel('lanA', V.add(A, [-1.7, 0.9]));
     dw.setLabel('lanB', V.add(B, [1.7, 0.9]));
@@ -217,6 +222,8 @@ export function create(dw, panel, makePlayer) {
   const player = makePlayer(STEPS, refresh);
   const par = panel.section('Given');
   panel.slider(par, s, 'F', 'F₁d = F₂d (kN)', 10, 100, 5, refresh);
+  panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.03, 0.001, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   const dim = panel.section('Dimensioning');
   panel.slider(dim, s, 'd1', 'cable diameter Ø (mm)', 8, 40, 1, refresh);
