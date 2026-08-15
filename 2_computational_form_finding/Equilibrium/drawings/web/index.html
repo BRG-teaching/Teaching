@@ -276,7 +276,8 @@
           const link = (u, t) => (u ? `<a href="${u}" target="_blank" rel="noopener">${t}</a>` : '');
           sec.innerHTML += `<p class="about"><b>${sh.code} · ${sh.title}</b><br>${v.task}</p>
             <p class="pylinks">${[link(sh.task_en, 'task (EN)'), link(sh.task_de, 'Aufgabe (DE)'),
-              link(sh.solution_en || sh.solution_de, 'official solution')].filter(Boolean).join(' · ')}</p>`;
+              link(sh.solution_en || sh.solution_de, 'official solution'),
+              link(sh.lecture, 'lecture ↗')].filter(Boolean).join(' · ')}</p>`;
         }
       }
 

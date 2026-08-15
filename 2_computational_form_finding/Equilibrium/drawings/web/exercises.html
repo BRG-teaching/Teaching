@@ -137,11 +137,11 @@
         <p class="meta">${sh.course}${sh.chapters && sh.chapters !== '—'
           ? ` · compendium ${sh.chapters}` : ''}</p>
         <p class="links">
-          ${link(sh.task_en, '↓ exercise sheet (EN)')}
-          ${link(sh.task_de, '↓ Aufgabenblatt (DE)')}
-          ${sol ? link(sol, '↓ official solution') : '<span class="none">no official solution in the archive</span>'}
-          ${link(sh.compendium, '↓ compendium')}
-          ${link(sh.lecture, '↓ lecture slides')}
+          ${link(sh.task_en, 'exercise sheet (EN)')}
+          ${link(sh.task_de, 'Aufgabenblatt (DE)')}
+          ${sol ? link(sol, 'official solution') : '<span class="none">no official solution in the archive</span>'}
+          ${link(sh.compendium, 'compendium')}
+          ${link(sh.lecture, 'lecture slides ↗')}
         </p>
         <div class="row"></div>`;
       const row = sec.querySelector('.row');
