@@ -247,6 +247,10 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('bhead', { intro: 5, color: PAL.green, ...NARR });
   dw.label('lbhead', '', { cls: 'num', intro: 5, color: PAL.green });
   dw.arrow('gwt', { intro: 6, color: PAL.green, ...NARR });
+  // the force arriving at the buttress head IS the aisle vault's thrust, so it
+  // must be parallel to the aisle's ray -- checked live by
+  // web/tools/regress/parallel.py
+  dw.link('bhead', 'rayA1', 'lbhead');
   dw.label('lgwt', 'G₁d', { cls: 'num', intro: 6, color: PAL.green, when: (st) => st.lbl });
   dw.strokes('bthrust', 2, { intro: 6, w: dw.W.bar, color: PAL.blue });
   dw.disk('bland', { intro: 6, r: dw.W.disk });

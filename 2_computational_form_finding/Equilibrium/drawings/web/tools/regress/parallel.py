@@ -47,6 +47,15 @@ VIEWS = ['1_1', '1_2', '1_3', '1_4', '1_5', '2_1', '2_2', '2_3', '3_1a',
 # _k is the step index, which the player owns
 SKIP_KEYS = {'_k', 'lbl', 'labels', 'show', 'sIF'}
 
+# Views with nothing to check, and why. Without this the run ends in a row of
+# "no link groups declared" lines that read like an oversight, and the next
+# person spends an afternoon establishing that they are not.
+NO_FORCE_DIAGRAM = {
+    '5_3': 'reactions only — the sheet asks for no force diagram',
+    '6_1': 'a determinacy count: no loads, no forces, nothing to pair',
+    '7_3': 'qualitative colouring of a force flow, no force diagram',
+}
+
 
 def ang(a, b):
     return math.degrees(math.atan2(b[1] - a[1], b[0] - a[0])) % 180.0
@@ -177,7 +186,11 @@ def run_live(views):
                         f"JSON.stringify(window.__set({json.dumps({list(patch)[0]: cur[list(patch)[0]]})}) ? 1 : 1)")
                     time.sleep(0.15)
             if not links:
-                print(f"ex{v:<6} — no dw.link() groups declared, nothing checked")
+                why = NO_FORCE_DIAGRAM.get(v)
+                print(f"ex{v:<6} — {why}" if why else
+                      f"ex{v:<6} — NO dw.link() GROUPS: this view has a force "
+                      f"diagram and declares no counterparts, so nothing about "
+                      f"it is being checked")
                 continue
             if not hits:
                 print(f"ex{v:<6} ok — {len(links)} groups × {len(probes)} states")

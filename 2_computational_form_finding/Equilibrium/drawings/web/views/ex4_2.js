@@ -192,6 +192,16 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('bres', { intro: 5, color: PAL.green, ...NARR });
   dw.label('lbres', '', { cls: 'num', intro: 5, flash: false, color: PAL.green });
 
+  // Declare the counterparts. Hovering one lights them all -- and
+  // web/tools/regress/parallel.py then insists in every state that each pair is
+  // actually drawn parallel, which is the whole claim a force diagram makes.
+  // B is the SUM of the two arches' legs, so its counterpart is the resultant
+  // `bres`, not either ray on its own; that pairing is what caught bres being
+  // drawn with its vertical component upside down.
+  dw.link('rayA', 'reA', 'lreA');
+  dw.link('rayC', 'reC', 'lreC');
+  dw.link('bres', 'reB', 'lreB', 'lbres');
+
   dw.instant('form_title', 'force_title', 'force_sub', 'ground');
   dw.ghostable('ff0', 'ff1');
 
