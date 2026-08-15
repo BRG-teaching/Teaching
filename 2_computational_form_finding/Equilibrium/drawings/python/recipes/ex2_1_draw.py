@@ -64,18 +64,18 @@ add(3, 'label', Point(17.3035, -9.25, 0), color=Color.from_hex("#ce4095"), text=
 
 # step 4 — a) The supports
 add(4, 'arrow', Line((-32, -2, 0), (-37.2805, 2.40249, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
-add(4, 'arrow', Line((19.5035, -9.25, 0), (27, -3, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
+add(4, 'arrow', Line((16.9035, -9.25, 0), (24.4, -3, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
 add(4, 'arrow', Line((-6.5, -2, 0), (-1.2195, 2.40249, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
-add(4, 'arrow', Line((27, -15.5, 0), (19.5035, -9.25, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
+add(4, 'arrow', Line((24.4, -15.5, 0), (16.9035, -9.25, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
 add(4, 'label', Point(23.2518, -1.4, 0), color=Color.from_hex("#3f9c20"), text='H = 60 kN')
 
 # step 5 — b) The same, with half the sag
 add(5, 'segment', Line((27, -39.5, 0), (11.9929, -33.25, 0)), color=Color.from_hex("#ce4095"), width=0.159264)
 add(5, 'segment', Line((11.9929, -33.25, 0), (27, -27, 0)), color=Color.from_hex("#ce4095"), width=0.159264)
 add(5, 'arrow', Line((-32, -26, 0), (-38.3466, -23.3568, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
-add(5, 'arrow', Line((11.9929, -33.25, 0), (27, -27, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
+add(5, 'arrow', Line((9.39294, -33.25, 0), (24.4, -27, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
 add(5, 'arrow', Line((-6.5, -26, 0), (-0.153404, -23.3568, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
-add(5, 'arrow', Line((27, -39.5, 0), (11.9929, -33.25, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
+add(5, 'arrow', Line((24.4, -39.5, 0), (9.39294, -33.25, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
 add(5, 'label', Point(19.4965, -25.4, 0), color=Color.from_hex("#3f9c20"), text='H = 120 kN')
 add(5, 'label', Point(9.79294, -33.25, 0), color=Color.from_hex("#ce4095"), text='130')
 

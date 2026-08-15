@@ -88,7 +88,8 @@ function compute(s) {
   const foot = [boxes[2].x0, boxes[2].x1];
   const stable = xbar >= foot[0] && xbar <= foot[1];
   const margin = stable ? 0 : Math.min(Math.abs(xbar - foot[0]), Math.abs(xbar - foot[1]));
-  return { boxes, cx, Fs, tot, xbar, L, o, A, S, foot, stable, margin, R: tot };
+  const off = [3.2, 0];        // the resultant sits BESIDE the load line
+  return { boxes, cx, Fs, tot, xbar, L, o, A, S, foot, stable, margin, R: tot, off };
 }
 
 export function create(dw, panel, makePlayer) {
@@ -192,8 +193,8 @@ export function create(dw, panel, makePlayer) {
     dw.setDashLine('Rline', [[d.xbar, GY + 15], [d.xbar, d.S[1] - 2]]);
     dw.setDashArrow('Rform', [d.xbar, GY + 12], [d.xbar, GY + 12 - d.R / SFD]);
     dw.setLabel('lRform', [d.xbar - 1.9, GY + 12 - d.R / SFD * 0.5]);
-    dw.setDashArrow('Rforce', d.L[0], d.L[3]);
-    dw.setLabel('lRforce', V.add(V.mid(d.L[0], d.L[3]), [-1.7, 0]));
+    dw.setDashArrow('Rforce', V.add(d.L[0], d.off), V.add(d.L[3], d.off));
+    dw.setLabel('lRforce', V.add(V.add(V.mid(d.L[0], d.L[3]), d.off), [1.7, 0]));
 
     dw.setSeg('foot', [d.foot[0], GY - 0.35], [d.foot[1], GY - 0.35]);
     dw.setLabel('lfoot', [(d.foot[0] + d.foot[1]) / 2, GY - 1.9]);

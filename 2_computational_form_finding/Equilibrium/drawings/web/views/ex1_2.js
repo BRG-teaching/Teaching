@@ -91,7 +91,10 @@ function compute(s) {
   const first = V.sub(L[0], o);                     // ray 0
   const last = V.sub(L[4], o);                      // ray 4
   const S = V.intersect(A[0], first, A[3], last) || A[0];
-  return { lines, L, o, A, S, Rv, R, ang, uR: V.unit(Rv), first, last };
+  // the resultant is drawn OFFSET beside the load line (house rule): on the
+  // load line itself it would cover the very load vectors it sums up
+  const off = V.mul(V.unit(V.perp(V.sub(L[4], L[0]))), -2.8);
+  return { lines, L, o, A, S, Rv, R, ang, uR: V.unit(Rv), first, last, off };
 }
 
 export function create(dw, panel, makePlayer) {
@@ -179,8 +182,8 @@ export function create(dw, panel, makePlayer) {
     const tail = V.sub(d.S, V.mul(d.uR, len * 0.3));
     dw.setDashArrow('Rform', tail, V.add(tail, V.mul(d.uR, len)));
     dw.setLabel('lRform', V.add(V.add(tail, V.mul(d.uR, len)), [1.4, -0.5]));
-    dw.setDashArrow('Rforce', d.L[0], d.L[4]);
-    dw.setLabel('lRforce', V.add(V.mid(d.L[0], d.L[4]), [-1.6, 0]));
+    dw.setDashArrow('Rforce', V.add(d.L[0], d.off), V.add(d.L[4], d.off));
+    dw.setLabel('lRforce', V.add(V.add(V.mid(d.L[0], d.L[4]), d.off), [-1.7, 0]));
 
     dw.setLabel('ro1', [0.5, -12.5]);
     dw.setText('ro1', `R = ${d.R.toFixed(1)} kN at ${d.ang.toFixed(1)}°`);

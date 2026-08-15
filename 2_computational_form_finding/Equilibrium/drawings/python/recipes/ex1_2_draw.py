@@ -74,9 +74,9 @@ add(6, 'label', Point(-8.08802, 6.83536, 0), text='S')
 
 # step 7 — The resultant — in both diagrams
 add(7, 'arrow', Line((-9.1535, 11.8201, 0), (-9.60191, -7.79581, 0)), color=Color.from_hex("#3f9c20"), width=0.176198, dash=0.52864, head=(0.528192, 0.204019))
-add(7, 'arrow', Line((17.5, 10.5, 0), (17.0516, -9.11596, 0)), color=Color.from_hex("#3f9c20"), width=0.176198, dash=0.52864, head=(0.528192, 0.204019))
+add(7, 'arrow', Line((14.7007, 10.564, 0), (14.2523, -9.05197, 0)), color=Color.from_hex("#3f9c20"), width=0.176198, dash=0.52864, head=(0.528192, 0.204019))
 add(7, 'label', Point(-8.20191, -8.29581, 0), color=Color.from_hex("#3f9c20"), text='R')
-add(7, 'label', Point(15.6758, 0.69202, 0), color=Color.from_hex("#3f9c20"), text='R')
+add(7, 'label', Point(12.7765, 0.75601, 0), color=Color.from_hex("#3f9c20"), text='R')
 
 # step 8 — The answer
 add(8, 'label', Point(0.5, -12.5, 0), color=Color.from_hex("#3f9c20"), text='R = 117.7 kN at 91.3°')

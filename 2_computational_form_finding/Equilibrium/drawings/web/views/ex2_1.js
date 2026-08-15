@@ -171,9 +171,12 @@ export function create(dw, panel, makePlayer) {
       const L = s.F / SFD * 0.55;          // load-symbol length, not the raw force
       dw.setArrow(`r${k}A`, x.A, V.add(x.A, V.mul(uA, L)));
       dw.setArrow(`r${k}B`, x.B, V.add(x.B, V.mul(uB, L)));
-      // in the force diagram they are the same two vectors, at the polygon ends
-      dw.setArrow(`fr${k}A`, x.Pm, x.P0);
-      dw.setArrow(`fr${k}B`, x.P1, x.Pm);
+      // in the force diagram they are the SAME two vectors — so draw them
+      // offset beside the polygon (house rule), otherwise they simply cover
+      // the cable forces and the student cannot tell the two apart
+      const ro = [-2.6, 0];
+      dw.setArrow(`fr${k}A`, V.add(x.Pm, ro), V.add(x.P0, ro));
+      dw.setArrow(`fr${k}B`, V.add(x.P1, ro), V.add(x.Pm, ro));
       dw.setLabel(`lH${k}`, [x.P0[0] - x.H / SFD / 2, x.P0[1] + 1.6]);
       dw.setText(`lH${k}`, `H = ${x.H.toFixed(0)} kN`);
     }
