@@ -37,15 +37,15 @@ add(2, 'arrow', Line((6.7686, 8, 0), (6.7686, -4, 0)), color=Color.from_hex("#3f
 add(2, 'label', Point(4, 2, 0), color=Color.from_hex("#3f9c20"), text='F_d')
 
 # step 3 — Now design: choose the sag
-add(3, 'polygon', Polygon([(-16.33, 0.104, 0), (-15.67, 0.896, 0), (-10.87, -3.104, 0), (-11.53, -3.896, 0)]), color=Color.from_hex("#ce4095"))
+add(3, 'polygon', Polygon([(-16.1412, 0.330607, 0), (-15.8588, 0.669393, 0), (-11.0588, -3.33061, 0), (-11.3412, -3.66939, 0)]), color=Color.from_hex("#f0bcdb"))
 add(3, 'segment', Line((-16, 0.5, 0), (-11.2, -3.5, 0)), color=Color.from_hex("#ce4095"), width=0.095558)
 add(3, 'segment', Line((13.2, 2, 0), (6, 8, 0)), color=Color.from_hex("#ce4095"), width=0.044755)
-add(3, 'label', Point(-11.9797, 0.444332, 0), color=Color.from_hex("#ce4095"), text='1')
+add(3, 'label', Point(-12.3574, -0.008882, 0), color=Color.from_hex("#ce4095"), text='1')
 add(3, 'label', Point(9.6, 6.1, 0), color=Color.from_hex("#ce4095"), text='1')
-add(3, 'polygon', Polygon([(-10.87, -3.896, 0), (-11.53, -3.104, 0), (-6.73, 0.896, 0), (-6.07, 0.104, 0)]), color=Color.from_hex("#ce4095"))
+add(3, 'polygon', Polygon([(-11.0588, -3.66939, 0), (-11.3412, -3.33061, 0), (-6.54116, 0.669393, 0), (-6.25884, 0.330607, 0)]), color=Color.from_hex("#f0bcdb"))
 add(3, 'segment', Line((-11.2, -3.5, 0), (-6.4, 0.5, 0)), color=Color.from_hex("#ce4095"), width=0.095558)
 add(3, 'segment', Line((13.2, 2, 0), (6, -4, 0)), color=Color.from_hex("#ce4095"), width=0.044755)
-add(3, 'label', Point(-7.17972, -3.44433, 0), color=Color.from_hex("#ce4095"), text='2')
+add(3, 'label', Point(-7.5574, -2.99112, 0), color=Color.from_hex("#ce4095"), text='2')
 add(3, 'label', Point(9.6, -2.1, 0), color=Color.from_hex("#ce4095"), text='2')
 add(3, 'point', Point(13.2, 2, 0), color=Color.from_hex("#ffffff"), width=0.24864)
 add(3, 'label', Point(14.7, 2.7, 0), text='o')
@@ -73,10 +73,10 @@ add(6, 'label', Point(-1.1, -9.2, 0), color=Color.from_hex("#aaaaaa"), text='nod
 add(6, 'label', Point(1.08076, -6.7673, 0), color=Color.from_hex("#ce4095"), text='1')
 add(6, 'label', Point(6.91924, -6.7673, 0), color=Color.from_hex("#ce4095"), text='2')
 add(6, 'label', Point(4, -13, 0), color=Color.from_hex("#3f9c20"), text='F_d')
-add(6, 'circle', Circle(2.13095, frame=Frame((-11.2, -3.5, 0), [1, 0, 0], [0, 1, 0])), color=Color.from_hex("#aaaaaa"), dash=0.2478)
+add(6, 'circle', Circle(1.541, frame=Frame((-11.2, -3.5, 0), [1, 0, 0], [0, 1, 0])), color=Color.from_hex("#aaaaaa"), dash=0.2478)
 
 # step 7 — What the shape costs
-add(7, 'label', Point(-15.7964, -4.13573, 0), color=Color.from_hex("#ce4095"), text='N = 93.7 kN')
+add(7, 'label', Point(-15.4188, -3.68252, 0), color=Color.from_hex("#ce4095"), text='N = 93.7 kN')
 
 
 if __name__ == "__main__":

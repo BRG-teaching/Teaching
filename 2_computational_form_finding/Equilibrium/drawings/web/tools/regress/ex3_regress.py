@@ -115,6 +115,29 @@ check("d) N from H and R/2 closes back", math.hypot(H3, R3 / 2), 5915.0, 0.5, "k
 check("e) double the load doubles the force", 2 * N3, 11830.0, 0.5, "kN")
 
 print("\nEX 3 Creative — asymmetric roof, S235 cable")
+# the solution prints N1 = 3000 and N2 = N_max = 3500. Those two numbers fix
+# the whole geometry: the segments share one thrust H and the vertical parts
+# must add up to R, so Av^2 - Bv^2 = 3000^2 - 3500^2 and Av + Bv = 2437.5
+N1_c, N2_c = 3000.0, 3500.0
+Av = (R3 + (N1_c ** 2 - N2_c ** 2) / R3) / 2
+Bv = R3 - Av
+Hc = math.sqrt(N1_c ** 2 - Av ** 2)
+check("Creative: A_v", Av, 552.08, 0.05, "kN")
+check("Creative: B_v", Bv, 1885.42, 0.05, "kN")
+check("Creative: H", Hc, 2948.8, 0.1, "kN")
+check("Creative: N2 closes", math.hypot(Hc, Bv), 3500.0, 0.05, "kN")
+check("Creative: vertical equilibrium", Av + Bv, R3, 1e-9, "kN")
+dHc = Hc and (R3 / 2 - Av) * span3 / Hc
+check("Creative: B stands above A by", dHc, 14.70, 0.02, "m")
+check("Creative: sag below the chord", sd_line * span3 ** 2 / (8 * Hc), 6.72, 0.01, "m")
+# the sheet's ANSWER TABLE says A = 3000, B = 3500; the sentence under it says
+# A = 3500. Only the table can be right -- a cable pulls along itself, so the
+# reaction at a support equals the force in the segment reaching it. With
+# A = 3500 the vertical components would sum to 2712 kN, not the 2437.5 there
+bad = math.sqrt(3500.0 ** 2 - Hc ** 2) + Bv
+print(f"         if A were 3500 kN the verticals would sum to {bad:.0f} kN, not {R3:.1f}")
+check("the table's A = N1, not 3500", N1_c, 3000.0, 1e-9, "kN")
+
 Nmax_c = 3500.0
 ftd = 223.8
 Areq = Nmax_c * 1000 / ftd

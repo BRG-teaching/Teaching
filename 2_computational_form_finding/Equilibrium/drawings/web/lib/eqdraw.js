@@ -35,6 +35,13 @@ export const PAL = {
   yellowLight: 0xf9e08a, // point fill while hover-highlighted
   grey: 0xaaaaaa,   // guides / construction lines
   zero: 0xb9b9bd,   // zero-force members ("asleep" -- neither blue nor pink)
+  // pale tints for the width-proportional force BANDS. The band shows how big
+  // a force is; the centre line shows where the member is. Painted the same
+  // colour the band swallows the line, so the tints sit behind and the full
+  // strength line stays readable on top of them.
+  redBand: 0xf0bcdb,
+  blueBand: 0xbdbfe8,
+  zeroBand: 0xe4e4e7,
   orange: 0xe07a26, // node-equilibrium inspector (the applets' mode-2 orange)
   black: 0x111111,
   white: 0xffffff,
@@ -50,6 +57,9 @@ const smooth = (f) => f * f * (3 - 2 * f);
 
 // z-layers inside the drawing plane
 const Z = { rect: -0.3, guide: -0.1, seg: 0.0, arrow: 0.15, disk: 0.3 };
+
+// one unit disc, shared by every round line cap in every drawing
+const CAP_GEO = new THREE.CircleGeometry(0.5, 14);
 
 const _v3 = new THREE.Vector3();
 const _plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
@@ -104,6 +114,9 @@ export class Drawing {
       dash: 0.00590 * fw,       // dash length of a guide
       disk: 0.00740 * fw,       // a joint marker
       off: 0.01830 * fw,        // how far an offset vector chain steps aside
+      band: 0.01050 * fw,       // half-width of the WIDEST force band: enough
+                                // to read a force off at a glance, not so much
+                                // that the drawing turns into sausages
       arrow: { w: 0.00380 * fw, headLen: 0.01310 * fw, headW: 0.00506 * fw },
       narrow: { w: 0.00274 * fw, headLen: 0.00886 * fw, headW: 0.00380 * fw },
     };
@@ -276,6 +289,11 @@ export class Drawing {
       e.mesh.position.set((p0[0] + q[0]) / 2, (p0[1] + q[1]) / 2, zE);
       e.mesh.rotation.z = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
       e.mesh.scale.set(l, wE, 1);
+      if (e.caps && e.caps.length) {
+        e.caps[0].position.set(p0[0], p0[1], zE);
+        e.caps[1].position.set(q[0], q[1], zE);
+        for (const c of e.caps) c.scale.set(wE, wE, 1);
+      }
     } else if (e.kind === 'arrow') {
       const { tail, tip } = e.geo;
       const tp = lerp2(tail, tip, Math.max(f, 0.02));
@@ -331,6 +349,11 @@ export class Drawing {
         m.position.set((a[0] + q[0]) / 2, (a[1] + q[1]) / 2, zE);
         m.rotation.z = Math.atan2(b[1] - a[1], b[0] - a[0]);
         m.scale.set(l, wE, 1);
+        if (e.caps) {
+          const c0 = e.caps[2 * i], c1 = e.caps[2 * i + 1];
+          if (c0) { c0.position.set(a[0], a[1], zE); c0.scale.set(wE, wE, 1); }
+          if (c1) { c1.position.set(q[0], q[1], zE); c1.scale.set(wE, wE, 1); }
+        }
       });
     } else if (e.kind === 'dline') {
       const pts = e.geo;
@@ -502,6 +525,14 @@ export class Drawing {
     }
   }
 
+  /** sIF for a view whose largest force is Nmax: the widest band then comes
+      out exactly W.band half-wide, whatever the view's frame or force scale.
+      Views should default their "scale internal forces" slider to this
+      instead of guessing a number that only suits one load case. */
+  bandScale(Nmax) {
+    return Nmax > 0 ? this.W.band / Nmax : 0;
+  }
+
   _register(name, entry) {
     entry.visible = entry.intro === 0 && !entry.when;
     for (const o of entry.objs || []) {
@@ -521,10 +552,15 @@ export class Drawing {
   }
 
   /** Thick segment drawn as a rotated unit quad; w is the width in world units. */
-  seg(name, { w = 0.4, z = Z.seg, intro = 0, outro, when, color = PAL.black, flash = true } = {}) {
+  seg(name, { w = 0.4, z = Z.seg, intro = 0, outro, when, color = PAL.black, flash = true,
+              cap = true } = {}) {
     const mat = this._mat(color);
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
-    return this._register(name, { kind: 'seg', objs: [mesh], mesh, mats: [mat], w, z, intro, outro, when, color, flash });
+    // round ends: a butt-ended quad reads as a chopped-off stick, and where
+    // two members meet at an angle it leaves a notch in the joint
+    const caps = cap ? [new THREE.Mesh(CAP_GEO, mat), new THREE.Mesh(CAP_GEO, mat)] : [];
+    return this._register(name, { kind: 'seg', objs: [mesh, ...caps], mesh, caps,
+                                  mats: [mat], w, z, intro, outro, when, color, flash });
   }
 
   setSeg(name, p0, p1) {
@@ -577,12 +613,15 @@ export class Drawing {
   }
 
   /** Group of thick strokes sharing one material (vector arrows, polylines). */
-  strokes(name, count, { w = 0.4, z = Z.seg, intro = 0, outro, when, color = PAL.black, flash = true } = {}) {
+  strokes(name, count, { w = 0.4, z = Z.seg, intro = 0, outro, when, color = PAL.black,
+                         flash = true, cap = true } = {}) {
     const mat = this._mat(color);
     const meshes = [];
     for (let i = 0; i < count; i++) meshes.push(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat));
-    return this._register(name, { kind: 'strokes', objs: meshes, meshes, mats: [mat],
-                                  w, z, intro, outro, when, color, flash });
+    const caps = [];
+    if (cap) for (let i = 0; i < count * 2; i++) caps.push(new THREE.Mesh(CAP_GEO, mat));
+    return this._register(name, { kind: 'strokes', objs: [...meshes, ...caps], meshes, caps,
+                                  mats: [mat], w, z, intro, outro, when, color, flash });
   }
 
   setStrokes(name, pairs) {

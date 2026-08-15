@@ -118,6 +118,9 @@ function compute(s) {
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
+  // one band width for every view: the largest force comes out W.band
+  // half-wide, so a force reads the same thickness whatever the frame
+  s.sIF = dw.bandScale(compute(s).Nmax);
   const ARR = dw.W.arrow, NARR = dw.W.narrow;
   // grey until the step that actually solves the cable, then tension pink
   const CAB = (i) => ({ pending: PAL.black,
@@ -137,7 +140,9 @@ export function create(dw, panel, makePlayer) {
   }
   for (let i = 0; i < 3; i++) {
     dw.poly(`if${i}`, 4, { intro: 5, opacity: 1.0, z: -0.18, flash: false,
-      color: { pending: PAL.grey, final: (dd, st) => CAB(i).final(dd, st) }, when: (st) => st.o1 });
+      color: { pending: PAL.zeroBand,
+        final: (dd, st) => (CAB(i).final(dd, st) === PAL.red ? PAL.redBand : PAL.zeroBand) },
+      when: (st) => st.o1 });
     dw.seg(`cab${i}`, { intro: 1, w: dw.W.bar, color: CAB(i) });
     dw.seg(`ray${i}`, { intro: i === 1 ? 4 : 3, w: dw.W.ray, color: PAL.grey });
     dw.seg(`fc${i}`, { intro: 5, w: dw.W.bar, color: CAB(i) });
@@ -231,7 +236,7 @@ export function create(dw, panel, makePlayer) {
   const par = panel.section('Given');
   panel.slider(par, s, 'F', 'F₁d = F₂d (kN)', 10, 100, 5, refresh);
   panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
-  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.03, 0.001, refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, s.sIF * 2.5, s.sIF / 20, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   const dim = panel.section('Dimensioning');
   panel.slider(dim, s, 'd1', 'cable diameter Ø (mm)', 8, 40, 1, refresh);

@@ -116,6 +116,9 @@ function compute(s) {
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
+  // one band width for every view: the largest force comes out W.band
+  // half-wide, so a force reads the same thickness whatever the frame
+  s.sIF = dw.bandScale(compute(s).Nmax);
   const ARR = dw.W.arrow, NARR = dw.W.narrow;
   const CAB = { pending: PAL.black, final: (dd, st) => (st._k >= SHAPED ? PAL.red : PAL.grey) };
 
@@ -146,7 +149,7 @@ export function create(dw, panel, makePlayer) {
 
   // the cable: one band per segment, so its width really does follow its force
   dw.poly('band', 2 * (NSEG + 1), { intro: SHAPED, opacity: 1.0, z: -0.18, flash: false,
-    color: { pending: PAL.grey, final: () => PAL.red }, when: (st) => st.o1 });
+    color: { pending: PAL.zeroBand, final: () => PAL.redBand }, when: (st) => st.o1 });
   dw.strokes('cable', NSEG, { intro: SHAPED, w: dw.W.bar, color: CAB });
   // the two end tangents and their rays — the same fact on both sides
   for (let i = 0; i < 2; i++) {
@@ -292,7 +295,7 @@ export function create(dw, panel, makePlayer) {
   const par = panel.section('Given');
   panel.slider(par, s, 'qd', 'q_d (kN/m)', 5, 40, 1, refresh);
   panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
-  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.03, 0.001, refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, s.sIF * 2.5, s.sIF / 20, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   const des = panel.section('Your design');
   panel.slider(des, s, 'f', 'sag f (m)', 0.8, 2.5, 0.05, refresh);

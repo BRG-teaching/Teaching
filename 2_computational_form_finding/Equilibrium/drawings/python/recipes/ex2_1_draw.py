@@ -58,9 +58,9 @@ add(2, 'label', Point(-17.55, -34.7475, 0), color=Color.from_hex("#3f9c20"), tex
 add(2, 'label', Point(28.8, -33.25, 0), color=Color.from_hex("#3f9c20"), text='F₁')
 
 # step 3 — a) Node I closes
-add(3, 'polygon', Polygon([(-32.275, -2.32985, 0), (-31.725, -1.67016, 0), (-18.975, -12.3002, 0), (-19.525, -12.9598, 0)]), color=Color.from_hex("#ce4095"))
+add(3, 'polygon', Polygon([(-32.1413, -2.16947, 0), (-31.8587, -1.83053, 0), (-19.1087, -12.4605, 0), (-19.3913, -12.7995, 0)]), color=Color.from_hex("#f0bcdb"))
 add(3, 'segment', Line((27, -15.5, 0), (19.5035, -9.25, 0)), color=Color.from_hex("#ce4095"), width=0.159264)
-add(3, 'polygon', Polygon([(-18.975, -12.9598, 0), (-19.525, -12.3002, 0), (-6.775, -1.67016, 0), (-6.225, -2.32985, 0)]), color=Color.from_hex("#ce4095"))
+add(3, 'polygon', Polygon([(-19.1087, -12.7995, 0), (-19.3913, -12.4605, 0), (-6.64129, -1.83053, 0), (-6.35871, -2.16947, 0)]), color=Color.from_hex("#f0bcdb"))
 add(3, 'segment', Line((19.5035, -9.25, 0), (27, -3, 0)), color=Color.from_hex("#ce4095"), width=0.159264)
 add(3, 'label', Point(17.3035, -9.25, 0), color=Color.from_hex("#ce4095"), text='78')
 
@@ -72,9 +72,9 @@ add(4, 'arrow', Line((20.7845, -9.25, 0), (28.281, -3, 0)), color=Color.from_hex
 add(4, 'label', Point(23.2518, -1.4, 0), color=Color.from_hex("#3f9c20"), text='H = 60 kN')
 
 # step 5 — b) The same, with half the sag
-add(5, 'polygon', Polygon([(-32.275, -26.6603, 0), (-31.725, -25.3397, 0), (-18.975, -30.6497, 0), (-19.525, -31.9703, 0)]), color=Color.from_hex("#ce4095"))
+add(5, 'polygon', Polygon([(-32.1413, -26.3393, 0), (-31.8587, -25.6607, 0), (-19.1087, -30.9707, 0), (-19.3913, -31.6493, 0)]), color=Color.from_hex("#f0bcdb"))
 add(5, 'segment', Line((27, -39.5, 0), (11.9929, -33.25, 0)), color=Color.from_hex("#ce4095"), width=0.159264)
-add(5, 'polygon', Polygon([(-18.975, -31.9703, 0), (-19.525, -30.6497, 0), (-6.775, -25.3397, 0), (-6.225, -26.6603, 0)]), color=Color.from_hex("#ce4095"))
+add(5, 'polygon', Polygon([(-19.1087, -31.6493, 0), (-19.3913, -30.9707, 0), (-6.64129, -25.6607, 0), (-6.35871, -26.3393, 0)]), color=Color.from_hex("#f0bcdb"))
 add(5, 'segment', Line((11.9929, -33.25, 0), (27, -27, 0)), color=Color.from_hex("#ce4095"), width=0.159264)
 add(5, 'arrow', Line((-32, -26, 0), (-38.3466, -23.3568, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))
 add(5, 'arrow', Line((26.5075, -40.6825, 0), (11.5004, -34.4325, 0)), color=Color.from_hex("#3f9c20"), width=0.138096, head=(0.446544, 0.19152))

@@ -83,6 +83,9 @@ function compute(s) {
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
+  // one band width for every view: the largest force comes out W.band
+  // half-wide, so a force reads the same thickness whatever the frame
+  s.sIF = dw.bandScale(Math.max(compute(s).a.N, compute(s).b.N));
   const ARR = dw.W.arrow, NARR = dw.W.narrow;
   const CST = { a: [3, 4], b: [5, 5] };        // [node step, support step]
 
@@ -96,7 +99,7 @@ export function create(dw, panel, makePlayer) {
     // the cable, drawn in tension colour once its node is solved
     for (const i of [1, 2]) {
       dw.poly(`if${k}${i}`, 4, { intro: ns, opacity: 1.0, z: -0.18, flash: false,
-        color: { pending: PAL.grey, final: () => PAL.red }, when: (st) => st.o1 });
+        color: { pending: PAL.zeroBand, final: () => PAL.redBand }, when: (st) => st.o1 });
       dw.seg(`m${k}${i}`, { intro: 1, w: dw.W.bar,
         color: { pending: PAL.black, final: (dd, st) => (st._k >= ns ? PAL.red : PAL.grey) } });
       dw.seg(`p${k}${i}`, { intro: ns, w: dw.W.bar,
@@ -211,7 +214,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(par, s, 'ha', 'sag of a)', 2, 18, 0.25, refresh);
   panel.slider(par, s, 'hb', 'sag of b)', 1, 18, 0.25, refresh);
   panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
-  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.03, 0.001, refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, s.sIF * 2.5, s.sIF / 20, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
 
   refresh();

@@ -92,9 +92,16 @@ function compute(s) {
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
+  // one band width for every view: the largest force comes out W.band
+  // half-wide, so a force reads the same thickness whatever the frame
+  s.sIF = dw.bandScale(Math.max(...compute(s).r.map((x) => Math.max(Math.abs(x.N1 || 0), Math.abs(x.N2 || 0)))));
   const W_BAR = dw.W.bar;
   const NARR = dw.W.narrow;
   const CASE_STEP = [2, 2, 3, 4, 5, 6];        // when each case is solved
+  const bandOf = (i, which) => ({ pending: PAL.zeroBand, final: (dd) => {
+    const c = colN(i, which).final(dd);
+    return c === PAL.blue ? PAL.blueBand : c === PAL.red ? PAL.redBand : PAL.zeroBand;
+  } });
   const colN = (i, which) => ({ pending: PAL.black, final: (dd) => {
     const x = dd.r[i];
     if (!x.ok) return PAL.zero;
@@ -112,9 +119,9 @@ export function create(dw, panel, makePlayer) {
     dw.dashLine(`lv${i}`, { intro: 1, color: PAL.grey, dash: dw.W.dash });
     // the two members, drawn in their resolved colour when the case is solved
     dw.poly(`if${i}a`, 4, { intro: st, opacity: 1.0, z: -0.18, flash: false,
-      color: colN(i, 1), when: (x) => x.o1 });
+      color: bandOf(i, 1), when: (x) => x.o1 });
     dw.poly(`if${i}b`, 4, { intro: st, opacity: 1.0, z: -0.18, flash: false,
-      color: colN(i, 2), when: (x) => x.o1 });
+      color: bandOf(i, 2), when: (x) => x.o1 });
     dw.seg(`m${i}a`, { intro: 1, w: W_BAR, color: colN(i, 1) });
     dw.seg(`m${i}b`, { intro: 1, w: W_BAR, color: colN(i, 2) });
     dw.arrow(`fl${i}`, { intro: 1, color: PAL.green, ...NARR });
@@ -200,7 +207,7 @@ export function create(dw, panel, makePlayer) {
   const par = panel.section('Given');
   panel.slider(par, s, 'F', 'F (kN)', 5, 60, 1, refresh);
   panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
-  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.12, 0.005, refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, s.sIF * 2.5, s.sIF / 20, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
 
   refresh();

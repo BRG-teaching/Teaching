@@ -105,6 +105,9 @@ function compute(s) {
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
+  // one band width for every view: the largest force comes out W.band
+  // half-wide, so a force reads the same thickness whatever the frame
+  s.sIF = dw.bandScale(Math.max(...compute(s).N));
   OFF = dw.W.off;
   const ARR = dw.W.arrow, NARR = dw.W.narrow;
 
@@ -158,7 +161,7 @@ export function create(dw, panel, makePlayer) {
   // the cable itself, paired with its rays
   for (let i = 0; i < 5; i++) {
     dw.poly(`if${i}`, 4, { intro: 8, opacity: 1.0, z: -0.18, flash: false,
-      color: { pending: PAL.grey, final: () => PAL.red }, when: (st) => st.o1 });
+      color: { pending: PAL.zeroBand, final: () => PAL.redBand }, when: (st) => st.o1 });
     dw.seg(`cab${i}`, { intro: 7, w: dw.W.bar, color: { pending: PAL.black, final: () => PAL.red } });
     dw.seg(`ray${i}`, { intro: 7, w: dw.W.ray, color: { pending: PAL.black, final: () => PAL.red } });
     dw.label(`ln${i}`, '', { cls: 'point', intro: 7, flash: false, color: PAL.red });
@@ -253,7 +256,7 @@ export function create(dw, panel, makePlayer) {
     panel.slider(par, s, k, lb, 5, 80, 5, refresh);
   }
   panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
-  panel.slider(par, s, 'sIF', 'scale internal forces', 0, 0.025, 0.001, refresh);
+  panel.slider(par, s, 'sIF', 'scale internal forces', 0, s.sIF * 2.5, s.sIF / 20, refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
   const des = panel.section('Your design');
   panel.slider(des, s, 'H', 'horizontal thrust H (kN)', 35, 160, 0.5, refresh);
