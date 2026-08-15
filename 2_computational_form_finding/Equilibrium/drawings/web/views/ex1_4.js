@@ -46,7 +46,10 @@ const CASES = [
   { k: 'f', a1: 330, a2: 30, note: 'the same as d), the load drawn above' },
 ];
 // where each case sits: form-diagram node, force-diagram polygon start
-const CELL = [[-38, 5], [-22, 5], [-6, 5], [-38, -16], [-22, -16], [-6, -16]];
+// The six cases in two rows. The top row is pulled down below y = 6, which is
+// where the caption card ends, and the bottom row stays above y = -25.8,
+// where the RESULT card begins (occlusion.py --cards reports both).
+const CELL = [[-38, -1], [-22, -1], [-6, -1], [-38, -19], [-22, -19], [-6, -19]];
 // 23-unit pitch: case c)'s N1 = 60 kN leg reaches 18.8 units back from
 // its own load line, so a 17-unit pitch laid it straight over case b)
 const FCELL = [[11, 9], [34, 9], [57, 9], [11, -12], [34, -12], [57, -12]];
@@ -152,16 +155,16 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-30, -28.5]);
-    dw.setLabel('force_title', [18, -28.5]);
-    dw.setLabel('force_sub', [18, -30.2]);
+    dw.setLabel('form_title', [-30, -24.2]);
+    dw.setLabel('force_title', [24, -28.5]);
+    dw.setLabel('force_sub', [24, -30.2]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
     CASES.forEach((c, i) => {
       const n = CELL[i], x = d.r[i];
-      dw.setLabel(`ck${i}`, [n[0] - 6.5, n[1] + 7.5]);
+      dw.setLabel(`ck${i}`, [n[0] - 6.5, n[1] + 6.2]);
       dw.setDisk(`nd${i}`, n);
-      dw.setDashLine(`lv${i}`, [[n[0], n[1] + 8], [n[0], n[1] - 9]]);
+      dw.setDashLine(`lv${i}`, [[n[0], n[1] + 6.8], [n[0], n[1] - 8]]);
       dw.setSeg(`m${i}a`, n, V.add(n, V.mul(x.u1, LEN)));
       dw.setSeg(`m${i}b`, n, V.add(n, V.mul(x.u2, LEN)));
       dw.setPoly(`if${i}a`, V.rectPoints(n, V.add(n, V.mul(x.u1, LEN)), s.sIF * Math.abs(x.N1)));

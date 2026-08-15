@@ -186,7 +186,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-2, -13.5]);
+    dw.setLabel('form_title', [-2, -11.0]);
 
     const c = [[ux(0), uy(0)], [ux(L), uy(0)], [ux(L), uy(DEP)], [ux(0), uy(DEP)]];
     dw.setPoly('beam', c);

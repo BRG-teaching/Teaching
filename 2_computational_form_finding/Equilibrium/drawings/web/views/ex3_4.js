@@ -45,6 +45,7 @@ export const meta = {
 
 const SPAN = 65;
 const MPU = 17 / SPAN;
+const QMAX = 3.6;                     // ceiling for the load bar (caption card)
 const AX = -19;
 const BX = AX + SPAN * MPU;
 const HL = 13.5;                      // m, the left wall — unchanged from task 3
@@ -227,13 +228,14 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lsupA', V.add(d.A, [-0.6, 1.1]));
     dw.setLabel('lsupB', V.add(d.B, [0.6, 1.1]));
 
-    const qy = Math.max(d.B[1], AYU) + 2.4;
+    // capped: above QMAX the bar disappears behind the caption card
+    const qy = Math.min(Math.max(d.B[1], AYU) + 2.4, QMAX);
     dw.setSeg('barq', [AX, qy], [BX, qy]);
     dw.setArrows('arrq', Array.from({ length: 14 }, (_, i) => {
       const x = AX + ((BX - AX) * i) / 13;
       return [[x, qy], [x, qy - 0.9]];
     }));
-    dw.setLabel('lq', [AX + 4.4, qy + 0.7]);
+    dw.setLabel('lq', [AX + 4.4, qy - 1.4]);
     dw.setText('lq', `s_d = ${SDL} kN/m`);
 
     const MXu = (AX + BX) / 2;

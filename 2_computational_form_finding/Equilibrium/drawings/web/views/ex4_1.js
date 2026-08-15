@@ -53,7 +53,7 @@ export const meta = {
 
 const SPAN = 6;                       // m, digitised
 const MPU = 3.0;                      // drawing units per metre
-const AX = -18, AY = -4;              // support A
+const AX = -18, AY = -6.5;            // support A, dropped clear of the caption
 const LX = [1.5, 3.0, 4.5];           // load axes, m from A
 const SFD = 10;                       // kN per drawing unit
 const LLX = 18, LLY = 6;              // top of the load line
@@ -241,7 +241,7 @@ export function create(dw, panel, makePlayer) {
       const node = d.P[i + 1];
       dw.setDashLine(`la${i}`, [[px, top + SYM + 1.4], [px, Math.min(node[1], AY) - 2.4]]);
       dw.setArrow(`f${i}`, [px, node[1] + SYM + 0.9], [px, node[1] + 0.5]);
-      dw.setLabel(`lf${i}`, [px + 2.0, node[1] + SYM * 1.05]);
+      dw.setLabel(`lf${i}`, [px + 3.0, node[1] + SYM * 0.75]);
       dw.setArrow(`ff${i}`, d.div[i], d.div[i + 1]);
       dw.setLabel(`lff${i}`, V.add(V.mid(d.div[i], d.div[i + 1]), [2.2 * ls, 0]));
     });

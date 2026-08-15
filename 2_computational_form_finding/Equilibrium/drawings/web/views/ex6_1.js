@@ -177,8 +177,8 @@ export function create(dw, panel, makePlayer) {
       });
       const c = d[k];
       const cx = ORG[k][0] + (WID[k] * MPU) / 2;
-      dw.setLabel(`tag${k}`, [ORG[k][0] - 1.4, ORG[k][1] + 6.2]);
-      dw.setLabel(`nm${k}`, [cx + 1.0, ORG[k][1] + 6.2]);
+      dw.setLabel(`tag${k}`, [ORG[k][0] - 1.4, ORG[k][1] + 5.0]);
+      dw.setLabel(`nm${k}`, [cx + 1.0, ORG[k][1] + 5.0]);
       // staggered, because three long lines side by side would collide
       dw.setLabel(`cnt${k}`, [cx, ORG[k][1] - (k === 1 ? 10.6 : 8.2)]);
       dw.setText(`cnt${k}`,

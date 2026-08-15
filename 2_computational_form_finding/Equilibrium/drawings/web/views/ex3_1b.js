@@ -42,7 +42,7 @@ const MPU = 1.6;
 const SFD = 10;
 const SPAN = 6;                       // m
 const SYM = 4.2;
-const AX = -16, AY = 2.0;
+const AX = -16, AY = -1.6;   // dropped clear of the caption card
 const BX = AX + SPAN * MPU;
 const SPU = BX - AX;                  // span in drawing units
 const MX = (AX + BX) / 2;
@@ -196,8 +196,8 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-16, -8.0]);
-    dw.setLabel('form_sub', [-16, -9.3]);
+    dw.setLabel('form_title', [-16, -5.6]);
+    dw.setLabel('form_sub', [-16, -6.9]);
     dw.setText('form_sub', 'arrows are symbols, not to scale');
     dw.setLabel('force_title', [1, 13.2]);
     dw.setLabel('force_sub', [9, 11.9]);

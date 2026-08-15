@@ -136,12 +136,26 @@
     position: absolute; top: 14px; left: 18px;
     /* an exercise view pins its task across the top; the card sits under it */
     width: max-content;
-    max-width: min(500px, calc(100% - 36px));
+    max-width: min(430px, calc(100% - 36px));
+    /* CAPPED, and scrollable past the cap. Every view composes its drawing
+       around this card, and a card whose height follows its text is a card
+       nobody can compose around: one long caption and the load arrows are
+       buried. 34% of the canvas is about eight lines, which is as much as
+       anyone reads in one glance anyway.
+       web/tools/regress/occlusion.py --live measures the real rectangle at
+       every step and will say so if this stops being true. */
+    max-height: 30%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 11px 15px 10px;
     background: rgba(255, 255, 255, 0.97);
     border: 1px solid #ececef; border-radius: 8px;
     box-shadow: 0 2px 14px rgba(20, 20, 30, 0.09);
-    pointer-events: none;
+    pointer-events: auto;                 /* so the overflow can be scrolled */
+  }
+  .eq-caption::-webkit-scrollbar { width: 6px; }
+  .eq-caption::-webkit-scrollbar-thumb {
+    background: #d4d4d8; border-radius: 3px;
   }
 
   /* ---- progress bar of the complete drawing (scrubbable) ------------ */

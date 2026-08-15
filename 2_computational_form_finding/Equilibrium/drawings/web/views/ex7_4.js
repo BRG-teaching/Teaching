@@ -202,7 +202,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [4, -19.0]);
+    dw.setLabel('form_title', [4, -15.4]);
     dw.setLabel('force_title', [19, -13.0]);
     dw.setLabel('force_sub', [19, -14.4]);
     dw.setText('force_sub', `1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 20 kN)`);

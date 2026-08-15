@@ -51,11 +51,15 @@ export const meta = {
 
 const TOT = 24;                       // m, the full width
 const MPU = 0.66;                     // drawing units per metre
-const AX = -19, SPR = -3;             // support A, and the springing level
+// SPR dropped so the line load along the top of the arches clears the caption
+const AX = -19, SPR = -6;             // support A, and the springing level
 const Q = 4;                          // kN/m, given
 const SFD = 7;                        // kN per drawing unit
 const LLX = 5, LLY = 7;               // top of the load line
 const NSEG = 20;
+// the line load rides just above the crown, not near the top of the canvas:
+// up there the caption card eats it (web/tools/regress/occlusion.py --live)
+const QY = -1.6;
 
 // the three situations: left span, right span, right rise, and whether the
 // left arch is the ANSWER rather than a given
@@ -221,17 +225,16 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`lsup${n}`, [x, SPR - 2.2]);
       dw.setStrokes(`hat${n}`, V.hatch([x - 1.8, SPR - 0.5], [x + 1.8, SPR - 0.5],
         -1, 0.95, 5));
-      dw.setDashLine(`drop${n}`, [[x, 4.2], [x, SPR - 1.4]]);
+      dw.setDashLine(`drop${n}`, [[x, QY + 0.8], [x, SPR - 1.4]]);
     }
     dw.setSeg('roll', [d.xB - 1.8, SPR - 1.3], [d.xB + 1.8, SPR - 1.3]);
 
-    const qy = 4.0;
-    dw.setSeg('qbar', [d.x0, qy], [d.xC, qy]);
+    dw.setSeg('qbar', [d.x0, QY], [d.xC, QY]);
     dw.setArrows('qarr', Array.from({ length: 25 }, (_, i) => {
       const x = d.x0 + ((d.xC - d.x0) * i) / 24;
-      return [[x, qy], [x, qy - 1.0]];
+      return [[x, QY], [x, QY - 1.0]];
     }));
-    dw.setLabel('lq', [d.x0 - 3.6, qy]);
+    dw.setLabel('lq', [d.x0 - 3.6, QY]);
     dw.setText('lq', `g_d = ${d.q} kN/m`);
 
     // the load line, split where the arches split

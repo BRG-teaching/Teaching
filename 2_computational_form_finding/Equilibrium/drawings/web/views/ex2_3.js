@@ -46,7 +46,7 @@ export const meta = {
 
 const SFD = 5;                          // kN per drawing unit
 const U = 0.12;                         // drawing units per PDF point
-const O = [-19, 4];
+const O = [-19, -0.6];   // dropped clear of the caption card
 const pt = (x, y) => [O[0] + (x - 324.9) * U, O[1] - (y - 338.8) * U];
 const A0 = pt(324.9, 338.8);            // task 2's left anchor
 const B0 = pt(644.4, 426.1);            // task 2's right anchor
@@ -244,7 +244,7 @@ export function create(dw, panel, makePlayer) {
     const LEN = 4.2;
     dw.setArrow('reA', d.A, V.add(d.A, V.mul(uA, LEN)));
     dw.setArrow('reB', d.B, V.add(d.B, V.mul(uB, LEN)));
-    dw.setLabel('lreA', V.add(V.add(d.A, V.mul(uA, LEN)), [-2.6, 0.8]));
+    dw.setLabel('lreA', V.add(V.add(d.A, V.mul(uA, LEN)), [-2.6, -1.6]));
     dw.setLabel('lreB', V.add(V.add(d.B, V.mul(uB, LEN)), [2.6, 0.8]));
     dw.setText('lreA', `A = ${d.NA.toFixed(1)}`);
     dw.setText('lreB', `B = ${d.NB.toFixed(1)}`);

@@ -57,7 +57,7 @@ const view = makeTrussView({
   supports: { 0: 'pin', 4: 'roller-v' },
   loads: { 6: [0, -30], 7: [0, -30], 8: [0, -30] },
   MPU: 2.0,
-  ORG: [-24, -8],
+  ORG: [-24, -12],                 // dropped clear of the caption card
   cells,
   SFD: 14,
   frame: [[-27, -31], [30, 18]],

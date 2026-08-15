@@ -188,7 +188,7 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-2, -14.4]);
+    dw.setLabel('form_title', [-2, -8.9]);
 
     dw.setSeg('axis', [ux(-1.2), uy(0)], [ux(d.far + 1.2), uy(0)]);
     const A = [ux(0), uy(0)], B = [ux(SPAN), uy(0)];

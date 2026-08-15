@@ -72,7 +72,9 @@ export const meta = {
 };
 
 const MPU = 2.6;                      // drawing units per metre (1:50 sheet)
-const OX = -11, GY = -4.0;            // where metre-zero and the ground sit
+// dropped and shifted right so the top box and its load arrows clear the
+// caption card, which owns the top-left of the canvas
+const OX = -8.5, GY = -7.0;           // where metre-zero and the ground sit
 const SFD = 16;                       // kN per drawing unit
 const LLX = 4, LLY = 6;               // top of the load line
 const SYM = 3.2;                      // constant arrow symbol length

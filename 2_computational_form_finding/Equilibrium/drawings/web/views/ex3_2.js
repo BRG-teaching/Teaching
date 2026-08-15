@@ -179,7 +179,7 @@ export function create(dw, panel, makePlayer) {
     s._k = player.k;
     d = compute(s);
     dw.setLabel('form_title', [10, 20.0]);
-    dw.setLabel('force_title', [7, -33.5]);
+    dw.setLabel('force_title', [7, -29.5]);
     dw.setLabel('force_sub', [7, -35.1]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
@@ -236,7 +236,7 @@ export function create(dw, panel, makePlayer) {
     const LEN = d.tot / SFD * 0.42;
     dw.setArrow('rA', A, V.add(A, V.mul(uA, LEN)));
     dw.setArrow('rB', B, V.add(B, V.mul(uB, LEN)));
-    dw.setLabel('lrA', V.add(V.add(A, V.mul(uA, LEN)), [-1.4, 0.8]));
+    dw.setLabel('lrA', V.add(V.add(A, V.mul(uA, LEN)), [-1.4, -1.8]));
     dw.setLabel('lrB', V.add(V.add(B, V.mul(uB, LEN)), [1.4, 0.8]));
     dw.setArrow('frA', d.o, d.div[0]);
     dw.setArrow('frB', d.div[4], d.o);
