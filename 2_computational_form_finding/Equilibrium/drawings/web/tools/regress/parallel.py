@@ -111,25 +111,28 @@ def from_ops(path):
 
 # pulled straight out of the live drawing rather than out of the ops file, so
 # that a state the exporter never visits is still measured
+# The RAW export keys its operations by `op` (segment / arrow / polyline), not
+# by the `kind` the ops database uses. Pulled from the live drawing rather than
+# from the ops file so that a state the exporter never visits is still measured.
+LIVE_OPS = ('segment', 'arrow', 'polyline', 'polygon')
+
 PROBE = """(() => {
-  const raw = JSON.parse(window.__exportOps());
+  const raw = window.__exportOps();
   const LIN = %s;
   const dirs = {};
   for (const o of raw.ops) {
-    if (!LIN.includes(o.kind)) continue;
-    const p = o.p || (o.c ? [o.c] : null);
-    if (!p || p.length < 2) continue;
+    if (!LIN.includes(o.op) || !o.p || o.p.length < 2) continue;
     let best = null, bl = 0;
-    for (let i = 0; i < p.length - 1; i++) {
-      const L = Math.hypot(p[i+1][0]-p[i][0], p[i+1][1]-p[i][1]);
-      if (L > bl) { bl = L; best = [p[i], p[i+1]]; }
+    for (let i = 0; i < o.p.length - 1; i++) {
+      const L = Math.hypot(o.p[i+1][0]-o.p[i][0], o.p[i+1][1]-o.p[i][1]);
+      if (L > bl) { bl = L; best = [o.p[i], o.p[i+1]]; }
     }
     const nm = o.name.split('[')[0];
     if (best && !(nm in dirs)) dirs[nm] = [best, bl];
   }
   return JSON.stringify({links: raw.links || [], dirs,
     fw: raw.frame[1][0] - raw.frame[0][0]});
-})()""" % json.dumps(list(LINEAR))
+})()""" % json.dumps(list(LIVE_OPS))
 
 
 def live_dirs(chrome):

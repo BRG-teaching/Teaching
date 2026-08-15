@@ -41,14 +41,20 @@ export const meta = {
                   d.tied ? `the supports take NO horizontal force — the ${d.arch ? 'tie' : 'strut'} inside carries ${d.H.toFixed(1)} kN`
                          : `each support also takes ${d.H.toFixed(1)} kN horizontally → reaction ${d.N.toFixed(1)} kN`,
                   `${d.arch ? 'arch' : 'cable'} members: ${d.N.toFixed(1)} kN ${d.arch ? 'compression' : 'tension'}`],
-  frame: [[-22, -17], [22, 19]],
+  frame: [[-24, -17], [26, 19]],
 };
 
 const SPAN = 7;                       // m, digitised
 const MPU = 1.9;
 const AX = -19, AY = 0;
 const SFD = 6;                        // kN per drawing unit
-const LLX = 5, LLY = 6;
+// The load line sits in the middle of the force-diagram area because the pole
+// swings to the FAR SIDE of it from the loads -- left for the arch, right for
+// the inverted cable. That is the only side on which the rays come out
+// parallel to the members instead of mirrored; putting it on the near side
+// mirrors the whole force diagram while leaving it looking perfectly normal.
+// web/tools/regress/parallel.py --live enforces both cases.
+const LLX = 12, LLY = 6;
 const SYM = 3.2;
 const NSEG = 20;
 
@@ -124,7 +130,7 @@ function compute(s) {
   const Nat = (u) => (S.udl ? Math.hypot(H, tot * (0.5 - u)) : N);
   // force diagram
   const T = [LLX, LLY], Bo = [LLX, LLY - tot / SFD];
-  const o = [LLX + H / SFD, LLY - Va / SFD];
+  const o = [LLX - sgn * H / SFD, LLY - Va / SFD];
   return { ...S, tot, Va, H, N, ang, pts, Nat, A, B, T, Bo, o, arch: s.arch, f: s.f };
 }
 
@@ -202,9 +208,10 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [2, -14.4]);
-    dw.setLabel('force_title', [7, -12.4]);
-    dw.setLabel('force_sub', [7, -13.8]);
+    // each title under its own diagram, clear of the caption and RESULT cards
+    dw.setLabel('form_title', [-12.35, -9.5]);
+    dw.setLabel('force_title', [12, -9.5]);
+    dw.setLabel('force_sub', [12, -11.0]);
     dw.setText('force_sub', `to scale · 1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 10 kN)`);
 
     dw.setDisk('supA', d.A); dw.setDisk('supB', d.B);
@@ -272,8 +279,12 @@ export function create(dw, panel, makePlayer) {
     dw.setSeg('tieF', [d.o[0], d.o[1]], [LLX, d.o[1]]);
 
     // the reactions
-    const uA = d.tied ? [0, 1] : V.unit([-d.H, d.Va]);
-    const uB = d.tied ? [0, 1] : V.unit([d.H, d.Va]);
+    // An arch PUSHES its abutments apart, so the support pushes back INWARD:
+    // up-and-right at A, up-and-left at B. A cable pulls them together, so its
+    // reactions lean the other way. Both were reversed here.
+    const sg = d.arch ? 1 : -1;
+    const uA = d.tied ? [0, 1] : V.unit([sg * d.H, d.Va]);
+    const uB = d.tied ? [0, 1] : V.unit([-sg * d.H, d.Va]);
     dw.setArrow('reA', V.sub(d.A, V.mul(uA, SYM)), d.A);
     dw.setArrow('reB', V.sub(d.B, V.mul(uB, SYM)), d.B);
     dw.setLabel('lreA', V.add(V.sub(d.A, V.mul(uA, SYM)), [-2.6, -0.4]));
