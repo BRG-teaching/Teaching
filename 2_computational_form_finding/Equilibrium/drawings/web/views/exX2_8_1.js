@@ -261,9 +261,11 @@ export function create(dw, panel, makePlayer) {
     }
     // the load, on its own line of action
     const ldTop = ux([XM, TOP]);
-    dw.setArrow('fF', V.add(ldTop, [0, 6.0]), V.add(ldTop, [0, 0.5]));
-    dw.setLabel('lfF', V.add(ldTop, [2.6, 4.4]));
-    dw.setDashLine('laF', [V.add(ldTop, [0, 6.4]), ux([XM, -1.4])]);
+    // 3.1 units, not 6: a longer load arrow — and its F label — climb into the
+    // step-caption card, whose lowest edge is y = 2.06
+    dw.setArrow('fF', V.add(ldTop, [0, 3.1]), V.add(ldTop, [0, 0.5]));
+    dw.setLabel('lfF', V.add(ldTop, [2.4, 2.1]));
+    dw.setDashLine('laF', [V.add(ldTop, [0, 3.5]), ux([XM, -1.4])]);
 
     // the reaction rays, clamped so a steep case stays on the drawing
     const t = Math.tan((d.th * Math.PI) / 180);

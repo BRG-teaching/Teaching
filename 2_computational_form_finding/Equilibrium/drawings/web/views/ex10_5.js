@@ -132,7 +132,10 @@ const MP = SC.plan, ME = SC.elev, SF = SC.force;
 const SA = 0.040;                              // plan arrows are symbols, m per kN
 const SEU = 0.080;                             // elevation arrows, units per kN
 
-const PO = [-38, -4];
+// the plan is the only thing in the left column, and the two UI cards pin it:
+// the step caption reaches down to y ≈ 6.2 and the RESULT card up to
+// y ≈ -13.2, so the slab sits low and its title/dimension margins are tight
+const PO = [-38, -7.8];
 const EO = [[0, -14], [15, -14], [30, -14]];
 const GO = [20, -2];                           // the global force polygon
 const NO = [[10, 20], [4, 2]];                 // the two entry-node polygons
@@ -155,17 +158,18 @@ export const meta = {
   subtitle: 'Structural Design II · sheet EX 10 “Bracing & Horizontal Forces”, task 5 a)–c)',
   about: 'The last task hands over a bare 16 by 12 metre slab with a 100 kN push on it and says: put three walls in, 2.8 metres high, so that it is braced. There is no single right answer, so this view recommends one and works it completely — two walls along opposite edges to take the push and share the twist, one up the right-hand edge to take anything across. With the first force alone that third wall carries exactly nothing, because the two others already line their resultant up with the load. Then a second 100 kN arrives from a different direction and the third wall earns its keep. The panel also offers the layout students reach for first, which is braced and still a worse design: one of its walls ends up carrying 38 % more than the whole applied load.',
   result: (d) => [
-    `layout: ${d.lay.n} — A ${d.walls[0].a.map((v) => v.toFixed(2)).join(',')} → ${d.walls[0].b.map((v) => v.toFixed(2)).join(',')} · B top right · C right edge`,
-    `${d.f2 ? 'c) F1 + F2' : 'a) F1 alone'}: A = ${Math.abs(d.A).toFixed(4)} kN · B = ${Math.abs(d.B).toFixed(4)} kN · C = ${Math.abs(d.C).toFixed(4)} kN`,
-    `at 1 cm ≙ 10 kN: A ${(Math.abs(d.A) / 10).toFixed(3)} cm · B ${(Math.abs(d.B) / 10).toFixed(3)} cm · C ${(Math.abs(d.C) / 10).toFixed(3)} cm · F1 ${(d.F1 / 10).toFixed(3)} cm${d.f2 ? ` · F2 ${(d.F2 / 10).toFixed(3)} cm` : ''}`,
+    `layout ${d.lay.n}: A ${d.walls[0].a.map((v) => v.toFixed(2)).join(',')}→${d.walls[0].b.map((v) => v.toFixed(2)).join(',')}, B top right, C right edge`,
+    `${d.f2 ? 'c) F1 + F2' : 'a) F1 alone'}: A = ${Math.abs(d.A).toFixed(4)} · B = ${Math.abs(d.B).toFixed(4)} · C = ${Math.abs(d.C).toFixed(4)} kN`,
+    `at 1 cm ≙ 10 kN: A ${(Math.abs(d.A) / 10).toFixed(3)} · B ${(Math.abs(d.B) / 10).toFixed(3)} · C ${(Math.abs(d.C) / 10).toFixed(3)} · F1 ${(d.F1 / 10).toFixed(3)}${d.f2 ? ` · F2 ${(d.F2 / 10).toFixed(3)}` : ''} cm`,
     d.f2
-      ? `applied resultant ${d.Rmag.toFixed(2)} kN at ${d.Rang.toFixed(1)}°, moment about the origin ${d.Rmom.toFixed(1)} kNm (line x·F2 − y·F1 = M); the walls deliver exactly minus that on the same line`
-      : `the two x-walls put their resultant on y = ${d.yR === null ? '—' : d.yR.toFixed(3)} m — F1's own line, so there is no torsion left for C and C = 0`,
-    `flow: struts ${d.struts.map((t) => Math.abs(t).toFixed(2)).join(' / ')} kN into the two axis crossings P₁ ${d.pts[0] ? `(${d.pts[0][0].toFixed(2)}, ${d.pts[0][1].toFixed(2)})` : ''} and P₂ ${d.pts[1] ? `(${d.pts[1][0].toFixed(2)}, ${d.pts[1][1].toFixed(2)})` : ''}`,
-    `b) walls ${HWALL.toFixed(2)} m high, span ${d.span.toFixed(2)} m: ` + d.ev.map((w) => `${w.k} → H ${Math.abs(w.H).toFixed(2)}, V ±${w.V.toFixed(2)}`).join(' · ') + ' kN',
-    d.alt ? `WARNING: this layout puts ${Math.max(Math.abs(d.A), Math.abs(d.B), Math.abs(d.C)).toFixed(2)} kN into one wall — more than either applied force`
+      ? `resultant ${d.Rmag.toFixed(2)} kN at ${d.Rang.toFixed(1)}°, M ${d.Rmom.toFixed(1)} kNm about O — the walls undo exactly that`
+      : `both x-walls put their resultant on F1's own line y = ${d.yR === null ? '—' : d.yR.toFixed(3)} m ⇒ C = 0`,
+    `struts ${d.struts.map((t) => Math.abs(t).toFixed(2)).join('/')} kN into P₁ ${d.pts[0] ? `${d.pts[0][0].toFixed(2)},${d.pts[0][1].toFixed(2)}` : ''} and P₂ ${d.pts[1] ? `${d.pts[1][0].toFixed(2)},${d.pts[1][1].toFixed(2)}` : ''}`,
+    `b) walls ${HWALL.toFixed(2)} m high, span ${d.span.toFixed(2)} m — base H and V, wall by wall:`,
+    d.ev.map((w) => `${w.k} → ${Math.abs(w.H).toFixed(2)}, ±${w.V.toFixed(2)}`).join(' · ') + ' kN',
+    d.alt ? `WARNING: ${Math.max(Math.abs(d.A), Math.abs(d.B), Math.abs(d.C)).toFixed(2)} kN into one wall — more than either applied force`
           : `worst wall ${Math.max(Math.abs(d.A), Math.abs(d.B), Math.abs(d.C)).toFixed(2)} kN; the task-3 layout would reach ${d.altWorst.toFixed(2)} kN`],
-  frame: [[-40, -26], [42, 26]],
+  frame: [[-42, -26], [44, 26]],
 };
 
 const STEPS = [
@@ -436,7 +440,7 @@ export function create(dw, panel, makePlayer) {
     s._k = player.k;
     d = compute(s);
 
-    dw.setLabel('tPlan', px([2.0, 13.6]));
+    dw.setLabel('tPlan', px([2.0, 12.8]));
     dw.setLabel('tForce', [GO[0] - 7, GO[1]]);
     dw.setLabel('tElev', [EO[0][0] + WLEN * ME / 2 + 7, EO[1][1] + HWALL * ME + 2.8]);
 
@@ -447,7 +451,7 @@ export function create(dw, panel, makePlayer) {
       ['16', [LX, 0], [0, 0], 4.0, `${LX.toFixed(2)} m`],
       ['12', [0, LY], [0, 0], 1.6, `${LY.toFixed(2)} m`]]) {
       dw.setStrokes(`dim${n}`, P.dimStrokes(a, b, off, 0.34).map(([p, q]) => [px(p), px(q)]));
-      dw.setLabel(`ldim${n}`, px(P.dimLabel(a, b, off, 0.8)));
+      dw.setLabel(`ldim${n}`, px(P.dimLabel(a, b, off, 0.6)));
       dw.setText(`ldim${n}`, txt);
     }
     const l1 = P.lineOfAction([0, d.yF1], [1, 0], box, 2.4);
@@ -483,7 +487,7 @@ export function create(dw, panel, makePlayer) {
     });
     d.pts.forEach((p, i) => {
       dw.setDisk(`P${i + 1}`, px(p));
-      dw.setLabel(`lP${i + 1}`, px(V.add(p, i ? [-1.8, 1.5] : [1.7, -1.3])));
+      dw.setLabel(`lP${i + 1}`, px(V.add(p, i ? [-3.6, 1.1] : [1.7, -1.3])));
     });
 
     // --- the flow

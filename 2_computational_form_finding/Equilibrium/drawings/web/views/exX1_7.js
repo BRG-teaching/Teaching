@@ -427,7 +427,9 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lm6', V.add(V.mid(pIII, pD), [-0.1, 0.65]));
 
     dw.setDisk('pII', pII); dw.setDisk('pIII', pIII);
-    dw.setLabel('lII', V.add(pII, [-0.75, 0.55]));
+    // below and right of the pylon top, not above it: above puts the label
+    // inside the step-caption card, whose lowest edge is y = 5.15
+    dw.setLabel('lII', V.add(pII, [1.0, -1.0]));
     dw.setLabel('lIII', V.add(pIII, [0.75, 0.55]));
     for (const [n, p] of [['A', pA], ['B', pFL], ['C', pFR], ['D', pD]]) {
       dw.setDisk(`s${n}`, p);

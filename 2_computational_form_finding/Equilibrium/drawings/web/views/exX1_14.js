@@ -106,8 +106,12 @@ import * as V from '../lib/vec.js';
 const XF1 = 1.00, XF2 = 2.50, XB = 6.00, XF3 = 7.50;   // metres, from A
 
 // ------------------------------------------------------------------ layout --
-const MPU = 2.8;                      // drawing units per metre (form diagram)
-const ORG = [-25.5, -5.6];            // support level of the form diagram
+// the form diagram lives in the band between the two UI cards: the step
+// caption's lowest edge is y = 1.53 and the RESULT card's top is y = -12.64,
+// so MPU and ORG are set to drop the load arrows clear of the caption while
+// the form title still clears the RESULT card
+const MPU = 2.45;                     // drawing units per metre (form diagram)
+const ORG = [-25.5, -7.35];           // support level of the form diagram
 const SFD = 4.5;                      // kN per drawing unit (force diagram)
 const KORG = [13.5, 10.5];            // q0, the top of the load line
 const KOFF = 0.62;                    // reactions on their own offset line
@@ -319,11 +323,12 @@ export const meta = {
   subtitle: 'Structural Design I · sheet EX X “Additional Exercises”, page 14 (tasks 14.1 a, b and 14.2)',
   about: 'Two arch-cable structures on the same pair of supports: one for two loads inside the span, one for a single load hanging past the right-hand support. Each is a design, not an analysis — the only thing you choose is how hard the structure pushes sideways, and that one number draws the whole shape. Then task 14.2 lays the two forms on top of each other and asks for the combination. Because equilibrium is linear, no new work is needed: the reactions add, every member keeps the force it already had, and the force diagram of the combination is literally the two force diagrams on one shared load line. Only the member between the two supports is shared by both, and it carries the DIFFERENCE of the two thrusts — a tie in a), a strut in b), and whichever wins in the combination. The sheet prints no numbers; everything here is derived and then checked against the drawn key, which it matches everywhere.',
   result: (d) => [
-    `a) A = ${d.Aa.toFixed(2)} kN ↑ · B = ${d.Ba.toFixed(2)} kN ↑ · at H_a = ${d.Ha.toFixed(2)} kN: 1 = ${Math.hypot(d.Ha, d.Aa).toFixed(2)} C · 2 = ${Math.hypot(d.Ha, d.Aa - d.F1).toFixed(2)} C · tie 3 = ${d.Ha.toFixed(2)} T · 4 = ${Math.hypot(d.Ha, d.Aa - d.F1 - d.F2).toFixed(2)} C  (rise y_I ${d.yI.toFixed(3)} / y_II ${d.yII.toFixed(3)} m)`,
-    `b) A = ${Math.abs(d.Ab).toFixed(2)} kN ↓ · B = ${d.Bb.toFixed(2)} kN ↑ · at H_b = ${d.Hb.toFixed(2)} kN: 1 = ${Math.hypot(d.Hb, -d.Ab).toFixed(2)} T · 2 = ${Math.hypot(d.Hb, d.Bb).toFixed(2)} C · strut 3 = ${d.Hb.toFixed(2)} C  (tip y_T ${d.yT.toFixed(3)} m)`,
-    `14.2 A = ${d.Atot.toFixed(2)} kN ↑ · B = ${d.Btot.toFixed(2)} kN ↑, both vertical · 1 = ${Math.hypot(d.Ha, d.Aa).toFixed(2)} C · 2 = ${Math.hypot(d.Ha, d.Aa - d.F1).toFixed(2)} C · 3 = ${Math.hypot(d.Ha, d.Aa - d.F1 - d.F2).toFixed(2)} C · 4 = ${Math.hypot(d.Hb, -d.Ab).toFixed(2)} T · 6 = ${Math.hypot(d.Hb, d.Bb).toFixed(2)} C`,
-    `14.2 the shared member 5 = H_a − H_b = ${d.Ha.toFixed(2)} − ${d.Hb.toFixed(2)} = ${Math.abs(d.N5).toFixed(2)} kN ${d.N5 >= 0 ? 'tension' : 'compression'} — the only force the superposition changes`,
-    `the sheet prints no numbers; the key’s own drawing (H_a = 36.92, H_b = 23.08 kN) agrees with all of the above — no error found on page 14`],
+    // kept to four lines: the RESULT card is as tall as its text, and the form
+    // diagram has to fit between it and the step caption
+    `a) H_a = ${d.Ha.toFixed(2)} kN → A ${d.Aa.toFixed(2)} ↑ · B ${d.Ba.toFixed(2)} ↑ · 1 = ${Math.hypot(d.Ha, d.Aa).toFixed(2)} C · 2 = ${Math.hypot(d.Ha, d.Aa - d.F1).toFixed(2)} C · tie 3 = ${d.Ha.toFixed(2)} T · 4 = ${Math.hypot(d.Ha, d.Aa - d.F1 - d.F2).toFixed(2)} C · y_I ${d.yI.toFixed(3)} / y_II ${d.yII.toFixed(3)} m`,
+    `b) H_b = ${d.Hb.toFixed(2)} kN → A ${Math.abs(d.Ab).toFixed(2)} ↓ · B ${d.Bb.toFixed(2)} ↑ · 1 = ${Math.hypot(d.Hb, -d.Ab).toFixed(2)} T · 2 = ${Math.hypot(d.Hb, d.Bb).toFixed(2)} C · strut 3 = ${d.Hb.toFixed(2)} C · y_T ${d.yT.toFixed(3)} m`,
+    `14.2 A = ${d.Atot.toFixed(2)} ↑ · B = ${d.Btot.toFixed(2)} ↑, vertical · 1 = ${Math.hypot(d.Ha, d.Aa).toFixed(2)} C · 2 = ${Math.hypot(d.Ha, d.Aa - d.F1).toFixed(2)} C · 3 = ${Math.hypot(d.Ha, d.Aa - d.F1 - d.F2).toFixed(2)} C · 4 = ${Math.hypot(d.Hb, -d.Ab).toFixed(2)} T · 6 = ${Math.hypot(d.Hb, d.Bb).toFixed(2)} C`,
+    `14.2 member 5 = H_a − H_b = ${Math.abs(d.N5).toFixed(2)} kN ${d.N5 >= 0 ? 'tension' : 'compression'} — the one force superposition changes, and the key’s own drawing agrees`],
   frame: [[-29, -22], [25, 16]],
 };
 

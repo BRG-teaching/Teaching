@@ -1,16 +1,31 @@
 /**
- * The shared body of the EX 6 truss views (tasks 2, 3 and 4).
+ * The shared body of the EX 6 truss views (tasks 2, 3, 4 and the creative task).
  *
- * All three sheets ask for exactly the same three things — global equilibrium,
+ * All four sheets ask for exactly the same three things — global equilibrium,
  * the zero-force members, then the internal forces node by node with the
- * matching force diagram — so they are one view built three times rather than
- * three views that happen to look alike.
+ * matching force diagram — so they are one view built four times rather than
+ * four views that happen to look alike.
  *
- * The force diagram is drawn the way the sheet asks for it: a grid of JOINT
- * polygons, one per joint, in the order a student can actually solve them (a
- * joint is only drawable once at most two of its members are still unknown).
- * Every edge of every polygon is parallel to the member it belongs to, and
- * carries that member's colour, so the reciprocity is visible at a glance.
+ * THE FORCE DIAGRAM IS ONE CREMONA, which is what the sheets draw and what the
+ * exercise exists to teach. An earlier version of this file drew a row of
+ * disjoint little joint polygons and claimed in this docstring that that was
+ * "the way the sheet asks for it". That was wrong twice over: the sheets draw a
+ * single nested reciprocal figure, and task c) says "complete the force
+ * diagram", singular. A grid of separate polygons gets every number right and
+ * hides the one idea worth having — that the joints SHARE their edges, so the
+ * whole structure is one drawing. The construction now lives in
+ * `../lib/cremona.js`; this file is only the view that draws what it returns.
+ *
+ * What that means on screen. Every FACE of the form diagram — the spaces
+ * between the external forces round the outside, and each triangular panel
+ * inside — becomes ONE POINT. Every member is the wall between two faces, and
+ * the segment joining those two points IS its force: parallel to the member, to
+ * scale, navy in compression and pink in tension. The outer points, chained in
+ * order round the outside, ARE the load line: the loads down one side, the
+ * reactions back up the other. A member carrying nothing gives two faces at the
+ * same point and a segment of zero length — the drawing saying "zero" in its
+ * own language. Bow's notation names the spaces (letters outside, numbers
+ * inside) in both diagrams, so a member can be pointed to as "the segment 1-e".
  *
  * MODULE SIZE. The sheet's trusses are drawn with a panel of 75.57 pt, which
  * is 2.667 m at the stated 1:100 — not a round number, while every other
@@ -22,14 +37,18 @@
 
 import { PAL } from '../lib/eqdraw.js';
 import * as V from '../lib/vec.js';
-import { analyse, polygonAt, chain } from '../lib/truss.js';
+import { analyse } from '../lib/truss.js';
+import { cremona } from '../lib/cremona.js';
 
 export function makeTrussView(cfg) {
-  const { nodes, members, supports, loads, MPU, ORG, cells, SFD, frame,
+  const { nodes, members, supports, loads, MPU, ORG, SFD, frame,
           nodeName, steps, extra } = cfg;
+  const FC = cfg.fdCenter;                  // world point the Cremona centres on
+  const GLOBAL = cfg.globalStep ?? 2;       // the step that lays the load line
 
   const model = { nodes, members, supports, loads };
   const res0 = analyse(model);
+  const C0 = cremona(model, res0);
 
   const ux = (p) => [ORG[0] + p[0] * MPU, ORG[1] + p[1] * MPU];
 
@@ -45,32 +64,32 @@ export function makeTrussView(cfg) {
     const L = {};
     for (const [k, v] of Object.entries(loads)) L[k] = [v[0] * s.scale, v[1] * s.scale];
     const r = analyse({ nodes, members, supports, loads: L });
-    return { ...r, loads: L, nodes, members, supports,
+    const C = cremona({ nodes, members, supports, loads: L }, r);
+    return { ...r, loads: L, nodes, members, supports, C,
              fmax: Math.max(...r.forces.map(Math.abs), 1e-6) };
   }
 
   function create(dw, panel, makePlayer) {
-    const s = { scale: 1, o1: true, sIF: 0.02, lbl: true, zero: true, _k: 99 };
+    const s = { scale: 1, o1: true, sIF: 0.02, lbl: true, zero: true, bow: true, _k: 99 };
     s.sIF = dw.bandScale(compute(s).fmax);
     const ARR = dw.W.arrow, NARR = dw.W.narrow;
     const FIRST_NODE = steps.length;               // where the node walk starts
 
     // THE FORM AND THE FORCE DIAGRAM HAVE TO GROW TOGETHER. A member stays grey
     // until the joint that actually solves it is reached, and at that step it
-    // takes its colour, its number appears, it flashes, and the matching edge
-    // of that joint's polygon is drawn beside it. Every member is also LINKED
-    // to every polygon edge that stands for it, so hovering either highlights
-    // the whole family.
+    // takes its colour, its number appears, it flashes, and its segment of the
+    // Cremona is drawn at the same moment. Every member is LINKED to that
+    // segment, so hovering either highlights both — and the parallel regression
+    // then has something to insist on.
     const solvedAt = members.map(() => FIRST_NODE + res0.order.length - 1);
     res0.order.forEach((o, k) => {
       for (const m of o.solved) solvedAt[m] = Math.min(solvedAt[m], FIRST_NODE + k);
     });
-    const edgesOf = members.map(() => []);
-    res0.order.forEach((o, k) => {
-      polygonAt(model, res0, o.node).forEach((part, e) => {
-        if (part.kind === 'member') edgesOf[part.m].push(`pe${k}_${e}`);
-      });
-    });
+    // a space's point is fixed either by the load line (stage −1) or by the
+    // joint that closes on it; a member's segment needs both of its points
+    const ptAt = C0.stage.map((k) => (k < 0 ? GLOBAL : FIRST_NODE + k));
+    const segAt = members.map((mm, m) =>
+      Math.max(solvedAt[m], ptAt[C0.seg[m].left], ptAt[C0.seg[m].right]));
 
     const colOf = (m) => ({ pending: PAL.black, final: (dd, st) => {
       if (st._k < solvedAt[m]) return PAL.grey;
@@ -86,7 +105,7 @@ export function makeTrussView(cfg) {
     } });
 
     dw.label('form_title', 'Form diagram 1:100', { cls: 'title', flash: false });
-    dw.label('force_title', 'Force diagram — one polygon per joint', { cls: 'title', flash: false });
+    dw.label('force_title', 'Force diagram — one Cremona diagram', { cls: 'title', flash: false });
     dw.label('force_sub', '', { cls: 'point', flash: false });
 
     members.forEach((mm, m) => {
@@ -115,22 +134,38 @@ export function makeTrussView(cfg) {
     });
     dw.label('lzero', '', { cls: 'num', intro: 3, flash: false, color: PAL.zero });
 
-    // one polygon per joint, in solve order, each in its own cell
-    res0.order.forEach((o, k) => {
-      const at = polygonAt(model, res0, o.node).length;
-      dw.strokes(`pg${k}`, at + 1, { intro: FIRST_NODE + k, w: dw.W.str,
-        color: PAL.grey, flash: false });
-      for (let e = 0; e < at; e++) {
-        dw.seg(`pe${k}_${e}`, { intro: FIRST_NODE + k, w: dw.W.bar * 0.85,
-          color: PAL.grey, flash: false });
-      }
-      dw.label(`pl${k}`, '', { cls: 'point', intro: FIRST_NODE + k, flash: false, color: PAL.grey });
-      dw.disk(`pd${k}`, { intro: FIRST_NODE + k, r: dw.W.disk * 0.6 });
+    // ---------------------------------------------------------------------
+    // THE CREMONA. One point per space, one segment per member, the external
+    // forces chained round the outside into the load line, and — while the
+    // walk is running — the current joint's own polygon traced in grey through
+    // the points it borrows.
+    // ---------------------------------------------------------------------
+    const RING = Math.max(...C0.ring.map((r) => r.length));
+    dw.strokes('fring', RING, { intro: FIRST_NODE, w: dw.W.dim * 1.4, color: PAL.grey,
+      flash: false, when: (st) => st._k >= FIRST_NODE });
+    C0.ext.forEach((e, k) => {
+      dw.arrow(`fext${k}`, { intro: GLOBAL, color: PAL.green, ...NARR });
+      dw.label(`lfext${k}`, e.kind === 'load' ? '' : '', { cls: 'num', intro: GLOBAL,
+        color: PAL.green, flash: false, when: (st) => st.lbl });
+    });
+    members.forEach((mm, m) => {
+      dw.seg(`fseg${m}`, { intro: segAt[m], w: dw.W.bar * 0.9, color: colOf(m) });
+    });
+    C0.pts.forEach((p, f) => {
+      dw.disk(`fpt${f}`, { intro: ptAt[f], r: dw.W.disk * 0.5 });
+      dw.label(`fpl${f}`, '', { cls: 'point', intro: ptAt[f], flash: false,
+        color: PAL.grey, when: (st) => st.bow });
+      // the same space named in the FORM diagram — that pairing IS Bow's notation
+      dw.label(`bl${f}`, C0.name[f], { cls: 'point', intro: GLOBAL, flash: false,
+        color: PAL.grey, when: (st) => st.bow });
     });
 
-    members.forEach((mm, m) => {
-      if (edgesOf[m].length) dw.link(`mem${m}`, `lm${m}`, ...edgesOf[m]);
+    members.forEach((mm, m) => dw.link(`mem${m}`, `lm${m}`, `fseg${m}`));
+    C0.ext.forEach((e, k) => {
+      dw.link(e.kind === 'load' ? `f${e.node}` : `re${e.node}`, `fext${k}`, `lfext${k}`);
     });
+    dw.ghostable(...members.map((mm, m) => `fseg${m}`),
+                 ...C0.ext.map((e, k) => `fext${k}`));
 
     dw.instant('form_title', 'force_title', 'force_sub');
 
@@ -138,6 +173,7 @@ export function makeTrussView(cfg) {
     function refresh() {
       s._k = player.k;
       d = compute(s);
+      const C = d.C;
       dw.setLabel('form_title', cfg.titlePos[0]);
       dw.setLabel('force_title', cfg.titlePos[1]);
       dw.setLabel('force_sub', cfg.titlePos[2]);
@@ -192,25 +228,62 @@ export function makeTrussView(cfg) {
       dw.setLabel('lzero', cfg.zeroLabelPos);
       dw.setText('lzero', nz ? `${nz} zero-force members` : 'no zero-force members');
 
-      res0.order.forEach((o, k) => {
-        const parts = polygonAt(model, d, o.node);
-        const cell = cells[k] || [0, 0];
-        const pts = chain(cell, parts, 1 / SFD);
-        // close it back to the start so the polygon reads as closed
-        dw.setStrokes(`pg${k}`, pts.slice(0, -1).map((p, e) => [p, pts[e + 1]])
-          .concat([[pts[pts.length - 1], pts[0]]]));
-        parts.forEach((p, e) => {
-          dw.setSeg(`pe${k}_${e}`, pts[e], pts[e + 1]);
-          const el = dw.elems.get(`pe${k}_${e}`);
-          el.color = p.kind === 'member'
-            ? (Math.abs(d.forces[p.m]) < 1e-7 ? PAL.zero : d.forces[p.m] > 0 ? PAL.red : PAL.blue)
-            : PAL.green;
-          el.mats[0].color.setHex(el.color);
-        });
-        dw.setDisk(`pd${k}`, cell);
-        dw.setLabel(`pl${k}`, V.add(cell, cfg.cellLabelOff || [0, -3.4]));
-        dw.setText(`pl${k}`, `joint ${nodeName(o.node)}`);
+      // ---- the Cremona, centred on its own bounding box so it stays put ----
+      const xs = C.pts.map((p) => p[0]), ys = C.pts.map((p) => p[1]);
+      const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+      const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+      const fx = (p) => [FC[0] + (p[0] - cx) / SFD, FC[1] + (p[1] - cy) / SFD];
+      const P = C.pts.map(fx);
+
+      // the load line: loads on one side of it, reactions on the other, exactly
+      // as the sheet draws them, so the two chains do not sit on top of one another
+      const EOF = cfg.extOff ?? 0.5;
+      C.ext.forEach((e, k) => {
+        const a = P[e.from], b = P[e.to];
+        const n = V.mul(V.unit(V.perp(V.sub(b, a))), -EOF);
+        dw.setArrow(`fext${k}`, V.add(a, n), V.add(b, n));
+        dw.setLabel(`lfext${k}`, V.add(V.add(V.mid(a, b), V.mul(n, 2.2)),
+          cfg.extLabelOff ? cfg.extLabelOff(e, k) : [0, 0]));
+        dw.setText(`lfext${k}`, e.kind === 'load'
+          ? `${Math.hypot(...e.v).toFixed(0)}`
+          : `${nodeName(e.node)} ${Math.hypot(...e.v).toFixed(1)}`);
       });
+
+      members.forEach((mm, m) => {
+        dw.setSeg(`fseg${m}`, P[C.seg[m].left], P[C.seg[m].right]);
+      });
+
+      // spaces whose points coincide (a zero-force member between them) get one
+      // shared label, "3=4", rather than two labels fighting over one dot
+      const key = (p) => `${p[0].toFixed(4)},${p[1].toFixed(4)}`;
+      const same = new Map();
+      P.forEach((p, f) => {
+        const k = key(p);
+        if (!same.has(k)) same.set(k, []);
+        same.get(k).push(f);
+      });
+      const cenx = P.reduce((t, p) => t + p[0], 0) / P.length;
+      const ceny = P.reduce((t, p) => t + p[1], 0) / P.length;
+      P.forEach((p, f) => {
+        dw.setDisk(`fpt${f}`, p);
+        const grp = same.get(key(p));
+        const away = V.sub(p, [cenx, ceny]);
+        const off = V.len(away) > 1e-6 ? V.mul(V.unit(away), 1.6) : [0, -1.6];
+        dw.setLabel(`fpl${f}`, V.add(p, cfg.fdLabelOff ? cfg.fdLabelOff(f, off) : off));
+        dw.setText(`fpl${f}`, grp[0] === f ? grp.map((g) => C.name[g]).join('=') : '');
+        const bp = C.at[f] || [0, 0];
+        dw.setLabel(`bl${f}`, V.add(ux(bp), V.mul(C.nrm[f], cfg.bowOff ?? 2.6)));
+      });
+
+      // the joint being solved, traced through the points it shares
+      const cyc = s._k >= FIRST_NODE && res0.order[s._k - FIRST_NODE]
+        ? C.ring[res0.order[s._k - FIRST_NODE].node] : [];
+      const pairs = [];
+      for (let t = 0; t < RING; t++) {
+        pairs.push(t < cyc.length ? [P[cyc[t].from], P[cyc[t].to]]
+                                  : [P[0], P[0]]);
+      }
+      dw.setStrokes('fring', pairs);
 
       if (extra) extra(dw, d, s);
       panel.syncAll();
@@ -225,11 +298,12 @@ export function makeTrussView(cfg) {
     panel.toggle(par, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
     panel.slider(par, s, 'sIF', 'scale internal forces', 0, s.sIF * 2.5, s.sIF / 20, refresh);
     panel.toggle(par, s, 'zero', 'grey out the zero-force members', refresh);
+    panel.toggle(par, s, 'bow', "show Bow's notation (the space names)", refresh);
     panel.toggle(par, s, 'lbl', 'show labels', refresh);
 
     refresh();
     return player;
   }
 
-  return { meta, create, res0 };
+  return { meta, create, res0, C0 };
 }

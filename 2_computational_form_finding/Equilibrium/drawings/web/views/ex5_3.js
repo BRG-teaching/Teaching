@@ -119,18 +119,44 @@ function compute(s) {
   const Ms = xs.map(M);
   const Mmax = Math.max(...Ms.map(Math.abs), 1e-9);
   const H = Mmax / s.depth;
-  const thrust = xs.map((x, i) => [x, Ms[i] / H]);
-  const sag = Math.max(0, Math.max(...thrust.map((p) => p[1])));
-  const hog = Math.max(0, -Math.min(...thrust.map((p) => p[1])));
+  // WHICH OF THE TWO LINES IS STRAIGHT.
+  //
+  // A force flow is a pair: a thrust line and a tie, separated at every section
+  // by M(x)/H. Either one may be drawn straight, and the choice is not free —
+  // the REACTIONS are applied to the thrust line, so the thrust line has to
+  // reach the supports. This view used to hold the TIE horizontal through both
+  // supports, which left the roller in b)–e) sitting on the tie with the
+  // compression path passing up to 1.6 m underneath it and nothing joining the
+  // two: a reaction applied to a point that is not on the structure.
+  //
+  // The sheet does it the other way, and so does this now. The tie is the
+  // inclined closing chord from A to the far end, tilted by exactly the amount
+  // that brings the thrust line back to zero at the roller.
+  const tieEnd = (S.far / SPAN) * (-M(SPAN) / H);
+  const tieAt = (x) => (x / S.far) * tieEnd;
+  const thrust = xs.map((x, i) => [x, tieAt(x) + Ms[i] / H]);
+  const sag = Math.max(0, Math.max(...Ms.map((m) => m / H)));
+  const hog = Math.max(0, -Math.min(...Ms.map((m) => m / H)));
+  // where the thrust line crosses the tie, i.e. where the moment changes sign.
+  // `< 0` never fired: with 60 samples over a 12 m span every zero lands ON a
+  // sample, so the product is exactly 0 and the crossing was reported as "—"
+  // in all five cases.
   let inflect = null;
   for (let i = 1; i <= NSEG; i++) {
-    if (Ms[i - 1] * Ms[i] < 0) { inflect = xs[i - 1] + (xs[i] - xs[i - 1]) * Math.abs(Ms[i - 1]) / (Math.abs(Ms[i - 1]) + Math.abs(Ms[i])); break; }
+    const a = Ms[i - 1], b = Ms[i];
+    if (a === 0 && i > 1) { inflect = xs[i - 1]; break; }
+    if (a * b < 0) {
+      inflect = xs[i - 1] + ((xs[i] - xs[i - 1]) * Math.abs(a)) / (Math.abs(a) + Math.abs(b));
+      break;
+    }
+    if (b === 0 && i < NSEG && Ms[i + 1] * a < 0) { inflect = xs[i]; break; }
   }
   const what = S.udl && S.pts.length ? `q_d over 0…${S.udl[1]} m (R = F_d) plus F_d at ${S.pts[0][0]} m`
     : S.udl ? `q_d over 0…${S.udl[1]} m — a ${(S.udl[1] - SPAN).toFixed(0)} m overhang`
       : S.pts.length === 2 ? `F₁d at ${S.pts[0][0]} m and F₂d at ${S.pts[1][0]} m, equal`
         : `F_d at ${S.pts[0][0]} m${S.pts[0][0] > SPAN ? ' — past the roller' : ''}`;
-  return { ...S, pts, tot, xR, RA, RB, H, thrust, sag, hog, inflect, what, Mfn: M };
+  return { ...S, pts, tot, xR, RA, RB, H, thrust, tieEnd, tieAt,
+           sag, hog, inflect, what, Mfn: M };
 }
 
 const ux = (m) => AX + m * MPU;
@@ -236,7 +262,7 @@ export function create(dw, panel, makePlayer) {
     // the thrust line and its tie
     const TP = d.thrust.map(([x, y]) => [ux(x), uy(y)]);
     dw.setStrokes('thrust', Array.from({ length: NSEG }, (_, i) => [TP[i], TP[i + 1]]));
-    dw.setSeg('tie', [ux(0), uy(0)], [ux(d.far), uy(0)]);
+    dw.setSeg('tie', [ux(0), uy(0)], [ux(d.far), uy(d.tieEnd)]);
     const hi = TP.reduce((b, p, i) => (p[1] > TP[b][1] ? i : b), 0);
     dw.setLabel('lthrust', V.add(TP[hi], [0, 1.7]));
     dw.setText('lthrust', 'thrust line — compression');

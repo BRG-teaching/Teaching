@@ -17,7 +17,7 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-2, -14.4, 0), text='Lageplan 1:100 — form diagram (qualitative, no force diagram)')
+add(0, 'label', Point(-2, -8.9, 0), text='Lageplan 1:100 — form diagram (qualitative, no force diagram)')
 
 # step 1 — What is given
 add(1, 'segment', Line((-18.62, 1, 0), (0.82, 1, 0)), color=Color.from_hex("#aaaaaa"), width=0.04968)

@@ -81,7 +81,10 @@ import * as V from '../lib/vec.js';
 const L = 7.00;                 // m, span A→B
 const FS = 1.6;                 // drawing units per metre  (form diagram)
 const QS = 0.32;                // drawing units per kN     (force diagram)
-const X0 = 4.6, Y0 = 0.0;       // where A sits
+// Y0 is 1.6 units below the natural zero so that the reaction arrow at A —
+// which reaches down and to the left of the support — clears the step-caption
+// card, whose lowest edge is y = -2.55
+const X0 = 4.6, Y0 = -1.6;      // where A sits
 const FOX = 22.0, FOY = -1.0;   // the pole of the force diagram
 const SUB = [11.5, -16.0];      // the subsystem (node B) star
 const NSEG = 22;                // segments per half of the drawn parabola
