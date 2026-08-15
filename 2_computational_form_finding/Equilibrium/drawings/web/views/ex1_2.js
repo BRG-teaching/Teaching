@@ -92,9 +92,14 @@ function compute(s) {
   const first = V.sub(L[0], o);                     // ray 0
   const last = V.sub(L[4], o);                      // ray 4
   const S = V.intersect(A[0], first, A[3], last) || A[0];
-  // the resultant is drawn OFFSET beside the load line (house rule): on the
-  // load line itself it would cover the very load vectors it sums up
-  const off = V.mul(V.unit(V.perp(V.sub(L[4], L[0]))), -OFF);
+  // The resultant is drawn OFFSET beside the load line (house rule): on the
+  // load line itself it would cover the very load vectors it sums up. It steps
+  // OUTWARD -- away from the pole and the ray fan -- because stepping the other
+  // way puts it inside the force diagram, on top of the rays, which is the one
+  // place it must not be.
+  const nrm = V.unit(V.perp(V.sub(L[4], L[0])));
+  const outward = V.dot(V.sub(V.mid(L[0], L[4]), o), nrm) >= 0 ? 1 : -1;
+  const off = V.mul(nrm, outward * OFF);
   return { lines, L, o, A, S, Rv, R, ang, uR: V.unit(Rv), first, last, off };
 }
 

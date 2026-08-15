@@ -451,10 +451,14 @@ export class Drawing {
    *     shared displacement for a group: two arrows meeting at an angle have
    *     two different perpendiculars, and moving them together shifts one of
    *     them sideways along itself, which reads as an error.
-   *  3. It moves to the side facing AWAY from the rest of the drawing, so an
-   *     offset polygon grows outward rather than folding into itself. That
-   *     side is decided ONCE, on the first pass, and remembered: a line must
-   *     not jump from one side to the other while a slider is being dragged.
+   *  3. It moves to the EMPTIER side. The reason a resultant must not step
+   *     inward is that inward is where the ray fan is, so the rule measures
+   *     exactly that: try the line one step each way and count how much other
+   *     drawing lies within a couple of offsets of it. Stepping into empty
+   *     space is the entire point of stepping aside. This replaced "away from
+   *     the centroid", which fails because a view holds two drawings and the
+   *     centroid of both lands in the gap between them. The side is decided
+   *     ONCE and remembered: a line must not jump sides mid-drag.
    *  4. Shorter lines are placed first. A resultant is longer than the parts
    *     it sums, so the parts keep the true line and the summary steps aside.
    *  5. Where two moved lines shared an end point, that corner is mitred back
@@ -472,7 +476,7 @@ export class Drawing {
     const finalOf = (c) => (typeof c === 'number' ? c : c?.final ? undefined : c?.pending);
     const isGreen = (e) => e.color === PAL.green
       || (typeof e.color === 'object' && e.color?.pending === PAL.green);
-    const obstacles = [], movers = [];
+    const obstacles = [], movers = [], everything = [];
     for (const [name, e] of this.elems) {
       if (e.noNudge || e.kind === 'dline' || e.kind === 'circle') continue;
       const p = two(e);
@@ -485,18 +489,69 @@ export class Drawing {
                     u: [(p[1][0] - p[0][0]) / L, (p[1][1] - p[0][1]) / L],
                     span: [e.intro ?? 0, e.outro ?? 1e9] };
       if (!grey) obstacles.push(rec);
+      // crowding counts GREY too: a resultant landing on a fan of construction
+      // rays is exactly as unreadable as one landing on the members, even
+      // though grey is deliberately not an obstacle for the "should it move at
+      // all" test (a load must be allowed to sit on its own line of action)
+      everything.push(rec);
       if (isGreen(e) && (e.kind === 'arrow' || e.kind === 'darrow')) movers.push(rec);
     }
     if (!movers.length) return;
-    // the reference centre is fixed on the first pass, not recomputed as the
-    // drawing moves -- otherwise the "away" side flips mid-drag
-    if (!this._declCentre) {
-      let sx = 0, sy = 0;
-      for (const o of obstacles) { sx += (o.p[0][0] + o.p[1][0]) / 2; sy += (o.p[0][1] + o.p[1][1]) / 2; }
-      this._declCentre = [sx / obstacles.length, sy / obstacles.length];
-      this._declSide = new Map();
-    }
-    const [cx, cy] = this._declCentre;
+    if (!this._declSide) this._declSide = new Map();
+    // Which way is "out"?
+    //
+    // A view holds TWO drawings side by side, and one centroid over both of
+    // them is the centre of the gap between them -- so "away from the centre"
+    // pushed a resultant in the force diagram straight back into it. The side
+    // has to be judged against the drawing the line actually belongs to.
+    //
+    // Rather than trying to label the clusters, weight every other line by how
+    // near it is: a Gaussian-ish kernel a fifth of the frame wide. What comes
+    // out is the local centre of whatever drawing the mover sits in, and away
+    // from THAT is genuinely outward. It degrades gracefully when a view has
+    // only one drawing, because then the local centre is the global one.
+    // A FOURTH power, over a tenth of the frame. A gentler kernel over a fifth
+    // still let the far diagram outvote the near one: two diagrams sit about
+    // half a frame apart, and the distant one has many long lines. Falling off
+    // as the fourth power puts anything a whole diagram away below one part in
+    // a thousand, so what is left is genuinely the local cluster.
+    // WHICH WAY IS OUT?
+    //
+    // Not "away from the centroid": a view holds two drawings, and a centroid
+    // over both of them lands in the gap between, which pushed resultants in
+    // the force diagram back into it. Weighting by nearness helped but stayed
+    // fragile wherever the two drawings sit close together.
+    //
+    // So ask the question that actually matters. The reason a resultant must
+    // not step inward is that inward is where the ray fan is. Measure that
+    // directly: try the line one step to each side and see which side is
+    // EMPTIER. Stepping into empty space is the whole point of stepping aside.
+    const segDist = (px, py, a, b) => {
+      const vx = b[0] - a[0], vy = b[1] - a[1];
+      const L2 = vx * vx + vy * vy || 1e-12;
+      let t = ((px - a[0]) * vx + (py - a[1]) * vy) / L2;
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+      return Math.hypot(px - (a[0] + vx * t), py - (a[1] + vy * t));
+    };
+    const R = off * 2.5;
+    const crowding = (m, side) => {
+      const n = [-m.u[1], m.u[0]];
+      const dx = m.p[1][0] - m.p[0][0], dy = m.p[1][1] - m.p[0][1];
+      let sum = 0;
+      for (let i = 0; i <= 10; i++) {
+        const t = i / 10;
+        const px = m.p[0][0] + dx * t + n[0] * off * side;
+        const py = m.p[0][1] + dy * t + n[1] * off * side;
+        for (const o of everything) {
+          if (o.name === m.name) continue;
+          // a line the mover LIES ON is the same distance from both sides, so
+          // it cancels and needs no special case
+          const d = segDist(px, py, o.p[0], o.p[1]);
+          if (d < R * 3) sum += 1 / (1 + (d / R) ** 2);
+        }
+      }
+      return sum;
+    };
 
     // do a and b lie along each other, over a meaningful stretch?
     const coincides = (a, qa, b, qb) => {
@@ -521,10 +576,14 @@ export class Drawing {
     for (const m of movers) {
       const n = [-m.u[1], m.u[0]];                        // rule 2: its own normal
       const mx = (m.p[0][0] + m.p[1][0]) / 2, my = (m.p[0][1] + m.p[1][1]) / 2;
-      // rule 3: the side is remembered per element, so it never flips
+      // rule 3: the side is remembered per element, so it never flips mid-drag
       let away = this._declSide.get(m.name);
       if (away === undefined) {
-        away = (mx - cx) * n[0] + (my - cy) * n[1] >= 0 ? 1 : -1;
+        const cp = crowding(m, 1), cm = crowding(m, -1);
+        // a real difference decides it; a dead heat falls back to the frame's
+        // centre so the answer is deterministic rather than a rounding error
+        away = Math.abs(cp - cm) > 1e-6 ? (cp < cm ? 1 : -1)
+          : ((mx - this.center[0]) * n[0] + (my - this.center[1]) * n[1] >= 0 ? 1 : -1);
         this._declSide.set(m.name, away);
       }
       const at = (k) => [[m.p[0][0] + n[0] * off * k, m.p[0][1] + n[1] * off * k],
