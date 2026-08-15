@@ -90,6 +90,23 @@ export class Drawing {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.1;
 
+    // HOUSE STROKE METRICS, proportional to the drawing frame so that every
+    // view looks identical whatever coordinate scale it works in (the ratios
+    // are the median of the 53 hand-written drawing views). Use these in new
+    // views instead of hard-coded numbers: dw.W.bar, dw.W.arrow, dw.W.dash …
+    const fw = this.halfW * 2;
+    this.W = {
+      bar: 0.00316 * fw,        // a member / chord
+      thin: 0.00150 * fw,       // a light member, a counter
+      str: 0.00232 * fw,        // a funicular string
+      ray: 0.00148 * fw,        // a ray in the force diagram
+      dim: 0.00105 * fw,        // a dimension line
+      dash: 0.00590 * fw,       // dash length of a guide
+      disk: 0.00740 * fw,       // a joint marker
+      arrow: { w: 0.00380 * fw, headLen: 0.01310 * fw, headW: 0.00506 * fw },
+      narrow: { w: 0.00274 * fw, headLen: 0.00886 * fw, headW: 0.00380 * fw },
+    };
+
     this.elems = new Map();
     this.raycaster = new THREE.Raycaster();
 

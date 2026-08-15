@@ -94,15 +94,15 @@ function compute(s) {
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
-  const W_RAY = 0.07, W_STR = 0.11;
-  const ARR = { w: 0.18, headLen: 0.62, headW: 0.24 };
+  const W_RAY = dw.W.ray, W_STR = dw.W.str;
+  const ARR = dw.W.arrow;
 
   dw.label('form_title', 'Form Diagram', { cls: 'title', flash: false });
   dw.label('force_title', 'Force Diagram', { cls: 'title', flash: false });
   dw.label('force_sub', '', { cls: 'point', flash: false });
 
   for (let i = 0; i < 4; i++) {
-    dw.dashLine(`la${i}`, { intro: 1, color: PAL.grey, dash: 0.55 });
+    dw.dashLine(`la${i}`, { intro: 1, color: PAL.grey, dash: dw.W.dash });
     dw.arrow(`f${i}`, { intro: 1, color: PAL.green, ...ARR });
     dw.label(`lf${i}`, `F${'₁₂₃₄'[i]}`, { cls: 'num', intro: 1, color: PAL.green, when: (st) => st.lbl });
     dw.arrow(`ff${i}`, { intro: 2, color: PAL.green, ...ARR });
@@ -111,7 +111,7 @@ export function create(dw, panel, makePlayer) {
     dw.highlight(`f${i}`, [2]);
   }
   // pole + rays
-  dw.disk('ptO', { intro: 3, r: 0.34 });
+  dw.disk('ptO', { intro: 3, r: dw.W.disk * 0.8 });
   dw.label('lO', 'o', { cls: 'num', intro: 3, when: (st) => st.lbl });
   for (let i = 0; i <= 4; i++) {
     dw.seg(`ray${i}`, { intro: i === 0 || i === 4 ? 5 : 3, w: W_RAY, color: PAL.grey });
@@ -122,17 +122,19 @@ export function create(dw, panel, makePlayer) {
     dw.seg(`str${i}`, { intro: 4, w: W_STR, color: PAL.grey });
     dw.link(`str${i}`, `ray${i}`);
   }
-  dw.dashLine('ext0', { intro: 5, color: PAL.grey, dash: 0.55 });
-  dw.dashLine('ext4', { intro: 5, color: PAL.grey, dash: 0.55 });
+  dw.dashLine('ext0', { intro: 5, color: PAL.grey, dash: dw.W.dash });
+  dw.dashLine('ext4', { intro: 5, color: PAL.grey, dash: dw.W.dash });
   dw.link('ext0', 'ray0');
   dw.link('ext4', 'ray4');
-  dw.disk('ptS', { intro: 6, r: 0.42 });
+  dw.disk('ptS', { intro: 6, r: dw.W.disk });
   dw.label('lS', 'S', { cls: 'num', intro: 6, when: (st) => st.lbl });
   // the resultant, in both diagrams at the same step
-  dw.dashArrow('Rform', { intro: 7, color: PAL.green, w: 0.2, headLen: 0.68,
-                          headW: 0.26, dash: 1.0, flash: false });
-  dw.dashArrow('Rforce', { intro: 7, color: PAL.green, w: 0.2, headLen: 0.68,
-                           headW: 0.26, dash: 1.0, flash: false });
+  dw.dashArrow('Rform', { intro: 7, color: PAL.green, w: dw.W.arrow.w * 1.15,
+                          headLen: dw.W.arrow.headLen, headW: dw.W.arrow.headW,
+                          dash: dw.W.dash * 1.6, flash: false });
+  dw.dashArrow('Rforce', { intro: 7, color: PAL.green, w: dw.W.arrow.w * 1.15,
+                           headLen: dw.W.arrow.headLen, headW: dw.W.arrow.headW,
+                           dash: dw.W.dash * 1.6, flash: false });
   dw.label('lRform', 'R', { cls: 'num', intro: 7, color: PAL.green });
   dw.label('lRforce', 'R', { cls: 'num', intro: 7, color: PAL.green });
   dw.link('Rform', 'Rforce', 'lRform', 'lRforce');

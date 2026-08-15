@@ -77,8 +77,7 @@ function compute(s) {
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
   // house line weights (identical to the drawing views, e.g. view_9)
-  const W_DIM = 0.05;
-  const ARR = { w: 0.18, headLen: 0.62, headW: 0.24 };   // big green vectors
+  const ARR = dw.W.arrow;                       // house green-vector metrics
 
   dw.label('form_title', 'Form Diagram', { cls: 'title', flash: false });
   dw.label('force_title', 'Force Diagram', { cls: 'title', flash: false });
@@ -86,20 +85,21 @@ export function create(dw, panel, makePlayer) {
   dw.label('form_sub', 'the lines of action', { cls: 'point', flash: false });
 
   // ---- form diagram --------------------------------------------------
-  dw.dashLine('la1', { intro: 1, color: PAL.grey, dash: 0.28 });
-  dw.dashLine('la2', { intro: 1, color: PAL.grey, dash: 0.28 });
+  dw.dashLine('la1', { intro: 1, color: PAL.grey, dash: dw.W.dash });
+  dw.dashLine('la2', { intro: 1, color: PAL.grey, dash: dw.W.dash });
   dw.arrow('f1', { intro: 1, color: PAL.green, ...ARR });
   dw.arrow('f2', { intro: 1, color: PAL.green, ...ARR });
   dw.label('lf1', 'F₁', { cls: 'num', intro: 1, color: PAL.green, when: (st) => st.lbl });
   dw.label('lf2', 'F₂', { cls: 'num', intro: 1, color: PAL.green, when: (st) => st.lbl });
   // the crossing point
-  dw.dashLine('ext1', { intro: 4, color: PAL.grey, dash: 0.28 });
-  dw.dashLine('ext2', { intro: 4, color: PAL.grey, dash: 0.28 });
-  dw.disk('ptP', { intro: 4, r: 0.42 });
+  dw.dashLine('ext1', { intro: 4, color: PAL.grey, dash: dw.W.dash });
+  dw.dashLine('ext2', { intro: 4, color: PAL.grey, dash: dw.W.dash });
+  dw.disk('ptP', { intro: 4, r: dw.W.disk });
   dw.label('lP', 'P', { cls: 'num', intro: 4, when: (st) => st.lbl });
   // the resultant, in the form diagram (house rule: dashed thick green)
-  dw.dashArrow('Rform', { intro: RESOLVE - 1, color: PAL.green, w: 0.2,
-                          headLen: 0.68, headW: 0.26, dash: 1.0, flash: false });
+  dw.dashArrow('Rform', { intro: RESOLVE - 1, color: PAL.green, w: dw.W.arrow.w * 1.15,
+                          headLen: dw.W.arrow.headLen, headW: dw.W.arrow.headW,
+                          dash: dw.W.dash * 1.6, flash: false });
   dw.label('lRform', 'R', { cls: 'num', intro: RESOLVE - 1, color: PAL.green });
 
   // ---- force diagram -------------------------------------------------
@@ -107,8 +107,9 @@ export function create(dw, panel, makePlayer) {
   dw.arrow('ff2', { intro: 3, color: PAL.green, ...ARR });
   dw.label('lff1', 'F₁', { cls: 'num', intro: 2, color: PAL.green, when: (st) => st.lbl });
   dw.label('lff2', 'F₂', { cls: 'num', intro: 3, color: PAL.green, when: (st) => st.lbl });
-  dw.dashArrow('Rforce', { intro: RESOLVE - 1, color: PAL.green, w: 0.2,
-                           headLen: 0.68, headW: 0.26, dash: 1.0, flash: false });
+  dw.dashArrow('Rforce', { intro: RESOLVE - 1, color: PAL.green, w: dw.W.arrow.w * 1.15,
+                           headLen: dw.W.arrow.headLen, headW: dw.W.arrow.headW,
+                           dash: dw.W.dash * 1.6, flash: false });
   dw.label('lRforce', 'R', { cls: 'num', intro: RESOLVE - 1, color: PAL.green });
   // the answer, spelled out at the resolve step
   dw.label('ro1', '', { intro: RESOLVE, flash: false, color: PAL.green });

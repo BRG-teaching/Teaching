@@ -87,9 +87,8 @@ function compute(s) {
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
-  const W_BAR = 0.15;
-  const ARR = { w: 0.18, headLen: 0.62, headW: 0.24 };
-  const NARR = { w: 0.13, headLen: 0.42, headW: 0.18 };
+  const W_BAR = dw.W.bar;
+  const NARR = dw.W.narrow;
   const CASE_STEP = [2, 2, 3, 4, 5, 6];        // when each case is solved
   const colN = (i, which) => ({ pending: PAL.black, final: (dd) => {
     const x = dd.r[i];
@@ -105,13 +104,13 @@ export function create(dw, panel, makePlayer) {
     const st = CASE_STEP[i];
     dw.label(`ck${i}`, `${c.k})`, { cls: 'num', intro: 1, flash: false });
     dw.label(`fk${i}`, `${c.k})`, { cls: 'num', intro: st, flash: false });
-    dw.dashLine(`lv${i}`, { intro: 1, color: PAL.grey, dash: 0.5 });
+    dw.dashLine(`lv${i}`, { intro: 1, color: PAL.grey, dash: dw.W.dash });
     // the two members, drawn in their resolved colour when the case is solved
     dw.seg(`m${i}a`, { intro: 1, w: W_BAR, color: colN(i, 1) });
     dw.seg(`m${i}b`, { intro: 1, w: W_BAR, color: colN(i, 2) });
     dw.arrow(`fl${i}`, { intro: 1, color: PAL.green, ...NARR });
     dw.label(`lfl${i}`, 'F', { cls: 'num', intro: 1, color: PAL.green, when: (x) => x.lbl });
-    dw.disk(`nd${i}`, { intro: 1, r: 0.3 });
+    dw.disk(`nd${i}`, { intro: 1, r: dw.W.disk * 0.8 });
     // the force polygon
     dw.arrow(`pf${i}`, { intro: st, color: PAL.green, ...NARR });
     dw.seg(`p${i}a`, { intro: st, w: W_BAR, color: colN(i, 1) });
@@ -127,7 +126,7 @@ export function create(dw, panel, makePlayer) {
   });
   // case e) gets a spelled-out verdict
   dw.label('efail', 'the polygon cannot close', { cls: 'num', intro: 5, flash: false, color: PAL.zero });
-  dw.dashLine('egap', { intro: 5, color: PAL.zero, dash: 0.5 });
+  dw.dashLine('egap', { intro: 5, color: PAL.zero, dash: dw.W.dash });
 
   dw.instant('form_title', 'force_title', 'force_sub');
   dw.ghostable(...CASES.map((_, i) => `p${i}a`), ...CASES.map((_, i) => `p${i}b`),
