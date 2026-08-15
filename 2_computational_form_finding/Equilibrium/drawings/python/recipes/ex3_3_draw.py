@@ -65,7 +65,7 @@ add(3, 'polyline', Polyline([(-21.6, 1.2, 0), (0.6, 1.2, 0)]), color=Color.from_
 add(3, 'label', Point(-9, 1.7, 0), color=Color.from_hex("#aaaaaa"), text='CS / SL')
 add(3, 'polyline', Polyline([(-10.5, 5, 0), (-10.5, -2.93077, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.2478)
 add(3, 'arrow', Line((-10.5, 2.6, 0), (-10.5, 0.1, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
-add(3, 'arrow', Line((4.16183, 5.79824, 0), (4.16183, -0.295506, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
+add(3, 'arrow', Line((4, 5.04688, 0), (4, -1.04688, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
 add(3, 'label', Point(-9.3, 1.5, 0), color=Color.from_hex("#3f9c20"), text='R')
 add(3, 'label', Point(2, 2, 0), color=Color.from_hex("#3f9c20"), text='R')
 
@@ -120,10 +120,10 @@ add(5, 'label', Point(11.0731, 7.84687, 0), color=Color.from_hex("#aaaaaa"), tex
 
 # step 6 — d) Global equilibrium
 add(6, 'arrow', Line((-19, 1.2, 0), (-22.5193, 1.958, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
-add(6, 'arrow', Line((18.308, 2.75137, 0), (4.16183, 5.79824, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
+add(6, 'arrow', Line((19.9714, 2, 0), (4.08092, 5.42256, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
 add(6, 'label', Point(-23.6193, 2.858, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(6, 'arrow', Line((-2, 1.2, 0), (1.51929, 1.958, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
-add(6, 'arrow', Line((4.16183, -0.295506, 0), (18.308, 2.75137, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
+add(6, 'arrow', Line((4.08092, -1.42256, 0), (19.9714, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
 add(6, 'label', Point(2.61929, 2.858, 0), color=Color.from_hex("#3f9c20"), text='B')
 
 # step 7 — d) The governing force

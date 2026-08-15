@@ -113,7 +113,7 @@ export class Drawing {
       dim: 0.00105 * fw,        // a dimension line
       dash: 0.00590 * fw,       // dash length of a guide
       disk: 0.00740 * fw,       // a joint marker
-      off: 0.01830 * fw,        // how far an offset vector chain steps aside
+      off: 0.00915 * fw,        // how far an offset line steps aside
       band: 0.01050 * fw,       // half-width of the WIDEST force band: enough
                                 // to read a force off at a glance, not so much
                                 // that the drawing turns into sausages
@@ -265,11 +265,13 @@ export class Drawing {
     // declutter() parks a perpendicular step-aside on the element; render
     // through it without touching the geometry the view actually set, so the
     // next refresh recomputes from clean coordinates and nothing accumulates
-    if (e.nudge && (e.nudge[0] || e.nudge[1]) && !e._nudging) {
-      const [nx, ny] = e.nudge, sh = (p) => [p[0] + nx, p[1] + ny];
+    if (e.nudge && !e._nudging) {
+      const [na, nb] = e.nudge;
+      const sa = (p) => [p[0] + na[0], p[1] + na[1]];
+      const sb = (p) => [p[0] + nb[0], p[1] + nb[1]];
       const g = e.geo;
-      const g2 = g.tail ? { ...g, tail: sh(g.tail), tip: sh(g.tip) }
-        : g.p0 ? { ...g, p0: sh(g.p0), p1: sh(g.p1) } : null;
+      const g2 = g.tail ? { ...g, tail: sa(g.tail), tip: sb(g.tip) }
+        : g.p0 ? { ...g, p0: sa(g.p0), p1: sb(g.p1) } : null;
       if (g2) {
         e._nudging = true; e.geo = g2;
         this._applyGeo(e);
@@ -433,21 +435,35 @@ export class Drawing {
   // ------------------------------------------------------------------
 
   /**
+  /**
    * Step external-force arrows aside when they would be drawn exactly on top
    * of another line.
    *
    * In graphic statics coincidence is the NORMAL case, not an accident: a
-   * resultant lies along the very load line it sums, a reaction lies along
-   * the very ray it belongs to, and a load-case total lies along its parts.
-   * Drawn honestly they hide each other, and the student cannot tell an
-   * internal force from an external one. So every green arrow that is
-   * collinear with, and overlapping, another visible line is moved sideways
-   * by W.off -- perpendicular to itself, the house amount, preferring the
-   * side facing away from the rest of the drawing.
+   * resultant lies along the very load line it sums, and a reaction lies along
+   * the very ray it belongs to. Drawn honestly they hide each other and the
+   * reader cannot tell an internal force from an external one.
    *
-   * Lines of action are exempt: a load MUST sit on its own dashed guide, so
-   * grey guides are never treated as obstacles. Runs after every refresh, so
-   * no view has to remember to do this by hand.
+   * THE RULES, in order:
+   *  1. Only a line that ACTUALLY coincides with another visible line moves.
+   *     No overlap, no offset — nothing is nudged "just in case".
+   *  2. Each line moves on its OWN perpendicular, by exactly W.off. Never a
+   *     shared displacement for a group: two arrows meeting at an angle have
+   *     two different perpendiculars, and moving them together shifts one of
+   *     them sideways along itself, which reads as an error.
+   *  3. It moves to the side facing AWAY from the rest of the drawing, so an
+   *     offset polygon grows outward rather than folding into itself. That
+   *     side is decided ONCE, on the first pass, and remembered: a line must
+   *     not jump from one side to the other while a slider is being dragged.
+   *  4. Shorter lines are placed first. A resultant is longer than the parts
+   *     it sums, so the parts keep the true line and the summary steps aside.
+   *  5. Where two moved lines shared an end point, that corner is mitred back
+   *     together: the shared end goes to the intersection of the two offset
+   *     lines, so a force polygon stays closed while every edge is still on
+   *     its own perpendicular.
+   *
+   * Lines of action are exempt throughout: a load MUST sit on its own dashed
+   * guide, so grey guides are never treated as obstacles.
    */
   declutter() {
     const off = this.W.off, fw = this.halfW * 2;
@@ -456,7 +472,6 @@ export class Drawing {
     const finalOf = (c) => (typeof c === 'number' ? c : c?.final ? undefined : c?.pending);
     const isGreen = (e) => e.color === PAL.green
       || (typeof e.color === 'object' && e.color?.pending === PAL.green);
-    const span = (e) => [e.intro ?? 0, e.outro ?? 1e9];
     const obstacles = [], movers = [];
     for (const [name, e] of this.elems) {
       if (e.noNudge || e.kind === 'dline' || e.kind === 'circle') continue;
@@ -466,105 +481,102 @@ export class Drawing {
       if (L < fw * 0.012) continue;
       const grey = e.color === PAL.grey || e.color === PAL.zero
         || finalOf(e.color) === PAL.grey;
-      const rec = { name, e, p, L, u: [(p[1][0] - p[0][0]) / L, (p[1][1] - p[0][1]) / L], span: span(e) };
+      const rec = { name, e, p, L,
+                    u: [(p[1][0] - p[0][0]) / L, (p[1][1] - p[0][1]) / L],
+                    span: [e.intro ?? 0, e.outro ?? 1e9] };
       if (!grey) obstacles.push(rec);
       if (isGreen(e) && (e.kind === 'arrow' || e.kind === 'darrow')) movers.push(rec);
     }
     if (!movers.length) return;
-    // centre of everything, so the step-aside goes outward rather than inward
-    let cx = 0, cy = 0;
-    for (const o of obstacles) { cx += (o.p[0][0] + o.p[1][0]) / 2; cy += (o.p[0][1] + o.p[1][1]) / 2; }
-    cx /= obstacles.length; cy /= obstacles.length;
+    // the reference centre is fixed on the first pass, not recomputed as the
+    // drawing moves -- otherwise the "away" side flips mid-drag
+    if (!this._declCentre) {
+      let sx = 0, sy = 0;
+      for (const o of obstacles) { sx += (o.p[0][0] + o.p[1][0]) / 2; sy += (o.p[0][1] + o.p[1][1]) / 2; }
+      this._declCentre = [sx / obstacles.length, sy / obstacles.length];
+      this._declSide = new Map();
+    }
+    const [cx, cy] = this._declCentre;
 
-    const hits = (a, b) => {
+    // do a and b lie along each other, over a meaningful stretch?
+    const coincides = (a, qa, b, qb) => {
       if (a === b) return false;
       if (Math.max(a.span[0], b.span[0]) > Math.min(a.span[1], b.span[1])) return false;
-      if (Math.abs(a.u[0] * b.u[1] - a.u[1] * b.u[0]) > 0.035) return false;   // not parallel
-      const px = b.q[0][0] - a.q[0][0], py = b.q[0][1] - a.q[0][1];
-      if (Math.abs(px * a.u[1] - py * a.u[0]) > off * 0.62) return false;      // far enough apart
+      if (Math.abs(a.u[0] * b.u[1] - a.u[1] * b.u[0]) > 0.035) return false;
+      const px = qb[0][0] - qa[0][0], py = qb[0][1] - qa[0][1];
+      if (Math.abs(px * a.u[1] - py * a.u[0]) > off * 0.62) return false;
       const t0 = px * a.u[0] + py * a.u[1];
-      const t1 = (b.q[1][0] - a.q[0][0]) * a.u[0] + (b.q[1][1] - a.q[0][1]) * a.u[1];
+      const t1 = (qb[1][0] - qa[0][0]) * a.u[0] + (qb[1][1] - qa[0][1]) * a.u[1];
       const lo = Math.min(t0, t1), hi = Math.max(t0, t1);
       return Math.min(hi, a.L) - Math.max(lo, 0) > 0.30 * Math.min(a.L, b.L);
     };
 
-    // A force polygon is a CHAIN: each arrow's head is the next one's tail.
-    // Nudging its links separately would tear it open, so head-to-tail runs
-    // move as one rigid group with a single shared displacement.
     const moverSet = new Set(movers.map((m) => m.name));
+    const placed = obstacles.filter((o) => !moverSet.has(o.name));
+    for (const o of placed) o.q = o.p;
+    // rule 4: shortest first, so the parts hold the line and the sum steps aside
+    movers.sort((a, b) => (Math.abs(a.L - b.L) > 1e-9 ? a.L - b.L
+      : a.name < b.name ? -1 : 1));
+
+    for (const m of movers) {
+      const n = [-m.u[1], m.u[0]];                        // rule 2: its own normal
+      const mx = (m.p[0][0] + m.p[1][0]) / 2, my = (m.p[0][1] + m.p[1][1]) / 2;
+      // rule 3: the side is remembered per element, so it never flips
+      let away = this._declSide.get(m.name);
+      if (away === undefined) {
+        away = (mx - cx) * n[0] + (my - cy) * n[1] >= 0 ? 1 : -1;
+        this._declSide.set(m.name, away);
+      }
+      const at = (k) => [[m.p[0][0] + n[0] * off * k, m.p[0][1] + n[1] * off * k],
+                         [m.p[1][0] + n[0] * off * k, m.p[1][1] + n[1] * off * k]];
+      let chosen = 0;
+      // rule 1: only move if it is actually sitting on something
+      for (const k of [0, away, 2 * away, 3 * away]) {
+        if (!placed.some((o) => coincides(m, at(k), o, o.q))) { chosen = k; break; }
+      }
+      m.k = chosen;
+      m.n = n;
+      m.q = at(chosen);
+      placed.push(m);
+    }
+
+    // rule 5: mitre the corners where two MOVED lines used to meet
     const near = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]) < fw * 2e-4;
-    const gid = new Map(movers.map((m, i) => [m.name, i]));
-    const merge = (a, b) => {
-      const ga = gid.get(a.name), gb = gid.get(b.name);
-      if (ga === gb) return;
-      for (const m of movers) if (gid.get(m.name) === gb) gid.set(m.name, ga);
-    };
-    // ...but a RESULTANT laid along the very chain it sums also shares its
-    // end points, and merging it in would move the whole lot together and
-    // separate nothing. So only join links that meet end to end WITHOUT
-    // lying on top of each other.
-    const covers = (a, b) => {
-      if (Math.abs(a.u[0] * b.u[1] - a.u[1] * b.u[0]) > 0.035) return false;
-      const px = b.p[0][0] - a.p[0][0], py = b.p[0][1] - a.p[0][1];
-      const t0 = px * a.u[0] + py * a.u[1];
-      const t1 = (b.p[1][0] - a.p[0][0]) * a.u[0] + (b.p[1][1] - a.p[0][1]) * a.u[1];
-      const lo = Math.min(t0, t1), hi = Math.max(t0, t1);
-      return Math.min(hi, a.L) - Math.max(lo, 0) > 0.30 * Math.min(a.L, b.L);
-    };
+    const cross = (a, b) => a[0] * b[1] - a[1] * b[0];
     for (let i = 0; i < movers.length; i++) {
       for (let j = i + 1; j < movers.length; j++) {
         const a = movers[i], b = movers[j];
-        const joined = near(a.p[1], b.p[0]) || near(b.p[1], a.p[0])
-          || near(a.p[0], b.p[0]) || near(a.p[1], b.p[1]);
-        if (joined && !covers(a, b)) merge(a, b);
+        if (!a.k || !b.k) continue;
+        if (Math.abs(cross(a.u, b.u)) < 0.05) continue;      // parallel: no corner
+        for (const [ea, eb] of [[0, 0], [0, 1], [1, 0], [1, 1]]) {
+          if (!near(a.p[ea], b.p[eb])) continue;
+          const den = cross(a.u, b.u);
+          const w = [b.q[0][0] - a.q[0][0], b.q[0][1] - a.q[0][1]];
+          const t = cross(w, b.u) / den;
+          const P = [a.q[0][0] + a.u[0] * t, a.q[0][1] + a.u[1] * t];
+          a.q[ea] = P; b.q[eb] = P;
+        }
       }
     }
-    const groups = new Map();
+
     for (const m of movers) {
-      const g = gid.get(m.name);
-      if (!groups.has(g)) groups.set(g, []);
-      groups.get(g).push(m);
-    }
-    const placed = obstacles.filter((o) => !moverSet.has(o.name));
-    for (const o of placed) o.q = o.p;
-    const order = [...groups.values()]
-      .sort((a, b) => (a[0].name < b[0].name ? -1 : 1));
-    for (const grp of order) {
-      // the group's own direction: the longest link decides the perpendicular
-      const lead = grp.reduce((a, b) => (a.L >= b.L ? a : b));
-      const n = [-lead.u[1], lead.u[0]];
-      let gx = 0, gy = 0;
-      for (const m of grp) { gx += (m.p[0][0] + m.p[1][0]) / 2; gy += (m.p[0][1] + m.p[1][1]) / 2; }
-      gx /= grp.length; gy /= grp.length;
-      const away = (gx - cx) * n[0] + (gy - cy) * n[1] >= 0 ? 1 : -1;
-      const shift = (k) => {
-        for (const m of grp) {
-          m.q = [[m.p[0][0] + n[0] * off * k, m.p[0][1] + n[1] * off * k],
-                 [m.p[1][0] + n[0] * off * k, m.p[1][1] + n[1] * off * k]];
-        }
-      };
-      let chosen = 0;
-      for (const k of [0, away, -away, 2 * away, -2 * away]) {
-        shift(k);
-        if (!grp.some((m) => placed.some((o) => hits(m, o)))) { chosen = k; break; }
-      }
-      shift(chosen);
-      const nud = chosen ? [n[0] * off * chosen, n[1] * off * chosen] : null;
-      for (const m of grp) {
-        placed.push(m);
-        const had = m.e.nudge;
-        if ((had ? `${had}` : '') !== (nud ? `${nud}` : '')) {
-          m.e.nudge = nud;
-          this._applyGeo(m.e);
-        }
+      const nud = [[m.q[0][0] - m.p[0][0], m.q[0][1] - m.p[0][1]],
+                   [m.q[1][0] - m.p[1][0], m.q[1][1] - m.p[1][1]]];
+      const zero = Math.abs(nud[0][0]) + Math.abs(nud[0][1])
+        + Math.abs(nud[1][0]) + Math.abs(nud[1][1]) < 1e-9;
+      const want = zero ? null : nud;
+      const had = m.e.nudge;
+      if (JSON.stringify(had ?? null) !== JSON.stringify(want)) {
+        m.e.nudge = want;
+        this._applyGeo(m.e);
       }
     }
   }
 
+
   /** sIF for a view whose largest force is Nmax: the widest band then comes
-      out exactly W.band half-wide, whatever the view's frame or force scale.
-      Views should default their "scale internal forces" slider to this
-      instead of guessing a number that only suits one load case. */
+      out exactly W.band half-wide, so a force reads the same thickness
+      whatever the view's frame or force scale. */
   bandScale(Nmax) {
     return Nmax > 0 ? this.W.band / Nmax : 0;
   }
@@ -860,7 +872,7 @@ export class Drawing {
         e.geo.forEach(([a, b], i) => {
           if (dist2(a, b) < 1e-9) return;
           ops.push({ op: 'arrow', ...base, name: `${name}[${i}]`,
-                     p: [nd(a), nd(b)], width: w(e.w),
+                     p: [nd(a, 0), nd(b, 1)], width: w(e.w),
                      head: [w(e.headLen), w(e.headW)] });
         });
       } else if (e.kind === 'strokes') {
@@ -1186,11 +1198,12 @@ export class Drawing {
       const color = resolved(e.color);
       if (color !== undefined) base.color = hex(color);
       // export what is actually DRAWN, declutter's step-aside included
-      const nd = (p) => (e.nudge ? pt([p[0] + e.nudge[0], p[1] + e.nudge[1]]) : pt(p));
+      const nd = (p, end) => (e.nudge
+        ? pt([p[0] + e.nudge[end][0], p[1] + e.nudge[end][1]]) : pt(p));
       if (e.kind === 'seg') {
-        ops.push({ op: 'segment', ...base, p: [nd(e.geo.p0), nd(e.geo.p1)], width: w(e.w) });
+        ops.push({ op: 'segment', ...base, p: [nd(e.geo.p0, 0), nd(e.geo.p1, 1)], width: w(e.w) });
       } else if (e.kind === 'arrow' || e.kind === 'darrow') {
-        const o = { op: 'arrow', ...base, p: [nd(e.geo.tail), nd(e.geo.tip)],
+        const o = { op: 'arrow', ...base, p: [nd(e.geo.tail, 0), nd(e.geo.tip, 1)],
                     width: w(e.w), head: [w(e.headLen), w(e.headW)] };
         if (e.kind === 'darrow') o.dash = e.dash;
         ops.push(o);

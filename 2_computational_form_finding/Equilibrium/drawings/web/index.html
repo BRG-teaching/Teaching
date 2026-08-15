@@ -269,6 +269,15 @@
       }
       // ops-database export (tools/export_ops.py -> drawings/python)
       window.__exportOps = () => dw.exportOps(mod.meta, window.__player);
+      // regression hook: the drawing keeps {k, d, state} from the last apply,
+      // so a test can poke the state, refresh, and read the answer back out
+      // (web/tools/regress/live.py). Read-only for anything but tests.
+      window.__dw = dw;
+      window.__set = (patch) => {
+        Object.assign(dw._lastApply.state, patch);
+        window.__player.refresh();
+        return dw._lastApply.d;
+      };
 
       // recreate-in-python links (the ops database, see drawings/python/)
       // the exercise wing: link straight back to the real course sheet

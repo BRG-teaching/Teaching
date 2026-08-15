@@ -47,7 +47,7 @@ add(1, 'label', Point(-14.6, 5.47539, 0), color=Color.from_hex("#3f9c20"), text=
 # step 2 — The resultant
 add(2, 'polyline', Polyline([(-10.5, 5.57538, 0), (-10.5, -5.5, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.2478)
 add(2, 'arrow', Line((-10.5, 3.57538, 0), (-10.5, 1.37539, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
-add(2, 'arrow', Line((4.41418, 3.56152, 0), (4.41418, -6.18848, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
+add(2, 'arrow', Line((4, 4.20898, 0), (4, -5.54102, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
 add(2, 'label', Point(-9.3, 2.47539, 0), color=Color.from_hex("#3f9c20"), text='R')
 add(2, 'label', Point(2, -0.666016, 0), color=Color.from_hex("#3f9c20"), text='R')
 
@@ -107,10 +107,10 @@ add(4, 'label', Point(-17.9484, -3.43009, 0), color=Color.from_hex("#aaaaaa"), t
 add(5, 'point', Point(4, 2, 0), color=Color.from_hex("#ffffff"), width=0.21756)
 add(5, 'label', Point(2.7, 2, 0), text='i')
 add(5, 'arrow', Line((-19, -1.46923, 0), (-22.3418, -0.843022, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
-add(5, 'arrow', Line((16.2027, 1.35254, 0), (4.41418, 3.56152, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
+add(5, 'arrow', Line((16.8128, 2.19905, 0), (4.07078, 4.58671, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
 add(5, 'label', Point(-20.9418, 0.256978, 0), color=Color.from_hex("#3f9c20"), text='A = 2998')
 add(5, 'arrow', Line((-2, 2.37539, 0), (0.864123, 4.20754, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
-add(5, 'arrow', Line((4.41418, -6.18848, 0), (16.2027, 1.35254, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
+add(5, 'arrow', Line((4.20709, -5.86475, 0), (16.8128, 2.19905, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
 add(5, 'label', Point(2.66412, 5.10754, 0), color=Color.from_hex("#3f9c20"), text='B = 3499')
 
 # step 6 — a) The governing force

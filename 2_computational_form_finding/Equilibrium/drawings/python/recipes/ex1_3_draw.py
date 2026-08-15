@@ -107,9 +107,9 @@ add(5, 'label', Point(35.21, -15.0482, 0), text='S')
 # step 6 — The resultant — in both diagrams
 add(6, 'polyline', Polyline([(34.11, 8, 0), (34.11, -17.9482, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.413)
 add(6, 'arrow', Line((34.11, 6, 0), (34.11, 0.6, 0)), color=Color.from_hex("#3f9c20"), width=0.220248, dash=0.6608, head=(0.66024, 0.255024))
-add(6, 'arrow', Line((62.781, -1, 0), (62.781, -21, 0)), color=Color.from_hex("#3f9c20"), width=0.220248, dash=0.6608, head=(0.66024, 0.255024))
+add(6, 'arrow', Line((62.1405, -1, 0), (62.1405, -21, 0)), color=Color.from_hex("#3f9c20"), width=0.220248, dash=0.6608, head=(0.66024, 0.255024))
 add(6, 'label', Point(36.51, 3.3, 0), color=Color.from_hex("#3f9c20"), text='R')
-add(6, 'label', Point(64.481, -11, 0), color=Color.from_hex("#3f9c20"), text='R')
+add(6, 'label', Point(63.8405, -11, 0), color=Color.from_hex("#3f9c20"), text='R')
 
 # step 7 — Stable or not?
 add(7, 'segment', Line((36.29, -18.35, 0), (43.09, -18.35, 0)), color=Color.from_hex("#111111"), width=0.254822)

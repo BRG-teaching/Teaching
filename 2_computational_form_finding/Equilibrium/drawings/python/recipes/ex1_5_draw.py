@@ -75,11 +75,11 @@ add(1, 'arrow', Line((-12.5444, 0.63, 0), (-12.5444, -2.57, 0)), color=Color.fro
 add(1, 'label', Point(-11.2444, -0.65, 0), color=Color.from_hex("#3f9c20"), text='F₃')
 
 # step 2 — The load line
-add(2, 'arrow', Line((4.7686, 6, 0), (4.7686, 2.25, 0)), color=Color.from_hex("#3f9c20"), width=0.114912, head=(0.396144, 0.153014))
+add(2, 'arrow', Line((4, 6, 0), (4, 2.25, 0)), color=Color.from_hex("#3f9c20"), width=0.114912, head=(0.396144, 0.153014))
 add(2, 'label', Point(5.5, 4.125, 0), color=Color.from_hex("#3f9c20"), text='F₁')
-add(2, 'arrow', Line((4.7686, -0.25, 0), (4.7686, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.114912, head=(0.396144, 0.153014))
+add(2, 'arrow', Line((4, -0.25, 0), (4, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.114912, head=(0.396144, 0.153014))
 add(2, 'label', Point(5.5, -2.125, 0), color=Color.from_hex("#3f9c20"), text='F₂')
-add(2, 'arrow', Line((4.7686, 2.25, 0), (4.7686, -0.25, 0)), color=Color.from_hex("#3f9c20"), width=0.114912, head=(0.396144, 0.153014))
+add(2, 'arrow', Line((4, 2.25, 0), (4, -0.25, 0)), color=Color.from_hex("#3f9c20"), width=0.114912, head=(0.396144, 0.153014))
 add(2, 'label', Point(5.5, 1, 0), color=Color.from_hex("#3f9c20"), text='F₃')
 
 # step 3 — A trial pole
@@ -101,7 +101,7 @@ add(5, 'point', Point(-12.5444, -9.55302, 0), color=Color.from_hex("#ffffff"), w
 add(5, 'label', Point(-11.4444, -10.553, 0), text='S')
 add(5, 'polyline', Polyline([(-12.5444, 4.84, 0), (-12.5444, -11.153, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.2478)
 add(5, 'arrow', Line((-12.5444, 4.84, 0), (-12.5444, 0.68, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
-add(5, 'arrow', Line((4, 6, 0), (4, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
+add(5, 'arrow', Line((4.3843, 6, 0), (4.3843, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
 add(5, 'label', Point(-11.1444, 2.76, 0), color=Color.from_hex("#3f9c20"), text='R')
 add(5, 'label', Point(2.2, 1, 0), color=Color.from_hex("#3f9c20"), text='R')
 

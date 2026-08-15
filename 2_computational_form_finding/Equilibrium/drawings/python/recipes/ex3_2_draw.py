@@ -67,9 +67,9 @@ add(3, 'polyline', Polyline([(26.044, -5.145, 0), (12.8635, 8.97696, 0)]), color
 add(4, 'point', Point(12.8635, 8.97696, 0), color=Color.from_hex("#ffffff"), width=0.40256)
 add(4, 'polyline', Polyline([(12.8635, 10, 0), (12.8635, -8, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.4012)
 add(4, 'arrow', Line((12.8635, 8, 0), (12.8635, -9.14286, 0)), color=Color.from_hex("#3f9c20"), width=0.213955, dash=0.64192, head=(0.641376, 0.247738))
-add(4, 'arrow', Line((-15.2444, -9, 0), (-15.2444, -26.1429, 0)), color=Color.from_hex("#3f9c20"), width=0.213955, dash=0.64192, head=(0.641376, 0.247738))
+add(4, 'arrow', Line((-14.6222, -9, 0), (-14.6222, -26.1429, 0)), color=Color.from_hex("#3f9c20"), width=0.213955, dash=0.64192, head=(0.641376, 0.247738))
 add(4, 'label', Point(14.5635, -0.571429, 0), color=Color.from_hex("#3f9c20"), text='R')
-add(4, 'label', Point(-17.0444, -17.5714, 0), color=Color.from_hex("#3f9c20"), text='R')
+add(4, 'label', Point(-16.4222, -17.5714, 0), color=Color.from_hex("#3f9c20"), text='R')
 
 # step 5 — Now choose: the thrust H
 add(5, 'point', Point(-4.31429, -18.2822, 0), color=Color.from_hex("#ffffff"), width=0.40256)
@@ -79,10 +79,10 @@ add(5, 'label', Point(-9.15714, -5.9, 0), color=Color.from_hex("#aaaaaa"), text=
 
 # step 6 — Global equilibrium
 add(6, 'arrow', Line((-2, 3, 0), (-7.19831, 7.98172, 0)), color=Color.from_hex("#3f9c20"), width=0.13415, head=(0.433786, 0.186048))
-add(6, 'arrow', Line((-4.31429, -18.2822, 0), (-14, -9, 0)), color=Color.from_hex("#3f9c20"), width=0.13415, head=(0.433786, 0.186048))
+add(6, 'arrow', Line((-4.34845, -19.1112, 0), (-14.4305, -9.44922, 0)), color=Color.from_hex("#3f9c20"), width=0.13415, head=(0.433786, 0.186048))
 add(6, 'label', Point(-8.59831, 8.78172, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(6, 'arrow', Line((36.259, 7.743, 0), (41.8495, 12.2802, 0)), color=Color.from_hex("#3f9c20"), width=0.13415, head=(0.433786, 0.186048))
-add(6, 'arrow', Line((-14, -26.1429, 0), (-4.31429, -18.2822, 0)), color=Color.from_hex("#3f9c20"), width=0.13415, head=(0.433786, 0.186048))
+add(6, 'arrow', Line((-13.6079, -26.626, 0), (-4.34845, -19.1112, 0)), color=Color.from_hex("#3f9c20"), width=0.13415, head=(0.433786, 0.186048))
 add(6, 'label', Point(43.2495, 13.0802, 0), color=Color.from_hex("#3f9c20"), text='B')
 
 # step 7 — The cable segments

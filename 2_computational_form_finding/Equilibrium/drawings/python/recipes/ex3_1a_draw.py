@@ -33,7 +33,7 @@ add(1, 'arrow', Line((-11.2, 0.9, 0), (-11.2, -3.3, 0)), color=Color.from_hex("#
 add(1, 'label', Point(-13.2, -0.99, 0), color=Color.from_hex("#3f9c20"), text='F_d')
 
 # step 2 — The load line
-add(2, 'arrow', Line((6.7686, 8, 0), (6.7686, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.114912, head=(0.396144, 0.153014))
+add(2, 'arrow', Line((6, 8, 0), (6, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.114912, head=(0.396144, 0.153014))
 add(2, 'label', Point(4, 2, 0), color=Color.from_hex("#3f9c20"), text='F_d')
 
 # step 3 — Now design: choose the sag
@@ -60,10 +60,10 @@ add(4, 'label', Point(9.6, 10.8, 0), color=Color.from_hex("#aaaaaa"), text='H = 
 
 # step 5 — Global equilibrium
 add(5, 'arrow', Line((-16, 0.5, 0), (-19.2265, 3.18877, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
-add(5, 'arrow', Line((13.9686, 2, 0), (6.7686, 8, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
+add(5, 'arrow', Line((13.8003, 2, 0), (6.24602, 8.29523, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
 add(5, 'label', Point(-20.4265, 4.08877, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(5, 'arrow', Line((-6.4, 0.5, 0), (-3.17347, 3.18877, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
-add(5, 'arrow', Line((6.7686, -4, 0), (13.9686, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
+add(5, 'arrow', Line((6.24602, -4.29523, 0), (13.8003, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
 add(5, 'label', Point(-1.97347, 4.08877, 0), color=Color.from_hex("#3f9c20"), text='B')
 
 # step 6 — Check the low point

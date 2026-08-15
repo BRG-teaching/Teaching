@@ -214,7 +214,7 @@ export function create(dw, panel, makePlayer) {
       const X = AX + (SPU * i) / 10;
       return [[X, qy], [X, qy - 1.5]];
     }));
-    dw.setLabel('lq', [AX - 4.2, qy]);
+    dw.setLabel('lq', [AX - 4.4, qy - 0.2]);
     dw.setText('lq', `q_d = ${s.qd} kN/m`);
 
     dw.setDashLine('chord', [[AX - 2.4, AY], [BX + 2.4, AY]]);

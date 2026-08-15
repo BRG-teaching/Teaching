@@ -28,14 +28,14 @@ add(1, 'label', Point(-17.4, 3, 0), text='A')
 add(1, 'point', Point(-6.4, 2, 0), color=Color.from_hex("#ffffff"), width=0.3108)
 add(1, 'label', Point(-5.1, 0.7, 0), text='B')
 add(1, 'segment', Line((-16, 5.4, 0), (-6.4, 5.4, 0)), color=Color.from_hex("#3f9c20"), width=0.04536)
-add(1, 'label', Point(-20.2, 5.4, 0), color=Color.from_hex("#3f9c20"), text='q_d = 20 kN/m')
+add(1, 'label', Point(-20.4, 5.2, 0), color=Color.from_hex("#3f9c20"), text='q_d = 20 kN/m')
 
 # step 2 — First the resultant
 add(2, 'polyline', Polyline([(-18.4, 2, 0), (-4, 2, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.2478)
 add(2, 'label', Point(-3, 2.9, 0), color=Color.from_hex("#aaaaaa"), text='CS / SL')
 add(2, 'polyline', Polyline([(-11.2, 6.4, 0), (-11.2, -4.2, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.2478)
 add(2, 'arrow', Line((-11.2, 5.2, 0), (-11.2, 1, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
-add(2, 'arrow', Line((6.7686, 8, 0), (6.7686, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
+add(2, 'arrow', Line((6, 8, 0), (6, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.132149, dash=0.39648, head=(0.396144, 0.153014))
 add(2, 'label', Point(-9.6, 3.1, 0), color=Color.from_hex("#3f9c20"), text='R')
 add(2, 'label', Point(4, 2, 0), color=Color.from_hex("#3f9c20"), text='R')
 
@@ -86,10 +86,10 @@ add(4, 'label', Point(9.6, 10.8, 0), color=Color.from_hex("#aaaaaa"), text='H = 
 
 # step 5 — Global equilibrium
 add(5, 'arrow', Line((-16, 2, 0), (-19.2265, 4.68877, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
-add(5, 'arrow', Line((13.9686, 2, 0), (6.7686, 8, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
+add(5, 'arrow', Line((13.8003, 2, 0), (6.24602, 8.29523, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
 add(5, 'label', Point(-20.4265, 5.58877, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(5, 'arrow', Line((-6.4, 2, 0), (-3.17347, 4.68877, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
-add(5, 'arrow', Line((6.7686, -4, 0), (13.9686, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
+add(5, 'arrow', Line((6.24602, -4.29523, 0), (13.8003, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.082858, head=(0.267926, 0.114912))
 add(5, 'label', Point(-1.97347, 5.58877, 0), color=Color.from_hex("#3f9c20"), text='B')
 
 # step 6 — c) Is the force constant?
