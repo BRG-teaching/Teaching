@@ -71,7 +71,7 @@ add(1, 'label', Point(5.06, 1.64986, 0), text='D')
 # step 2 — The deck weight Rg
 add(2, 'arrow', Line((5, 3.24384, 0), (5, 2.24384, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, dash=0.12, head=(0.1728, 0.0648), until=5)
 add(2, 'label', Point(5.34, 2.96384, 0), color=Color.from_hex("#3f9c20"), text='Rg', until=5)
-add(2, 'arrow', Line((14, 4, 0), (14, 0.600902, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=10)
+add(2, 'arrow', Line((14.3172, 4, 0), (14.3172, 0.600902, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=10)
 add(2, 'label', Point(14.38, 2.30045, 0), color=Color.from_hex("#3f9c20"), text='Rg', until=10)
 add(2, 'point', Point(14, 4, 0), color=Color.from_hex("#ffffff"), width=0.085)
 
@@ -122,9 +122,9 @@ add(4, 'segment', Line((11.1671, 2.30045, 0), (14, 0.600902, 0)), color=Color.fr
 
 # step 5 — The built bridge
 add(5, 'image', Polygon([(-0.7, -1.74, 0), (10.7, -1.74, 0), (10.7, 3.07, 0), (-0.7, 3.07, 0)]), opacity=0.2)
-add(5, 'arrow', Line((11.1671, 2.30045, 0), (14, 4, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=10)
+add(5, 'arrow', Line((11.3303, 2.02842, 0), (14.1632, 3.72797, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=10)
 add(5, 'arrow', Line((14, 0.600902, 0), (11.1671, 2.30045, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=10)
-add(5, 'arrow', Line((0.028366, -0.282952, 0), (0.5, 0, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=10)
+add(5, 'arrow', Line((-0.134835, -0.010922, 0), (0.336798, 0.27203, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=10)
 add(5, 'arrow', Line((9.97163, -0.282952, 0), (9.5, 0, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=10)
 add(5, 'label', Point(12.4836, 3.47023, 0), color=Color.from_hex("#3f9c20"), text='A', until=10)
 add(5, 'label', Point(12.4836, 1.11068, 0), color=Color.from_hex("#3f9c20"), text='B', until=10)
@@ -134,7 +134,7 @@ add(5, 'label', Point(10.12, -0.42, 0), color=Color.from_hex("#3f9c20"), text='B
 # step 6 — Two loads: Q₁ and Q₂
 add(6, 'polyline', Polyline([(2.75, 4.27849, 0), (2.75, -1.5587, 0)]), color=Color.from_hex("#bbbbbb"), dash=0.05, until=9)
 add(6, 'polyline', Polyline([(7.25, 4.27849, 0), (7.25, -1.5587, 0)]), color=Color.from_hex("#bbbbbb"), dash=0.05, until=9)
-add(6, 'arrow', Line((2.75, 4.27849, 0), (2.75, 3.77849, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=9)
+add(6, 'arrow', Line((2.43277, 4.27849, 0), (2.43277, 3.77849, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=9)
 add(6, 'arrow', Line((7.25, 4.27849, 0), (7.25, 3.77849, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=9)
 add(6, 'label', Point(3.11, 4.13849, 0), color=Color.from_hex("#3f9c20"), text='Q₁', until=9)
 add(6, 'label', Point(7.61, 4.13849, 0), color=Color.from_hex("#3f9c20"), text='Q₂', until=9)
@@ -176,7 +176,7 @@ add(9, 'label', Point(2.39, 4.13849, 0), color=Color.from_hex("#3f9c20"), text='
 add(9, 'polyline', Polyline([(2.75, 3.77849, 0), (2.75, -1.5587, 0)]), color=Color.from_hex("#999999"), dash=0.05)
 add(9, 'polyline', Polyline([(0.5, 0, 0), (2.75, 2.0248, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.12, until=10)
 add(9, 'polyline', Polyline([(2.75, 2.0248, 0), (9.5, 0, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.12, until=10)
-add(9, 'arrow', Line((12, 5.7, 0), (12, 5.18, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=16)
+add(9, 'arrow', Line((12.3172, 5.7, 0), (12.3172, 5.18, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648), until=16)
 add(9, 'label', Point(12.3, 5.44, 0), color=Color.from_hex("#3f9c20"), text='Q', until=16)
 add(9, 'segment', Line((11.5666, 5.31, 0), (12, 5.7, 0)), color=Color.from_hex("#aaaaaa"), width=0.0144, until=16)
 add(9, 'segment', Line((11.5666, 5.31, 0), (12, 5.18, 0)), color=Color.from_hex("#aaaaaa"), width=0.0144, until=16)
@@ -376,9 +376,9 @@ add(14, 'polygon', Polygon([(9.01699, 0.178843, 0), (9.083, 0.304468, 0), (9.383
 add(14, 'polygon', Polygon([(9.31482, 0.021208, 0), (9.38518, 0.146833, 0), (9.53518, 0.062812, 0), (9.46482, -0.062812, 0)]), color=Color.from_hex("#1a1eb2"))
 
 # step 15 — Reactions
-add(15, 'arrow', Line((10.7338, 1.91045, 0), (14, 4, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648))
+add(15, 'arrow', Line((10.9047, 1.64322, 0), (14.171, 3.73277, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648))
 add(15, 'arrow', Line((14, 0.080902, 0), (10.7338, 1.91045, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648))
-add(15, 'arrow', Line((0.036696, -0.296394, 0), (0.5, 0, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648))
+add(15, 'arrow', Line((-0.134259, -0.029169, 0), (0.329045, 0.267226, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648))
 add(15, 'arrow', Line((9.97985, -0.268782, 0), (9.5, 0, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1728, 0.0648))
 add(15, 'label', Point(12.2669, 3.27522, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(15, 'label', Point(12.2669, 0.655676, 0), color=Color.from_hex("#3f9c20"), text='B')

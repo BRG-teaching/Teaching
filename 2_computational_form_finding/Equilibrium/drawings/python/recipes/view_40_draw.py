@@ -86,7 +86,7 @@ add(3, 'label', Point(14.1939, 6.16052, 0), text='V')
 # step 4 — B is the distance between the poles
 add(4, 'arrow', Line((14.5139, 6.34052, 0), (14.5139, 8.37267, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.1368, 0.054))
 add(4, 'label', Point(14.1739, 7.35659, 0), color=Color.from_hex("#3f9c20"), text='B')
-add(4, 'arrow', Line((15.832, 8.37267, 0), (15.832, 9.28159, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.1368, 0.054))
+add(4, 'arrow', Line((16.2053, 8.37267, 0), (16.2053, 9.28159, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.1368, 0.054))
 add(4, 'arrow', Line((15.832, 5.43159, 0), (15.832, 6.34052, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.1368, 0.054))
 add(4, 'label', Point(16.052, 8.82713, 0), color=Color.from_hex("#3f9c20"), text='A_V')
 add(4, 'label', Point(16.052, 5.88605, 0), color=Color.from_hex("#3f9c20"), text='C')

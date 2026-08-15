@@ -31,7 +31,6 @@ export const meta = {
   frame: [[-37, -45], [33, 5]],
 };
 
-const RESOLVE = 7;
 const SFD = 8;                       // kN per drawing unit
 const SPAN = 25.5;                   // drawing units (170 pt at 0.15)
 const CASES = [
@@ -56,7 +55,7 @@ const STEPS = [
   { t: 'a) Node I closes', d: 'left: at node I the two cable segments 1 and 2 meet the load — right: the polygon closes with two equal segments, parallel to the cable: both are TENSION',
     detail: (d) => [`a) N₁ = N₂ = ${d.a.N.toFixed(1)} kN tension · horizontal part H = ${d.a.H.toFixed(1)} kN`] },
   { t: 'a) The supports', d: 'left: at A and B the cable pulls down and inward, so each support must pull up and outward — right: the same two vectors, read straight off the ends of the polygon',
-    detail: (d) => [`a) each support: V = ${d.a.V.toFixed(1)} kN up · H = ${d.a.H.toFixed(1)} kN inward · resultant ${d.a.N.toFixed(1)} kN`] },
+    detail: (d) => [`a) each support: V = ${d.a.V.toFixed(1)} kN up · H = ${d.a.H.toFixed(1)} kN outward · resultant ${d.a.N.toFixed(1)} kN`] },
   { t: 'b) The same, with half the sag', d: 'left: the flatter cable — right: its polygon has the same vertical F₁, but the segments must be far flatter, so they get far longer',
     detail: (d) => [`b) N₁ = N₂ = ${d.b.N.toFixed(1)} kN · H = ${d.b.H.toFixed(1)} kN`] },
   { t: 'Halve the sag, double the thrust', d: 'both diagrams side by side: the load never changed, but the flat cable pulls its supports apart with twice the force',
@@ -96,10 +95,10 @@ export function create(dw, panel, makePlayer) {
     dw.label(`ck${k}`, `${k})`, { cls: 'num', intro: 1, flash: false });
     // the cable, drawn in tension colour once its node is solved
     for (const i of [1, 2]) {
-      dw.poly(`if${k}${i}`, 4, { intro: 3, opacity: 1.0, z: -0.18, flash: false,
+      dw.poly(`if${k}${i}`, 4, { intro: ns, opacity: 1.0, z: -0.18, flash: false,
         color: { pending: PAL.grey, final: () => PAL.red }, when: (st) => st.o1 });
       dw.seg(`m${k}${i}`, { intro: 1, w: dw.W.bar,
-        color: { pending: PAL.black, final: () => PAL.red } });
+        color: { pending: PAL.black, final: (dd, st) => (st._k >= ns ? PAL.red : PAL.grey) } });
       dw.seg(`p${k}${i}`, { intro: ns, w: dw.W.bar,
         color: { pending: PAL.black, final: () => PAL.red } });
       dw.link(`m${k}${i}`, `p${k}${i}`);
@@ -171,17 +170,19 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`lN${k}`, V.add(x.Pm, [-2.2, 0]));
       dw.setText(`lN${k}`, `${x.N.toFixed(0)}`);
 
-      // the support reactions: on the form diagram they pull up and inward
+      // the support reactions: on the form diagram they pull up and outward
       const uA = V.unit(V.sub(x.A, x.I)), uB = V.unit(V.sub(x.B, x.I));
       const L = s.F / SFD * 0.55;          // load-symbol length, not the raw force
       dw.setArrow(`r${k}A`, x.A, V.add(x.A, V.mul(uA, L)));
       dw.setArrow(`r${k}B`, x.B, V.add(x.B, V.mul(uB, L)));
-      // in the force diagram they are the SAME two vectors — so draw them
-      // offset beside the polygon (house rule), otherwise they simply cover
-      // the cable forces and the student cannot tell the two apart
-      const ro = V.mul(V.unit(V.perp(V.sub(x.P1, x.P0))), dw.W.off);
-      dw.setArrow(`fr${k}A`, V.add(x.Pm, ro), V.add(x.P0, ro));
-      dw.setArrow(`fr${k}B`, V.add(x.P1, ro), V.add(x.Pm, ro));
+      // In the force diagram they are the SAME two vectors, so they would
+      // land exactly on the cable forces; declutter() steps the pair aside
+      // as one rigid chain, so B's arrowhead still meets A's tail.
+      // A is the LEFT support, so its reaction is the up-and-left leg
+      // P1 -> Pm; B's is the up-and-right leg Pm -> P0. The other way round
+      // contradicts the form diagram beside it.
+      dw.setArrow(`fr${k}A`, x.P1, x.Pm);
+      dw.setArrow(`fr${k}B`, x.Pm, x.P0);
       dw.setLabel(`lH${k}`, [x.P0[0] - x.H / SFD / 2, x.P0[1] + 1.6]);
       dw.setText(`lH${k}`, `H = ${x.H.toFixed(0)} kN`);
     }

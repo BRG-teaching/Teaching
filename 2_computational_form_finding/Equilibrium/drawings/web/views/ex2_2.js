@@ -56,6 +56,8 @@ const SAG1 = pt(453.3, 467.0)[1];       // the drawn depth of the first node
 const LL = [30, 1];                     // top of the load line
 const STEEL = { S235: 235, S355: 355 }, GM = 1.05;
 
+const SOLVED = 5;        // the step at which the cable forces are known
+
 const DEFAULTS = { F: 40, d1: 18, grade: 1, o1: true, sIF: 0.012, lbl: true, _k: 99 };
 
 const STEPS = [
@@ -67,8 +69,9 @@ const STEPS = [
   { t: 'The shape fixes the pole', d: 'right: draw a ray parallel to the FIRST cable segment through the top of the load line, and one parallel to the LAST segment through its bottom — they cross at the pole o. Its distance from the load line is the horizontal thrust H',
     detail: (d) => [`H = ${d.H.toFixed(1)} kN — the same in every segment of the cable`],
     take: 'the geometry is given, so the pole is not a choice: the cable itself tells you where it is' },
-  { t: 'The middle ray checks it', d: 'right: the third ray, from o to the division between the loads — left: it comes out parallel to the middle cable segment, which proves the drawn shape really is the funicular of these two loads',
-    detail: (d) => [`slope break at node 1: ${d.brk1.toFixed(3)} · at node 2: ${d.brk2.toFixed(3)} (equal loads ⇒ equal breaks)`] },
+  { t: 'The middle ray', d: 'right: the third ray, from o to the division between the loads — left: it is parallel to the middle cable segment. Equal loads bend the cable by equal amounts, so the two slope breaks come out the same',
+    detail: (d) => [`slope break at each node: P/H = ${d.brk1.toFixed(3)}`,
+                    `the sheet's own drawn cable breaks by 0.758 and 0.755 — 0.4 % apart, which is draughtsman's tolerance, not physics`] },
   { t: 'The three cable forces', d: 'left: each segment flashes — right: its force is the ray from the pole, all three in tension',
     detail: (d) => [`segment 1 (steep, at the left anchor): ${d.N[0].toFixed(1)} kN`,
                     `segment 2 (flat, mid-span): ${d.N[1].toFixed(1)} kN · segment 3: ${d.N[2].toFixed(1)} kN`] },
@@ -116,8 +119,9 @@ function compute(s) {
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
   const ARR = dw.W.arrow, NARR = dw.W.narrow;
-  const CAB = (i) => ({ pending: PAL.black, final: (dd) =>
-    (dd.N[i] === dd.Nmax ? PAL.red : PAL.red) });
+  // grey until the step that actually solves the cable, then tension pink
+  const CAB = (i) => ({ pending: PAL.black,
+    final: (dd, st) => (st._k >= SOLVED ? PAL.red : PAL.grey) });
 
   dw.label('form_title', 'Form Diagram', { cls: 'title', flash: false });
   dw.label('force_title', 'Force Diagram', { cls: 'title', flash: false });
@@ -133,7 +137,7 @@ export function create(dw, panel, makePlayer) {
   }
   for (let i = 0; i < 3; i++) {
     dw.poly(`if${i}`, 4, { intro: 5, opacity: 1.0, z: -0.18, flash: false,
-      color: { pending: PAL.grey, final: (dd) => CAB(i).final(dd) }, when: (st) => st.o1 });
+      color: { pending: PAL.grey, final: (dd, st) => CAB(i).final(dd, st) }, when: (st) => st.o1 });
     dw.seg(`cab${i}`, { intro: 1, w: dw.W.bar, color: CAB(i) });
     dw.seg(`ray${i}`, { intro: i === 1 ? 4 : 3, w: dw.W.ray, color: PAL.grey });
     dw.seg(`fc${i}`, { intro: 5, w: dw.W.bar, color: CAB(i) });
@@ -201,7 +205,9 @@ export function create(dw, panel, makePlayer) {
     for (let i = 0; i < 3; i++) {
       dw.setSeg(`ray${i}`, d.o, div[i]);
       dw.setSeg(`fc${i}`, div[i], d.o);
-      dw.setLabel(`lfc${i}`, V.add(V.mid(div[i], d.o), [0, i === 1 ? -1.4 : 1.4]));
+      // step each label clear of its own ray, not toward its neighbour
+      const nrm = V.mul(V.unit(V.perp(V.sub(d.o, div[i]))), 1.5);
+      dw.setLabel(`lfc${i}`, V.add(V.mid(div[i], d.o), nrm));
       dw.setText(`lfc${i}`, `${d.N[i].toFixed(1)}`);
     }
     dw.setDisk('ptO', d.o);
@@ -212,7 +218,9 @@ export function create(dw, panel, makePlayer) {
 
     const gi = d.N.indexOf(d.Nmax);
     dw.setSeg('gov', pts[gi], pts[gi + 1]);
-    dw.setLabel('lgov', V.add(V.mid(pts[gi], pts[gi + 1]), [-3.2, 1.4]));
+    // clear of the force-thickness band, which is sIF*N units half-wide
+    const gn = V.mul(V.unit(V.perp(V.sub(pts[gi + 1], pts[gi]))), -(s.sIF * d.Nmax + 2.0));
+    dw.setLabel('lgov', V.add(V.add(V.mid(pts[gi], pts[gi + 1]), gn), [-3.2, 0]));
     dw.setText('lgov', `N_d,max = ${d.Nmax.toFixed(1)} kN`);
 
     panel.syncAll();

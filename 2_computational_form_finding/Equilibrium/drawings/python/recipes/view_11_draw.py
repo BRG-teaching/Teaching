@@ -228,7 +228,7 @@ add(5, 'label', Point(19.7955, 7.32238, 0), color=Color.from_hex("#3f9c20"), tex
 
 # step 6 — Components of A and B
 add(6, 'arrow', Line((6, 6.57, 0), (5, 6.57, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, head=(0.2016, 0.0864))
-add(6, 'arrow', Line((6, 6.57, 0), (6, 7.57, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, head=(0.2016, 0.0864))
+add(6, 'arrow', Line((5.44781, 6.57, 0), (5.44781, 7.57, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, head=(0.2016, 0.0864))
 add(6, 'arrow', Line((18.76, 6.57, 0), (19.76, 6.57, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, head=(0.2016, 0.0864))
 add(6, 'arrow', Line((18.76, 6.57, 0), (18.76, 7.57, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, head=(0.2016, 0.0864))
 add(6, 'arrow', Line((23, -5.3651, 0), (17.4577, -5.3651, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, head=(0.2016, 0.0864))
@@ -352,9 +352,9 @@ add(10, 'label', Point(9.78603, -2.52474, 0), text='o₂')
 add(10, 'point', Point(9.33603, -2.27474, 0), color=Color.from_hex("#ffffff"), width=0.1)
 
 # step 11 — Tower equilibrium: E and F
-add(11, 'arrow', Line((15.5447, 0.4216, 0), (10.0024, -2.70231, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.288, 0.1152))
-add(11, 'arrow', Line((10.0024, -2.70231, 0), (15.5447, -5.13831, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.288, 0.1152))
-add(11, 'arrow', Line((15.5447, -5.13831, 0), (15.5447, 0.4216, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.288, 0.1152))
+add(11, 'arrow', Line((15.8158, -0.059438, 0), (10.2735, -3.18335, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.288, 0.1152))
+add(11, 'arrow', Line((9.78018, -3.20782, 0), (15.3225, -5.64382, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.288, 0.1152))
+add(11, 'arrow', Line((16.0969, -5.13831, 0), (16.0969, 0.4216, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.288, 0.1152))
 add(11, 'label', Point(12.5235, -0.740354, 0), color=Color.from_hex("#3f9c20"), text='C')
 add(11, 'label', Point(12.4235, -4.22031, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(11, 'label', Point(15.9947, -2.35835, 0), color=Color.from_hex("#3f9c20"), text='E')

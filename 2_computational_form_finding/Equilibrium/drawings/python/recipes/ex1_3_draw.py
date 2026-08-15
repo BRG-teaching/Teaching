@@ -107,14 +107,14 @@ add(5, 'label', Point(25.21, -5.04824, 0), text='S')
 # step 6 — The resultant — in both diagrams
 add(6, 'polyline', Polyline([(24.11, 7, 0), (24.11, -7.94824, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3422)
 add(6, 'arrow', Line((24.11, 4, 0), (24.11, -16, 0)), color=Color.from_hex("#3f9c20"), width=0.182491, dash=0.54752, head=(0.547056, 0.211306))
-add(6, 'arrow', Line((52.7, 9, 0), (52.7, -11, 0)), color=Color.from_hex("#3f9c20"), width=0.182491, dash=0.54752, head=(0.547056, 0.211306))
+add(6, 'arrow', Line((50.5614, 9, 0), (50.5614, -11, 0)), color=Color.from_hex("#3f9c20"), width=0.182491, dash=0.54752, head=(0.547056, 0.211306))
 add(6, 'label', Point(22.21, -6, 0), color=Color.from_hex("#3f9c20"), text='R')
-add(6, 'label', Point(54.4, -1, 0), color=Color.from_hex("#3f9c20"), text='R')
+add(6, 'label', Point(52.2614, -1, 0), color=Color.from_hex("#3f9c20"), text='R')
 
 # step 7 — Stable or not?
-add(7, 'segment', Line((26.29, -8.35, 0), (33.09, -8.35, 0)), color=Color.from_hex("#232327"), width=0.211139)
+add(7, 'segment', Line((26.29, -8.35, 0), (33.09, -8.35, 0)), color=Color.from_hex("#111111"), width=0.211139)
 add(7, 'label', Point(29.69, -9.9, 0), text='contact patch')
-add(7, 'label', Point(23.61, -11.4, 0), text='NOT STABLE — it tips')
+add(7, 'label', Point(23.61, -11.4, 0), color=Color.from_hex("#ce4095"), text='NOT STABLE — it tips')
 
 
 if __name__ == "__main__":

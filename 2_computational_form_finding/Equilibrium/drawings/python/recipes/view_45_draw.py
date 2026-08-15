@@ -200,12 +200,12 @@ add(6, 'segment', Line((23.5767, 6.21791, 0), (26.9801, 2.35076, 0)), color=Colo
 add(6, 'segment', Line((23.5767, 6.21791, 0), (26.9801, 1.88808, 0)), color=Color.from_hex("#111111"), width=0.02304)
 
 # step 7 — The resultant R
-add(7, 'arrow', Line((26.9801, 10.8881, 0), (26.9801, 1.88808, 0)), color=Color.from_hex("#3f9c20"), width=0.0648, dash=0.2, head=(0.216, 0.0864))
+add(7, 'arrow', Line((26.3101, 10.8881, 0), (26.3101, 1.88808, 0)), color=Color.from_hex("#3f9c20"), width=0.0648, dash=0.2, head=(0.216, 0.0864))
 add(7, 'label', Point(27.4001, 4.81791, 0), color=Color.from_hex("#3f9c20"), text='R')
 
 # step 8 — The reactions A and B
-add(8, 'arrow', Line((23.5767, 6.21791, 0), (26.9801, 10.8881, 0)), color=Color.from_hex("#3f9c20"), width=0.0648, head=(0.216, 0.0864), until=10)
-add(8, 'arrow', Line((26.9801, 1.88808, 0), (23.5767, 6.21791, 0)), color=Color.from_hex("#3f9c20"), width=0.0648, head=(0.216, 0.0864), until=10)
+add(8, 'arrow', Line((24.1181, 5.82333, 0), (27.5215, 10.4935, 0)), color=Color.from_hex("#3f9c20"), width=0.0648, head=(0.216, 0.0864), until=10)
+add(8, 'arrow', Line((27.5068, 2.3021, 0), (24.1034, 6.63193, 0)), color=Color.from_hex("#3f9c20"), width=0.0648, head=(0.216, 0.0864), until=10)
 add(8, 'label', Point(25.1184, 8.93299, 0), color=Color.from_hex("#3f9c20"), text='A', until=10)
 add(8, 'label', Point(25.1184, 3.67299, 0), color=Color.from_hex("#3f9c20"), text='B', until=10)
 add(8, 'arrow', Line((-0.824533, -1.13143, 0), (0, 0, 0)), color=Color.from_hex("#3f9c20"), width=0.0648, head=(0.216, 0.0864), until=10)

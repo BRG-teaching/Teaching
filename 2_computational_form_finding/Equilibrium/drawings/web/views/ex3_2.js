@@ -119,20 +119,22 @@ export function create(dw, panel, makePlayer) {
   for (let i = 0; i < 4; i++) {
     dw.dashLine(`la${i}`, { intro: 1, color: PAL.grey, dash: dw.W.dash });
     dw.arrow(`f${i}`, { intro: 1, color: PAL.green, ...ARR });
-    dw.label(`lf${i}`, `F${'₁₂₃₄'[i]}`, { cls: 'num', intro: 1, color: PAL.green, when: (st) => st.lbl });
+    dw.label(`lf${i}`, `F_d${i + 1}`, { cls: 'num', intro: 1, color: PAL.green, when: (st) => st.lbl });
     dw.arrow(`ff${i}`, { intro: 2, color: PAL.green, ...ARR });
-    dw.label(`lff${i}`, `F${'₁₂₃₄'[i]}`, { cls: 'num', intro: 2, color: PAL.green, when: (st) => st.lbl });
+    dw.label(`lff${i}`, `F_d${i + 1}`, { cls: 'num', intro: 2, color: PAL.green, when: (st) => st.lbl });
     dw.link(`f${i}`, `ff${i}`, `lf${i}`, `lff${i}`);
     dw.highlight(`f${i}`, [2]);
   }
-  // the auxiliary (trial) construction, retired once the real pole is chosen
-  dw.disk('ptOt', { intro: 3, outro: 6, r: dw.W.disk * 0.7 });
-  dw.label('lOt', 'o′', { cls: 'point', intro: 3, outro: 6, when: (st) => st.lbl });
-  for (let i = 0; i <= 4; i++) dw.seg(`tray${i}`, { intro: 3, outro: 6, w: dw.W.ray, color: PAL.grey });
-  for (let i = 0; i < 3; i++) dw.seg(`tstr${i}`, { intro: 3, outro: 6, w: dw.W.str, color: PAL.grey });
-  dw.dashLine('text0', { intro: 3, outro: 6, color: PAL.grey, dash: dw.W.dash });
-  dw.dashLine('text4', { intro: 3, outro: 6, color: PAL.grey, dash: dw.W.dash });
-  dw.disk('ptS', { intro: 4, outro: 6, r: dw.W.disk * 0.8 });
+  // the auxiliary (trial) construction — KEPT to the end: construction
+  // information must never disappear, and the official solution plate
+  // still shows its whole Hilfskonstruktion
+  dw.disk('ptOt', { intro: 3, r: dw.W.disk * 0.7 });
+  dw.label('lOt', 'o′', { cls: 'point', intro: 3, when: (st) => st.lbl });
+  for (let i = 0; i <= 4; i++) dw.seg(`tray${i}`, { intro: 3, w: dw.W.ray, color: PAL.grey });
+  for (let i = 0; i < 3; i++) dw.seg(`tstr${i}`, { intro: 3, w: dw.W.str, color: PAL.grey });
+  dw.dashLine('text0', { intro: 3, color: PAL.grey, dash: dw.W.dash });
+  dw.dashLine('text4', { intro: 3, color: PAL.grey, dash: dw.W.dash });
+  dw.disk('ptS', { intro: 4, r: dw.W.disk * 0.8 });
   dw.dashLine('Rline', { intro: 4, color: PAL.grey, dash: dw.W.dash });
   dw.dashArrow('Rform', { intro: 4, color: PAL.green, w: dw.W.arrow.w * 1.15,
     headLen: dw.W.arrow.headLen, headW: dw.W.arrow.headW, dash: dw.W.dash * 1.6, flash: false });
@@ -227,15 +229,14 @@ export function create(dw, panel, makePlayer) {
       dw.setText(`ln${i}`, `${d.N[i].toFixed(0)}`);
     }
     // reactions: at the supports they pull along the cable, offset in the polygon
-    const ro = V.mul(V.unit(V.perp(V.sub(d.div[4], d.div[0]))), -dw.W.off);
     const uA = V.unit(V.sub(A, d.pts[1])), uB = V.unit(V.sub(B, d.pts[4]));
     const LEN = d.tot / SFD * 0.42;
     dw.setArrow('rA', A, V.add(A, V.mul(uA, LEN)));
     dw.setArrow('rB', B, V.add(B, V.mul(uB, LEN)));
     dw.setLabel('lrA', V.add(V.add(A, V.mul(uA, LEN)), [-1.4, 0.8]));
     dw.setLabel('lrB', V.add(V.add(B, V.mul(uB, LEN)), [1.4, 0.8]));
-    dw.setArrow('frA', V.add(d.o, ro), V.add(d.div[0], ro));
-    dw.setArrow('frB', V.add(d.div[4], ro), V.add(d.o, ro));
+    dw.setArrow('frA', d.o, d.div[0]);
+    dw.setArrow('frB', d.div[4], d.o);
 
     dw.setSeg('gov', d.pts[d.imax], d.pts[d.imax + 1]);
     dw.setLabel('lgov', V.add(V.mid(d.pts[d.imax], d.pts[d.imax + 1]), [-2.5, -1.7]));

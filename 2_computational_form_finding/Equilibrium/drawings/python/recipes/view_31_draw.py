@@ -123,7 +123,7 @@ add(6, 'arrow', Line((4.75831, 2.02965, 0), (5, 3, 0)), color=Color.from_hex("#3
 add(6, 'arrow', Line((7.42169, 2.02965, 0), (7.18, 3, 0)), color=Color.from_hex("#3f9c20"), width=0.0432, head=(0.1728, 0.0684))
 add(6, 'label', Point(4.43831, 1.92965, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(6, 'label', Point(7.74169, 1.92965, 0), color=Color.from_hex("#3f9c20"), text='B')
-add(6, 'arrow', Line((15.4119, 10.3234, 0), (13.6119, 3.09668, 0)), color=Color.from_hex("#3f9c20"), width=0.0432, head=(0.1728, 0.0684), until=8)
+add(6, 'arrow', Line((15.0407, 10.4158, 0), (13.2407, 3.18912, 0)), color=Color.from_hex("#3f9c20"), width=0.0432, head=(0.1728, 0.0684), until=8)
 add(6, 'arrow', Line((17.9881, 3.09668, 0), (16.1881, 10.3234, 0)), color=Color.from_hex("#3f9c20"), width=0.0432, head=(0.1728, 0.0684), until=8)
 add(6, 'label', Point(14.1719, 6.71004, 0), color=Color.from_hex("#3f9c20"), text='A', until=8)
 add(6, 'label', Point(17.4281, 6.71004, 0), color=Color.from_hex("#3f9c20"), text='B', until=8)
@@ -264,7 +264,7 @@ add(13, 'point', Point(17.3, 10.2267, 0), color=Color.from_hex("#ffffff"), width
 add(13, 'label', Point(17.46, 10.5267, 0), text='A₂')
 
 # step 14 — The polygon closes
-add(14, 'arrow', Line((15.4119, 10.3234, 0), (13.6119, 3.09668, 0)), color=Color.from_hex("#3f9c20"), width=0.0432, head=(0.1728, 0.0684))
+add(14, 'arrow', Line((15.0407, 10.4158, 0), (13.2407, 3.18912, 0)), color=Color.from_hex("#3f9c20"), width=0.0432, head=(0.1728, 0.0684))
 add(14, 'arrow', Line((17.9881, 3.09668, 0), (16.1881, 10.3234, 0)), color=Color.from_hex("#3f9c20"), width=0.0432, head=(0.1728, 0.0684))
 add(14, 'label', Point(14.1719, 6.71004, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(14, 'label', Point(17.4281, 6.71004, 0), color=Color.from_hex("#3f9c20"), text='B')

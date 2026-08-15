@@ -713,7 +713,7 @@ add(9, 'point', Point(561.054, -268, 0), color=Color.from_hex("#ffffff"), width=
 add(9, 'label', Point(575.054, -260, 0), text='N₇')
 
 # step 10 — The anchor force Fₗ
-add(10, 'arrow', Line((561.054, -268, 0), (10, -356, 0)), color=Color.from_hex("#3f9c20"), width=2.592, head=(10.08, 4.032))
+add(10, 'arrow', Line((565.022, -292.848, 0), (13.968, -380.848, 0)), color=Color.from_hex("#3f9c20"), width=2.592, head=(10.08, 4.032))
 add(10, 'arrow', Line((10, 10, 0), (-52.2117, 0.065161, 0)), color=Color.from_hex("#3f9c20"), width=2.592, head=(10.08, 4.032))
 add(10, 'label', Point(265.527, -298, 0), color=Color.from_hex("#3f9c20"), text='Fₗ')
 add(10, 'label', Point(-58.2117, 16.0652, 0), color=Color.from_hex("#3f9c20"), text='Fₗ')

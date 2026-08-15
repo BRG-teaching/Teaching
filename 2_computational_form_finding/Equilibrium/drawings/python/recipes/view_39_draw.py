@@ -69,7 +69,7 @@ add(2, 'point', Point(16.5806, -1.69, 0), color=Color.from_hex("#ffffff"), width
 add(2, 'point', Point(16.5806, -2.65, 0), color=Color.from_hex("#ffffff"), width=0.045)
 add(2, 'point', Point(16.5806, -0.25, 0), color=Color.from_hex("#111111"), width=0.055)
 add(2, 'label', Point(16.2006, -0.41, 0), text='U₁')
-add(2, 'arrow', Line((17.0806, -0.25, 0), (17.0806, 2.15, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(2, 'arrow', Line((17.4924, -0.25, 0), (17.4924, 2.15, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
 add(2, 'arrow', Line((17.0806, -2.65, 0), (17.0806, -0.25, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
 add(2, 'label', Point(17.3006, 0.95, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(2, 'label', Point(17.3006, -1.45, 0), color=Color.from_hex("#3f9c20"), text='B')

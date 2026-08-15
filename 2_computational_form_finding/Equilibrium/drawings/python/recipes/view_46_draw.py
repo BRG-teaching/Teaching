@@ -73,7 +73,7 @@ add(7, 'arrow', Line((9.90549, -1.3, 0), (9.90549, 0, 0)), color=Color.from_hex(
 add(7, 'label', Point(-0.85, -0.936, 0), color=Color.from_hex("#3f9c20"), text='A_V')
 add(7, 'label', Point(10.7555, -0.936, 0), color=Color.from_hex("#3f9c20"), text='B_V')
 add(7, 'arrow', Line((19.4807, -8.60884, 0), (19.4807, -6.64323, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.432, 0.1872))
-add(7, 'arrow', Line((19.4807, -6.64323, 0), (19.4807, -4.60884, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.432, 0.1872))
+add(7, 'arrow', Line((20.1944, -6.64323, 0), (20.1944, -4.60884, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.432, 0.1872))
 add(7, 'label', Point(20.0807, -7.62603, 0), color=Color.from_hex("#3f9c20"), text='B_V')
 add(7, 'label', Point(20.0807, -5.62603, 0), color=Color.from_hex("#3f9c20"), text='A_V')
 add(7, 'polyline', Polyline([(18.9807, -4.60884, 0), (19.4807, -4.60884, 0)]), color=Color.from_hex("#3f9c20"), dash=0.3)

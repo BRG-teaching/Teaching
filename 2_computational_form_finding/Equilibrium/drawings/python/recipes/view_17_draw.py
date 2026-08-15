@@ -328,7 +328,7 @@ add(4, 'polyline', Polyline([(20.5475, 3.25084, 0), (20.5475, 30.2364, 0)]), col
 add(4, 'arrow', Line((20.5475, 28.1014, 0), (20.5475, 25.6014, 0)), color=Color.from_hex("#3f9c20"), width=0.0936, head=(0.432, 0.1872))
 add(4, 'segment', Line((70.036, 28.1464, 0), (70.036, 26.9464, 0)), color=Color.from_hex("#111111"), width=0.072)
 add(4, 'polyline', Polyline([(20.9417, 3.25084, 0), (20.9417, 30.2364, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.5)
-add(4, 'arrow', Line((20.9417, 28.1014, 0), (20.9417, 25.6014, 0)), color=Color.from_hex("#3f9c20"), width=0.0936, head=(0.432, 0.1872))
+add(4, 'arrow', Line((19.7504, 28.1014, 0), (19.7504, 25.6014, 0)), color=Color.from_hex("#3f9c20"), width=0.0936, head=(0.432, 0.1872))
 add(4, 'segment', Line((70.036, 26.9464, 0), (70.036, 25.7464, 0)), color=Color.from_hex("#111111"), width=0.072)
 add(4, 'polyline', Polyline([(21.7194, 3.25084, 0), (21.7194, 30.2364, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.5)
 add(4, 'arrow', Line((21.7194, 28.1014, 0), (21.7194, 25.6014, 0)), color=Color.from_hex("#3f9c20"), width=0.0936, head=(0.432, 0.1872))
@@ -382,7 +382,7 @@ add(4, 'polyline', Polyline([(49.0583, 3.25084, 0), (49.0583, 30.2364, 0)]), col
 add(4, 'arrow', Line((49.0583, 28.1014, 0), (49.0583, 25.6014, 0)), color=Color.from_hex("#3f9c20"), width=0.0936, head=(0.432, 0.1872))
 add(4, 'segment', Line((70.036, 7.74643, 0), (70.036, 6.54643, 0)), color=Color.from_hex("#111111"), width=0.072)
 add(4, 'polyline', Polyline([(49.4525, 3.25084, 0), (49.4525, 30.2364, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.5)
-add(4, 'arrow', Line((49.4525, 28.1014, 0), (49.4525, 25.6014, 0)), color=Color.from_hex("#3f9c20"), width=0.0936, head=(0.432, 0.1872))
+add(4, 'arrow', Line((50.6438, 28.1014, 0), (50.6438, 25.6014, 0)), color=Color.from_hex("#3f9c20"), width=0.0936, head=(0.432, 0.1872))
 add(4, 'segment', Line((70.036, 6.54643, 0), (70.036, 5.34643, 0)), color=Color.from_hex("#111111"), width=0.072)
 add(4, 'point', Point(70.036, 28.1464, 0), color=Color.from_hex("#ffffff"), width=0.3)
 
@@ -461,9 +461,9 @@ add(11, 'point', Point(49.1944, 6, 0), color=Color.from_hex("#ffffff"), width=0.
 add(11, 'point', Point(49.1944, 6, 0), color=Color.from_hex("#ffffff"), width=0.14)
 
 # step 12 — Reactions
-add(12, 'arrow', Line((70.036, 28.1464, 0), (70.036, 5.34643, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.612, 0.2592))
-add(12, 'arrow', Line((66.4887, 16.7464, 0), (70.036, 28.1464, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.612, 0.2592))
-add(12, 'arrow', Line((70.036, 5.34643, 0), (66.4887, 16.7464, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.612, 0.2592))
+add(12, 'arrow', Line((71.2273, 28.1464, 0), (71.2273, 5.34643, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.612, 0.2592))
+add(12, 'arrow', Line((67.6262, 16.3925, 0), (71.1735, 27.7925, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.612, 0.2592))
+add(12, 'arrow', Line((71.1735, 5.70039, 0), (67.6262, 17.1004, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.612, 0.2592))
 add(12, 'arrow', Line((19.9844, 3.63872, 0), (20.8056, 6, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.612, 0.2592))
 add(12, 'arrow', Line((50.0156, 3.63872, 0), (49.1944, 6, 0)), color=Color.from_hex("#3f9c20"), width=0.1584, head=(0.612, 0.2592))
 add(12, 'label', Point(67.5939, 22.6544, 0), color=Color.from_hex("#3f9c20"), text='A')

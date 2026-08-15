@@ -256,6 +256,17 @@
       window.__dw = dw;
       window.__player = mod.create(dw, panel,
         (steps, refresh) => new StepPlayer(dw, panel, steps, refresh));
+      // Every view gets the two escape hatches, so a reader is never stuck
+      // with the drawing under a caption card or a slider dragged too far.
+      // Views that already add their own keep theirs; this only fills gaps.
+      if (![...panel.root.querySelectorAll('button')].some((b) => b.textContent === 'zoom fit')) {
+        const sec = panel.section('View');
+        panel.button(sec, 'zoom fit', () => dw.zoomFit());
+        panel.button(sec, 'reset the drawing', () => {
+          window.__player.set(0);
+          dw.zoomFit();
+        });
+      }
       // ops-database export (tools/export_ops.py -> drawings/python)
       window.__exportOps = () => dw.exportOps(mod.meta, window.__player);
 

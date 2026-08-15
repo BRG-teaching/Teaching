@@ -82,7 +82,7 @@ add(3, 'label', Point(24.5179, -10.1964, 0), text='k')
 add(4, 'polyline', Polyline([(5, 2.17078, 0), (5, -17.67, 0)]), color=Color.from_hex("#111111"), dash=0.28)
 add(4, 'arrow', Line((5, 2.17078, 0), (5, 0.770784, 0)), color=Color.from_hex("#3f9c20"), width=0.144, head=(0.396, 0.1728))
 add(4, 'label', Point(5.68, 1.47078, 0), color=Color.from_hex("#3f9c20"), text='R')
-add(4, 'arrow', Line((24.1979, -0.316368, 0), (24.1979, -10.3164, 0)), color=Color.from_hex("#3f9c20"), width=0.1872, head=(0.4464, 0.216))
+add(4, 'arrow', Line((24.8585, -0.316368, 0), (24.8585, -10.3164, 0)), color=Color.from_hex("#3f9c20"), width=0.1872, head=(0.4464, 0.216))
 add(4, 'label', Point(23.6979, -5.31637, 0), color=Color.from_hex("#3f9c20"), text='R')
 
 # step 5 — Pole o′ at distance H

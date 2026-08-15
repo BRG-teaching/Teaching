@@ -108,7 +108,7 @@ add(6, 'label', Point(3.32197, 10.8909, 0), color=Color.from_hex("#3f9c20"), tex
 add(6, 'label', Point(4.53197, 9.69086, 0), color=Color.from_hex("#3f9c20"), text='A_V')
 add(6, 'label', Point(9.10053, 9.69086, 0), color=Color.from_hex("#3f9c20"), text='B')
 add(6, 'arrow', Line((16.1967, 8.35298, 0), (16.1967, 10.6662, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.2304, 0.108))
-add(6, 'arrow', Line((16.1967, 10.6662, 0), (16.1967, 11.353, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.2304, 0.108))
+add(6, 'arrow', Line((16.6176, 10.6662, 0), (16.6176, 11.353, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.2304, 0.108))
 add(6, 'label', Point(16.5967, 11.0096, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(6, 'label', Point(16.5967, 9.50957, 0), color=Color.from_hex("#3f9c20"), text='B')
 add(6, 'polyline', Polyline([(15.6967, 11.353, 0), (16.1967, 11.353, 0)]), color=Color.from_hex("#111111"), dash=0.18)

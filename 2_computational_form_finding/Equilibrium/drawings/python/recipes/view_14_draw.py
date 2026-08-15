@@ -67,14 +67,14 @@ add(8, 'point', Point(147.329, 58.408, 0), color=Color.from_hex("#ffffff"), widt
 # step 9 — The tie closes the polygon
 add(9, 'segment', Line((147.329, 58.408, 0), (147.329, 38.308, 0)), color=Color.from_hex("#ce4095"), width=0.2448)
 add(9, 'label', Point(145.529, 48.358, 0), color=Color.from_hex("#ce4095"), text='1')
-add(9, 'arrow', Line((147.329, 58.408, 0), (147.329, 38.308, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
+add(9, 'arrow', Line((150.47, 58.408, 0), (150.47, 38.308, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
 add(9, 'label', Point(149.329, 48.358, 0), color=Color.from_hex("#3f9c20"), text='C')
 
 # step 10 — Reactions A and B
 add(10, 'arrow', Line((15.4918, 76.0956, 0), (8.38512, 79.7691, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
 add(10, 'arrow', Line((75.38, 76.0956, 0), (82.4867, 79.7691, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
-add(10, 'arrow', Line((147.329, 38.308, 0), (108.445, 58.408, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
-add(10, 'arrow', Line((108.445, 38.308, 0), (147.329, 58.408, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
+add(10, 'arrow', Line((148.771, 41.0976, 0), (109.887, 61.1976, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
+add(10, 'arrow', Line((109.887, 35.5184, 0), (148.771, 55.6184, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
 add(10, 'label', Point(6.98512, 81.3691, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(10, 'label', Point(83.8867, 81.3691, 0), color=Color.from_hex("#3f9c20"), text='B')
 add(10, 'label', Point(115.966, 51.583, 0), color=Color.from_hex("#3f9c20"), text='A')

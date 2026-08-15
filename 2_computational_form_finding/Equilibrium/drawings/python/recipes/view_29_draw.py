@@ -67,7 +67,7 @@ add(2, 'label', Point(21.28, 5.5, 0), color=Color.from_hex("#3f9c20"), text='Gâ‚
 add(3, 'polyline', Polyline([(21, 5, 0), (21.6, 5, 0)]), color=Color.from_hex("#111111"), dash=0.09)
 add(3, 'polyline', Polyline([(21, 10, 0), (21.6, 10, 0)]), color=Color.from_hex("#111111"), dash=0.09)
 add(3, 'polyline', Polyline([(21, 7.5, 0), (21.6, 7.5, 0)]), color=Color.from_hex("#111111"), dash=0.09)
-add(3, 'arrow', Line((21.6, 5, 0), (21.6, 7.5, 0)), color=Color.from_hex("#3f9c20"), width=0.036, head=(0.1296, 0.054))
+add(3, 'arrow', Line((22.0231, 5, 0), (22.0231, 7.5, 0)), color=Color.from_hex("#3f9c20"), width=0.036, head=(0.1296, 0.054))
 add(3, 'arrow', Line((21.6, 7.5, 0), (21.6, 10, 0)), color=Color.from_hex("#3f9c20"), width=0.036, head=(0.1296, 0.054))
 add(3, 'label', Point(21.86, 6.25, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(3, 'label', Point(21.86, 8.75, 0), color=Color.from_hex("#3f9c20"), text='B')

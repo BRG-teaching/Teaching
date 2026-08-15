@@ -249,6 +249,21 @@ export class Drawing {
     const zE = e.ghostNow ? zE0 - 2 : zE0;
     const hwE = e.ghostNow ? hwE0 * 0.6 : hwE0;
     if (!e.geo) return;
+    // declutter() parks a perpendicular step-aside on the element; render
+    // through it without touching the geometry the view actually set, so the
+    // next refresh recomputes from clean coordinates and nothing accumulates
+    if (e.nudge && (e.nudge[0] || e.nudge[1]) && !e._nudging) {
+      const [nx, ny] = e.nudge, sh = (p) => [p[0] + nx, p[1] + ny];
+      const g = e.geo;
+      const g2 = g.tail ? { ...g, tail: sh(g.tail), tip: sh(g.tip) }
+        : g.p0 ? { ...g, p0: sh(g.p0), p1: sh(g.p1) } : null;
+      if (g2) {
+        e._nudging = true; e.geo = g2;
+        this._applyGeo(e);
+        e.geo = g; e._nudging = false;
+        return;
+      }
+    }
     if (e.ghostTwin) {
       e.ghostTwin.geo = e.geo;
       this._applyGeo(e.ghostTwin);
@@ -370,6 +385,122 @@ export class Drawing {
   //   color : hex, or {pending: hex, final: (d) => hex} resolved by the player
   //   flash : draw pink while its intro step is the current one (default true)
   // ------------------------------------------------------------------
+
+  /**
+   * Step external-force arrows aside when they would be drawn exactly on top
+   * of another line.
+   *
+   * In graphic statics coincidence is the NORMAL case, not an accident: a
+   * resultant lies along the very load line it sums, a reaction lies along
+   * the very ray it belongs to, and a load-case total lies along its parts.
+   * Drawn honestly they hide each other, and the student cannot tell an
+   * internal force from an external one. So every green arrow that is
+   * collinear with, and overlapping, another visible line is moved sideways
+   * by W.off -- perpendicular to itself, the house amount, preferring the
+   * side facing away from the rest of the drawing.
+   *
+   * Lines of action are exempt: a load MUST sit on its own dashed guide, so
+   * grey guides are never treated as obstacles. Runs after every refresh, so
+   * no view has to remember to do this by hand.
+   */
+  declutter() {
+    const off = this.W.off, fw = this.halfW * 2;
+    const two = (e) => (e.geo?.tail ? [e.geo.tail, e.geo.tip]
+      : e.geo?.p0 ? [e.geo.p0, e.geo.p1] : null);
+    const finalOf = (c) => (typeof c === 'number' ? c : c?.final ? undefined : c?.pending);
+    const isGreen = (e) => e.color === PAL.green
+      || (typeof e.color === 'object' && e.color?.pending === PAL.green);
+    const span = (e) => [e.intro ?? 0, e.outro ?? 1e9];
+    const obstacles = [], movers = [];
+    for (const [name, e] of this.elems) {
+      if (e.noNudge || e.kind === 'dline' || e.kind === 'circle') continue;
+      const p = two(e);
+      if (!p) continue;
+      const L = Math.hypot(p[1][0] - p[0][0], p[1][1] - p[0][1]);
+      if (L < fw * 0.012) continue;
+      const grey = e.color === PAL.grey || e.color === PAL.zero
+        || finalOf(e.color) === PAL.grey;
+      const rec = { name, e, p, L, u: [(p[1][0] - p[0][0]) / L, (p[1][1] - p[0][1]) / L], span: span(e) };
+      if (!grey) obstacles.push(rec);
+      if (isGreen(e) && (e.kind === 'arrow' || e.kind === 'darrow')) movers.push(rec);
+    }
+    if (!movers.length) return;
+    // centre of everything, so the step-aside goes outward rather than inward
+    let cx = 0, cy = 0;
+    for (const o of obstacles) { cx += (o.p[0][0] + o.p[1][0]) / 2; cy += (o.p[0][1] + o.p[1][1]) / 2; }
+    cx /= obstacles.length; cy /= obstacles.length;
+
+    const hits = (a, b) => {
+      if (a === b) return false;
+      if (Math.max(a.span[0], b.span[0]) > Math.min(a.span[1], b.span[1])) return false;
+      if (Math.abs(a.u[0] * b.u[1] - a.u[1] * b.u[0]) > 0.035) return false;   // not parallel
+      const px = b.q[0][0] - a.q[0][0], py = b.q[0][1] - a.q[0][1];
+      if (Math.abs(px * a.u[1] - py * a.u[0]) > off * 0.62) return false;      // far enough apart
+      const t0 = px * a.u[0] + py * a.u[1];
+      const t1 = (b.q[1][0] - a.q[0][0]) * a.u[0] + (b.q[1][1] - a.q[0][1]) * a.u[1];
+      const lo = Math.min(t0, t1), hi = Math.max(t0, t1);
+      return Math.min(hi, a.L) - Math.max(lo, 0) > 0.30 * Math.min(a.L, b.L);
+    };
+
+    // A force polygon is a CHAIN: each arrow's head is the next one's tail.
+    // Nudging its links separately would tear it open, so head-to-tail runs
+    // move as one rigid group with a single shared displacement.
+    const moverSet = new Set(movers.map((m) => m.name));
+    const near = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]) < fw * 2e-4;
+    const gid = new Map(movers.map((m, i) => [m.name, i]));
+    const merge = (a, b) => {
+      const ga = gid.get(a.name), gb = gid.get(b.name);
+      if (ga === gb) return;
+      for (const m of movers) if (gid.get(m.name) === gb) gid.set(m.name, ga);
+    };
+    for (let i = 0; i < movers.length; i++) {
+      for (let j = i + 1; j < movers.length; j++) {
+        const a = movers[i], b = movers[j];
+        if (near(a.p[1], b.p[0]) || near(b.p[1], a.p[0])
+            || near(a.p[0], b.p[0]) || near(a.p[1], b.p[1])) merge(a, b);
+      }
+    }
+    const groups = new Map();
+    for (const m of movers) {
+      const g = gid.get(m.name);
+      if (!groups.has(g)) groups.set(g, []);
+      groups.get(g).push(m);
+    }
+    const placed = obstacles.filter((o) => !moverSet.has(o.name));
+    for (const o of placed) o.q = o.p;
+    const order = [...groups.values()]
+      .sort((a, b) => (a[0].name < b[0].name ? -1 : 1));
+    for (const grp of order) {
+      // the group's own direction: the longest link decides the perpendicular
+      const lead = grp.reduce((a, b) => (a.L >= b.L ? a : b));
+      const n = [-lead.u[1], lead.u[0]];
+      let gx = 0, gy = 0;
+      for (const m of grp) { gx += (m.p[0][0] + m.p[1][0]) / 2; gy += (m.p[0][1] + m.p[1][1]) / 2; }
+      gx /= grp.length; gy /= grp.length;
+      const away = (gx - cx) * n[0] + (gy - cy) * n[1] >= 0 ? 1 : -1;
+      const shift = (k) => {
+        for (const m of grp) {
+          m.q = [[m.p[0][0] + n[0] * off * k, m.p[0][1] + n[1] * off * k],
+                 [m.p[1][0] + n[0] * off * k, m.p[1][1] + n[1] * off * k]];
+        }
+      };
+      let chosen = 0;
+      for (const k of [0, away, -away, 2 * away, -2 * away]) {
+        shift(k);
+        if (!grp.some((m) => placed.some((o) => hits(m, o)))) { chosen = k; break; }
+      }
+      shift(chosen);
+      const nud = chosen ? [n[0] * off * chosen, n[1] * off * chosen] : null;
+      for (const m of grp) {
+        placed.push(m);
+        const had = m.e.nudge;
+        if ((had ? `${had}` : '') !== (nud ? `${nud}` : '')) {
+          m.e.nudge = nud;
+          this._applyGeo(m.e);
+        }
+      }
+    }
+  }
 
   _register(name, entry) {
     entry.visible = entry.intro === 0 && !entry.when;
@@ -703,9 +834,14 @@ export class Drawing {
 
       // color: yellow while hover-linked, pink while being drawn,
       // its proper color otherwise
+      // color.final receives the STATE as well as the data, so a view can
+      // hold a member grey until the step that actually solves it -- without
+      // that gate an element introduced early shows its answer colour from
+      // the moment it appears, and the later steps "reveal" what the student
+      // has been staring at for four steps
       const resolved = e.color === undefined ? undefined
         : typeof e.color === 'number' ? e.color
-        : e.color.final ? e.color.final(d) : e.color.pending;
+        : e.color.final ? e.color.final(d, state) : e.color.pending;
 
       if (e.kind === 'label') {
         e.el.classList.toggle('hover', hovered);
@@ -929,7 +1065,7 @@ export class Drawing {
     const w = (v) => +(v * LINE_SCALE).toFixed(6);
     const resolved = (c) => (c === undefined ? undefined
       : typeof c === 'number' ? c
-      : c.final ? c.final(la.d) : c.pending);
+      : c.final ? c.final(la.d, la.state) : c.pending);
     const ops = [];
     for (const [name, e] of this.elems) {
       if (name.startsWith('nq') || name.startsWith('nf')) continue;   // node inspector
@@ -939,10 +1075,12 @@ export class Drawing {
       if (e.outro !== undefined && e.outro !== Infinity) base.until = e.outro;
       const color = resolved(e.color);
       if (color !== undefined) base.color = hex(color);
+      // export what is actually DRAWN, declutter's step-aside included
+      const nd = (p) => (e.nudge ? pt([p[0] + e.nudge[0], p[1] + e.nudge[1]]) : pt(p));
       if (e.kind === 'seg') {
-        ops.push({ op: 'segment', ...base, p: [pt(e.geo.p0), pt(e.geo.p1)], width: w(e.w) });
+        ops.push({ op: 'segment', ...base, p: [nd(e.geo.p0), nd(e.geo.p1)], width: w(e.w) });
       } else if (e.kind === 'arrow' || e.kind === 'darrow') {
-        const o = { op: 'arrow', ...base, p: [pt(e.geo.tail), pt(e.geo.tip)],
+        const o = { op: 'arrow', ...base, p: [nd(e.geo.tail), nd(e.geo.tip)],
                     width: w(e.w), head: [w(e.headLen), w(e.headW)] };
         if (e.kind === 'darrow') o.dash = e.dash;
         ops.push(o);
@@ -1250,6 +1388,7 @@ export class StepPlayer {
 
   /** Called by the view's refresh() with the freshly computed geometry. */
   apply(d, state) {
+    this.dw.declutter();
     this.dw.applyStep(this.k, d, state);
     const s = this.steps[this.k];
     const live = (v) => (typeof v === 'function' ? v(d, state) : v);

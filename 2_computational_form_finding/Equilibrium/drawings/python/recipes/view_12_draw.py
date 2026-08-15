@@ -203,8 +203,8 @@ add(20, 'label', Point(120.342, 65.8385, 0), color=Color.from_hex("#ce4095"), te
 # step 21 — Reactions A and B
 add(21, 'arrow', Line((8.81, 64.87, 0), (2.47923, 67.8569, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
 add(21, 'arrow', Line((80.0878, 64.8686, 0), (86.4204, 67.8516, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
-add(21, 'arrow', Line((127.986, 40.5193, 0), (98.5855, 54.3902, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
-add(21, 'arrow', Line((98.5855, 54.3902, 0), (127.986, 68.2393, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
+add(21, 'arrow', Line((129.28, 43.2633, 0), (99.8802, 57.1343, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
+add(21, 'arrow', Line((99.8785, 51.6454, 0), (129.278, 65.4944, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
 add(21, 'label', Point(1.0322, 67.1396, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(21, 'label', Point(87.8679, 67.1335, 0), color=Color.from_hex("#3f9c20"), text='B')
 add(21, 'label', Point(112.086, 45.8548, 0), color=Color.from_hex("#3f9c20"), text='A')
@@ -271,8 +271,8 @@ add(29, 'label', Point(135.63, 65.8382, 0), color=Color.from_hex("#ce4095"), tex
 # step 30 — Reactions C and D
 add(30, 'arrow', Line((8.80681, 38.1948, 0), (2.47595, 35.2081, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
 add(30, 'arrow', Line((80.0878, 38.1948, 0), (86.4203, 35.2115, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
-add(30, 'arrow', Line((157.386, 54.3891, 0), (127.986, 40.5193, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
-add(30, 'arrow', Line((127.986, 68.2393, 0), (157.386, 54.3891, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
+add(30, 'arrow', Line((158.68, 51.645, 0), (129.28, 37.7752, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
+add(30, 'arrow', Line((129.279, 70.9841, 0), (158.679, 57.1339, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.368, 0.5184))
 add(30, 'label', Point(1.02889, 35.9254, 0), color=Color.from_hex("#3f9c20"), text='C')
 add(30, 'label', Point(87.8677, 35.9296, 0), color=Color.from_hex("#3f9c20"), text='D')
 add(30, 'label', Point(143.886, 45.8542, 0), color=Color.from_hex("#3f9c20"), text='C')

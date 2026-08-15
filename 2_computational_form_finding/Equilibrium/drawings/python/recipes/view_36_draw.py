@@ -73,8 +73,8 @@ add(6, 'point', Point(10.6128, 3.16071, 0), color=Color.from_hex("#ffffff"), wid
 add(6, 'label', Point(10.7128, 2.80071, 0), text='i', until=12)
 
 # step 7 — Reactions parallel to F
-add(7, 'arrow', Line((10.8974, 3.25554, 0), (10.2846, 5.09483, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072), until=10)
-add(7, 'arrow', Line((11.7071, 0.825561, 0), (10.8974, 3.25554, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072), until=10)
+add(7, 'arrow', Line((11.1762, 3.34842, 0), (10.5634, 5.18771, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072), until=10)
+add(7, 'arrow', Line((11.9858, 0.918447, 0), (11.1762, 3.34842, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072), until=10)
 add(7, 'arrow', Line((2.3161, 1.05127, 0), (2, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072), until=10)
 add(7, 'arrow', Line((6.3161, 1.05127, 0), (6, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072), until=10)
 add(7, 'label', Point(10.9136, 4.28266, 0), color=Color.from_hex("#3f9c20"), text='A', until=10)
@@ -133,8 +133,8 @@ add(11, 'segment', Line((2.04286, 1.74019, 0), (1.98223, 1.63519, 0)), color=Col
 add(11, 'segment', Line((2.12857, 1.74019, 0), (2.06795, 1.63519, 0)), color=Color.from_hex("#111111"), width=0.01152)
 add(11, 'segment', Line((2.21429, 1.74019, 0), (2.15366, 1.63519, 0)), color=Color.from_hex("#111111"), width=0.01152)
 add(11, 'segment', Line((2.3, 1.74019, 0), (2.23938, 1.63519, 0)), color=Color.from_hex("#111111"), width=0.01152)
-add(11, 'arrow', Line((11.4224, 3.16071, 0), (11.4224, 5, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072))
-add(11, 'arrow', Line((11.4224, 5, 0), (10, 5, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072))
+add(11, 'arrow', Line((11.7163, 3.16071, 0), (11.7163, 5, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072))
+add(11, 'arrow', Line((11.4224, 5.29385, 0), (10, 5.29385, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072))
 add(11, 'arrow', Line((2, 0.53, 0), (2, 1.53, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072))
 add(11, 'arrow', Line((0.79, 2, 0), (1.79, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.054, head=(0.1872, 0.072))
 add(11, 'label', Point(11.8024, 4.08035, 0), color=Color.from_hex("#3f9c20"), text='A_V')

@@ -86,7 +86,7 @@ add(3, 'arrow', Line((60, -6.15385, 0), (60, -9.23077, 0)), color=Color.from_hex
 add(3, 'label', Point(58.65, -7.69231, 0), color=Color.from_hex("#3f9c20"), text='F₃')
 add(3, 'arrow', Line((6.25, -2.07446, 0), (6.25, -7.07446, 0)), color=Color.from_hex("#3f9c20"), width=0.216, head=(1.152, 0.468))
 add(3, 'label', Point(7.6, -4.82446, 0), color=Color.from_hex("#3f9c20"), text='F₄')
-add(3, 'arrow', Line((60, -9.23077, 0), (60, -12.3077, 0)), color=Color.from_hex("#3f9c20"), width=0.216, head=(1.152, 0.468))
+add(3, 'arrow', Line((62.7972, -9.23077, 0), (62.7972, -12.3077, 0)), color=Color.from_hex("#3f9c20"), width=0.216, head=(1.152, 0.468))
 add(3, 'label', Point(58.65, -10.7692, 0), color=Color.from_hex("#3f9c20"), text='F₄')
 add(3, 'point', Point(60, 0, 0), color=Color.from_hex("#ffffff"), width=0.62)
 

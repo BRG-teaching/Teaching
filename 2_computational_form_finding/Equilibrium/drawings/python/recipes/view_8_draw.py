@@ -145,7 +145,7 @@ add(16, 'label', Point(21.6591, 4.27796, 0), color=Color.from_hex("#ce4095"), te
 add(16, 'label', Point(48.7457, 4.0132, 0), color=Color.from_hex("#ce4095"), text='5')
 
 # step 17 — Reactions A and B
-add(17, 'arrow', Line((54.5463, 9.22006, 0), (46.2803, 15.2253, 0)), color=Color.from_hex("#3f9c20"), width=0.2304, head=(0.756, 0.288))
+add(17, 'arrow', Line((55.3111, 10.2728, 0), (47.0451, 16.278, 0)), color=Color.from_hex("#3f9c20"), width=0.2304, head=(0.756, 0.288))
 add(17, 'arrow', Line((46.2803, -3.01472, 0), (54.5463, 9.22006, 0)), color=Color.from_hex("#3f9c20"), width=0.2304, head=(0.756, 0.288))
 add(17, 'arrow', Line((0, 0, 0), (-2.62935, 1.91023, 0)), color=Color.from_hex("#3f9c20"), width=0.2304, head=(0.756, 0.288))
 add(17, 'arrow', Line((23.6682, 5.10817, 0), (25.4876, 7.80117, 0)), color=Color.from_hex("#3f9c20"), width=0.2304, head=(0.756, 0.288))

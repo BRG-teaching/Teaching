@@ -36,7 +36,7 @@ add(3, 'label', Point(22.3385, 57.4998, 0), color=Color.from_hex("#1a1eb2"), tex
 add(4, 'label', Point(89, 79.3, 0), text='Force Diagram')
 add(4, 'segment', Line((96, 58, 0), (96.0937, 42.0003, 0)), color=Color.from_hex("#1a1eb2"), width=0.288)
 add(4, 'arrow', Line((23.836, 75.9995, 0), (23.877, 68.9996, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.224, 0.468))
-add(4, 'arrow', Line((96, 58, 0), (96.0937, 42.0003, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.224, 0.468))
+add(4, 'arrow', Line((98.4258, 58.0142, 0), (98.5195, 42.0145, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.224, 0.468))
 add(4, 'point', Point(96, 58, 0), color=Color.from_hex("#ffffff"), width=0.65)
 add(4, 'point', Point(96.0937, 42.0003, 0), color=Color.from_hex("#ffffff"), width=0.42)
 add(4, 'label', Point(97.2, 56.2, 0), text='F4')

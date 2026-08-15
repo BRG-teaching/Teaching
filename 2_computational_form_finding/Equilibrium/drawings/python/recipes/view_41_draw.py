@@ -73,7 +73,7 @@ add(3, 'segment', Line((4.11085, 6.41343, 0), (7.96037, 6.41343, 0)), color=Colo
 add(3, 'label', Point(5.26571, 6.09343, 0), color=Color.from_hex("#da2020"), text='H_tension')
 
 # step 4 — The reactions and the H rail
-add(4, 'arrow', Line((14.4044, 8.85667, 0), (14.4044, 9.40479, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
+add(4, 'arrow', Line((13.7309, 8.85667, 0), (13.7309, 9.40479, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
 add(4, 'arrow', Line((11.9014, 7.38547, 0), (11.9014, 8.85667, 0)), color=Color.from_hex("#3f9c20"), width=0.0324, head=(0.144, 0.0576))
 add(4, 'label', Point(14.5844, 9.13073, 0), color=Color.from_hex("#3f9c20"), text='A_V')
 add(4, 'label', Point(12.0614, 8.12107, 0), color=Color.from_hex("#3f9c20"), text='B')

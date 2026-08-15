@@ -70,7 +70,7 @@ add(3, 'label', Point(10.38, 4.16, 0), text='B')
 
 # step 4 — The load 2Q and the budget Nₘₐₓ
 add(4, 'arrow', Line((7.5, 9.1, 0), (7.5, 8.3, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1872, 0.072))
-add(4, 'arrow', Line((7.5, 8.3, 0), (7.5, 7.5, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1872, 0.072))
+add(4, 'arrow', Line((7.12851, 8.3, 0), (7.12851, 7.5, 0)), color=Color.from_hex("#3f9c20"), width=0.0504, head=(0.1872, 0.072))
 add(4, 'label', Point(7.8, 8.7, 0), color=Color.from_hex("#3f9c20"), text='Q')
 add(4, 'label', Point(7.8, 7.9, 0), color=Color.from_hex("#3f9c20"), text='Q')
 add(4, 'segment', Line((15.5111, 9.41405, 0), (18, 9.41405, 0)), color=Color.from_hex("#aaaaaa"), width=0.01152)

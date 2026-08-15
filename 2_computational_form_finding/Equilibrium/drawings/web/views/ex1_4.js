@@ -29,7 +29,7 @@ export const meta = {
   result: (d) => d.r.map((x, i) => ('abcdef'[i] + ') ' + (x.ok
     ? `N₁ = ${Math.abs(x.N1).toFixed(1)} ${x.N1 < 0 ? 'C' : 'T'}   N₂ = ${Math.abs(x.N2).toFixed(1)} ${x.N2 < 0 ? 'C' : 'T'}`
     : 'no solution — both members are horizontal, so the polygon cannot close'))),
-  frame: [[-46, -32], [58, 16]],
+  frame: [[-46, -32], [70, 16]],
 };
 
 const RESOLVE = 7;
@@ -47,7 +47,9 @@ const CASES = [
 ];
 // where each case sits: form-diagram node, force-diagram polygon start
 const CELL = [[-38, 5], [-22, 5], [-6, 5], [-38, -16], [-22, -16], [-6, -16]];
-const FCELL = [[11, 9], [28, 9], [45, 9], [11, -12], [28, -12], [45, -12]];
+// 23-unit pitch: case c)'s N1 = 60 kN leg reaches 18.8 units back from
+// its own load line, so a 17-unit pitch laid it straight over case b)
+const FCELL = [[11, 9], [34, 9], [57, 9], [11, -12], [34, -12], [57, -12]];
 
 const DEFAULTS = { F: 30, o1: true, sIF: 0.055, lbl: true, _k: 99 };
 

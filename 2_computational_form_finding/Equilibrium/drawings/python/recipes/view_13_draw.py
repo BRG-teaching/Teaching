@@ -95,7 +95,7 @@ add(2, 'point', Point(150.497, 74.8716, 0), color=Color.from_hex("#ffffff"), wid
 
 # step 3 — The resultant R_g
 add(3, 'arrow', Line((41.15, 2.61756, 0), (41.15, -10.5824, 0)), color=Color.from_hex("#3f9c20"), width=0.504, dash=1.35, head=(1.728, 0.684), until=4)
-add(3, 'arrow', Line((150.497, 74.8716, 0), (150.497, 37.8366, 0)), color=Color.from_hex("#3f9c20"), width=0.504, dash=1.35, head=(1.728, 0.684), until=4)
+add(3, 'arrow', Line((154.358, 74.8716, 0), (154.358, 37.8366, 0)), color=Color.from_hex("#3f9c20"), width=0.504, dash=1.35, head=(1.728, 0.684), until=4)
 add(3, 'label', Point(43.35, -3.98244, 0), color=Color.from_hex("#3f9c20"), text='R_g', until=4)
 add(3, 'label', Point(152.897, 56.3541, 0), color=Color.from_hex("#3f9c20"), text='R_g', until=4)
 
@@ -240,9 +240,9 @@ add(9, 'segment', Line((84.137, 39.1656, 0), (85.2177, 40.206, 0)), color=Color.
 add(9, 'segment', Line((85.9741, 40.9342, 0), (86.2907, 41.239, 0)), color=Color.from_hex("#111111"), width=0.3024)
 
 # step 10 — Reactions A and B
-add(10, 'arrow', Line((0, 20, 0), (-5.80751, 23.1357, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612), until=14)
+add(10, 'arrow', Line((-1.83446, 16.6025, 0), (-7.64197, 19.7382, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612), until=14)
 add(10, 'arrow', Line((82.3, 37.3971, 0), (87.0547, 41.9745, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612), until=14)
-add(10, 'arrow', Line((150.497, 37.8366, 0), (125.851, 51.1443, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612), until=14)
+add(10, 'arrow', Line((152.332, 41.2341, 0), (127.685, 54.5417, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612), until=14)
 add(10, 'arrow', Line((125.851, 51.1443, 0), (150.497, 74.8716, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612), until=14)
 add(10, 'label', Point(-7.40751, 24.4357, 0), color=Color.from_hex("#3f9c20"), text='A', until=14)
 add(10, 'label', Point(88.6547, 43.2745, 0), color=Color.from_hex("#3f9c20"), text='B', until=14)
@@ -450,7 +450,7 @@ add(21, 'segment', Line((161.597, 35.3676, 0), (163.397, 35.3676, 0)), color=Col
 add(21, 'segment', Line((161.597, 32.8986, 0), (163.397, 32.8986, 0)), color=Color.from_hex("#aaaaaa"), width=0.0864)
 add(21, 'segment', Line((162.497, 62.5266, 0), (162.497, 55.1196, 0)), color=Color.from_hex("#3f9c20"), width=0.396)
 add(21, 'label', Point(164.497, 58.8231, 0), color=Color.from_hex("#3f9c20"), text='Q')
-add(21, 'arrow', Line((162.497, 74.8716, 0), (162.497, 32.8986, 0)), color=Color.from_hex("#3f9c20"), width=0.504, dash=1.35, head=(1.728, 0.684))
+add(21, 'arrow', Line((166.358, 74.8716, 0), (166.358, 32.8986, 0)), color=Color.from_hex("#3f9c20"), width=0.504, dash=1.35, head=(1.728, 0.684))
 add(21, 'label', Point(165.697, 57.8851, 0), color=Color.from_hex("#3f9c20"), text='R_g + Q')
 
 # step 22 — Trial pole o′₁ again
@@ -551,9 +551,9 @@ add(26, 'segment', Line((79.5567, 34.7288, 0), (82.3, 37.3971, 0)), color=Color.
 add(26, 'segment', Line((82.3, 37.3971, 0), (86.2907, 41.2786, 0)), color=Color.from_hex("#ce4095"), width=0.36)
 
 # step 27 — Reactions
-add(27, 'arrow', Line((0, 20, 0), (-5.89481, 22.9684, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
-add(27, 'arrow', Line((82.3, 37.3971, 0), (87.0312, 41.9988, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
-add(27, 'arrow', Line((162.497, 32.8986, 0), (134.064, 47.2164, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
+add(27, 'arrow', Line((-1.73655, 16.5514, 0), (-7.63136, 19.5198, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
+add(27, 'arrow', Line((79.6079, 40.1649, 0), (84.3391, 44.7666, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
+add(27, 'arrow', Line((164.234, 36.3472, 0), (135.801, 50.6649, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
 add(27, 'arrow', Line((134.064, 47.2164, 0), (162.497, 74.8716, 0)), color=Color.from_hex("#3f9c20"), width=0.396, head=(1.512, 0.612))
 add(27, 'label', Point(-7.49481, 24.2684, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(27, 'label', Point(88.6312, 43.2988, 0), color=Color.from_hex("#3f9c20"), text='B')

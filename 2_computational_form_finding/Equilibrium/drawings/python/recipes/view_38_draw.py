@@ -95,7 +95,7 @@ add(4, 'polyline', Polyline([(9.15264, 9.87314, 0), (5.15264, 8.32041, 0)]), col
 add(4, 'point', Point(5.15264, 8.32041, 0), color=Color.from_hex("#ffffff"), width=0.06, until=7)
 add(4, 'arrow', Line((5.15264, 9.66, 0), (5.15264, 8.66, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, dash=0.22, head=(0.1728, 0.0684), until=7)
 add(4, 'label', Point(5.43264, 9.16, 0), color=Color.from_hex("#3f9c20"), text='R', until=7)
-add(4, 'arrow', Line((16, 10, 0), (16, 4, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, dash=0.22, head=(0.1728, 0.0684), until=6)
+add(4, 'arrow', Line((16.4172, 10, 0), (16.4172, 4, 0)), color=Color.from_hex("#3f9c20"), width=0.0576, dash=0.22, head=(0.1728, 0.0684), until=6)
 add(4, 'label', Point(15.45, 7.8, 0), color=Color.from_hex("#3f9c20"), text='R', until=6)
 
 # step 5 — Closing line → division point i

@@ -182,7 +182,7 @@ add(13, 'segment', Line((102.726, 19.8, 0), (98.8234, 13.0414, 0)), color=Color.
 add(13, 'label', Point(102.074, 15.6707, 0), color=Color.from_hex("#1a1eb2"), text='7')
 
 # step 14 — The check: R₁₂₃ again
-add(14, 'arrow', Line((80, 60, 0), (98.8234, 13.0414, 0)), color=Color.from_hex("#3f9c20"), width=0.2448, dash=0.55, head=(1.08, 0.4176))
+add(14, 'arrow', Line((82.8197, 61.1303, 0), (101.643, 14.1717, 0)), color=Color.from_hex("#3f9c20"), width=0.2448, dash=0.55, head=(1.08, 0.4176))
 
 # step 15 — Compression and tension
 add(15, 'polygon', Polygon([(7.73243, 46.42, 0), (13.2324, 36.8937, 0), (12.5124, 36.4781, 0), (7.01243, 46.0043, 0)]), color=Color.from_hex("#1a1eb2"))

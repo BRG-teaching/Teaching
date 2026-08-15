@@ -83,7 +83,7 @@ add(2, 'arrow', Line((21, 0.666667, 0), (21, -0.666667, 0)), color=Color.from_he
 add(2, 'label', Point(20.45, 0, 0), color=Color.from_hex("#3f9c20"), text='F₄', until=7)
 add(2, 'arrow', Line((21, -0.666667, 0), (21, -2, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224), until=7)
 add(2, 'label', Point(20.45, -1.33333, 0), color=Color.from_hex("#3f9c20"), text='F₅', until=7)
-add(2, 'arrow', Line((21, -2, 0), (21, -2.66667, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224), until=7)
+add(2, 'arrow', Line((20.2973, -2, 0), (20.2973, -2.66667, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224), until=7)
 add(2, 'label', Point(20.45, -2.33333, 0), color=Color.from_hex("#3f9c20"), text='F₆', until=7)
 
 # step 3 — A trial pole
@@ -162,7 +162,7 @@ add(7, 'segment', Line((21, 2, 0), (25.1609, 6.72661, 0)), color=Color.from_hex(
 add(7, 'label', Point(6.95261, 5.29088, 0), text='5')
 add(7, 'label', Point(22.6805, 4.66331, 0), text='5')
 add(7, 'point', Point(21, 2, 0), color=Color.from_hex("#ffffff"), width=0.11)
-add(7, 'arrow', Line((21, 5.33333, 0), (21, 4, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224))
+add(7, 'arrow', Line((21.7027, 5.33333, 0), (21.7027, 4, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224))
 add(7, 'label', Point(20.45, 4.66667, 0), color=Color.from_hex("#3f9c20"), text='F₄')
 add(7, 'polyline', Polyline([(21, 5.33333, 0), (21, 5.33333, 0)]), color=Color.from_hex("#2e8b2e"), dash=0.14)
 add(7, 'arrow', Line((21, 4, 0), (21, 2.66667, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224))
@@ -180,7 +180,7 @@ add(7, 'polyline', Polyline([(21, 1.33333, 0), (21, 1.33333, 0)]), color=Color.f
 add(7, 'arrow', Line((21, 0, 0), (21, -1.33333, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224))
 add(7, 'label', Point(20.45, -0.666667, 0), color=Color.from_hex("#3f9c20"), text='F₃')
 add(7, 'polyline', Polyline([(21, 0, 0), (21, 0, 0)]), color=Color.from_hex("#2e8b2e"), dash=0.14)
-add(7, 'arrow', Line((20, -1.33333, 0), (20, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224))
+add(7, 'arrow', Line((19.2973, -1.33333, 0), (19.2973, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224))
 add(7, 'arrow', Line((20, 2, 0), (20, 5.33333, 0)), color=Color.from_hex("#3f9c20"), width=0.0792, head=(0.3024, 0.1224))
 add(7, 'label', Point(19.55, 0.333333, 0), color=Color.from_hex("#3f9c20"), text='A')
 add(7, 'label', Point(19.55, 3.66667, 0), color=Color.from_hex("#3f9c20"), text='B')

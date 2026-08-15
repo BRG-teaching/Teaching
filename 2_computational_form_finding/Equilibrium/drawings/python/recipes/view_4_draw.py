@@ -23,8 +23,8 @@ add(0, 'label', Point(95, 20.6, 0), text='1 unit :: 0.40 kN')
 
 # step 1 — Force 1 — in both diagrams
 add(1, 'polyline', Polyline([(-19.3806, 19.6294, 0), (-14.1428, -55.2746, 0)]), color=Color.from_hex("#aaaaaa"), dash=1.1)
-add(1, 'arrow', Line((-18.759, 10.7396, 0), (-18.2707, 3.7567, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
-add(1, 'arrow', Line((77.2424, 12.7263, 0), (77.94, 2.75066, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(1, 'arrow', Line((-21.797, 10.5272, 0), (-21.3087, 3.54426, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(1, 'arrow', Line((80.2804, 12.9387, 0), (80.978, 2.9631, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
 add(1, 'point', Point(-18.2707, 3.7567, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(1, 'point', Point(-18.759, 10.7396, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(1, 'point', Point(77.94, 2.75066, 0), color=Color.from_hex("#ffffff"), width=0.55)
@@ -36,8 +36,8 @@ add(1, 'label', Point(75.3965, 7.58501, 0), color=Color.from_hex("#3f9c20"), tex
 
 # step 2 — Force 2
 add(2, 'polyline', Polyline([(-9.27487, 19.6294, 0), (-5.86104, -55.2746, 0)]), color=Color.from_hex("#aaaaaa"), dash=1.1)
-add(2, 'arrow', Line((-8.8727, 10.8053, 0), (-8.554, 3.8126, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
-add(2, 'arrow', Line((77.94, 2.75066, 0), (78.5091, -9.73638, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(2, 'arrow', Line((-11.915, 10.6667, 0), (-11.5963, 3.67394, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(2, 'arrow', Line((80.9822, 2.88931, 0), (81.5514, -9.59772, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
 add(2, 'point', Point(-8.554, 3.8126, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(2, 'point', Point(-8.8727, 10.8053, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(2, 'point', Point(78.5091, -9.73638, 0), color=Color.from_hex("#ffffff"), width=0.55)
@@ -47,8 +47,8 @@ add(2, 'label', Point(76.0268, -3.59302, 0), color=Color.from_hex("#3f9c20"), te
 
 # step 3 — Force 3
 add(3, 'polyline', Polyline([(3.05682, 19.6294, 0), (-8.60774, -55.2746, 0)]), color=Color.from_hex("#aaaaaa"), dash=1.1)
-add(3, 'arrow', Line((1.0771, 6.91664, 0), (0, 0, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
-add(3, 'arrow', Line((78.5091, -9.73638, 0), (76.778, -20.8524, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(3, 'arrow', Line((-1.93205, 7.38524, 0), (-3.00916, 0.468606, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(3, 'arrow', Line((81.5182, -10.205, 0), (79.7872, -21.321, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
 add(3, 'point', Point(0, 0, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(3, 'point', Point(1.0771, 6.91664, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(3, 'point', Point(76.778, -20.8524, 0), color=Color.from_hex("#ffffff"), width=0.55)
@@ -58,8 +58,8 @@ add(3, 'label', Point(75.4698, -14.9559, 0), color=Color.from_hex("#3f9c20"), te
 
 # step 4 — Force 4
 add(4, 'polyline', Polyline([(12.5769, 19.6294, 0), (4.42015, -55.2746, 0)]), color=Color.from_hex("#aaaaaa"), dash=1.1)
-add(4, 'arrow', Line((11.5659, 10.345, 0), (10.8081, 3.3861, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
-add(4, 'arrow', Line((76.778, -20.8524, 0), (75.6955, -30.7936, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(4, 'arrow', Line((8.53837, 10.6746, 0), (7.78057, 3.71579, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(4, 'arrow', Line((79.8056, -21.1821, 0), (78.723, -31.1233, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
 add(4, 'point', Point(10.8081, 3.3861, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(4, 'point', Point(11.5659, 10.345, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(4, 'point', Point(75.6955, -30.7936, 0), color=Color.from_hex("#ffffff"), width=0.55)
@@ -69,8 +69,8 @@ add(4, 'label', Point(74.0497, -25.5848, 0), color=Color.from_hex("#3f9c20"), te
 
 # step 5 — Force 5
 add(5, 'polyline', Polyline([(25.4888, 19.6294, 0), (1.14523, -55.2746, 0)]), color=Color.from_hex("#aaaaaa"), dash=1.1)
-add(5, 'arrow', Line((18.1666, -2.90055, 0), (20.3302, 3.7567, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
-add(5, 'arrow', Line((75.6955, -30.7936, 0), (81.1044, -14.1505, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(5, 'arrow', Line((15.2703, -1.95925, 0), (17.4339, 4.69799, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(5, 'arrow', Line((78.5918, -31.7349, 0), (84.0007, -15.0918, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
 add(5, 'point', Point(20.3302, 3.7567, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(5, 'point', Point(18.1666, -2.90055, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(5, 'point', Point(81.1044, -14.1505, 0), color=Color.from_hex("#ffffff"), width=0.55)
@@ -80,8 +80,8 @@ add(5, 'label', Point(80.4922, -23.1521, 0), color=Color.from_hex("#3f9c20"), te
 
 # step 6 — Force 6
 add(6, 'polyline', Polyline([(14.1859, 19.6294, 0), (71.8043, -55.2746, 0)]), color=Color.from_hex("#aaaaaa"), dash=1.1)
-add(6, 'arrow', Line((26.7771, 3.26077, 0), (31.0451, -2.2876, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
-add(6, 'arrow', Line((81.1044, -14.1505, 0), (91.7744, -28.0214, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(6, 'arrow', Line((24.3632, 1.40394, 0), (28.6312, -4.14443, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
+add(6, 'arrow', Line((83.5183, -12.2937, 0), (94.1882, -26.1646, 0)), color=Color.from_hex("#3f9c20"), width=0.4752, head=(1.512, 0.576))
 add(6, 'point', Point(31.0451, -2.2876, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(6, 'point', Point(26.7771, 3.26077, 0), color=Color.from_hex("#ffffff"), width=0.8)
 add(6, 'point', Point(91.7744, -28.0214, 0), color=Color.from_hex("#ffffff"), width=0.55)

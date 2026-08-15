@@ -118,7 +118,7 @@ export function create(dw, panel, makePlayer) {
     dw.highlight(`f${i}`, [2]);
   }
   // the contact patch, called out at the verdict
-  dw.seg('foot', { intro: RESOLVE, w: dw.W.bar * 1.6, color: 0x232327, flash: false });
+  dw.seg('foot', { intro: RESOLVE, w: dw.W.bar * 1.6, color: PAL.black, flash: false });
   dw.label('lfoot', 'contact patch', { cls: 'point', intro: RESOLVE, flash: false });
 
   dw.disk('ptO', { intro: 3, r: dw.W.disk * 0.8 });
@@ -148,7 +148,8 @@ export function create(dw, panel, makePlayer) {
   dw.label('lRform', 'R', { cls: 'num', intro: 6, color: PAL.green });
   dw.label('lRforce', 'R', { cls: 'num', intro: 6, color: PAL.green });
   dw.link('Rform', 'Rforce', 'lRform', 'lRforce');
-  dw.label('verdict', '', { cls: 'num', intro: RESOLVE, flash: false });
+  dw.label('verdict', '', { cls: 'num', intro: RESOLVE, flash: false,
+    color: { final: (dd) => (dd.stable ? PAL.green : PAL.red) } });
 
   dw.instant('form_title', 'force_title', 'force_sub', 'ground', 'hatch');
   dw.ghostable('ff0', 'ff1', 'ff2', 'Rforce');
@@ -202,7 +203,6 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lfoot', [(d.foot[0] + d.foot[1]) / 2, GY - 1.9]);
     dw.setLabel('verdict', [d.xbar - 0.5, GY - 3.4]);
     dw.setText('verdict', d.stable ? 'STABLE' : 'NOT STABLE — it tips');
-    dw.elems.get('verdict').el.style.color = d.stable ? '#3f9c20' : '#ce4095';
 
     panel.syncAll();
     player.apply(d, s);
