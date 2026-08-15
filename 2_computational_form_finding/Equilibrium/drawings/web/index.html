@@ -158,34 +158,49 @@
   <script type="module">
     import { Drawing, Panel, StepPlayer } from './lib/eqdraw.js';
 
-    const id = new URLSearchParams(location.search).get('view') ?? '1';
+    // two wings: the drawings (?view=N -> views/view_N.js) and the course
+    // exercises (?ex=S_T -> views/exS_T.js, listed in exercises.json)
+    const qs = new URLSearchParams(location.search);
+    const exId = qs.get('ex');
+    const isEx = exId !== null;
+    const id = isEx ? exId : (qs.get('view') ?? '1');
 
     // ---- view navigation (prev / dropdown / next) --------------------
     // The view ids come from views.json; static hosts (GitHub Pages) serve no
     // directory listing, so that listing is only a fallback for a dev server
     // whose views.json has gone stale.
     let views = [];
-    try {
-      views = await (await fetch('./views.json')).json();
-    } catch {
+    let exMeta = null;
+    if (isEx) {
       try {
-        const html = await (await fetch('./views/')).text();
-        views = [...new Set([...html.matchAll(/view_(\d+)\.js/g)].map((m) => +m[1]))]
-          .sort((a, b) => a - b);
-      } catch { /* no listing available */ }
+        exMeta = await (await fetch('./exercises.json')).json();
+        views = exMeta.views.map((v) => v.id);
+      } catch { views = [id]; }
+    } else {
+      try {
+        views = await (await fetch('./views.json')).json();
+      } catch {
+        try {
+          const html = await (await fetch('./views/')).text();
+          views = [...new Set([...html.matchAll(/view_(\d+)\.js/g)].map((m) => +m[1]))]
+            .sort((a, b) => a - b);
+        } catch { /* no listing available */ }
+      }
     }
 
-    const cur = views.indexOf(+id);
-    const goto = (n) => { location.search = `?view=${n}`; };
+    const cur = isEx ? views.indexOf(id) : views.indexOf(+id);
+    const goto = (n) => { location.search = isEx ? `?ex=${n}` : `?view=${n}`; };
     const nav = document.createElement('div');
     nav.id = 'viewnav';
     nav.innerHTML = `
       <button class="btn" id="nav-prev" title="Previous view (PageUp)">‹</button>
       <select id="nav-select" title="Jump to view">
-        ${views.map((n) => `<option value="${n}" ${n === +id ? 'selected' : ''}>View ${n}</option>`).join('')}
+        ${views.map((n) => `<option value="${n}" ${String(n) === String(id) ? 'selected' : ''}>${
+          isEx ? 'Exercise ' + String(n).replace('_', '.') : 'View ' + n}</option>`).join('')}
       </select>
       <button class="btn" id="nav-next" title="Next view (PageDown)">›</button>
-      <button class="btn" id="nav-grid" title="All views" onclick="location.href='gallery.html'">⊞</button>`;
+      <button class="btn" id="nav-grid" title="All views" onclick="location.href='${
+        isEx ? 'exercises.html' : 'gallery.html'}'">⊞</button>`;
     document.getElementById('sidebar').appendChild(nav);
     const prev = nav.querySelector('#nav-prev');
     const next = nav.querySelector('#nav-next');
@@ -200,7 +215,7 @@
     });
 
     try {
-      const mod = await import(`./views/view_${id}.js`);
+      const mod = await import(isEx ? `./views/ex${id}.js` : `./views/view_${id}.js`);
       document.title = mod.meta.title;
       const dw = new Drawing(document.getElementById('viewport'), mod.meta);
       const panel = new Panel(document.getElementById('sidebar'), mod.meta);
@@ -213,13 +228,27 @@
       window.__exportOps = () => dw.exportOps(mod.meta, window.__player);
 
       // recreate-in-python links (the ops database, see drawings/python/)
+      // the exercise wing: link straight back to the real course sheet
+      if (isEx && exMeta) {
+        const v = exMeta.views.find((x) => x.id === id);
+        const sh = v && exMeta.sheets[v.sheet];
+        if (sh) {
+          const sec = panel.section('The exercise');
+          const link = (u, t) => (u ? `<a href="${u}" target="_blank" rel="noopener">${t}</a>` : '');
+          sec.innerHTML += `<p class="about"><b>${sh.code} · ${sh.title}</b><br>${v.task}</p>
+            <p class="pylinks">${[link(sh.task_en, 'task (EN)'), link(sh.task_de, 'Aufgabe (DE)'),
+              link(sh.solution_en || sh.solution_de, 'official solution')].filter(Boolean).join(' · ')}</p>`;
+        }
+      }
+
       const gh = 'https://github.com/BRG-teaching/Teaching/blob/main/2_computational_form_finding/Equilibrium/drawings/python';
       const py = panel.section('Recreate in Python');
+      const opsName = isEx ? `ex${id}` : `view_${id}`;
       py.innerHTML += `<p class="about">this drawing as a series of COMPAS drawing
         operations — geometry, color, width and construction step of every element:</p>
         <p class="pylinks">
-          <a href="../python/ops/view_${id}.json">view_${id}.json</a> ·
-          <a href="${gh}/recipes/view_${id}_draw.py">view_${id}_draw.py</a> ·
+          <a href="../python/ops/${opsName}.json">${opsName}.json</a> ·
+          <a href="${gh}/recipes/${opsName}_draw.py">${opsName}_draw.py</a> ·
           <a href="${gh.replace('/blob/', '/tree/')}">the python package</a>
         </p>`;
     } catch (err) {

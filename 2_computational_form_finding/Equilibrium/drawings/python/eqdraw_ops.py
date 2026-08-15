@@ -135,8 +135,9 @@ class Drawing(Data):
 
     Parameters
     ----------
-    view : int
-        The drawing number (1..54, there is no 30).
+    view : int or str
+        The drawing number (1..54, there is no 30) for the drawings wing,
+        or an exercise id such as ``"ex1_1"`` for the exercises wing.
     title : str
         The drawing's title.
     about : str
@@ -174,7 +175,7 @@ class Drawing(Data):
         }
 
     def __repr__(self):
-        return "Drawing({0}, {1!r}, {2} ops)".format(self.view, self.title, len(self.ops))
+        return "Drawing({0!r}, {1!r}, {2} ops)".format(self.view, self.title, len(self.ops))
 
     def at_step(self, k):
         """The operations visible at construction step ``k``.

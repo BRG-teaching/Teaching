@@ -123,16 +123,16 @@ official solution. Mine them once Tier A proves the workflow.
 - **Phase 4** — Tier B, where each needs a bespoke right-hand pane.
 - **Phase 5** — Tier C additional exercises.
 
-## 6. Open questions for the user
+## 6. Decisions (user, 2026-08-15)
 
-1. **Language**: captions in English only (as the 54 views are), or
-   EN/DE toggle since every sheet exists in both? A toggle is real work;
-   English-only is consistent with what exists.
-2. **Answers**: should a view reveal the numeric answer immediately, or
-   hold it behind a "show solution" toggle so the sheet stays usable as
-   homework? (Recommendation: hold it — a `solution` toggle, default off,
-   with the construction steps still available.)
-3. **Scope**: all 32 tasks, or Tier A only (20) as the first release?
-4. **PDF hosting**: link into the `pdf-archive` branch (zero copying, but
-   the files stay on a side branch), or copy the exercise PDFs into the
-   Pages deployment so the site is self-contained?
+1. **Every view is the DIRECT ANSWER.** No "show solution" toggle, no
+   blanks to fill: "the exercises must be direct answer, nobody will draw
+   them only you". The view is the worked solution, drawn from start to
+   finish, with the numeric results shown in the caption card as live
+   values — exactly as the drawing views do.
+2. **English only.** German sheets are used only as a cross-check on
+   numbers and as a second link on the page.
+3. **Links to the exercise PDFs go on the website** — per-sheet header
+   rows on `exercises.html` and an "Exercise" section in each view's
+   sidebar, pointing into the `pdf-archive` branch (raw URLs).
+4. Scope: work through Tier A first, then B, then C — but all of it.

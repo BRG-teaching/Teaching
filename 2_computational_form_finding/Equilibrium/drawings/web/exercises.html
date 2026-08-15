@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>eQUILIBRIUM — exercises</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    font: 400 15px/1.4 Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #111;
+    background: #eef0f2;
+  }
+  header { background: #2196ea; color: #fff; }
+  header .inner {
+    max-width: 1440px; margin: 0 auto; padding: 36px 40px 30px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  }
+  header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  header .sub { font-size: 14px; color: #fff; margin-top: 6px; }
+  header .count { font: 12px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+                  color: rgba(255,255,255,0.72); }
+  header a { color: #fff; }
+  main { max-width: 1440px; margin: 0 auto; padding: 40px 40px 64px; }
+  .sheet { margin-bottom: 44px; }
+  .sheet h2 {
+    font-size: 20px; font-weight: 700; letter-spacing: -0.01em;
+    padding-bottom: 4px;
+  }
+  .sheet .code { color: #2196ea; }
+  .sheet .meta { font-size: 13px; color: #455b6b; margin-bottom: 10px; }
+  .links { font-size: 13px; margin-bottom: 18px; }
+  .links a {
+    display: inline-block; margin: 0 14px 6px 0;
+    color: #2196ea; text-decoration: none; border-bottom: 1px solid transparent;
+  }
+  .links a:hover { border-bottom-color: #2196ea; }
+  .links .none { color: #9aa7b0; margin-right: 14px; }
+  #grid, .row { display: grid; gap: 24px; grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .row { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 960px) { .row { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 599.98px) {
+    main { padding: 24px 16px 48px; }
+    header .inner { padding: 28px 16px 24px; }
+  }
+  .card {
+    display: block; overflow: hidden; text-decoration: none; color: inherit;
+    background: #fff; border: none; border-radius: 0; box-shadow: none; cursor: pointer;
+    transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card:hover { box-shadow: 0 3px 14px rgba(20, 30, 40, 0.13); }
+  .thumb { aspect-ratio: 660 / 430; background: #fff; position: relative;
+           display: grid; place-content: center; overflow: hidden; }
+  .thumb img.poster { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb video { position: absolute; inset: 0; width: 100%; height: 100%;
+                 object-fit: cover; display: block; opacity: 0; transition: opacity 0.25s; }
+  .thumb video.live { opacity: 1; }
+  .thumb .placeholder { width: 26px; height: 26px; border: 1px solid #d9d9d9; border-radius: 50%; }
+  .meta-b { padding: 20px 16px 26px; }
+  .meta-b .t { display: block; font-size: 1rem; font-weight: 500; line-height: 1.5;
+               letter-spacing: 0.03125em; color: #2196ea; }
+  .meta-b .d { display: block; margin-top: 8px; font-size: 0.875rem; line-height: 1.425;
+               letter-spacing: 0.0178571429em; color: #455b6b;
+               display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+               overflow: hidden; }
+  .todo { opacity: 0.72; }
+  .todo .t { color: #b3b3b3; }
+  footer { max-width: 1440px; margin: 0 auto; padding: 8px 40px 48px;
+           font-size: 13px; color: #71717a; }
+  footer a { color: #ce4095; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <div>
+        <h1>e<span class="q">QUILIBRIUM</span> — exercises</h1>
+        <p class="sub">the course exercise sheets, worked step by step as interactive drawings</p>
+      </div>
+      <span class="count" id="count"></span>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <footer>
+    The drawings wing lives at <a href="gallery.html">gallery.html</a>. Exercise
+    sheets and lecture slides are served from the
+    <a href="https://github.com/BRG-teaching/Teaching/tree/pdf-archive/2_computational_form_finding/Equilibrium/files">pdf-archive</a>
+    branch; every drawing is also available as
+    <a href="https://github.com/BRG-teaching/Teaching/tree/main/2_computational_form_finding/Equilibrium/drawings/python">COMPAS operations</a>.
+  </footer>
+
+  <script type="module">
+    const main = document.getElementById('main');
+    const data = await (await fetch('./exercises.json')).json();
+    const built = new Set(data.views.map((v) => v.id));
+    document.getElementById('count').textContent =
+      `${data.views.length} worked · ${Object.keys(data.sheets).length} sheets`;
+
+    const order = ['I-1','I-2','I-3','I-4','I-5','I-X','II-6','II-7','II-8','II-9','II-10','II-X'];
+    const io = new IntersectionObserver((es) => {
+      for (const e of es) {
+        const v = e.target;
+        if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
+      }
+    }, { rootMargin: '120px' });
+
+    let idx = 0;
+    for (const key of order) {
+      const sh = data.sheets[key];
+      if (!sh) continue;
+      const sec = document.createElement('section');
+      sec.className = 'sheet';
+      const link = (u, t) => (u ? `<a href="${u}" target="_blank" rel="noopener">${t}</a>` : '');
+      const sol = sh.solution_en || sh.solution_de;
+      sec.innerHTML = `
+        <h2><span class="code">${sh.code}</span> · ${sh.title}</h2>
+        <p class="meta">${sh.course}${sh.chapters && sh.chapters !== '—'
+          ? ` · compendium ${sh.chapters}` : ''}</p>
+        <p class="links">
+          ${link(sh.task_en, '↓ exercise sheet (EN)')}
+          ${link(sh.task_de, '↓ Aufgabenblatt (DE)')}
+          ${sol ? link(sol, '↓ official solution') : '<span class="none">no official solution in the archive</span>'}
+          ${link(sh.compendium, '↓ compendium')}
+          ${link(sh.lecture, '↓ lecture slides')}
+        </p>
+        <div class="row"></div>`;
+      const row = sec.querySelector('.row');
+      const mine = data.views.filter((v) => v.sheet === key);
+      if (!mine.length) {
+        row.innerHTML = `<div class="card todo"><div class="thumb"><div class="placeholder"></div></div>
+          <div class="meta-b"><span class="t">worked drawings in preparation</span>
+          <span class="d">the sheet and its material are linked above</span></div></div>`;
+      }
+      for (const v of mine) {
+        const a = document.createElement('a');
+        a.className = 'card';
+        a.href = `index.html?ex=${v.id}`;
+        a.innerHTML = `<div class="thumb"><div class="placeholder"></div></div>
+          <div class="meta-b"><span class="t">${v.title}</span><span class="d">${v.task}</span></div>`;
+        row.appendChild(a);
+        const thumb = a.querySelector('.thumb');
+        const my = idx++;
+        fetch(`./movies/ex${v.id}.mp4`, { method: 'HEAD' }).then((r) => {
+          if (!r.ok) return;
+          thumb.textContent = '';
+          const img = document.createElement('img');
+          img.className = 'poster';
+          img.src = `./movies/ex${v.id}.png`;
+          img.loading = 'lazy';
+          thumb.appendChild(img);
+          const vid = document.createElement('video');
+          vid.muted = true; vid.loop = true; vid.playsInline = true; vid.preload = 'none';
+          vid.src = `./movies/ex${v.id}.mp4`;
+          vid.addEventListener('loadedmetadata', () => {
+            vid.currentTime = (0.618 * my * vid.duration) % vid.duration;
+          });
+          vid.addEventListener('timeupdate', () => vid.classList.add('live'), { once: true });
+          thumb.appendChild(vid);
+          io.observe(vid);
+        }).catch(() => {});
+      }
+      main.appendChild(sec);
+    }
+  </script>
+</body>
+</html>

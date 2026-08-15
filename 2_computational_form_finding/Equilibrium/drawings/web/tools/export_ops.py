@@ -27,16 +27,20 @@ VIEWS = [*range(1, 30), *range(31, 55)]
 
 
 def export(chrome, view):
-    chrome.goto(f"{BASE}/?view={view}&step=last")
+    ex = isinstance(view, str) and not str(view).isdigit()
+    q = f"ex={view}" if ex else f"view={view}"
+    stem = f"ex{view}" if ex else f"view_{view}"
+    chrome.goto(f"{BASE}/?{q}&step=last")
     time.sleep(0.4)                                   # let refresh settle
     raw = chrome.evaluate("JSON.stringify(window.__exportOps())")
     raw = json.loads(raw)
-    validate(raw, view)
+    if not ex:
+        validate(raw, view)
     drawing = Drawing.from_export(raw)
-    out = PYDIR / "ops" / f"view_{view}.json"
+    out = PYDIR / "ops" / f"{stem}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     compas.json_dump(drawing, out, pretty=True)
-    write_recipe(drawing, PYDIR / "recipes" / f"view_{view}_draw.py")
+    write_recipe(drawing, PYDIR / "recipes" / f"{stem}_draw.py")
     return drawing
 
 
@@ -87,7 +91,8 @@ def write_recipe(drawing, path):
     lines = [
         '"""%s' % drawing.title,
         "",
-        "Auto-generated from ops/view_%d.json — the drawing as literal COMPAS" % drawing.view,
+        "Auto-generated from ops/%s.json — the drawing as literal COMPAS" % (
+            drawing.view if isinstance(drawing.view, str) else "view_%d" % drawing.view),
         "calls, one operation per line, in construction order. Regenerate with",
         "web/tools/export_ops.py; edit the web view, not this file.",
         '"""',
@@ -132,7 +137,7 @@ def write_recipe(drawing, path):
 
 
 def main():
-    views = [int(a) for a in sys.argv[1:]] or VIEWS
+    views = [a if not a.isdigit() else int(a) for a in sys.argv[1:]] or VIEWS
     chrome = Chrome()
     try:
         for view in views:

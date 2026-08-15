@@ -106,7 +106,11 @@ class Chrome:
 
 
 def make_movie(chrome, view):
-    chrome.goto(f"{BASE}/?view={view}&step=0")   # step param disables autoplay
+    # exercise views are addressed as ?ex=S_T and live at movies/exS_T.mp4
+    ex = isinstance(view, str) and not str(view).isdigit()
+    q = f"ex={view}" if ex else f"view={view}"
+    stem = f"ex{view}" if ex else f"view_{view}"
+    chrome.goto(f"{BASE}/?{q}&step=0")           # step param disables autoplay
     n = chrome.evaluate("window.__player.steps.length - 1")
     MOVIES.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
@@ -120,7 +124,7 @@ def make_movie(chrome, view):
                 f += 1
         # drop the sidebar (250 CSS px, captured at DSF device px), keep the canvas
         crop = f"crop=iw-{250 * DSF}:ih:{250 * DSF}:0"
-        out = MOVIES / f"view_{view}.mp4"
+        out = MOVIES / f"{stem}.mp4"
         subprocess.run(
             ["ffmpeg", "-y", "-v", "error", "-framerate", str(FPS), "-i", f"{tmp}/f%05d.png",
              "-vf", f"tpad=stop_mode=clone:stop_duration={HOLD_LAST},{crop},scale={OUT_W}:-2",
@@ -129,16 +133,16 @@ def make_movie(chrome, view):
         # static poster of the finished drawing for the gallery grid
         subprocess.run(
             ["ffmpeg", "-y", "-v", "error", "-i", f"{tmp}/f{f - 1:05d}.png",
-             "-vf", f"{crop},scale={OUT_W}:-2", str(MOVIES / f"view_{view}.png")],
+             "-vf", f"{crop},scale={OUT_W}:-2", str(MOVIES / f"{stem}.png")],
             check=True)
-    print(f"view_{view}: {n + 1} frames -> {out}")
+    print(f"{stem}: {n + 1} frames -> {out}")
 
 
 def main():
     if "--all" in sys.argv:
         views = sorted(int(p.stem.split("_")[1]) for p in (WEB / "views").glob("view_*.js"))
     else:
-        views = [int(a) for a in sys.argv[1:]]
+        views = [a if not a.isdigit() else int(a) for a in sys.argv[1:]]
     if not views:
         print(__doc__)
         return

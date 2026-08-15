@@ -953,7 +953,8 @@ export class Drawing {
     ops.sort((a, b) => a.step - b.step);   // stable: declaration order within a step
     const live = (v) => (typeof v === 'function' ? v(la.d, la.state) : v);
     return {
-      view: parseInt(new URLSearchParams(location.search).get('view') ?? '0', 10),
+      view: (() => { const q = new URLSearchParams(location.search);
+        return q.get('ex') ? `ex${q.get('ex')}` : parseInt(q.get('view') ?? '0', 10); })(),
       title: meta.title,
       about: meta.about ?? '',
       frame: meta.frame,
