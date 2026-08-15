@@ -54,7 +54,7 @@ add(1, 'segment', Line((-5.3069, 0.1139, 0), (-26, 0.1139, 0)), color=Color.from
 add(1, 'segment', Line((-26, 0.1139, 0), (-26, -7, 0)), color=Color.from_hex("#aaaaaa"), width=0.06696)
 add(1, 'polygon', Polygon([(-26, -7, 0), (-5.3069, -7, 0), (-5.3069, 0.1139, 0), (-26, 0.1139, 0)]), color=Color.from_hex("#aaaaaa"), opacity=0.09)
 add(1, 'polyline', Polyline([(-29.8505, -3.2742, 0), (-12.5828, 1.80795, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3658)
-add(1, 'label', Point(-7.58282, 2.40795, 0), color=Color.from_hex("#aaaaaa"), text='F: line of action')
+add(1, 'label', Point(-5.98282, 3.80795, 0), color=Color.from_hex("#aaaaaa"), text='F: line of action')
 
 # step 2 — The reactions
 add(2, 'arrow', Line((-29.9313, -9.281, 0), (-26.7637, -7.57025, 0)), color=Color.from_hex("#3f9c20"), width=0.122314, head=(0.39551, 0.169632))

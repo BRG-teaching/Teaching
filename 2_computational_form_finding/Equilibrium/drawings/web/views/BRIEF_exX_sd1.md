@@ -343,7 +343,8 @@ minimum requirement."
 | C20/25 | 13.333 | 900.0 | 30.00 | **30** |
 
 *d) What you notice.* Concrete in tension needs **12 000 mm²** where steel needs
-**54 mm²** — a factor of **224 in area, 13.7 in side length** (110 mm vs 8 mm).
+**54 mm²** — a factor of **224 in area and 15.0 in side length** (109.5 mm against
+7.3 mm exact; 110 against 8 mm once both are rounded up, which is 13.75).
 The same concrete in compression needs **900 mm²**, 13.3× less than in tension:
 concrete's tensile strength is 1/13.3 of its compressive strength, and the whole
 of reinforced concrete follows from that one ratio — put steel where the tension

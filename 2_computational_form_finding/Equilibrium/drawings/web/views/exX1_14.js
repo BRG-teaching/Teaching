@@ -131,8 +131,8 @@ const NUM = [                          // the member number the sheet prints
 ];
 
 const PART = ['14.1 a)  span', '14.1 b)  cantilever', '14.2  a) + b) combined'];
-const STAGE_AT = [0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2];   // which part each step is about
-const FIRST_OF = [1, 5, 8];                            // ... and the reverse
+const STAGE_AT = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2];  // which part each step is about
+const FIRST_OF = [1, 6, 10];                            // ... and the reverse
 
 const DEFAULTS = {
   F1: 60, F2: 30, F3: 30,
@@ -266,6 +266,12 @@ const STEPS = [
                     `pole distance ${d.Ha.toFixed(2)} kN — the same H that drew the form`,
                     'hover any member: its ray lights up with it'] },
 
+  { t: 'a) Read the answers off it', d: 'now the colours mean what they say: navy for the three compressed arch segments, pink for the tie that holds the two supports together. Everything below is measured off the diagram you just drew, and it changes the moment you change the thrust',
+    detail: (d) => [`1 ${Math.hypot(d.Ha, d.Aa).toFixed(2)} C · 2 ${Math.hypot(d.Ha, d.Aa - d.F1).toFixed(2)} C · 4 ${Math.hypot(d.Ha, d.Aa - d.F1 - d.F2).toFixed(2)} C · tie 3 ${d.Ha.toFixed(2)} T`,
+                    `rise y_I ${d.yI.toFixed(3)} m · y_II ${d.yII.toFixed(3)} m · A ${d.Aa.toFixed(2)} ↑ · B ${d.Ba.toFixed(2)} ↑`,
+                    'the key chose H_a = 36.92 kN and drew 76.91 / 37.67 / 36.92 / 43.24 kN — the same numbers'],
+    take: 'a flatter arch (bigger H) costs more in every member and more in the tie; the reactions never notice' },
+
   { t: 'b) A load past the support', d: 'same two supports, one load — but now outside the span. Everything about the structure changes: it is a cantilever hung off the right-hand support and held down at the left one',
     detail: (d) => [`F3 = ${d.F3.toFixed(0)} kN at ${XF3.toFixed(2)} m, i.e. ${(XF3 - XB).toFixed(2)} m beyond B`,
                     'three members and three joints: a triangle A–B–T'] },
@@ -281,6 +287,12 @@ const STEPS = [
                     `1 (tie A→T) ${Math.hypot(d.Hb, -d.Ab).toFixed(2)} T · 2 (strut B→T) ${Math.hypot(d.Hb, d.Bb).toFixed(2)} C · 3 (strut A–B) ${d.Hb.toFixed(2)} C`,
                     'the member between the supports has swapped from red to blue'],
     take: 'a) puts the supports in tension between them, b) puts them in compression — hold that thought' },
+
+  { t: 'b) Read it, and note the sign', d: 'the cable back to A is pink, the strut up from B is navy — and so is the member between the supports. In a) that same member was pink. Two structures, the same two supports, opposite signs in between: that is the whole reason 14.2 has anything to say',
+    detail: (d) => [`1 (tie A→T) ${Math.hypot(d.Hb, -d.Ab).toFixed(2)} T · 2 (strut B→T) ${Math.hypot(d.Hb, d.Bb).toFixed(2)} C · 3 (strut A–B) ${d.Hb.toFixed(2)} C`,
+                    `tip y_T ${d.yT.toFixed(3)} m · A ${Math.abs(d.Ab).toFixed(2)} ↓ · B ${d.Bb.toFixed(2)} ↑`,
+                    'the key chose H_b = 23.08 kN and drew 24.27 / 44.02 / 23.08 kN — the same numbers'],
+    take: 'a) pulls the supports together, b) pushes them apart' },
 
   { t: '14.2 Superimpose the two forms', d: 'now lay b) on top of a) without moving a single joint. Two equilibrium states on the same set of members simply add, so the combined structure carries all three loads with no new construction at all. Members 1–3 are a)’s, 4 and 6 are b)’s, and member 5 is the one they share',
     detail: (d) => [`reactions add:  A = ${d.Aa.toFixed(2)} − ${Math.abs(d.Ab).toFixed(2)} = ${d.Atot.toFixed(2)} kN ↑ · B = ${d.Ba.toFixed(2)} + ${d.Bb.toFixed(2)} = ${d.Btot.toFixed(2)} kN ↑`,
@@ -335,10 +347,10 @@ export function create(dw, panel, makePlayer) {
   // ---- titles
   dw.label('tForm', '', { cls: 'title', flash: false });
   dw.label('tForce', 'Force diagram   1 cm ≙ 10 kN', { cls: 'title', flash: false,
-    when: (st, dd) => !!dd && st._k >= (dd.stage === 0 ? 4 : dd.stage === 1 ? 7 : 9) });
+    when: (st, dd) => !!dd && st._k >= (dd.stage === 0 ? 4 : dd.stage === 1 ? 8 : 11) });
 
   // ---- supports
-  const GS = gate({ 0: 1, 1: 5, 2: 8 });
+  const GS = gate({ 0: 1, 1: 6, 2: 10 });
   for (const n of ['A', 'B']) {
     dw.strokes(`sup${n}`, 3, { intro: 1, when: GS, w: dw.W.bar, color: PAL.black, flash: false });
     dw.strokes(`hat${n}`, 5, { intro: 1, when: GS, w: dw.W.dim, color: PAL.grey, flash: false });
@@ -347,7 +359,7 @@ export function create(dw, panel, makePlayer) {
   dw.seg('rollB', { intro: 1, when: GS, w: dw.W.dim, color: PAL.black, flash: false });
 
   // ---- load lines + loads
-  const LG = [gate({ 0: 1, 2: 8 }), gate({ 0: 1, 2: 8 }), gate({ 1: 5, 2: 8 })];
+  const LG = [gate({ 0: 1, 2: 10 }), gate({ 0: 1, 2: 10 }), gate({ 1: 6, 2: 10 })];
   ['F1', 'F2', 'F3'].forEach((nm, i) => {
     dw.dashLine(`ll${i}`, { intro: 1, when: LG[i], color: PAL.grey, dash: dw.W.dash, flash: false });
     dw.arrow(`ld${i}`, { intro: 1, when: LG[i], color: PAL.green, ...ARR });
@@ -355,14 +367,14 @@ export function create(dw, panel, makePlayer) {
   });
 
   // ---- reactions
-  const GR = gate({ 0: 2, 1: 6, 2: 9 });
+  const GR = gate({ 0: 2, 1: 7, 2: 11 });
   for (const n of ['A', 'B']) {
     dw.arrow(`re${n}`, { intro: 2, when: GR, color: PAL.green, ...ARR });
     dw.label(`lre${n}`, '', { cls: 'num', intro: 2, when: GR, color: PAL.green });
   }
 
   // ---- members, joints
-  const GM = gate({ 0: 3, 1: 7, 2: 8 });
+  const GM = gate({ 0: 3, 1: 8, 2: 10 });
   const hasM = (k) => (st, dd) => !!dd && !!dd.mem[k] && GM(st, dd);
   for (let k = 0; k < 6; k++) {
     dw.seg(`mem${k}`, { intro: 3, when: hasM(k), w: dw.W.bar, color: memColor(k) });
@@ -379,7 +391,7 @@ export function create(dw, panel, makePlayer) {
   }
 
   // ---- force diagram
-  const GF = gate({ 0: 4, 1: 7, 2: 9 });
+  const GF = gate({ 0: 4, 1: 8, 2: 11 });
   for (let i = 0; i < 3; i++) {
     dw.arrow(`fl${i}`, { intro: 4, when: (st, dd) => GF(st, dd) && i < dd.loads.length,
       color: PAL.green, ...NARR });
@@ -404,28 +416,28 @@ export function create(dw, panel, makePlayer) {
     dw.label(`lray${k}`, '', { cls: 'num', intro: 4, color: PAL.grey,
       when: (st, dd) => !!dd && !!dd.ray[k] && GF(st, dd) && st.lbl });
   }
-  dw.seg('ray6', { intro: 9, w: dw.W.ray, color: memColor(3),
+  dw.seg('ray6', { intro: 11, w: dw.W.ray, color: memColor(3),
     when: (st, dd) => !!dd && !!dd.dup[0] && GF(st, dd) });
-  dw.seg('ray7', { intro: 9, w: dw.W.ray, color: memColor(2),
+  dw.seg('ray7', { intro: 11, w: dw.W.ray, color: memColor(2),
     when: (st, dd) => !!dd && !!dd.dup[1] && GF(st, dd) });
 
   // ---- the two component rays that the superposition replaces
   for (let i = 0; i < 2; i++) {
-    dw.seg(`cmp${i}`, { intro: 9, w: dw.W.ray * 1.8, color: PAL.grey, flash: false,
+    dw.seg(`cmp${i}`, { intro: 11, w: dw.W.ray * 1.8, color: PAL.grey, flash: false,
       when: (st, dd) => !!dd && st.comp && i < dd.comp.length && GF(st, dd) });
   }
-  dw.label('lcmp', '', { cls: 'num', intro: 9, color: PAL.grey, flash: false,
+  dw.label('lcmp', '', { cls: 'num', intro: 11, color: PAL.grey, flash: false,
     when: (st, dd) => !!dd && st.comp && !!dd.comp.length && GF(st, dd) });
 
   // ---- the H_a − H_b bar, spelled out under the force diagram
   const SGN = { pending: PAL.black, final: (dd) => (dd && dd.N5 >= 0 ? PAL.red : PAL.blue) };
-  dw.arrow('barA', { intro: 10, color: PAL.red, flash: false, ...NARR,
+  dw.arrow('barA', { intro: 12, color: PAL.red, flash: false, ...NARR,
     when: (st, dd) => !!dd && dd.stage === 2 });
-  dw.arrow('barB', { intro: 10, color: PAL.blue, flash: false, ...NARR,
+  dw.arrow('barB', { intro: 12, color: PAL.blue, flash: false, ...NARR,
     when: (st, dd) => !!dd && dd.stage === 2 });
-  dw.arrow('barN', { intro: 10, flash: false, ...ARR, color: SGN,
+  dw.arrow('barN', { intro: 12, flash: false, ...ARR, color: SGN,
     when: (st, dd) => !!dd && dd.stage === 2 });
-  dw.label('lbar', '', { cls: 'num', intro: 10, flash: false, color: SGN,
+  dw.label('lbar', '', { cls: 'num', intro: 12, flash: false, color: SGN,
     when: (st, dd) => !!dd && dd.stage === 2 });
 
   // counterparts — one group per SLOT, so the pairing never changes part

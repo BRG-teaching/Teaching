@@ -327,7 +327,7 @@ export function create(dw, panel, makePlayer) {
 
     dw.setLabel('t_plan', [PX + (LX / 2) * PM, PY + LY * PM + 1.7]);
     dw.setText('t_plan', `Grundriss 1:200 — ${d.tag} ${d.name}`);
-    dw.setLabel('t_elev', [EX, EY + 9.4]);
+    dw.setLabel('t_elev', [EX, 1.0]);
     dw.setText('t_elev', `${d.tag} ${d.bname} on its own`);
     dw.setLabel('t_chart', [CX0 + 7.0, CROW[0]]);
     dw.setText('t_chart', `R on every beam of every case — 1 unit ≙ ${(1 / CKN).toFixed(2)} kN`);

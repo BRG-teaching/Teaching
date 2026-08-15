@@ -48,7 +48,9 @@ const LLX = 12, LLY = 6;
 const NSEG = 48;
 
 const DEFAULTS = {
-  q: 7.5, snow: false,
+  // the sheet prints g_d = 7.5 kN/m but DRAWS a second bar as well, and its
+  // force diagram is built on the sum: 10.0 kN/m is the official load case
+  q: 7.5, snow: true,
   tip: 5.6,                             // m, the roof tip above the bearings
   dep: 1.4,                             // m, the beam depth
   lbl: true, _k: 99,
@@ -287,7 +289,7 @@ export function create(dw, panel, makePlayer) {
   panel.toggle(des, s, 'lbl', 'show labels', refresh);
   const giv = panel.section('Given');
   panel.slider(giv, s, 'q', 'g_d (kN/m)', 4, 15, 0.5, refresh);
-  panel.toggle(giv, s, 'snow', 'add the unprinted q_d (10.0 kN/m total)', refresh);
+  panel.toggle(giv, s, 'snow', 'the second load bar the sheet draws (10.0 kN/m total)', refresh);
 
   refresh();
   return player;

@@ -77,11 +77,11 @@ const CAND = [
 // the two sections are drawn at DIFFERENT scales, stated on each: a 19 mm bar
 // beside a 100 mm bearing at one scale would be a dot beside a block, and the
 // point of a) is the millimetre between 18 and 19
-const BARC = [-20.5, -3.6], BARS = 0.40;    // bar section: centre, units per mm
+const BARC = [-20.5, -4.4], BARS = 0.32;    // bar section: centre, units per mm
 const CONC = [-7.0, -4.0], CONS = 0.100;    // bearing area: centre, units per mm
 const CX0 = 4.0, CKN = 0.185;               // chart origin x, units per kN
 const SNM = 0.088;                          // and units per N/mm² for rows 1–2
-const ROW = [11.5, 8.5, 4.0, -0.5, -5.5];   // chart rows
+const ROW = [8.2, 5.4, 1.4, -2.8, -7.8];    // chart rows
 const BH = 1.3;                             // half height of a chart bar
 const NCIRC = 40;
 
@@ -251,12 +251,12 @@ export function create(dw, panel, makePlayer) {
     s._k = player.k;
     d = compute(s);
 
-    dw.setLabel('t_bar', [BARC[0], 3.4]);
+    dw.setLabel('t_bar', [BARC[0], 1.1]);
     dw.setText('t_bar', `a) the bar — S235`);
-    dw.setLabel('t_conc', [CONC[0], 4.2]);
+    dw.setLabel('t_conc', [CONC[0] + 4.0, 1.1]);
     dw.setText('t_conc', `b) the bearing — C12/15`);
-    dw.setLabel('t_chart', [16.0, 15.0]);
-    dw.setLabel('t_note', [16.0, 13.6]);
+    dw.setLabel('t_chart', [16.0, 11.2]);
+    dw.setLabel('t_note', [16.0, 10.2]);
     dw.setText('t_note', `sections at 1 mm ≙ ${BARS} / ${CONS} units · bars: N/mm² at ${SNM}, kN at ${CKN}`);
 
     // ---- a) the bar

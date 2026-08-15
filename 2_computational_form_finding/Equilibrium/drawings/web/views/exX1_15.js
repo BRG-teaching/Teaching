@@ -143,8 +143,8 @@ const NUM = [{ 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 },        // 15.1
 const LABPOS = [[0.50, 1], [0.45, 1], [0.50, -1], [0.58, 1], [0.42, -1], [0.58, -1]];
 const RLABT = [0.44, 0.66, 0.30, 0.78, 0.52, 0.62];
 const PART = ['15.1  cantilever of a GIVEN arch', '15.2  the whole form, F4 added'];
-const STAGE_AT = [0, 0, 0, 0, 0, 0, 1, 1, 1];
-const FIRST_OF = [1, 6];
+const STAGE_AT = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1];
+const FIRST_OF = [1, 7];
 
 const DEFAULTS = {
   F1: 60, F2: 30, F3: 30, F4: 45,
@@ -294,6 +294,13 @@ const STEPS = [
     take: (d) => (d.ok ? 'the red arrow at B has vanished: that is the whole of task 15.1'
                        : 'the red arrow at B is the force the roller would have to invent. Put the tip back on the answer') },
 
+  { t: '15.1 The force diagram', d: 'the arch gets a pole to the LEFT of the load line, the cantilever one to the RIGHT, and each is its own thrust away from it. Read the members off the rays: every ray is parallel to the member it stands for, and hovering one lights up the pair',
+    detail: only(0, (d) => [`load line ${(d.F1 + d.F2 + d.F3).toFixed(0)} kN, stacked F1 / F2 / F3, split ${d.Av.toFixed(2)} above i and ${d.Bv.toFixed(2)} below`,
+                    `left pole ${d.H.toFixed(2)} kN out · right pole ${d.Hc.toFixed(2)} kN out`,
+                    d.ok ? 'the two pole distances are equal, so the whole diagram closes'
+                         : `they differ by ${Math.abs(d.resid).toFixed(2)} kN and node B’s polygon stays open by exactly that much`]),
+    take: 'both poles the same distance from the load line — that is the roller condition, drawn' },
+
   { t: '15.1 The finished diagram, and three checks',
     d: (d) => (d.ok
       ? 'two poles, one on each side of the load line, both exactly H away from it — that equality IS the answer. The gap that was open in node B’s polygon has closed, and the two rays for members 2 and 4 fall on top of each other because those two members happen to carry the same 7.50 kN of vertical over the same thrust'
@@ -320,6 +327,12 @@ const STEPS = [
                     `members 3 and 5 both ${d.mem[2].N.toFixed(2)} kN — mirror slopes ±${(7.5).toFixed(2)}/H, one C one T`,
                     `the key drew this at a 4.007 cm pole, i.e. H ≈ 60.1 kN; everything above matches its rays inside 0.15 %`]),
     take: 'drag H and watch the arch breathe while every reaction, and the answer to the roller question, stays put' },
+
+  { t: '15.2 What the page was about', d: 'blue is compression and pink tension, so read the finished picture: an arch of four compressed panels, a tie flying over the roller to the cantilever tip, and one strut standing on the roller. The tie and the last arch panel push the roller in opposite directions with the same force, which is why it can be a roller at all',
+    detail: only(1, (d) => [`A = ${d.Av.toFixed(2)} kN ↑ · B = ${d.Bv.toFixed(2)} kN ↑ · both vertical, whatever H you chose`,
+                    `largest force: member 1 at ${d.mem[0].N.toFixed(2)} kN compression · the tie 5 pulls ${d.mem[4].N.toFixed(2)} kN`,
+                    `ΣH at the roller B = 0.00 kN · the arch closes on B to ${d.yB.toExponential(1)} m`]),
+    take: 'the same one-equation idea as 15.1 — only here it is satisfied by construction, and the price is that the tip height is no longer yours to pick' },
 ];
 
 // ------------------------------------------------------------------- meta ---
@@ -357,10 +370,10 @@ export function create(dw, panel, makePlayer) {
 
   dw.label('tForm', '', { cls: 'title', flash: false });
   dw.label('tForce', 'Force diagram   1 cm ≙ 15 kN', { cls: 'title', flash: false,
-    when: (st, dd) => !!dd && st._k >= (dd.stage === 0 ? 5 : 8) });
+    when: (st, dd) => !!dd && st._k >= (dd.stage === 0 ? 5 : 9) });
 
   // ---- supports
-  const GS = gate({ 0: 1, 1: 6 });
+  const GS = gate({ 0: 1, 1: 7 });
   for (const n of ['A', 'B']) {
     dw.strokes(`sup${n}`, 3, { intro: 1, when: GS, w: dw.W.bar, color: PAL.black, flash: false });
     dw.strokes(`hat${n}`, 5, { intro: 1, when: GS, w: dw.W.dim, color: PAL.grey, flash: false });
@@ -370,7 +383,7 @@ export function create(dw, panel, makePlayer) {
 
   // ---- load lines + loads (F4 only in 15.2)
   const LOADX = [X1, X2, X3, X4];
-  const LG = [GS, GS, GS, gate({ 1: 6 })];
+  const LG = [GS, GS, GS, gate({ 1: 7 })];
   ['F1', 'F2', 'F3', 'F4'].forEach((nm, i) => {
     dw.dashLine(`ll${i}`, { intro: 1, when: LG[i], color: PAL.grey, dash: dw.W.dash, flash: false });
     dw.arrow(`ld${i}`, { intro: 1, when: LG[i], color: PAL.green, ...ARR });
@@ -378,20 +391,20 @@ export function create(dw, panel, makePlayer) {
   });
 
   // ---- reactions
-  const GR = gate({ 0: 2, 1: 6 });
+  const GR = gate({ 0: 2, 1: 7 });
   for (const n of ['A', 'B']) {
     dw.arrow(`re${n}`, { intro: 2, when: GR, color: PAL.green, ...ARR });
     dw.label(`lre${n}`, '', { cls: 'num', intro: 2, when: GR, color: PAL.green });
   }
   // 15.2 only: the resultant of the four loads on its own line of action
-  const GRES = (st, dd) => !!dd && dd.stage === 1 && st._k >= 6 && st.res;
-  dw.dashLine('llR', { intro: 6, when: GRES, color: PAL.green, dash: dw.W.dash, flash: false });
-  dw.arrow('resR', { intro: 6, when: GRES, color: PAL.green, ...ARR });
-  dw.label('lresR', '', { cls: 'num', intro: 6, when: GRES, color: PAL.green });
+  const GRES = (st, dd) => !!dd && dd.stage === 1 && st._k >= 7 && st.res;
+  dw.dashLine('llR', { intro: 7, when: GRES, color: PAL.green, dash: dw.W.dash, flash: false });
+  dw.arrow('resR', { intro: 7, when: GRES, color: PAL.green, ...ARR });
+  dw.label('lresR', '', { cls: 'num', intro: 7, when: GRES, color: PAL.green });
 
   // ---- the given arch of 15.1 appears one step before the cantilever
-  const GA = (st, dd) => !!dd && (dd.stage === 1 ? st._k >= 7 : st._k >= 1);
-  const GC = (st, dd) => !!dd && (dd.stage === 1 ? st._k >= 7 : st._k >= 3);
+  const GA = (st, dd) => !!dd && (dd.stage === 1 ? st._k >= 8 : st._k >= 1);
+  const GC = (st, dd) => !!dd && (dd.stage === 1 ? st._k >= 8 : st._k >= 3);
   const hasM = (k) => (st, dd) => !!dd && !!dd.mem[k] && (k >= 4 ? GC : GA)(st, dd);
   for (let k = 0; k < 6; k++) {
     dw.seg(`mem${k}`, { intro: 1, when: hasM(k), w: dw.W.bar, color: memColor(k) });
@@ -411,7 +424,7 @@ export function create(dw, panel, makePlayer) {
     when: (st, dd) => GBAD(st, dd) && st._k >= 5 });
 
   // ---- force diagram
-  const GF = gate({ 0: 5, 1: 8 });
+  const GF = gate({ 0: 5, 1: 9 });
   for (let i = 0; i < 4; i++) {
     dw.arrow(`fl${i}`, { intro: 5, when: (st, dd) => GF(st, dd) && i < dd.loads.length,
       color: PAL.green, ...NARR });
@@ -521,7 +534,7 @@ export function create(dw, panel, makePlayer) {
     }
     for (const n of NODEN) if (P[n]) dw.setDisk(`jt${n}`, P[n]);
 
-    dw.setLabel('tForm', [ORG[0] + 5.6 * MPU, ORG[1] - 5.3]);
+    dw.setLabel('tForm', [ORG[0] + 5.6 * MPU, ORG[1] - 4.75]);
     dw.setText('tForm', `${PART[d.stage]}   ·   Form diagram 1:100`);
     dw.setLabel('tForce', [KORG[0], KORG[1] + 2.4]);
 

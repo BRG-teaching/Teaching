@@ -112,14 +112,36 @@ function compute(s) {
         / (Math.abs(Ms[i - 1]) + Math.abs(Ms[i])));
     }
   }
-  // how deep the tie has to drop to clear the lowest opening it meets
-  const tops = [...B.holes.map((h) => h.y - h.r), ...B.rects.map((r) => r.y0)];
-  const drop = tops.length ? DEP - Math.min(...tops) : 0;
-  const clash = B.holes.length + B.rects.length;
+  // WHERE THE TIE CAN ACTUALLY RUN.
+  //
+  // The beam hogs everywhere, so the tie wants the top face. An opening does
+  // not push it down merely by existing — it pushes it down only if the strip
+  // of material left ABOVE the opening is too thin to be a chord. The first
+  // version of this ignored that and routed the tie under every opening
+  // unconditionally, which produced a 567 % penalty for a door the top chord
+  // clears by 374 mm.
+  //
+  // Threshold: a chord needs MIN_CHORD of depth, and it keeps CLEAR below
+  // whatever it has to duck under. On the sheet's own drawings this rule gives
+  // the top face for the right beam (no detour, exactly as drawn) and 1.098 m
+  // for the left, against the 1.097 m the solution threads between the pipes.
+  const MIN_CHORD = 0.20, CLEAR = 0.16;
+  const bands = [...B.holes.map((h) => [h.y - h.r, h.y + h.r]),
+                 ...B.rects.map((r) => [r.y0, r.y1])];
+  let tie = DEP;
+  for (let guard = 0; guard < 8; guard++) {
+    // the highest opening whose top is within MIN_CHORD of where the tie sits
+    const blocking = bands.filter((b) => b[1] > tie - MIN_CHORD && b[0] < tie + 1e-9);
+    if (!blocking.length) break;
+    tie = Math.min(...blocking.map((b) => b[0])) - CLEAR;
+  }
+  const drop = DEP - tie;
+  const clash = bands.filter((b) => b[1] > DEP - MIN_CHORD).length;
+  // and the price is the LOCAL moment over the LOCAL lever arm
   const f0 = Math.abs(Mhog) / DEP;
-  const f1 = Math.abs(Mhog) / Math.max(DEP - drop, 0.2);
+  const f1 = Math.abs(Mhog) / Math.max(tie, 0.2);
   return { ...B, q, tot, RA, RB, xa, xb, thrust, inflect, Mhog, Msag, H,
-           drop, clash, f0, f1, detour: s.detour };
+           tie, drop, clash, f0, f1, detour: s.detour };
 }
 
 export const meta = {
@@ -222,14 +244,9 @@ export function create(dw, panel, makePlayer) {
 
     // the tie: on the bottom where the beam sags, on the top where it hogs,
     // and pushed clear of the openings when the detour is asked for
-    const tieY = (x, m) => {
-      const base = m >= 0 ? 0 : DEP;
-      if (!d.detour || m >= 0) return base;
-      const near = [...d.holes.filter((h) => Math.abs(h.x - x) < h.r * 2.6)
-        .map((h) => h.y - h.r),
-      ...d.rects.filter((r) => x > r.x0 - 0.2 && x < r.x1 + 0.2).map((r) => r.y0)];
-      return near.length ? Math.min(...near) - 0.12 : base;
-    };
+    // ONE STRAIGHT TIE at the level the openings allow, which is how the sheet
+    // draws it -- not a line that dives at each hole and climbs back
+    const tieY = (x, m) => (m >= 0 ? 0 : (d.detour ? d.tie : DEP));
     const TP = [], TIE = [];
     d.thrust.forEach(([x, y]) => {
       const t = tieY(x, y);

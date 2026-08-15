@@ -244,12 +244,53 @@ const STEPS = [
                     `and because member 1 is shared, all three poles also sit on one line through the TOP of the load line, parallel to it`,
                     `everything is tension here: nothing in situation b) is blue`],
     take: 'moving a support vertically changes every force in the structure and cannot touch i at all' },
-  { t: 'c) The answer', d: 'both halves are the same theorem. The point i is fixed by the load and the two horizontal support positions; the pole then always lies on the line through i parallel to that structure’s closing line. Hold the closing line still and the poles line up on it; swing it, and the poles scatter while i stays',
-    detail: (d) => ['“as long as the load remains the same, all closing lines intersect at point i on the load line”',
-                    '“all poles o come to lie on the respective closing line” — the key’s own words, and both are consequences of A_v',
-                    `checked here at every depth from ${d.S.dmin} to ${d.S.dmax} m, in both situations`],
-    take: 'this is what makes graphic statics a design tool: choose the depth, and the drawing tells you the price without a single equation' },
+  { t: 'c) The answer', d: 'both halves are one theorem. i is fixed by the load and the two horizontal support positions; the pole then lies on the line through i parallel to that structure’s closing line',
+    detail: () => ['“all closing lines intersect at point i on the load line”',
+                   '“all poles o come to lie on the respective closing line” — the key’s words'],
+    take: 'choose the depth and the drawing tells you the price, without a single equation' },
 ];
+
+/**
+ * Push overlapping labels apart.
+ *
+ * Situation b) fans four members out of one node onto one vertical line, so any
+ * hand-chosen offset that works at one slider value collides at another. Rather
+ * than tune constants, every label declares where it WANTS to sit and how big
+ * its text is; anything still overlapping after that is separated here, along
+ * whichever axis costs less. Items marked `fixed` (node names, titles) push but
+ * are never pushed.
+ */
+function declutter(L, passes = 80) {
+  const PADX = 0.55, PADY = 0.30;
+  for (let it = 0; it < passes; it++) {
+    let moved = false;
+    for (let a = 0; a < L.length; a++) {
+      for (let b = a + 1; b < L.length; b++) {
+        const A = L[a], B = L[b];
+        if (A.fixed && B.fixed) continue;
+        const ox = A.w + B.w + PADX - Math.abs(B.p[0] - A.p[0]);
+        const oy = A.h + B.h + PADY - Math.abs(B.p[1] - A.p[1]);
+        if (ox <= 0 || oy <= 0) continue;
+        const sx = B.p[0] >= A.p[0] ? 1 : -1;
+        const sy = B.p[1] >= A.p[1] ? 1 : -1;
+        // a vertical shift reads better than a horizontal one, so it is
+        // "cheaper" by a factor of two and a bit
+        const useY = oy * 2.4 < ox;
+        const fa = A.fixed ? 0 : (B.fixed ? 1 : 0.5);
+        const fb = B.fixed ? 0 : (A.fixed ? 1 : 0.5);
+        if (useY) {
+          A.p = [A.p[0], A.p[1] - sy * oy * fa];
+          B.p = [B.p[0], B.p[1] + sy * oy * fb];
+        } else {
+          A.p = [A.p[0] - sx * ox * fa, A.p[1]];
+          B.p = [B.p[0] + sx * ox * fb, B.p[1]];
+        }
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+}
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
@@ -344,6 +385,14 @@ export function create(dw, panel, makePlayer) {
 
   function refresh() {
     s._k = player.k;
+    // every label declares where it wants to sit; declutter() settles the rest
+    const LAB = [];
+    const put = (name, p, text, opt = {}) => {
+      dw.setText(name, text);
+      if (opt.on === false) { dw.setLabel(name, p); return; }
+      LAB.push({ name, p: [p[0], p[1]], w: 0.235 * String(text).length,
+                 h: 0.55, fixed: !!opt.fixed });
+    };
     // follow the steps into b), but only when the STEP changed — otherwise a
     // toggle in the panel would be undone by its own refresh
     if (s.auto && player.k !== lastK) {
@@ -354,16 +403,14 @@ export function create(dw, panel, makePlayer) {
     d = compute(s);
     const S = d.S;
 
-    dw.setLabel('t_form', [2.5, 9.6]);
-    dw.setText('t_form', `${d.tag} ${d.name} — Lageplan 1:50`);
+    put('t_form', [2.5, 9.6], `${d.tag} ${d.name} — Lageplan 1:50`, { fixed: true });
     dw.setLabel('t_force', [LLP[0] + 4.0, 15.4]);
-    dw.setLabel('t_scale', [LLP[0] + 4.0, 14.0]);
-    dw.setText('t_scale', `1 unit ≙ ${d.sfd.toFixed(2)} kN · the load line is always ${LLH} units long, so the shape never depends on F₁`);
+    put('t_scale', [LLP[0] + 4.0, 14.0], `1 unit ≙ ${d.sfd.toFixed(2)} kN · the load line is always ${LLH} units long, so the shape never depends on F₁`, { fixed: true });
 
     // ================================================== form diagram =========
     const Ap = fp(S.A);
     dw.setDisk('supA', Ap);
-    dw.setLabel('lsupA', V.add(Ap, [-1.5, -1.0]));
+    put('lsupA', V.add(Ap, [-1.6, -1.1]), 'A', { fixed: true, on: !!s.lbl });
     dw.setStrokes('hatA', V.hatch([Ap[0] - 1.5, Ap[1] - 0.5], [Ap[0] + 1.5, Ap[1] - 0.5],
       -1, 0.85, 5));
     const vtop = 4.6, vbot = -8.8;
@@ -381,16 +428,16 @@ export function create(dw, panel, makePlayer) {
       dw.setSeg(`mB${k}`, Ct, Bq);
       dw.setDisk(`ndC${k}`, Ct);
       dw.setDisk(`supB${k}`, Bq);
-      dw.setLabel(`lndC${k}`, V.add(Ct, [d.moves === 'C' ? -1.5 : -1.7, -0.9]));
-      dw.setText(`lndC${k}`, d.moves === 'C' ? `C${k + 1}` : 'C');
-      dw.setLabel(`lsupB${k}`, V.add(Bq, [1.5, -0.2]));
-      dw.setText(`lsupB${k}`, d.moves === 'C' ? 'B' : `B${k + 1}`);
+      put(`lndC${k}`, V.add(Ct, [d.moves === 'C' ? -1.6 : -1.8, -1.0]),
+          d.moves === 'C' ? `C${k + 1}` : 'C', { fixed: true, on: !!(s.sheet && s.lbl) });
+      put(`lsupB${k}`, V.add(Bq, [1.6, -0.2]), d.moves === 'C' ? 'B' : `B${k + 1}`,
+          { fixed: true, on: !!(s.sheet && s.lbl) });
       const nb = (p, q, t, f) => V.add(V.add(p, V.mul(V.sub(q, p), f)),
                                        V.mul(V.unit(V.perp(V.sub(q, p))), t));
-      dw.setLabel(`lmA${k}`, nb(Aq, Cq, d.moves === 'C' ? [1.5, -1.5, 1.5][k] : 1.3 + 1.7 * k, 0.62));
-      dw.setText(`lmA${k}`, `${Math.abs(x.nA).toFixed(1)}`);
-      dw.setLabel(`lmB${k}`, nb(Bq, Ct, [1.5, -1.6, -2.2][k], [0.30, 0.55, 0.30][k]));
-      dw.setText(`lmB${k}`, `${Math.abs(x.nB).toFixed(1)}`);
+      put(`lmA${k}`, nb(Aq, Cq, [1.5, -1.5, 1.5][k], 0.62), `${Math.abs(x.nA).toFixed(1)}`,
+          { on: !!(s.sheet && s.lbl) });
+      put(`lmB${k}`, nb(Bq, Ct, [1.5, -1.6, -2.2][k], [0.34, 0.52, 0.34][k]),
+          `${Math.abs(x.nB).toFixed(1)}`, { on: !!(s.sheet && s.lbl) });
       dw.setDashLine(`clos${k}`, [At, Bq]);
     });
 
@@ -404,38 +451,31 @@ export function create(dw, panel, makePlayer) {
     dw.setDashLine('closL', [ALp, BLp]);
     const nbL = (p, q, t) => V.add(V.add(p, V.mul(V.sub(q, p), 0.30)),
                                    V.mul(V.unit(V.perp(V.sub(q, p))), t));
-    dw.setLabel('lmAL', nbL(ALp, CLp, -2.6));
-    dw.setText('lmAL', `${Math.abs(L.nA).toFixed(1)}`);
-    dw.setLabel('lmBL', nbL(BLp, CLp, 2.6));
-    dw.setText('lmBL', `${Math.abs(L.nB).toFixed(1)}`);
+    put('lmAL', nbL(ALp, CLp, -2.6), `${Math.abs(L.nA).toFixed(1)}`, { on: !!s.lbl });
+    put('lmBL', nbL(BLp, CLp, 2.6), `${Math.abs(L.nB).toFixed(1)}`, { on: !!s.lbl });
     // the statical depth, dimensioned from the closing line down to the node
     const sx = FA[0] + S.xF * MPU;
     dw.setSeg('dimD', [sx, FA[1] + L.yS * MPU], [sx, CLp[1]]);
-    dw.setLabel('ldimD', [FA[0] + 2.2, 3.4]);
-    dw.setText('ldimD', `statical depth d = ${L.d.toFixed(3)} m`);
+    put('ldimD', [FA[0] + 2.2, 3.4], `statical depth d = ${L.d.toFixed(3)} m`, { fixed: true });
 
     // the load, on its line of action, and the two live reactions
     dw.setArrow('fLoad', [CLp[0], CLp[1] + 3.4], [CLp[0], CLp[1] + 0.8]);
-    dw.setLabel('lfLoad', d.moves === 'C' ? [CLp[0] + 3.9, CLp[1] + 1.5] : [CLp[0] - 1.2, CLp[1] - 1.9]);
-    dw.setText('lfLoad', `F₁ = ${d.F1.toFixed(0)} kN`);
+    put('lfLoad', d.moves === 'C' ? [CLp[0] + 4.4, CLp[1] + 1.5] : [CLp[0] - 1.2, CLp[1] - 2.0],
+        `F₁ = ${d.F1.toFixed(0)} kN`);
     for (const [n, at, R] of [['A', ALp, L.RA], ['B', BLp, L.RB]]) {
       const u = V.unit(R);
       dw.setArrow(`re${n}`, at, V.add(at, V.mul(u, 2.4)));
-      dw.setLabel(`lre${n}`, V.add(at, V.mul(u, 3.9)));
-      dw.setText(`lre${n}`, `${n} = ${V.len(R).toFixed(1)}`);
+      put(`lre${n}`, V.add(at, V.mul(u, 3.9)), `${n} = ${V.len(R).toFixed(1)}`);
     }
 
     // ================================================= force diagram =========
     const P = d.P, Q = d.Q, iP = d.iP;
     dw.setArrow('ff', P, Q);
-    dw.setLabel('lff', V.add(V.mid(P, Q), [-3.0, 0]));
-    dw.setText('lff', `F₁ ${d.F1.toFixed(0)}`);
+    put('lff', V.add(V.mid(P, Q), [-3.0, 0]), `F₁ ${d.F1.toFixed(0)}`);
     dw.setDisk('ptI', iP);
-    dw.setLabel('lptI', V.add(iP, [-1.2, -0.9]));
-    dw.setText('lptI', 'i');
+    put('lptI', V.add(iP, [-1.3, -1.0]), 'i', { fixed: true });
     dw.setSeg('dimAv', V.add(P, [-1.6, 0]), V.add(iP, [-1.6, 0]));
-    dw.setLabel('ldimAv', V.add(V.mid(P, iP), [-4.4, 0]));
-    dw.setText('ldimAv', `A_v ${d.Av.toFixed(1)}`);
+    put('ldimAv', V.add(V.mid(P, iP), [-4.4, 0]), `A_v ${d.Av.toFixed(1)}`);
 
     d.sheet.forEach((x, k) => {
       const o = d.poles[k];
@@ -443,32 +483,31 @@ export function create(dw, panel, makePlayer) {
       dw.setSeg(`rayB${k}`, Q, o);
       dw.setDashLine(`cray${k}`, [o, iP]);
       dw.setDisk(`pole${k}`, o);
-      dw.setLabel(`lpole${k}`, V.add(o, [-1.6, 1.0]));
-      dw.setText(`lpole${k}`, `o${k + 1}`);
+      put(`lpole${k}`, V.add(o, [-1.7, 1.1]), `o${k + 1}`, { on: !!(s.sheet && s.lbl) });
     });
     dw.setSeg('rayAL', d.poleL, P);
     dw.setSeg('rayBL', Q, d.poleL);
     dw.setDashLine('crayL', [d.poleL, iP]);
     dw.setDisk('poleL', d.poleL);
-    dw.setLabel('lpoleL', V.add(d.poleL, [1.8, -1.2]));
-    dw.setText('lpoleL', 'o');
+    put('lpoleL', V.add(d.poleL, [1.9, -1.3]), 'o', { on: !!s.lbl });
 
     // the line every pole has to land on
     if (d.moves === 'C') {
       const u = V.unit(V.sub(fp(d.sheet[0].B), fp(d.sheet[0].A)));
       dw.setDashLine('locus', [V.add(iP, V.mul(u, -13.5)), V.add(iP, V.mul(u, 13.5))]);
-      dw.setLabel('llocus', V.add(V.add(iP, V.mul(u, 13.0)), [0, -2.8]));
-      dw.setText('llocus', 'all the poles on this one line');
+      put('llocus', V.add(V.add(iP, V.mul(u, 13.0)), [0, -2.8]), 'all the poles on this one line');
     } else {
       const u = V.unit(V.sub(fp(d.sheet[0].C), fp(d.sheet[0].A)));
       dw.setDashLine('locus', [V.add(P, V.mul(u, -2.0)), V.add(P, V.mul(u, 24.0))]);
-      dw.setLabel('llocus', V.add(V.add(P, V.mul(u, 21.0)), [-1.2, -2.3]));
-      dw.setText('llocus', 'member 1 shared, all the poles on this line');
+      put('llocus', V.add(V.add(P, V.mul(u, 21.0)), [-1.2, -2.3]), 'member 1 shared, all the poles on this line');
     }
     dw.setLabel('lkey', [LLP[0] + 3.0, -9.6]);
     dw.setText('lkey', d.sitIdx === 0
       ? 'the key swaps o₁ and o₂ here: o₁ is structure I’s pole, o₂ is structure II’s'
       : 'three closing lines, three poles — and one i');
+
+    declutter(LAB);
+    for (const q of LAB) dw.setLabel(q.name, q.p);
 
     panel.syncAll();
     player.apply(d, s);

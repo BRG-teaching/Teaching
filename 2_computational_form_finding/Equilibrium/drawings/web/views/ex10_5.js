@@ -182,7 +182,9 @@ const STEPS = [
     detail: (d) => [`${d.st.n} independent axes · ${d.st.why}`,
                     ...d.pts.map((p, i) => `P${i + 1} = (${p[0].toFixed(2)}, ${p[1].toFixed(2)})`)] },
   { t: 'The flow', d: 'the load cannot reach the walls directly, so it is steered into the two crossings. At the entry point it splits into two members, one aimed at each crossing; at each crossing the arriving force is taken apart along the two wall axes that meet there, and each part runs along its axis to its wall',
-    detail: (d) => [...d.struts.map((t, i) => `entry → P${i % 2 + 1} : ${Math.abs(t).toFixed(2)} kN ${t < 0 ? 'compression' : 'tension'}`),
+    detail: (d) => [...d.struts.map((t, i) => (d.nodes[Math.floor(i / 2)]
+                      ? `F${Math.floor(i / 2) + 1} entry → P${i % 2 + 1} : ${Math.abs(t).toFixed(2)} kN ${t < 0 ? 'compression' : 'tension'}`
+                      : '')).filter(Boolean),
                     ...d.links.filter((m) => m.len > 1e-6).map((m) =>
                       `along wall ${m.wall}'s axis, ${m.len.toFixed(2)} m : ${Math.abs(m.force).toFixed(2)} kN ${m.tension ? 'tension' : 'compression'}`)],
     take: 'P₂ already lies inside wall B, so that part of the load is delivered on the spot with no member at all' },
@@ -434,7 +436,7 @@ export function create(dw, panel, makePlayer) {
     s._k = player.k;
     d = compute(s);
 
-    dw.setLabel('tPlan', px([14, -3.0]));
+    dw.setLabel('tPlan', px([2.0, 13.6]));
     dw.setLabel('tForce', [GO[0] - 7, GO[1]]);
     dw.setLabel('tElev', [EO[0][0] + WLEN * ME / 2 + 7, EO[1][1] + HWALL * ME + 2.8]);
 
@@ -456,7 +458,7 @@ export function create(dw, panel, makePlayer) {
     const l2 = P.lineOfAction([d.xF2, 0], [0, 1], box, 2.4);
     if (l2) dw.setDashLine('loa2', l2.map(px));
     dw.setArrow('F2', px([d.xF2, -d.F2 * SA]), px([d.xF2, 0]));
-    dw.setLabel('lF2', px([d.xF2 + 2.6, -d.F2 * SA / 2]));
+    dw.setLabel('lF2', px([d.xF2 - 3.4, -d.F2 * SA / 2]));
     dw.setText('lF2', `F2 = ${d.F2.toFixed(0)} kN`);
 
     d.walls.forEach((w, i) => {
@@ -508,7 +510,7 @@ export function create(dw, panel, makePlayer) {
     let p = GO;
     // the three horizontal edges are collinear whenever F2 is off, so their
     // labels are staggered rather than stacked on one line
-    const OFF = { gF1: [0, 1.5], gF2: [3.4, 0], gA: [0, -1.5], gB: [0, 2.9], gC: [-3.4, 0] };
+    const OFF = { gF1: [0, 1.5], gF2: [-4.2, 0], gA: [0, -1.5], gB: [-3.4, -1.5], gC: [-3.6, 0] };
     const step = (n, v) => {
       const q = V.add(p, V.mul(v, SF));
       dw.setArrow(n, p, q);

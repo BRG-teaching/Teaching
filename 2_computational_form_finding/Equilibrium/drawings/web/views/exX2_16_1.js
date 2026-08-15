@@ -285,7 +285,7 @@ export function create(dw, panel, makePlayer) {
     s._k = player.k;
     d = compute(s);
 
-    dw.setLabel('t_big', [BX + 2.0, 3.6]);
+    dw.setLabel('t_big', [BX + 2.0, 0.8]);
     dw.setText('t_big', `one column, l = ${d.L.toFixed(2)} m — drawn at 1 m ≙ ${(BH / d.L).toFixed(2)} units`);
     dw.setLabel('t_all', [15.7, 8.6]);
     dw.setText('t_all', `the sheet's five conditions, and their l_cr to the same scale`);

@@ -88,8 +88,12 @@ PROBE = """(() => {
 
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    views = args or [os.path.basename(f)[2:-5]
-                     for f in sorted(glob.glob("python/ops/ex*.json"))]
+    import re
+    ids = [os.path.basename(f)[2:-3] for f in glob.glob("web/views/ex*.js")]
+    ids = [i for i in ids if i != "6_common"]
+    views = args or sorted(ids, key=lambda i: (
+        i.startswith("X"),
+        [int(p) if p.isdigit() else p for p in re.findall(r"\d+|[a-zA-Z]+", i)]))
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from make_movies import BASE, Chrome                          # noqa: E402
     bad = 0

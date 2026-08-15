@@ -111,9 +111,9 @@ const NAX = 3, NARCH = 10;
 
 const SC = pageScales(1.5);            // 1 printed cm ≙ 1.5 drawing units
 const FORCE20 = SC.cm / 20;            // THIS page says 1 cm ≙ 20 kN, not 10
-const PORG = [11.0, 1.0];
+const PORG = [11.0, -1.6];
 const EORG = [[3.6, -15.6], [12.6, -15.6], [21.6, -15.6]];
-const FDX = -14.0, FDY = -0.6;
+const FDX = -14.0, FDY = -2.2;
 const FARR = 0.05;                     // units per kN for arrows on FORM diagrams
 const ROFF = 1.7;
 
@@ -298,9 +298,9 @@ export function create(dw, panel, makePlayer) {
     s._k = player.k;
     d = compute(s);
 
-    dw.setLabel('t_plan', [PORG[0] + (SLW / 2) * SC.plan, PORG[1] + SLH * SC.plan + 4.2]);
+    dw.setLabel('t_plan', [PORG[0] + (SLW / 2) * SC.plan, 11.0]);
     dw.setText('t_plan', `Grundriss 1:200 — arrows here at 1 unit ≙ ${(1 / FARR).toFixed(0)} kN`);
-    dw.setLabel('t_fd', [FDX, FDY + 3.7]);
+    dw.setLabel('t_fd', [FDX, 1.0]);
     dw.setText('t_fd', `Kräfteplan — this page says 1 cm ≙ 20 kN`);
     dw.setLabel('t_elev', [14.0, -5.6]);
     dw.setText('t_elev', `Wandansichten 1:100 — the arrows are symbols, the numbers exact`);

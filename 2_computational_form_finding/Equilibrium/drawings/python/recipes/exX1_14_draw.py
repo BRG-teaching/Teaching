@@ -17,7 +17,7 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-14.3, -8.75, 0), text='14.2  a) + b) combined   ·   Form diagram 1:100')
+add(0, 'label', Point(-14.3, -10.15, 0), text='14.2  a) + b) combined   ·   Form diagram 1:100')
 add(0, 'label', Point(13.5, 13.1, 0), text='Force diagram   1 cm ≙ 10 kN')
 
 # step 1 — a) What is given
@@ -51,10 +51,10 @@ add(1, 'arrow', Line((-4.5, 3.74409, 0), (-4.5, 2.19409, 0)), color=Color.from_h
 add(1, 'label', Point(-2.75, 3.19409, 0), color=Color.from_hex("#3f9c20"), text='F3 = 30')
 
 # step 2 — a) The reactions come first
-add(2, 'arrow', Line((-25.5, -8.7, 0), (-25.5, -6.15, 0)), color=Color.from_hex("#3f9c20"), width=0.147744, head=(0.509328, 0.196733))
-add(2, 'label', Point(-29.8, -7.5525, 0), color=Color.from_hex("#3f9c20"), text='A = 60.00 ↑')
-add(2, 'arrow', Line((-8.7, -8.7, 0), (-8.7, -6.15, 0)), color=Color.from_hex("#3f9c20"), width=0.147744, head=(0.509328, 0.196733))
-add(2, 'label', Point(-4.4, -7.5525, 0), color=Color.from_hex("#3f9c20"), text='B = 60.00 ↑')
+add(2, 'arrow', Line((-25.5, -9.8, 0), (-25.5, -7.45, 0)), color=Color.from_hex("#3f9c20"), width=0.147744, head=(0.509328, 0.196733))
+add(2, 'label', Point(-29.8, -8.7425, 0), color=Color.from_hex("#3f9c20"), text='A = 60.00 ↑')
+add(2, 'arrow', Line((-8.7, -9.8, 0), (-8.7, -7.45, 0)), color=Color.from_hex("#3f9c20"), width=0.147744, head=(0.509328, 0.196733))
+add(2, 'label', Point(-4.4, -8.7425, 0), color=Color.from_hex("#3f9c20"), text='B = 60.00 ↑')
 
 # step 3 — a) Choose the thrust, get the form
 add(3, 'segment', Line((-25.5, -5.6, 0), (-22.7, -0.480823, 0)), color=Color.from_hex("#1a1eb2"), width=0.122861)
@@ -106,18 +106,18 @@ add(4, 'label', Point(11.2856, -1.93333, 0), color=Color.from_hex("#aaaaaa"), te
 add(4, 'segment', Line((13.5, -16.1667, 0), (18.6289, -7.83333, 0)), color=Color.from_hex("#1a1eb2"), width=0.057542)
 add(4, 'label', Point(16.3209, -10.6833, 0), color=Color.from_hex("#aaaaaa"), text='6')
 
-# step 9 — 14.2 The force diagram is the two, stacked
-add(9, 'segment', Line((13.5, -9.5, 0), (18.6289, -7.83333, 0)), color=Color.from_hex("#ce4095"), width=0.057542)
-add(9, 'segment', Line((10.4244, -2.83333, 0), (18.6289, -7.83333, 0)), color=Color.from_hex("#1a1eb2"), width=0.057542)
-add(9, 'segment', Line((5.29556, -4.5, 0), (13.5, -4.5, 0)), color=Color.from_hex("#aaaaaa"), width=0.103576)
-add(9, 'segment', Line((18.6289, -7.83333, 0), (13.5, -7.83333, 0)), color=Color.from_hex("#aaaaaa"), width=0.103576)
-add(9, 'label', Point(12.9, -17.2, 0), color=Color.from_hex("#aaaaaa"), text='grey: a)’s tie ray 36.92 → · b)’s strut ray 23.08 ←')
+# step 11 — 14.2 The force diagram is the two, stacked
+add(11, 'segment', Line((13.5, -9.5, 0), (18.6289, -7.83333, 0)), color=Color.from_hex("#ce4095"), width=0.057542)
+add(11, 'segment', Line((10.4244, -2.83333, 0), (18.6289, -7.83333, 0)), color=Color.from_hex("#1a1eb2"), width=0.057542)
+add(11, 'segment', Line((5.29556, -4.5, 0), (13.5, -4.5, 0)), color=Color.from_hex("#aaaaaa"), width=0.103576)
+add(11, 'segment', Line((18.6289, -7.83333, 0), (13.5, -7.83333, 0)), color=Color.from_hex("#aaaaaa"), width=0.103576)
+add(11, 'label', Point(12.9, -17.2, 0), color=Color.from_hex("#aaaaaa"), text='grey: a)’s tie ray 36.92 → · b)’s strut ray 23.08 ←')
 
-# step 10 — 14.2 The one member that changes
-add(10, 'arrow', Line((8.3, -18.5, 0), (16.5044, -18.5, 0)), color=Color.from_hex("#ce4095"), width=0.106531, head=(0.344477, 0.147744))
-add(10, 'arrow', Line((16.5044, -18.5, 0), (11.3756, -18.5, 0)), color=Color.from_hex("#1a1eb2"), width=0.106531, head=(0.344477, 0.147744))
-add(10, 'arrow', Line((8.3, -20, 0), (11.3756, -20, 0)), color=Color.from_hex("#ce4095"), width=0.147744, head=(0.509328, 0.196733))
-add(10, 'label', Point(16.9, -19.25, 0), color=Color.from_hex("#ce4095"), text='5 = H_a − H_b = 36.92 − 23.08 = 13.84 kN T')
+# step 12 — 14.2 The one member that changes
+add(12, 'arrow', Line((8.3, -18.5, 0), (16.5044, -18.5, 0)), color=Color.from_hex("#ce4095"), width=0.106531, head=(0.344477, 0.147744))
+add(12, 'arrow', Line((16.5044, -18.5, 0), (11.3756, -18.5, 0)), color=Color.from_hex("#1a1eb2"), width=0.106531, head=(0.344477, 0.147744))
+add(12, 'arrow', Line((8.3, -20, 0), (11.3756, -20, 0)), color=Color.from_hex("#ce4095"), width=0.147744, head=(0.509328, 0.196733))
+add(12, 'label', Point(16.9, -19.25, 0), color=Color.from_hex("#ce4095"), text='5 = H_a − H_b = 36.92 − 23.08 = 13.84 kN T')
 
 
 if __name__ == "__main__":

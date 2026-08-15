@@ -128,14 +128,14 @@ const NAX = 3, NARCH = 10, NCIRC = 32;
 // exactly as the page locks them — so a 100 kN arrow really is longer than the
 // 16 m slab drawn beside it
 const SC = pageScales(1.5);
-const PORG = [11.0, 1.0];               // the 1:200 plan
+const PORG = [11.0, -1.6];              // the 1:200 plan
 const EORG = [[3.6, -15.6], [12.6, -15.6], [21.6, -15.6]];  // the 1:100 walls
 // Arrows drawn ON a form diagram are symbols, not measurements: at the sheet's
 // own 1 cm ≙ 10 kN a 100 kN arrow is longer than the 16 m slab beside it. The
 // FORCE DIAGRAM keeps that true scale; the plan and the elevations use FARR,
 // and both scales are printed on the drawing.
 const FARR = 0.05;                      // units per kN on the form diagrams
-const FDX = -14.0, FDY = -1.0;          // the plate's force diagram
+const FDX = -14.0, FDY = -0.6;          // the plate's force diagram
 const ROFF = 1.7;                       // reactions drawn this far outside the slab
 
 const DEFAULTS = { F: 100, fy: 9.996, edge: false, axes: true, lbl: true, _k: 99 };
@@ -323,9 +323,9 @@ export function create(dw, panel, makePlayer) {
     d = compute(s);
     d.diagIsTie = d.F >= 0;
 
-    dw.setLabel('t_plan', [PORG[0] + (SLW / 2) * SC.plan, PORG[1] + SLH * SC.plan + 4.2]);
+    dw.setLabel('t_plan', [PORG[0] + (SLW / 2) * SC.plan, 11.0]);
     dw.setText('t_plan', `Grundriss 1:200 — arrows here at 1 unit ≙ ${(1 / FARR).toFixed(0)} kN`);
-    dw.setLabel('t_fd', [FDX, FDY + 4.4]);
+    dw.setLabel('t_fd', [FDX, 1.2]);
     dw.setText('t_fd', `Kräfteplan — the sheet's own 1 cm ≙ 10 kN (${SC.force.toFixed(2)} units/kN)`);
     dw.setLabel('t_elev', [14.0, -5.6]);
     dw.setText('t_elev', `Wandansichten 1:100 — the arrows are symbols, the numbers exact`);

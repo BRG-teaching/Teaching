@@ -202,6 +202,19 @@ CARD_PROBE = """(() => {
 })()"""
 
 
+def all_views():
+    """Every exercise view on disk, in sheet order — not a hardcoded list, so a
+    new view cannot quietly escape the check."""
+    import re
+    ids = [os.path.basename(f)[2:-3] for f in glob.glob("web/views/ex*.js")]
+    ids = [i for i in ids if i != "6_common"]
+
+    def key(i):
+        parts = re.findall(r"\d+|[a-zA-Z]+", i)
+        return (i.startswith("X"), [int(p) if p.isdigit() else p for p in parts])
+    return sorted(ids, key=key)
+
+
 def run_cards(views):
     import time
     from pathlib import Path
@@ -279,8 +292,7 @@ def main():
         return
     if "--live" in sys.argv:
         args = [a for a in sys.argv[1:] if not a.startswith("--")]
-        views = args or [os.path.basename(f)[2:-5]
-                         for f in sorted(glob.glob("python/ops/ex*.json"))]
+        views = args or all_views()
         n = run_live(views)
         print(f"\n{n} pieces of GEOMETRY hidden behind a card"
               f" (labels listed separately)")

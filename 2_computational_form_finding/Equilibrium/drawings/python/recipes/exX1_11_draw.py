@@ -17,9 +17,7 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(9.1, 6.4, 0), text='form diagram 1:100')
-add(0, 'label', Point(13, -10.9, 0), text='subsystem — node B')
-add(0, 'label', Point(25.4, 6.3, 0), text='force diagram 1 cm ≙ 5 kN')
+add(0, 'label', Point(6.5, 6.4, 0), text='form diagram 1:100')
 
 # step 1 — The load, and the thrust it needs
 add(1, 'segment', Line((4.6, 0, 0), (4.85454, 0.213223, 0)), color=Color.from_hex("#1a1eb2"), width=0.078509)
@@ -74,7 +72,7 @@ add(1, 'polyline', Polyline([(4.6, 0, 0), (15.8, 0, 0)]), color=Color.from_hex("
 add(1, 'segment', Line((4.6, 4.96, 0), (15.8, 4.96, 0)), color=Color.from_hex("#3f9c20"), width=0.05076)
 add(1, 'label', Point(17.95, 4.96, 0), color=Color.from_hex("#3f9c20"), text='q₁ = 5.00 kN/m')
 add(1, 'arrow', Line((10.2, 7.84, 0), (10.2, 5.6, 0)), color=Color.from_hex("#3f9c20"), width=0.092722, dash=0.2773, head=(0.299822, 0.128592))
-add(1, 'label', Point(12.1, 5.12, 0), color=Color.from_hex("#3f9c20"), text='R = 35.00 kN')
+add(1, 'label', Point(12.4, 6.72, 0), color=Color.from_hex("#3f9c20"), text='R = 35.00 kN')
 add(1, 'point', Point(4.6, 0, 0), color=Color.from_hex("#ffffff"), width=0.3478)
 add(1, 'label', Point(3.6, 0.55, 0), text='A')
 add(1, 'point', Point(15.8, 0, 0), color=Color.from_hex("#ffffff"), width=0.3478)
@@ -104,6 +102,7 @@ add(2, 'segment', Line((14.839, -1.05, 0), (15.2774, -1.48841, 0)), color=Color.
 add(2, 'polyline', Polyline([(-0.866648, -4.6857, 0), (7.02962, 2.08253, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.2773)
 
 # step 3 — The force diagram: pole and the two arch rays
+add(3, 'label', Point(25.4, 6.3, 0), text='force diagram 1 cm ≙ 5 kN')
 add(3, 'arrow', Line((28.5333, 4.6, 0), (28.5333, -6.6, 0)), color=Color.from_hex("#3f9c20"), width=0.092722, head=(0.299822, 0.128592))
 add(3, 'label', Point(30.5833, -1, 0), color=Color.from_hex("#3f9c20"), text='R = 35.00')
 add(3, 'segment', Line((22, -1, 0), (28.5333, -6.6, 0)), color=Color.from_hex("#1a1eb2"), width=0.050083)
@@ -126,13 +125,14 @@ add(4, 'label', Point(23.5167, 2.3, 0), color=Color.from_hex("#3f9c20"), text='A
 add(4, 'label', Point(23.5167, -4.3, 0), color=Color.from_hex("#3f9c20"), text='B 26.89')
 
 # step 5 — The subsystem at B
-add(5, 'point', Point(13, -14.5, 0), color=Color.from_hex("#ffffff"), width=0.27824)
-add(5, 'arrow', Line((13, -14.5, 0), (14.8981, -16.127, 0)), color=Color.from_hex("#1a1eb2"), width=0.092722, head=(0.299822, 0.128592))
-add(5, 'arrow', Line((13, -14.5, 0), (13, -14.5, 0)), color=Color.from_hex("#b9b9bd"), width=0.092722, head=(0.299822, 0.128592))
-add(5, 'arrow', Line((13, -14.5, 0), (11.1019, -12.873, 0)), color=Color.from_hex("#3f9c20"), width=0.092722, head=(0.299822, 0.128592))
-add(5, 'label', Point(15.5055, -16.6476, 0), color=Color.from_hex("#1a1eb2"), text='1')
-add(5, 'label', Point(13, -14.5, 0), color=Color.from_hex("#b9b9bd"), text='3')
-add(5, 'label', Point(10.4945, -12.3524, 0), color=Color.from_hex("#3f9c20"), text='B')
+add(5, 'label', Point(11.5, -12.4, 0), text='subsystem — node B')
+add(5, 'point', Point(11.5, -16, 0), color=Color.from_hex("#ffffff"), width=0.27824)
+add(5, 'arrow', Line((11.5, -16, 0), (13.3981, -17.627, 0)), color=Color.from_hex("#1a1eb2"), width=0.092722, head=(0.299822, 0.128592))
+add(5, 'arrow', Line((11.5, -16, 0), (11.5, -16, 0)), color=Color.from_hex("#b9b9bd"), width=0.092722, head=(0.299822, 0.128592))
+add(5, 'arrow', Line((11.5, -16, 0), (9.60186, -14.373, 0)), color=Color.from_hex("#3f9c20"), width=0.092722, head=(0.299822, 0.128592))
+add(5, 'label', Point(14.0055, -18.1476, 0), color=Color.from_hex("#1a1eb2"), text='1')
+add(5, 'label', Point(11.5, -16, 0), color=Color.from_hex("#b9b9bd"), text='3')
+add(5, 'label', Point(8.99445, -13.8524, 0), color=Color.from_hex("#3f9c20"), text='B')
 
 # step 6 — All four, side by side
 add(6, 'label', Point(24, -9.6, 0), color=Color.from_hex("#111111"), text='▶ a) ⟂ tangent · A = B = 26.89 kN · string 0.00 kN')

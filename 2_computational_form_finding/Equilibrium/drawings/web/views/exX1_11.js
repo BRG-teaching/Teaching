@@ -83,7 +83,7 @@ const FS = 1.6;                 // drawing units per metre  (form diagram)
 const QS = 0.32;                // drawing units per kN     (force diagram)
 const X0 = 4.6, Y0 = 0.0;       // where A sits
 const FOX = 22.0, FOY = -1.0;   // the pole of the force diagram
-const SUB = [13.0, -14.5];      // the subsystem (node B) star
+const SUB = [11.5, -16.0];      // the subsystem (node B) star
 const NSEG = 22;                // segments per half of the drawn parabola
 
 const CASES = [
@@ -216,8 +216,11 @@ function compute(s) {
   const uA = V.unit([sg * r.ah, r.Av]);
   const uB = V.unit([-sg * r.ah, r.Av]);
 
-  // ---- force diagram
-  const fp = (x, y) => [FOX + x * QS, FOY + y * QS];
+  // ---- force diagram.  A cable's reaction at A leans the OTHER way from an
+  // arch's, so for the hanging case the whole polygon is built on the other
+  // side of the pole; the pole is shifted so the diagram keeps its place.
+  const ox = FOX + (r.down ? r.H * QS : 0);
+  const fp = (x, y) => [ox + sg * x * QS, FOY + y * QS];
   const P = fp(0, 0);                               // pole
   const Stop = fp(r.H, r.Av);
   const Sbot = fp(r.H, -r.Av);
@@ -245,8 +248,8 @@ export function create(dw, panel, makePlayer) {
       : (dd.T > 0) === !dd.down ? PAL.red : PAL.blue) };
 
   dw.label('t_form', 'form diagram 1:100', { cls: 'title', flash: false });
-  dw.label('t_sub', 'subsystem — node B', { cls: 'title', flash: false });
-  dw.label('t_force', 'force diagram 1 cm ≙ 5 kN', { cls: 'title', flash: false });
+  dw.label('t_sub', 'subsystem — node B', { cls: 'title', intro: 5, flash: false, when: (t) => t.sub });
+  dw.label('t_force', 'force diagram 1 cm ≙ 5 kN', { cls: 'title', intro: 3, flash: false });
 
   // ---------- form diagram ----------
   dw.strokes('cvL', NSEG, { intro: 1, w: dw.W.str, color: CURVE, cap: false });
@@ -321,7 +324,7 @@ export function create(dw, panel, makePlayer) {
     const K = s._k;
     const fm = d.fm;
 
-    dw.setLabel('t_form', [X0 + (L * FS) / 2 - 1.1, 6.4]);
+    dw.setLabel('t_form', [X0 + 1.9, 6.4]);
     dw.setLabel('t_sub', [SUB[0], SUB[1] + 3.6]);
     dw.setLabel('t_force', [FOX + 3.4, 6.3]);
 
@@ -349,7 +352,7 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lq', V.add(fm(L, d.ybar), [2.15, 0]));
     dw.setText('lq', `q₁ = ${d.q.toFixed(2)} kN/m`);
     dw.setDashArrow('Rres', fm(L / 2, d.yres0), fm(L / 2, d.yres1));
-    dw.setLabel('lRres', V.add(fm(L / 2, (d.yres0 + d.yres1) / 2), d.down ? [-3.0, 0.8] : [1.9, -1.6]));
+    dw.setLabel('lRres', V.add(fm(L / 2, (d.yres0 + d.yres1) / 2), d.down ? [-3.0, 0.8] : [2.2, 0]));
     dw.setText('lRres', `R = ${d.R.toFixed(2)} kN`);
 
     // ---- the supports, and the reactions they allow
@@ -377,22 +380,22 @@ export function create(dw, panel, makePlayer) {
 
     // ---- the force diagram
     dw.setDisk('fo', d.P);
-    dw.setLabel('lfo', V.add(d.P, [-0.55, 0.5]));
+    dw.setLabel('lfo', V.add(d.P, [-d.sg * 0.55, 0.5]));
     dw.setArrow('fR', d.Stop, d.Sbot);
-    dw.setLabel('lfR', V.add(V.mid(d.Stop, d.Sbot), [2.05, 0]));
+    dw.setLabel('lfR', V.add(V.mid(d.Stop, d.Sbot), [d.sg * 2.05, 0]));
     dw.setText('lfR', `R = ${d.R.toFixed(2)}`);
     dw.setSeg('ray2', d.P, d.Stop);
     dw.setSeg('ray1', d.P, d.Sbot);
-    dw.setLabel('lray2', V.add(V.mid(d.P, d.Stop), [0.85, -0.35]));
-    dw.setLabel('lray1', V.add(V.mid(d.P, d.Sbot), [0.85, 0.35]));
+    dw.setLabel('lray2', V.add(V.mid(d.P, d.Stop), [d.sg * 0.85, -0.35]));
+    dw.setLabel('lray1', V.add(V.mid(d.P, d.Sbot), [d.sg * 0.85, 0.35]));
     dw.setSeg('ray3', d.P, d.Q);
     dw.setLabel('lray3', V.add(V.mid(d.P, d.Q), [0, -0.75]));
     dw.setText('lray3', Math.abs(d.T) < 5e-3 ? '3 · 0.00' : `3 · ${Math.abs(d.T).toFixed(2)}`);
     dw.setArrow('fA', d.Q, d.Stop);
     dw.setArrow('fB', d.Sbot, d.Q);
-    dw.setLabel('lfA', V.add(V.mid(d.Q, d.Stop), [-1.75, 0.50]));
+    dw.setLabel('lfA', V.add(V.mid(d.Q, d.Stop), [-d.sg * 1.75, 0.50]));
     dw.setText('lfA', `A ${d.Amag.toFixed(2)}`);
-    dw.setLabel('lfB', V.add(V.mid(d.Sbot, d.Q), [-1.75, -0.50]));
+    dw.setLabel('lfB', V.add(V.mid(d.Sbot, d.Q), [-d.sg * 1.75, -0.50]));
     dw.setText('lfB', `B ${d.Amag.toFixed(2)}`);
 
     // ---- the subsystem: the three forces on node B, drawn from the node

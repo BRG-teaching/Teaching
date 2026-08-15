@@ -158,7 +158,7 @@ const NPAN = 8;                        // funicular panels
 
 // ---------------------------------------------------------------- layout --
 
-const EX0 = -24.6, EY = -3.6, EM = 0.80;      // subsystem B elevation
+const EX0 = -24.6, EY = -4.6, EM = 0.80;      // subsystem B elevation
 const PX = 2.6, PY = 4.6, PM = 0.42;          // the 1:500 plan
 const LLX = 28.0, LLY = 7.0, SFD = 0.0300;    // force diagram: units per kN
 const CDC = [[8.0, -12.0], [22.0, -12.0]];    // the two C/D minis
@@ -358,10 +358,10 @@ export function create(dw, panel, makePlayer) {
     s._k = player.k;
     d = compute(s);
 
-    dw.setLabel('t_form', [EX0 + (PLX / 2) * EM, 3.4]);
+    dw.setLabel('t_form', [EX0 + (PLX / 2) * EM, 1.2]);
     dw.setText('t_form', `Subsystem B — Ansicht 1:200, ${PLX.toFixed(2)} m long, ${DEP_B.toFixed(3)} m deep`);
     dw.setLabel('t_plan', [PX + (PLX / 2) * PM, PY + PLY * PM + 1.7]);
-    dw.setLabel('t_force', [LLX - 6.0, 14.2]);
+    dw.setLabel('t_force', [LLX - 6.0, 13.4]);
     dw.setText('t_force', `Kräfteplan — 1 unit ≙ ${(1 / SFD).toFixed(1)} kN (sheet: 1 cm ≙ 50 kN)`);
     dw.setLabel('t_cd', [15.0, -3.2]);
     dw.setText('t_cd', 'Subsystems D and C — Ansicht 1:200');
@@ -381,8 +381,8 @@ export function create(dw, panel, makePlayer) {
     const box = [ex(0, 0), ex(PLX, 0), ex(PLX, DEP_B), ex(0, DEP_B)];
     dw.setStrokes('bmOut', box.map((p, i) => [p, box[(i + 1) % 4]]));
     AX_M.forEach((x, i) => {
-      dw.setArrow(`ld${i}`, ex(x, DEP_B + 3.4), ex(x, DEP_B + 0.35));
-      dw.setLabel(`lld${i}`, V.add(ex(x, DEP_B + 2.2), [1.5, 0]));
+      dw.setArrow(`ld${i}`, ex(x, DEP_B + 2.8), ex(x, DEP_B + 0.35));
+      dw.setLabel(`lld${i}`, V.add(ex(x, DEP_B + 1.9), [1.5, 0]));
       dw.setText(`lld${i}`, `A${i + 1}`);
     });
     for (const [n, x, R] of [['r', d.xr, d.Rr], ['p', d.xp, d.Rp]]) {
@@ -390,13 +390,13 @@ export function create(dw, panel, makePlayer) {
       dw.setDisk(`sup${n}`, p);
       dw.setStrokes(`hat${n}`, V.hatch([p[0] - 1.2, p[1] - 0.5], [p[0] + 1.2, p[1] - 0.5],
         -1, 0.8, 5));
-      dw.setLabel(`lsup${n}`, V.add(p, [0, -2.4]));
+      dw.setLabel(`lsup${n}`, V.add(p, [0, -2.2]));
       dw.setText(`lsup${n}`, n === 'r' ? 'roller' : 'pin');
       // an upward reaction is drawn pushing up into the support; a downward one
       // is drawn pulling down out of it, which is exactly the problem
       const up = R >= 0;
-      dw.setArrow(`re${n}`, [p[0], p[1] - (up ? 5.6 : 3.4)], [p[0], p[1] - (up ? 3.4 : 5.6)]);
-      dw.setLabel(`lre${n}`, [p[0] + (n === 'r' ? -2.9 : 3.1), p[1] - 4.5]);
+      dw.setArrow(`re${n}`, [p[0], p[1] - (up ? 4.8 : 3.0)], [p[0], p[1] - (up ? 3.0 : 4.8)]);
+      dw.setLabel(`lre${n}`, [p[0] + (n === 'r' ? -2.9 : 3.1), p[1] - 3.9]);
       dw.setText(`lre${n}`, `${Math.abs(R).toFixed(2)}${up ? '' : ' ↓'}`);
     }
     // the thrust line, the tie above it, and the struts under each load

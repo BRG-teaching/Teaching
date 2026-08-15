@@ -17,10 +17,10 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-15, -15.8, 0), text='Form diagram 1:100 — the sheet prints no dimensions')
+add(0, 'label', Point(-15, -16.4, 0), text='Form diagram 1:100')
 add(0, 'label', Point(16, 21.4, 0), text='Force diagram — one closed polygon per joint')
 add(0, 'label', Point(16, 19.8, 0), text='1 unit ≙ 17 kN  (sheet: 1 cm ≙ 10 kN)')
-add(0, 'label', Point(-15, -17.5, 0), color=Color.from_hex("#aaaaaa"), text='rise 2.941 m → rafter 85.68 kN, while the reactions stay at 25.00 kN')
+add(0, 'label', Point(-15, -18, 0), color=Color.from_hex("#aaaaaa"), text='rise 2.941 m → rafter 85.68 kN, while the reactions stay at 25.00 kN')
 
 # step 1 — The truss
 add(1, 'polygon', Polygon([(-25.837, -10.2817, 0), (-26.163, -9.71826, 0), (-15.997, -3.83626, 0), (-15.671, -4.39974, 0)]), color=Color.from_hex("#bdbfe8"))
@@ -68,7 +68,7 @@ add(2, 'arrow', Line((-5.668, -14.8, 0), (-5.668, -11.2, 0)), color=Color.from_h
 add(2, 'label', Point(-1.868, -14.8, 0), color=Color.from_hex("#3f9c20"), text='B = 25.00')
 
 # step 3 — The member forces
-add(3, 'label', Point(-15, -19.2, 0), color=Color.from_hex("#b9b9bd"), text='no zero-force members')
+add(3, 'label', Point(16, -24, 0), color=Color.from_hex("#b9b9bd"), text='no zero-force members')
 add(3, 'label', Point(-22.0944, -5.02407, 0), color=Color.from_hex("#1a1eb2"), text='-85.7')
 add(3, 'label', Point(-9.5736, -5.02407, 0), color=Color.from_hex("#1a1eb2"), text='-85.7')
 add(3, 'label', Point(-21.5309, -11.266, 0), color=Color.from_hex("#ce4095"), text='76.3')

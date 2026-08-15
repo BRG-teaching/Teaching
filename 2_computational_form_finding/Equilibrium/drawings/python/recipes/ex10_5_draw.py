@@ -17,9 +17,9 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-33, 11.4, 0), text='top view 1:200')
+add(0, 'label', Point(-36, 9.6, 0), text='top view 1:200')
 add(0, 'label', Point(13, -2, 0), text='force diagram  1 cm ≙ 10 kN')
-add(0, 'label', Point(12, -3.4, 0), text='form diagrams 1:100 — new structural walls, 2.80 m')
+add(0, 'label', Point(12, -5.6, 0), text='form diagrams 1:100 — new structural walls, 2.80 m')
 
 # step 1 — What is given
 add(1, 'segment', Line((-38, -4, 0), (-22, -4, 0)), color=Color.from_hex("#111111"), width=0.136973)
@@ -44,13 +44,13 @@ add(1, 'label', Point(-40, 0.1, 0), color=Color.from_hex("#3f9c20"), text='F1 = 
 
 # step 2 — Three walls, placed
 add(2, 'polygon', Polygon([(-38, -4, 0), (-33, -4, 0), (-33, -3.6, 0), (-38, -3.6, 0)]), color=Color.from_hex("#111111"))
-add(2, 'label', Point(-35.5, -2.3, 0), text='wall A')
+add(2, 'label', Point(-37.1, -2.3, 0), text='wall A')
 add(2, 'polygon', Polygon([(-35.5, -4.53, 0), (-35.7604, -5.202, 0), (-35.2396, -5.202, 0)]), color=Color.from_hex("#111111"))
 add(2, 'polygon', Polygon([(-27, 7.6, 0), (-22, 7.6, 0), (-22, 8, 0), (-27, 8, 0)]), color=Color.from_hex("#111111"))
-add(2, 'label', Point(-24.5, 6.3, 0), text='wall B')
+add(2, 'label', Point(-26.1, 6.3, 0), text='wall B')
 add(2, 'polygon', Polygon([(-24.5, 7.07, 0), (-24.7604, 6.398, 0), (-24.2396, 6.398, 0)]), color=Color.from_hex("#111111"))
 add(2, 'polygon', Polygon([(-22, -0.5, 0), (-22, 4.5, 0), (-22.4, 4.5, 0), (-22.4, -0.5, 0)]), color=Color.from_hex("#111111"))
-add(2, 'label', Point(-23.7, 2, 0), text='wall C')
+add(2, 'label', Point(-23.7, 0.4, 0), text='wall C')
 add(2, 'polygon', Polygon([(-22.93, 2, 0), (-23.602, 2.2604, 0), (-23.602, 1.7396, 0)]), color=Color.from_hex("#111111"))
 
 # step 3 — Braced?
@@ -60,7 +60,7 @@ add(3, 'polyline', Polyline([(-22.2, -6.2, 0), (-22.2, 10.2, 0)]), color=Color.f
 add(3, 'point', Point(-22.2, -3.8, 0), color=Color.from_hex("#ffffff"), width=0.6068)
 add(3, 'label', Point(-20.5, -5.1, 0), text='P₁')
 add(3, 'point', Point(-22.2, 7.8, 0), color=Color.from_hex("#ffffff"), width=0.6068)
-add(3, 'label', Point(-20.5, 9.1, 0), text='P₂')
+add(3, 'label', Point(-24, 9.3, 0), text='P₂')
 
 # step 4 — The flow
 add(4, 'segment', Line((-38, -1, 0), (-22.2, -3.8, 0)), color=Color.from_hex("#1a1eb2"), width=0.186566)
@@ -75,12 +75,12 @@ add(4, 'segment', Line((-22.2, 7.8, 0), (-22.2, 4.5, 0)), color=Color.from_hex("
 add(4, 'label', Point(-21, 6.15, 0), color=Color.from_hex("#ce4095"), text='13.44')
 
 # step 5 — a) The answer with F1 alone
-add(5, 'arrow', Line((-32.4655, -6.4, 0), (-35.5, -6.4, 0)), color=Color.from_hex("#3f9c20"), width=0.16177, head=(0.523094, 0.224352))
-add(5, 'label', Point(-33.9828, -7.8, 0), color=Color.from_hex("#3f9c20"), text='A = 75.86 kN')
-add(5, 'arrow', Line((-23.5345, 10.4, 0), (-24.5, 10.4, 0)), color=Color.from_hex("#3f9c20"), width=0.16177, head=(0.523094, 0.224352))
-add(5, 'label', Point(-24.0172, 11.8, 0), color=Color.from_hex("#3f9c20"), text='B = 24.14 kN')
-add(5, 'arrow', Line((-19.6, 2, 0), (-19.6, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.16177, head=(0.523094, 0.224352))
-add(5, 'label', Point(-18.2, 2, 0), color=Color.from_hex("#3f9c20"), text='C = 0.00 kN')
+add(5, 'arrow', Line((-32.4655, -5.6, 0), (-35.5, -5.6, 0)), color=Color.from_hex("#3f9c20"), width=0.16177, head=(0.523094, 0.224352))
+add(5, 'label', Point(-33.9828, -6.8, 0), color=Color.from_hex("#3f9c20"), text='A = 75.86 kN')
+add(5, 'arrow', Line((-23.5345, 9.6, 0), (-24.5, 9.6, 0)), color=Color.from_hex("#3f9c20"), width=0.16177, head=(0.523094, 0.224352))
+add(5, 'label', Point(-20.4172, 8.8, 0), color=Color.from_hex("#3f9c20"), text='B = 24.14 kN')
+add(5, 'arrow', Line((-20.4, 2, 0), (-20.4, 2, 0)), color=Color.from_hex("#3f9c20"), width=0.16177, head=(0.523094, 0.224352))
+add(5, 'label', Point(-19.2, 2, 0), color=Color.from_hex("#3f9c20"), text='C = 0.00 kN')
 
 # step 6 — The force diagram
 add(6, 'arrow', Line((20, -2.7503, 0), (40, -2.7503, 0)), color=Color.from_hex("#3f9c20"), width=0.16177, head=(0.523094, 0.224352))
@@ -88,7 +88,7 @@ add(6, 'arrow', Line((40, -2, 0), (24.8276, -2, 0)), color=Color.from_hex("#3f9c
 add(6, 'arrow', Line((24.8276, -2, 0), (20, -2, 0)), color=Color.from_hex("#3f9c20"), width=0.16177, head=(0.523094, 0.224352))
 add(6, 'label', Point(30, -0.5, 0), color=Color.from_hex("#3f9c20"), text='F1 10.00 cm')
 add(6, 'label', Point(32.4138, -3.5, 0), color=Color.from_hex("#3f9c20"), text='A 7.586')
-add(6, 'label', Point(22.4138, -5, 0), color=Color.from_hex("#3f9c20"), text='B 2.414')
+add(6, 'label', Point(19.0138, -3.5, 0), color=Color.from_hex("#3f9c20"), text='B 2.414')
 add(6, 'segment', Line((30, 20, 0), (14.8276, 22.6888, 0)), color=Color.from_hex("#1a1eb2"), width=0.087379)
 add(6, 'segment', Line((14.8276, 22.6888, 0), (10, 20, 0)), color=Color.from_hex("#1a1eb2"), width=0.087379)
 add(6, 'label', Point(32, 18.7, 0), text='node F1')

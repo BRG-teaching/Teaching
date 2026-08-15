@@ -136,7 +136,7 @@ const AX = -18.6, AY = -9.2;           // where P1 lands
 const SFD = 13.0;                      // kN per drawing unit, force diagrams
 // nine cells on the right: P1…P7 then the global triangle
 const CELL = Array.from({ length: 9 }, (_, i) =>
-  [4.5 + (i % 3) * 9.5, 4.0 - Math.floor(i / 3) * 9.5]);
+  [4.5 + (i % 3) * 9.5, 2.6 - Math.floor(i / 3) * 9.5]);
 const GCELL = CELL[7];
 // hand-placed label offsets: a bar's number steps aside on that bar's own
 // perpendicular, and the signs alternate so bars meeting at a node do not
@@ -352,8 +352,8 @@ export function create(dw, panel, makePlayer) {
 
     dw.setLabel('t_form', [AX + 5.1 * MPU, 1.0]);
     dw.setText('t_form', `Lageplan 1:100 — the given internal force distribution`);
-    dw.setLabel('t_force', [15.5, 14.6]);
-    dw.setLabel('t_scale', [15.5, 13.0]);
+    dw.setLabel('t_force', [15.5, 11.2]);
+    dw.setLabel('t_scale', [15.5, 10.0]);
     dw.setText('t_scale', `1 drawing unit ≙ ${SFD} kN   (the sheet says 1 cm ≙ 10 kN)`);
 
     // ---- the concrete

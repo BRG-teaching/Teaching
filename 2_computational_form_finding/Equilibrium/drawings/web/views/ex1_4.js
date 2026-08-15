@@ -41,9 +41,11 @@ const CASES = [
   { k: 'a', a1: 150, a2: 30, note: 'members straddle the load, both above' },
   { k: 'b', a1: 210, a2: 330, note: 'members straddle the load, both below' },
   { k: 'c', a1: 150, a2: 0, note: 'one inclined, one horizontal' },
-  { k: 'd', a1: 330, a2: 30, note: 'both members to the same side' },
+  // the official solution labels the +30 member as 1 (tension) and the
+  // 330 member as 2 (compression) in BOTH d) and f); this was reversed
+  { k: 'd', a1: 30, a2: 330, note: 'both members to the same side' },
   { k: 'e', a1: 0, a2: 180, note: 'both members horizontal' },
-  { k: 'f', a1: 330, a2: 30, note: 'the same as d), the load drawn above' },
+  { k: 'f', a1: 30, a2: 330, note: 'the same as d), the load drawn above' },
 ];
 // where each case sits: form-diagram node, force-diagram polygon start
 // The six cases in two rows. The top row is pulled down below y = 6, which is

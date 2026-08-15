@@ -126,7 +126,7 @@ export const { meta, create } = makeJointTrussView({
   steps: STEPS,
   formTitle: () => 'Form diagram 1:100',
   titlePos: { form: [-15, -16.4], force: [16, 21.4], sub: [16, 19.8],
-              note: [-15, -18.0], zero: [-15, -19.6] },
+              note: [-15, -18.0], zero: [16, -24.0] },
   controls: (panel, s, refresh) => {
     const g = panel.section('Given');
     panel.slider(g, s, 'rise', 'apex rise (m)', 1.0, 5.0, 0.05, refresh,

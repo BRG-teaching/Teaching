@@ -141,7 +141,7 @@ const NLOAD = 13;                      // load arrows per beam
 // ---------------------------------------------------------------- layout --
 
 const AXC = [14.5, -1.8], AXM = 1.34;  // the axonometric
-const EX = -15.0, EY = -3.6, EM = 1.30, ED = 1.30;   // the flat key elevation
+const EX = -15.0, EY = -5.6, EM = 1.30, ED = 1.30;   // the flat key elevation
 
 const DEFAULTS = { cs: 0, cc: 0.0, flow: true, wire: true, lbl: true, _k: 99 };
 
@@ -350,11 +350,11 @@ export function create(dw, panel, makePlayer) {
     s._k = player.k;
     d = compute(s);
 
-    dw.setLabel('t_axo', [AXC[0], 13.6]);
+    dw.setLabel('t_axo', [AXC[0], 11.2]);
     dw.setText('t_axo', `${d.tag} isometric — 30 / 150 / 90°, foreshortening ${ISO_F}`);
-    dw.setLabel('t_none', [AXC[0], 12.2]);
+    dw.setLabel('t_none', [AXC[0], 10.0]);
     dw.setText('t_none', 'no scale and no load magnitude are printed on this page');
-    dw.setLabel('t_elev', [EX, EY + d.bd * ED + 4.4]);
+    dw.setLabel('t_elev', [EX, 1.0]);
     dw.setText('t_elev', `one deep beam, unrolled — ${d.bl.toFixed(2)} long × ${d.bd.toFixed(2)} deep`);
 
     // ---- wireframe
@@ -409,11 +409,11 @@ export function create(dw, panel, makePlayer) {
       const x = kx0 + ((kx1 - kx0) * k) / (NLOAD - 1);
       return [[x, EY + kd + 2.4], [x, EY + kd + 0.35]];
     }));
-    dw.setLabel('kGL', [EX, EY + kd + 2.9]);
+    dw.setLabel('kGL', [EX, EY + kd + 2.3]);
     dw.setText('kGL', `${B0.g || 'the load from above'} — no value is given`);
-    dw.setArrow('kRA', [kx0, EY - 0.6], [kx0, EY - 3.4]);
-    dw.setArrow('kRB', [kx1, EY - 0.6], [kx1, EY - 3.4]);
-    dw.setLabel('kRL', [EX, EY - 4.2]);
+    dw.setArrow('kRA', [kx0, EY - 0.6], [kx0, EY - 2.8]);
+    dw.setArrow('kRB', [kx1, EY - 0.6], [kx1, EY - 2.8]);
+    dw.setLabel('kRL', [EX, EY - 3.6]);
     dw.setText('kRL', d.cs === 0 ? 'g·L/2 into each corner' : '5·g into each crossing');
     dw.setLabel('kArchL', [kx1 + 4.7, EY + kd * 0.6]);
     dw.setLabel('kTieL', [kx1 + 3.5, EY - 1.7]);

@@ -17,7 +17,7 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-15.58, -9, 0), text='15.2  the whole form, F4 added   ·   Form diagram 1:100')
+add(0, 'label', Point(-15.58, -9.15, 0), text='15.2  the whole form, F4 added   ·   Form diagram 1:100')
 add(0, 'label', Point(11, 16, 0), text='Force diagram   1 cm ≙ 15 kN')
 
 # step 1 — 15.1 The arch is GIVEN — and it is a funicular
@@ -72,12 +72,12 @@ add(1, 'point', Point(-19.1875, 1.26719, 0), color=Color.from_hex("#ffffff"), wi
 add(1, 'point', Point(-14.8, 0.71875, 0), color=Color.from_hex("#ffffff"), width=0.34336)
 
 # step 2 — 15.1 The reactions
-add(2, 'arrow', Line((-26.5, -7.6, 0), (-26.5, -5, 0)), color=Color.from_hex("#3f9c20"), width=0.158688, head=(0.547056, 0.211306))
-add(2, 'label', Point(-30.4, -6.43, 0), color=Color.from_hex("#3f9c20"), text='A = 75.00 ↑')
-add(2, 'arrow', Line((-8.95, -7.6, 0), (-8.95, -5, 0)), color=Color.from_hex("#3f9c20"), width=0.158688, head=(0.547056, 0.211306))
-add(2, 'label', Point(-5.05, -6.43, 0), color=Color.from_hex("#3f9c20"), text='B = 90.00 ↑')
+add(2, 'arrow', Line((-26.5, -8.55, 0), (-26.5, -6.25, 0)), color=Color.from_hex("#3f9c20"), width=0.158688, head=(0.547056, 0.211306))
+add(2, 'label', Point(-30.4, -7.515, 0), color=Color.from_hex("#3f9c20"), text='A = 75.00 ↑')
+add(2, 'arrow', Line((-8.95, -8.55, 0), (-8.95, -6.25, 0)), color=Color.from_hex("#3f9c20"), width=0.158688, head=(0.547056, 0.211306))
+add(2, 'label', Point(-5.05, -7.515, 0), color=Color.from_hex("#3f9c20"), text='B = 90.00 ↑')
 
-# step 5 — 15.1 The finished diagram, and three checks
+# step 5 — 15.1 The force diagram
 add(5, 'arrow', Line((11, 13.6, 0), (11, 2.69091, 0)), color=Color.from_hex("#3f9c20"), width=0.114422, head=(0.369994, 0.158688))
 add(5, 'label', Point(9.4, 8.14546, 0), color=Color.from_hex("#3f9c20"), text='F1')
 add(5, 'arrow', Line((11, 2.69091, 0), (11, -2.76364, 0)), color=Color.from_hex("#3f9c20"), width=0.114422, head=(0.369994, 0.158688))
@@ -114,10 +114,10 @@ add(5, 'label', Point(17.7636, -11.2727, 0), color=Color.from_hex("#aaaaaa"), te
 add(5, 'segment', Line((21.9091, -9.58182, 0), (11, -10.9455, 0)), color=Color.from_hex("#ce4095"), width=0.061805)
 add(5, 'segment', Line((11, -0.036364, 0), (21.9091, -9.58182, 0)), color=Color.from_hex("#1a1eb2"), width=0.061805)
 
-# step 6 — 15.2 A fourth load, and nothing drawn
-add(6, 'polyline', Polyline([(-16.9273, -8, 0), (-16.9273, 3.11969, 0)]), color=Color.from_hex("#3f9c20"), dash=0.3422)
-add(6, 'arrow', Line((-16.9273, -4.9, 0), (-16.9273, -7.7, 0)), color=Color.from_hex("#3f9c20"), width=0.158688, head=(0.547056, 0.211306))
-add(6, 'label', Point(-21.8273, -6.5, 0), color=Color.from_hex("#3f9c20"), text='R = 165 at x̄ = 4.909 m')
+# step 7 — 15.2 A fourth load, and nothing drawn
+add(7, 'polyline', Polyline([(-16.9273, -8, 0), (-16.9273, 3.11969, 0)]), color=Color.from_hex("#3f9c20"), dash=0.3422)
+add(7, 'arrow', Line((-16.9273, -5.5, 0), (-16.9273, -8.3, 0)), color=Color.from_hex("#3f9c20"), width=0.158688, head=(0.547056, 0.211306))
+add(7, 'label', Point(-21.8273, -7, 0), color=Color.from_hex("#3f9c20"), text='R = 165 at x̄ = 4.909 m')
 
 
 if __name__ == "__main__":

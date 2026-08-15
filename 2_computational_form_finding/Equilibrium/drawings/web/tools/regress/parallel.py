@@ -32,6 +32,7 @@ import glob
 import json
 import math
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -39,9 +40,18 @@ from pathlib import Path
 TOL = 1.0          # degrees
 MIN_LEN = 0.012    # of the frame width — shorter than this and the angle is noise
 
-VIEWS = ['1_1', '1_2', '1_3', '1_4', '1_5', '2_1', '2_2', '2_3', '3_1a',
-         '3_1b', '3_2', '3_3', '3_4', '4_1', '4_2', '4_3', '5_1', '5_2',
-         '5_3', '6_1', '6_2', '6_3', '6_4', '6_5', '7_1', '7_3', '7_4']
+def all_views():
+    """Every exercise view on disk, in sheet order.
+
+    Hardcoding this list meant new views were silently not checked, which is
+    the one thing a regression must never do."""
+    ids = [os.path.basename(f)[2:-3] for f in glob.glob("web/views/ex*.js")]
+    ids = [i for i in ids if i != "6_common"]
+
+    def key(i):
+        parts = re.findall(r"\d+|[a-zA-Z]+", i)
+        return (i.startswith("X"), [int(p) if p.isdigit() else p for p in parts])
+    return sorted(ids, key=key)
 
 # never worth flipping: they change what is LABELLED, not what is drawn, and
 # _k is the step index, which the player owns
@@ -54,6 +64,13 @@ NO_FORCE_DIAGRAM = {
     '5_3': 'reactions only — the sheet asks for no force diagram',
     '6_1': 'a determinacy count: no loads, no forces, nothing to pair',
     '7_3': 'qualitative colouring of a force flow, no force diagram',
+    '8_3': 'dimensioning and a proof: a bar, a section and a utilisation',
+    'X2_9_2': 'a capacity check — section, utilisation, capacity curve',
+    'X2_10_2': 'a bar and a bearing: dimensioning, not a force diagram',
+    'X2_11': 'tributary areas over one plate, four times: no forces drawn',
+    'X2_12': 'the sheet prints no magnitudes at all; the answer is qualitative',
+    'X2_16_1': 'buckling lengths: a table of columns, not a force diagram',
+    'X2_16_2': 'one point read off a buckling chart',
     '10_1': 'a purely topological test of wall axes: no load, no force diagram',
     '10_4': 'a buckling chart with a demand point: no force polygon to pair',
     '9_1': 'tributary AREAS: no forces anywhere on the sheet, nothing to pair',
@@ -218,7 +235,7 @@ def main():
     live = '--live' in args
     if live:
         args.remove('--live')
-    views = args or VIEWS
+    views = args or all_views()
     if live:
         total = run_live(views)
     else:
