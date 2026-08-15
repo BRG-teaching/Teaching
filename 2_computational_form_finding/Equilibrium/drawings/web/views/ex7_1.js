@@ -226,7 +226,13 @@ export function create(dw, panel, makePlayer) {
     dw.label(`lwe${n}`, '', { cls: 'num', intro: 3, color: PAL.green, when: (st, dd) => !!dd && dd.wall });
   }
   // the force flow: the thrust line and the two chords
-  dw.strokes('thrust', NSEG, { intro: FLOW, w: dw.W.bar, color: PAL.blue });
+  dw.strokes('thrust', NSEG + 4, { intro: FLOW, w: dw.W.bar, color: PAL.blue });
+  // where the moment changes sign the tie moves from one chord to the other,
+  // and the whole chord force is handed across the depth at that one section.
+  // Drawn as its own dashed vertical rather than as a stray diagonal in the
+  // thrust line, which is what a naive polyline through the samples produces.
+  dw.strokes('swap', 4, { intro: FLOW, w: dw.W.thin, color: PAL.grey, flash: false,
+    when: (st, dd) => !!dd && dd.inflect.length > 0 });
   dw.strokes('topch', NSEG, { intro: FLOW, w: dw.W.bar * 1.1,
     color: { pending: PAL.black, final: (dd) => (dd.hog > 1e-6 && dd.sag <= 1e-6 ? PAL.red : PAL.blue) } });
   dw.strokes('botch', NSEG, { intro: FLOW, w: dw.W.bar * 1.1,
@@ -314,8 +320,40 @@ export function create(dw, panel, makePlayer) {
     // sags the tie is the bottom chord and the arch rises off it to the top at
     // the point of largest moment; where it hogs, the tie is the top chord and
     // the arch hangs below it. z(x) = M(x)/H does both, with H = M_max/depth.
-    const TP = d.thrust.map(([x, y]) => [ux(x), uy(y >= 0 ? y : DEP + y)]);
-    dw.setStrokes('thrust', Array.from({ length: NSEG }, (_, i) => [TP[i], TP[i + 1]]));
+    // A sample where the moment is exactly zero -- both beam ends -- belongs to
+    // whichever branch its neighbours are on, otherwise the free end of a
+    // hogging cantilever snaps down to the bottom chord on the last point.
+    const branch = (i) => {
+      const y = d.thrust[i][1];
+      if (Math.abs(y) > 1e-9) return Math.sign(y);
+      for (let k = i + 1; k < d.thrust.length; k++)
+        if (Math.abs(d.thrust[k][1]) > 1e-9) return Math.sign(d.thrust[k][1]);
+      for (let k = i - 1; k >= 0; k--)
+        if (Math.abs(d.thrust[k][1]) > 1e-9) return Math.sign(d.thrust[k][1]);
+      return 1;
+    };
+    const TP = d.thrust.map(([x, y], i) =>
+      [ux(x), uy(branch(i) > 0 ? y : DEP + y)]);
+    // Split the line at every sign change instead of letting one sample step
+    // leap the full depth: a sagging branch runs down to the BOTTOM chord as
+    // its moment dies, a hogging branch starts again at the TOP chord.
+    const tseg = [], swap = [];
+    for (let i = 0; i < NSEG; i++) {
+      const [x0, y0] = d.thrust[i], [x1, y1] = d.thrust[i + 1];
+      if (y0 * y1 < 0) {
+        const t = Math.abs(y0) / (Math.abs(y0) + Math.abs(y1));
+        const xc = ux(x0 + (x1 - x0) * t);
+        tseg.push([TP[i], [xc, uy(y0 > 0 ? 0 : DEP)]]);
+        tseg.push([[xc, uy(y1 > 0 ? 0 : DEP)], TP[i + 1]]);
+        swap.push([[xc, uy(0)], [xc, uy(DEP)]]);
+      } else {
+        tseg.push([TP[i], TP[i + 1]]);
+      }
+    }
+    while (tseg.length < NSEG + 4) tseg.push([TP[NSEG], TP[NSEG]]);
+    while (swap.length < 4) swap.push([[0, 0], [0, 0]]);
+    dw.setStrokes('thrust', tseg.slice(0, NSEG + 4));
+    dw.setStrokes('swap', swap.slice(0, 4));
     dw.setStrokes('topch', Array.from({ length: NSEG }, (_, i) =>
       [[ux((L * i) / NSEG), uy(DEP)], [ux((L * (i + 1)) / NSEG), uy(DEP)]]));
     dw.setStrokes('botch', Array.from({ length: NSEG }, (_, i) =>

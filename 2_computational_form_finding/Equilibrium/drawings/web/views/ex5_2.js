@@ -42,7 +42,7 @@ export const meta = {
   about: 'Two supports on a wall, three metres apart, and 40 kN reaching four metres out. The lower support is a roller against the wall face, so it can only push — which turns the whole thing into a couple: the pin pulls back, the roller pushes out, and the lever arm is the three metres between them. Because all three load cases have the same resultant in the same place, the reactions never change. What changes is the shape of the cable that catches them.',
   result: (d) => [`${d.tag} pin: ${d.Vp.toFixed(2)} kN up and ${d.H.toFixed(3)} kN toward the wall → ${d.Rp.toFixed(3)} kN at ${d.ang.toFixed(2)}°`,
                   `roller: ${d.H.toFixed(3)} kN horizontal, pushing away from the wall — no vertical at all`,
-                  `cable at the wall ${d.Rp.toFixed(2)} kN tension · strut ${d.H.toFixed(2)} kN compression · the cable meets the strut at the tip`],
+                  `cable at the wall ${d.Ncab.toFixed(2)} kN tension (max ${d.Nmax.toFixed(2)}) · strut ${d.H.toFixed(2)} kN compression · the cable meets the strut at the tip`],
   frame: [[-22, -18], [22, 26.5]],
 };
 
@@ -102,7 +102,8 @@ function compute(s) {
   const ang = (Math.atan2(Vp, H) * 180) / Math.PI;
   // the cable, hung from the pin with that thrust
   const nodes = [[0, 0]];
-  const N = [];
+  const N = [];                       // force in each cable SEGMENT
+  const Vs = [];                      // and the shear that produced it
   if (S.udl) {
     for (let i = 1; i <= NSEG; i++) {
       const x = (S.L * i) / NSEG;
@@ -110,22 +111,41 @@ function compute(s) {
       nodes.push([x, -(tot / H) * x + (S.q / (2 * H)) * x * x]);
     }
     for (let i = 0; i < NSEG; i++) {
-      const xm = (S.L * (i + 0.5)) / NSEG;
-      N.push(Math.hypot(H, tot - S.q * xm));
+      // the MID-segment shear: a chord of the parabola is parallel to the
+      // tangent at its midpoint, so that is the shear the chord represents
+      const v = tot - S.q * ((S.L * (i + 0.5)) / NSEG);
+      Vs.push(v);
+      N.push(Math.hypot(H, v));
     }
   } else {
     let shear = tot, y = 0;
     for (let i = 0; i < S.xs.length; i++) {
       const x0 = i === 0 ? 0 : S.xs[i - 1];
-      y -= (shear / H) * (S.xs[i] - x0);
-      if (S.xs[i] > x0 || i === 0) N.push(Math.hypot(H, shear));
+      const dx = S.xs[i] - x0;
+      // In b) the first 10 kN sits exactly on the support axis. It has no
+      // lever arm and no cable segment: it goes straight into the pin. Adding
+      // one anyway gave a zero-length "segment" credited with the whole pin
+      // reaction, which is where the 66.67 kN at the wall came from -- the
+      // first real segment carries 61.19 kN.
+      if (dx > 1e-9) {
+        y -= (shear / H) * dx;
+        Vs.push(shear);
+        N.push(Math.hypot(H, shear));
+      }
+      // one node per load either way, so the load arrows still have somewhere
+      // to hang -- it is only the SEGMENT list that skips the degenerate step
       nodes.push([S.xs[i], y]);
-      shear -= S.Fs[i];
+      shear -= S.Fs[i];               // the load is taken AT the node
     }
   }
+  // the cable itself: the nodes with any repeated point dropped, so its
+  // vertices line up one-for-one with the segment forces in N
+  const poly = nodes.filter((p, i) => i === 0
+    || Math.hypot(p[0] - nodes[i - 1][0], p[1] - nodes[i - 1][1]) > 1e-9);
   const tip = nodes[nodes.length - 1];
   const close = Math.abs(tip[1] + SEP);
-  return { ...S, tot, xR, Vp, H, Rp, ang, nodes, N, tip, close };
+  return { ...S, tot, xR, Vp, H, Rp, ang, nodes, poly, N, Vs, tip, close,
+           Ncab: N[0], Nmax: Math.max(...N) };
 }
 
 const ux = (m) => WX + m * MPU;
@@ -251,7 +271,7 @@ export function create(dw, panel, makePlayer) {
     dw.setText('lH', `H = ${d.H.toFixed(2)} kN`);
 
     // the cable and its rays
-    const CP = d.nodes.map((p) => [ux(p[0]), uy(p[1])]);
+    const CP = d.poly.map((p) => [ux(p[0]), uy(p[1])]);
     const seg = [];
     for (let i = 0; i < NSEG; i++) {
       const j = Math.min(i, CP.length - 2);
@@ -266,16 +286,13 @@ export function create(dw, panel, makePlayer) {
     for (let i = CP.length - 1; i >= 0; i--) band.push(V.sub(CP[i], V.mul(nrm[i], hwOf(i))));
     while (band.length < 2 * (NSEG + 1)) band.push(band[band.length - 1]);
     dw.setPoly('band', band.slice(0, 2 * (NSEG + 1)));
-    // one ray per cable segment: from the pole to the matching load-line point
-    let acc = 0;
-    const rays = [];
-    for (let i = 0; i < NSEG; i++) {
-      const j = Math.min(i, (d.udl ? NSEG : d.N.length) - 1);
-      acc = d.udl ? d.q * ((d.L * (j + 1)) / NSEG) : d.Fs.slice(0, j + 1).reduce((a, b) => a + b, 0);
-      const shear = d.tot - acc;
-      rays.push([o, [LLX, CY - shear / SFD]]);
-    }
-    dw.setStrokes('rays', rays);
+    // ONE ray per cable segment, at the shear that segment actually carries --
+    // so every ray is parallel to its own piece of cable. The old version
+    // indexed past the end of the list and drew twenty copies of the last ray,
+    // which in a) meant twenty copies of the strut and no cable ray at all.
+    const rays = d.Vs.map((v) => [o, [LLX, CY - v / SFD]]);
+    while (rays.length < NSEG) rays.push([o, o]);      // unused slots collapse
+    dw.setStrokes('rays', rays.slice(0, NSEG));
 
     // the strut, along the roller's level, out to where the cable arrives
     const sEnd = [ux(d.tip[0]), uy(-SEP)];
@@ -288,7 +305,7 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('ltip', V.add(sEnd, [3.6, -1.2]));
     dw.setText('ltip', 'the cable lands here');
     dw.setLabel('lcab', V.add(V.mid(CP[0], CP[1]), [3.0, 1.4]));
-    dw.setText('lcab', `${d.Rp.toFixed(1)} kN tension`);
+    dw.setText('lcab', `${d.Ncab.toFixed(1)} kN tension`);
 
     // the reactions
     const uP = V.unit([-d.H, d.Vp]);

@@ -131,7 +131,13 @@ function compute(s) {
   }
   const N = shear.map((v) => Math.hypot(H, v));
   const Nmax = Math.max(...N);
-  const rise = Math.max(...nodes.map((p) => sgn * p.m));
+  // the rise is measured from the CHORD, not from A's level -- with B two
+  // metres lower the deepest point of the funicular is support B itself, and
+  // dimensioning that is dimensioning the drop, not the rise
+  const chordAt = (x) => dropB * (x / SPAN);
+  const dev = nodes.map((p) => sgn * (p.m - chordAt(p.x)));
+  const rise = Math.max(...dev);
+  const ci = dev.indexOf(rise);
   const pt = (n) => [AX + n.x * MPU, AY + n.m * MPU];
   const P = nodes.map(pt);
   const A = P[0], B = P[P.length - 1];
@@ -140,7 +146,7 @@ function compute(s) {
   const div = [T];
   F.forEach((f) => div.push([LLX, div[div.length - 1][1] - f / SFD]));
   const o = [LLX - sgn * H / SFD, LLY - Av / SFD];
-  return { F, tot, H, Av, Bv, nodes, N, Nmax, rise, P, A, B, T, div, o,
+  return { F, tot, H, Av, Bv, nodes, N, Nmax, rise, ci, chordAt, P, A, B, T, div, o,
            NA: N[0], NB: N[N.length - 1], caseB: s.caseB, cable: s.cable, dropB };
 }
 
@@ -256,14 +262,22 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`lm${i}`, V.add(V.mid(d.P[i], d.P[i + 1]), nb));
       dw.setText(`lm${i}`, `${d.N[i].toFixed(0)}`);
     }
-    // the rise, dimensioned at the crown
-    const ci = d.nodes.reduce((b, p, i) => (Math.abs(p.m) > Math.abs(d.nodes[b].m) ? i : b), 0);
-    dw.setSeg('dimF', [d.P[ci][0] + 1.0, AY], [d.P[ci][0] + 1.0, d.P[ci][1]]);
-    dw.setLabel('lF', [d.P[ci][0] + 3.2, (AY + d.P[ci][1]) / 2]);
+    // the rise, dimensioned at the crown -- from the chord up to the funicular
+    const ci = d.ci;
+    const cy = AY + d.chordAt(d.nodes[ci].x) * MPU;
+    dw.setSeg('dimF', [d.P[ci][0] + 1.0, cy], [d.P[ci][0] + 1.0, d.P[ci][1]]);
+    dw.setLabel('lF', [d.P[ci][0] + 3.2, (cy + d.P[ci][1]) / 2]);
     dw.setText('lF', `f = ${d.rise.toFixed(2)} m`);
 
-    // reactions: along the end segments, pushing into the supports
-    const uA = V.unit(V.sub(d.A, d.P[1])), uB = V.unit(V.sub(d.B, d.P[3]));
+    // Reactions along the end segments. An ARCH is pushed inward and up by its
+    // abutments, so the arrow runs from outside toward the support along the
+    // member. A CABLE pulls its supports inward and down, so the support pulls
+    // back up and OUTWARD and the same arrow reverses. It was drawn the arch
+    // way in both cases, which put the cable's reactions 180 degrees out
+    // against a force diagram that had them right.
+    const rs = d.cable ? -1 : 1;
+    const uA = V.mul(V.unit(V.sub(d.A, d.P[1])), rs);
+    const uB = V.mul(V.unit(V.sub(d.B, d.P[3])), rs);
     dw.setArrow('reA', V.add(d.A, V.mul(uA, SYM)), d.A);
     dw.setArrow('reB', V.add(d.B, V.mul(uB, SYM)), d.B);
     dw.setLabel('lreA', V.add(V.add(d.A, V.mul(uA, SYM)), [-2.2, -0.6]));

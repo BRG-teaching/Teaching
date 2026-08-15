@@ -42,7 +42,7 @@ for (let k = 0; k < 10; k++) cells.push([8 + (k % 2) * 15, 8 - Math.floor(k / 2)
 const view = makeTrussView({
   title: 'EX 6.4 — a truss that spans and cantilevers at once',
   subtitle: 'Structural Design II · sheet EX 6 “Trusses”, task 4 a)–c)',
-  about: 'The roller has moved one panel inward, so the last bay hangs off the end — and that one change makes the truss behave like two different structures joined together. Inside the span the top chord is in compression and the bottom in tension, exactly as in task 2; out over the cantilever they swap. Watch the top chord change colour at the roller, and note the single tension diagonal, the only one on the whole sheet.',
+  about: 'The roller has moved one panel inward, so the last bay hangs off the end — and that one change makes the truss behave like two different structures joined together. Inside the span the top chord is in compression and the bottom in tension, exactly as in task 2; out over the cantilever they swap. Watch the top chord change colour at T2 — one panel short of the roller, not over it, because the sign follows the bending moment and that crosses zero inside the span. Note too the single tension diagonal, the only one on the whole sheet.',
   nodes,
   members,
   supports: { 0: 'pin', 3: 'roller-v' },
@@ -63,7 +63,7 @@ const view = makeTrussView({
   result: (d) => [
     `a) A = ${Math.abs(d.reactions[0][1]).toFixed(1)} kN, B = ${Math.abs(d.reactions[3][1]).toFixed(1)} kN, both vertical and both up`,
     `b) ${d.zero.filter(Boolean).length} zero-force members: T0-T1, B0-T0, B2-T2, B3-T3, B3-B4 and B4-T4`,
-    `c) F_t,max = +${d.tmax.toFixed(2)} kN · F_c,max = ${d.cmax.toFixed(2)} kN — and the top chord changes sign over the roller`],
+    `c) F_t,max = +${d.tmax.toFixed(2)} kN · F_c,max = ${d.cmax.toFixed(2)} kN — and the top chord changes sign at T2, one panel INSIDE the roller`],
   steps: [
     { t: 'The exercise', d: 'EX 6 task 4: the same truss as task 2, but with the roller one panel further in, so the last bay cantilevers' },
     { t: 'The truss', d: 'left: four panels, a pin at the left end and a roller under the fourth bottom joint. Two of the three loads sit inside the span, and the third is right out at the tip of the cantilever',
@@ -76,9 +76,9 @@ const view = makeTrussView({
       detail: () => ['T0-T1 and B0-T0 at the unloaded left top joint',
                      'B2-T2 and B3-T3, each the odd member out at a joint with two collinear ones',
                      'B3-B4 and B4-T4, the two members at the unloaded bottom tip'] },
-    { t: 'c) Now joint by joint', d: 'and this is where the two halves show themselves. Solve along and watch the top chord: navy compression while you are inside the span, pink tension the moment you pass the roller',
+    { t: 'c) Now joint by joint', d: 'and this is where the two halves show themselves. Solve along and watch the top chord: navy compression over the first two panels, then pink tension from T2 onward — the change happens one panel BEFORE the roller, where the bending moment passes through zero',
       detail: (d) => [`top chord: ${[4, 5, 6, 7].map((m) => (Math.abs(d.forces[m]) < 1e-7 ? '0' : d.forces[m].toFixed(0))).join(' · ')} kN, left to right`],
-      take: 'a cantilever hangs from its top; a span leans on it — this truss does both, and the roller is where they change over' },
+      take: 'a cantilever hangs from its top; a span leans on it — this truss does both, and the changeover is where the moment vanishes, not where the support is' },
   ],
   nodeStep: (o, k) => ({
     t: `Joint ${NAME[o.node]}`,

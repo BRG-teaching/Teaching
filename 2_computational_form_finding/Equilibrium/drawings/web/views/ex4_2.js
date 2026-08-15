@@ -275,7 +275,10 @@ export function create(dw, panel, makePlayer) {
     }
     // B as the sum of the two arches' legs, drawn beside the polygon
     const base = [d.o1[0] + 6.5, d.M[1] + 3.0];
-    const tip = V.add(base, [d.Bh / SFD, -d.Bv / SFD]);
+    // B acts UP and to the left on the structure -- which is what the form
+    // diagram's arrow shows and what the two legs it sums actually add to.
+    // This copy of it was drawn with its vertical component pointing down.
+    const tip = V.add(base, [d.Bh / SFD, d.Bv / SFD]);
     dw.setSeg('bsum', base, [base[0] + d.Bh / SFD, base[1]]);
     dw.setArrow('bres', base, tip);
     dw.setLabel('lbres', V.add(V.mid(base, tip), [2.8, 0]));

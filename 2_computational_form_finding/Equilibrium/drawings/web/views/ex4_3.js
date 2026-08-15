@@ -356,7 +356,9 @@ export function create(dw, panel, makePlayer) {
     const uHead = V.unit([-d.Hn, -d.Va]);
     dw.setArrow('bhead', head, V.add(head, V.mul(uHead, 3.2)));
     dw.setLabel('lbhead', V.add(head, V.mul(uHead, 5.4)));
-    dw.setText('lbhead', `${d.Va.toFixed(0)} ↓ · ${d.Hn.toFixed(0)} →`);
+    // the arrow is drawn down-and-LEFT: at the left buttress the aisle vault
+    // pushes OUTWARD, away from the nave
+    dw.setText('lbhead', `${d.Va.toFixed(0)} ↓ · ${d.Hn.toFixed(0)} ←`);
     dw.setArrow('gwt', [ux(BUT[0]), uy(SPR * 0.62) + 1.8], [ux(BUT[0]), uy(SPR * 0.62) - 0.6]);
     dw.setLabel('lgwt', [ux(BUT[0]) - 4.2, uy(SPR * 0.62) + 1.6]);
     dw.setText('lgwt', `G₁d = ${d.G.toFixed(0)} kN`);
