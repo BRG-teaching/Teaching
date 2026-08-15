@@ -27,6 +27,15 @@
  *   diagonals     −63.64 / −21.21 / −21.21 / −63.64 kN   (= −45√2 and −15√2)
  * so F_t,max = +60.00 kN in the middle of the bottom chord and F_c,max =
  * −63.64 kN in the two end diagonals.
+ *
+ * THE FORCE DIAGRAM is the sheet's: one Cremona, built in `../lib/cremona.js`.
+ * Point for point it is the figure printed on page 1 — a vertical load line
+ * with the three loads running down it and the two 45 kN reactions coming back
+ * up, the two end diagonals closing on its ends, and the bottom-chord members
+ * (the sheet's 2, 6 and 10) all radiating from the one point where the two
+ * reactions meet. The sheet draws its two coincident pairs of horizontals
+ * slightly apart so both are visible; here they are labelled 2=3 and so on,
+ * which says the same thing: the member between those two spaces is zero.
  */
 
 import { makeTrussView } from './ex6_common.js';
@@ -43,33 +52,28 @@ const members = [
 ];
 const NAME = ['B0', 'B1', 'B2', 'B3', 'B4', 'T0', 'T1', 'T2', 'T3', 'T4'];
 
-// three columns of joint polygons down the right-hand side
-// two columns of five, down the right-hand side, clear of both UI cards
-const cells = [];
-for (let k = 0; k < 10; k++) cells.push([8 + (k % 2) * 14, 8 - Math.floor(k / 2) * 8]);
-
 const view = makeTrussView({
   title: 'EX 6.2 — a spanning truss, joint by joint',
   subtitle: 'Structural Design II · sheet EX 6 “Trusses”, task 2 a)–c)',
-  about: 'Four square panels, three 30 kN loads on the top chord, a pin at one end and a roller at the other. The whole method is on this one drawing: close the structure globally, spot the members that cannot be carrying anything, then walk from joint to joint closing one small polygon at a time. Every edge of every polygon is parallel to the member it stands for, and carries its colour — pink for tension, navy for compression, pale grey for the five members doing nothing at all.',
+  about: 'Four square panels, three 30 kN loads on the top chord, a pin at one end and a roller at the other. The whole method is on this one drawing: close the structure globally, spot the members that cannot be carrying anything, then walk from joint to joint. The force diagram on the right is one Cremona — a single reciprocal figure, not ten separate polygons. Every space of the truss becomes a point; every member is the segment between the two points either side of it, drawn parallel to the member and to its colour; and because neighbouring joints share those segments the three bottom-chord members all radiate from one point on the load line.',
   nodes,
   members,
   supports: { 0: 'pin', 4: 'roller-v' },
   loads: { 6: [0, -30], 7: [0, -30], 8: [0, -30] },
-  MPU: 2.0,
-  ORG: [-24, -12],                 // dropped clear of the caption card
-  cells,
-  SFD: 14,
-  frame: [[-27, -31], [30, 18]],
-  titlePos: [[-16, -14.5], [15, 15.4], [15, 14.0]],
+  MPU: 2.6,
+  ORG: [-30, -11],                 // dropped clear of the caption card
+  fdCenter: [16, -8],
+  SFD: 3.5,
+  frame: [[-27, -27], [30, 16]],
+  titlePos: [[-17, -17.6], [16, 11.6], [16, 10.2]],
   nodeName: (i) => NAME[i],
   nodeLabelOff: (i) => (i < 5 ? [0, -2.0] : [0, 2.0]),
   // chords label outward, verticals and diagonals inward
   labelSide: (m) => (m < 4 ? -1 : m < 8 ? 1 : m < 13 ? 1 : -1),
   reacLabelOff: () => [-3.4, -0.6],
-  zeroLabelPos: [-16, -17.0],
+  zeroLabelPos: [-17, -19.4],
   supportDir: () => [0, -1],
-  cellLabelOff: [0, 3.4],
+  bowOff: 5.2,
   result: (d) => [
     `a) A = ${Math.hypot(...d.reactions[0]).toFixed(1)} kN, B = ${Math.hypot(...d.reactions[4]).toFixed(1)} kN, both vertical`,
     `b) ${d.zero.filter(Boolean).length} zero-force members: T0-T1, T3-T4, B0-T0, B4-T4 and B2-T2`,
@@ -79,21 +83,23 @@ const view = makeTrussView({
     { t: 'The truss', d: 'left: square panels with 45° diagonals, a pin under the left end and a roller under the right. Ten joints, seventeen members and three reactions — and 17 + 3 = 2 × 10, so it is exactly determinate',
       detail: (d) => [`three loads of ${(30 * d.loads[6][1] / -30).toFixed(0)} kN at the interior top joints`,
                       `members + reactions − 2 × joints = ${d.nm} + ${d.nr} − ${2 * d.nn} = ${d.det} → statically determinate`] },
-    { t: 'a) Global equilibrium', d: 'right at the start, before any member: the whole truss is one body. The loads are symmetric, so the two supports share them equally and neither is pushed sideways',
+    { t: 'a) Global equilibrium — and the load line', d: 'right at the start, before any member: the whole truss is one body. The loads are symmetric, so the two supports share them equally and neither is pushed sideways. Now walk once round the outside of the truss and lay the five external forces end to end in the order you meet them: that chain is the LOAD LINE on the right, and it closes, because the truss as a whole is in equilibrium',
       detail: (d) => [`A = ${Math.hypot(...d.reactions[0]).toFixed(1)} kN up · B = ${Math.hypot(...d.reactions[4]).toFixed(1)} kN up · H = 0`,
-                      `ΣV: ${Math.hypot(...d.reactions[0]).toFixed(1)} + ${Math.hypot(...d.reactions[4]).toFixed(1)} = ${(-d.loads[6][1] * 3).toFixed(0)} kN ✓`] },
+                      `ΣV: ${Math.hypot(...d.reactions[0]).toFixed(1)} + ${Math.hypot(...d.reactions[4]).toFixed(1)} = ${(-d.loads[6][1] * 3).toFixed(0)} kN ✓`,
+                      'the three loads run down it and the two reactions come back up — five external forces, five outer spaces a…e'] },
     { t: 'b) The zero members', d: 'five of them, and you can find every one without any arithmetic. A joint with only two members and no load cannot carry anything in either; a joint with two members in a straight line plus one more cannot carry anything in the odd one out',
       detail: (d) => ['T0 and T4 each have just two members and no load → all four are zero',
                       'B2 has two collinear members plus the vertical, and no load → the vertical is zero',
-                      'they are drawn pale grey; untick the panel to see them in colour'],
+                      'in the Cremona a zero member is a segment of ZERO LENGTH: the spaces on its two sides land on the same point, which is the drawing saying "nothing here"'],
       take: 'a zero-force member is not useless — it holds the geometry, and it comes alive under a different load case' },
-    { t: 'c) Now joint by joint', d: 'the rule is simple: only start at a joint where at most two member forces are still unknown. Each joint gets its own closed polygon on the right, drawn to scale, with every edge parallel to its member',
-      detail: () => ['the polygons are laid out in the order they can actually be solved',
-                     'green edges are the load and the reaction; pink is tension, navy compression'] },
+    { t: 'c) Now joint by joint — one Cremona', d: 'the rule is simple: only start at a joint where at most two member forces are still unknown. Its two unknowns are then two lines through points already on the paper, drawn parallel to the two members, and where they cross is the new point. Nothing is redrawn: every joint reuses the segments its neighbours already put down, which is why this is ONE figure and not ten',
+      detail: () => ['each space of the truss — the panels inside, the gaps between external forces outside — is one point of the diagram, named a…e and 1…8',
+                     'a member is the segment between the two points either side of it: parallel to it, and to scale',
+                     'the grey outline is the joint being closed right now, borrowed from the shared figure'] },
   ],
   nodeStep: (o, k) => ({
     t: `Joint ${NAME[o.node]}`,
-    d: `close the polygon at ${NAME[o.node]}: every force meeting there, laid tip to tail, must come back to where it started. The two unknown members are the two edges that close it`,
+    d: `close ${NAME[o.node]} inside the Cremona: every force meeting there, laid tip to tail, must come back to where it started. Its known forces are segments already drawn; the unknown ones are lines parallel to those members through points already fixed`,
     detail: (d) => {
       const lines = [];
       const at = members.map((mm, m) => [mm, m]).filter(([mm]) => mm.includes(o.node));

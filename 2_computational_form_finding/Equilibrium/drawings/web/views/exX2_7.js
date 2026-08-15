@@ -332,7 +332,9 @@ export const { meta, create } = makeJointTrussView({
   steps: STEPS,
   formTitle: (d) => `${d.tag} — Form diagram 1:100`,
   noPolyNote: 'no funicular exists for d): every force in it is vertical',
-  titlePos: { form: [-15, -16.4], force: [16, 21.4], sub: [16, 19.8],
+  // force/sub sit at 20.6 / 19.35, not 21.4 / 19.8: the sheet's task text is
+  // pinned across the top of the canvas and its banner covers y > 21.30
+  titlePos: { form: [-15, -16.4], force: [16, 20.6], sub: [16, 19.35],
               note: [-15, -18.1], zero: [-15, -19.8] },
 
   declare: (dw) => {

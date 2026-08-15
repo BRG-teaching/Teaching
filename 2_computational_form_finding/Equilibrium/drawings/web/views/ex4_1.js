@@ -62,6 +62,7 @@ const LLX = 18, LLY = 6;              // top of the load line
 // rays come out PARALLEL to the members rather than mirrored. It flips with
 // the arch/cable toggle; web/tools/regress/parallel.py enforces both cases.
 const SYM = 3.4;
+const ALT = 1.8;                      // c) the second, higher arch the sheet draws
 
 const DEFAULTS = {
   F: 40,                              // kN, each of the three loads
@@ -95,12 +96,12 @@ const STEPS = [
   { t: 'The member forces', d: 'every segment carries the same horizontal thrust, so again the steepest one carries the most. In blue, because an arch works in compression',
     detail: (d) => [`${d.N.map((n, i) => `segment ${i + 1}: ${n.toFixed(1)}`).join(' · ')} kN`,
                     `the relevant force is ${d.Nmax.toFixed(1)} kN`] },
-  { t: 'c) The other solution', d: 'tick “inverted” in the panel. Hang the same funicular below the chord instead of standing it above, and every single force keeps its magnitude and changes its sign — compression becomes tension. Same statics, opposite structure',
-    detail: (d, st) => [st.cable
-      ? 'inverted: a cable, every member in tension (pink), and in b) the two reactions swap over'
-      : 'the arch above the chord — now tick “inverted” to see the cable that does the same job',
-      'any shape that is NOT the funicular also works, but only if its members can bend'],
-    take: 'an arch and a cable are the same drawing read upside down' },
+  { t: 'c) Other possible solutions', d: 'the sheet asks whether there are others, and draws one: a SECOND ARCH through the same two supports, higher than the first. A higher arch needs less thrust, so it is a different pole and a different force diagram — but the same three loads and the same two supports. Nothing in the problem fixed the shape; only the extra condition in a) or b) did',
+    detail: (d, st) => [`the pale arch is ${ALT.toFixed(1)}× higher and carries the same load with ${(100 / ALT).toFixed(0)} % of the thrust`,
+      'and the constraint is what picks one out: fix the relevant force, or fix the thrust, and the shape follows',
+      st.cable ? 'inverted as well: a cable, every member in tension, same magnitudes'
+               : 'tick “inverted” for a third answer — hang it below the chord and every force keeps its size and changes its sign'],
+    take: 'the shape is not unique; the constraint is what makes it unique' },
 ];
 
 function compute(s) {
@@ -170,6 +171,10 @@ export function create(dw, panel, makePlayer) {
     dw.strokes(`hat${n}`, 5, { intro: 1, w: dw.W.dim, color: PAL.grey, flash: false });
   }
   dw.dashLine('chord', { intro: 1, color: PAL.grey, dash: dw.W.dash });
+  // the closing line, in BOTH diagrams, as the sheet labels it
+  dw.label('lchord', 'CS / SL', { cls: 'point', intro: 1, flash: false, color: PAL.grey });
+  dw.dashLine('csl', { intro: 3, color: PAL.grey, dash: dw.W.dash });
+  dw.label('lcsl', 'CS / SL', { cls: 'point', intro: 3, flash: false, color: PAL.grey });
   for (let i = 0; i < 3; i++) {
     dw.dashLine(`la${i}`, { intro: 1, color: PAL.grey, dash: dw.W.dash });
     dw.arrow(`f${i}`, { intro: 1, color: PAL.green, ...ARR });
@@ -230,6 +235,7 @@ export function create(dw, panel, makePlayer) {
         [p[0] + 2.0, p[1] - 0.55], -1, 1.05, 5));
     }
     dw.setDashLine('chord', [V.add(d.A, [-2.4, 0]), V.add(d.B, [2.4, 0])]);
+    dw.setLabel('lchord', V.add(V.mid(d.A, d.B), [0, -1.6]));
 
     // the pole is on the far side of the load line, so everything ANNOTATING
     // the load line has to move to the other side of it to stay clear
@@ -248,8 +254,20 @@ export function create(dw, panel, makePlayer) {
 
     dw.setDisk('ptO', d.o);
     dw.setLabel('lO', V.add(d.o, [-1.4 * ls, 0.7]));
-    dw.setDisk('ptI', [LLX, d.o[1]]);
-    dw.setLabel('lI', [LLX + 1.3 * ls, d.o[1]]);
+    // Point i is where the ray PARALLEL TO THE CLOSING LINE (the chord A-B,
+    // "CS/SL" on the sheet) cuts the load line — not where a horizontal
+    // through the pole cuts it. Those coincide only when the two supports are
+    // at the same level, so case a) was right by accident and case b) put i
+    // 40 kN too high. With the chord dropping 2 m over 6 m the ray lands 60 kN
+    // below the top of the load line in BOTH cases, which is what the sheet
+    // draws, beside F2d.
+    const chordDir = [SPAN * MPU, d.dropB * MPU];
+    const tI = (LLX - d.o[0]) / chordDir[0];
+    const iPt = [LLX, d.o[1] + tI * chordDir[1]];
+    dw.setDisk('ptI', iPt);
+    dw.setLabel('lI', [LLX + 1.3 * ls, iPt[1]]);
+    dw.setDashLine('csl', [d.o, iPt]);
+    dw.setLabel('lcsl', V.add(V.mid(d.o, iPt), [0, 1.2]));
     dw.setSeg('dimH', [LLX, d.T[1] + 1.7], [d.o[0], d.T[1] + 1.7]);
     dw.setLabel('lH', [(LLX + d.o[0]) / 2, d.T[1] + 2.8]);
     dw.setText('lH', `H = ${d.H.toFixed(1)} kN`);
@@ -292,15 +310,22 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lgov', V.add(V.mid(d.P[gi], d.P[gi + 1]), gn));
     dw.setText('lgov', `relevant force ${d.Nmax.toFixed(0)} kN`);
 
-    // c) the mirror solution, shown faintly on the other side of the chord
+    // c) "are there other possible solutions?" — the sheet's answer is a
+    // SECOND ARCH through the same two supports, drawn qualitatively: a higher
+    // one, which needs less thrust. (Inverting it into a cable, which the
+    // panel still offers, is a different and also true answer, but it is not
+    // the one the sheet draws.)
+    const chordY = (x) => AY + d.chordAt(x) * MPU;
     dw.setStrokes('alt', Array.from({ length: 4 }, (_, i) => {
-      const mir = (p, k) => [p[0], AY + (AY - p[1]) + (d.dropB * MPU) * (d.nodes[k].x / SPAN) * 2];
-      return [mir(d.P[i], i), mir(d.P[i + 1], i + 1)];
+      const hi = (p, k) => {
+        const cy = chordY(d.nodes[k].x);
+        return [p[0], cy + (p[1] - cy) * ALT];
+      };
+      return [hi(d.P[i], i), hi(d.P[i + 1], i + 1)];
     }));
     // inside the empty bowl of the mirrored shape, which is where it belongs
-    dw.setLabel('lalt', [AX + SPAN * MPU * 0.5, AY - (d.cable ? -1 : 1) * 2.4]);
-    dw.setText('lalt', d.cable ? 'the arch does the same job in compression'
-                               : 'the cable does the same job in tension');
+    dw.setLabel('lalt', [AX + SPAN * MPU * 0.5, AY + (d.cable ? -1 : 1) * 1.5]);
+    dw.setText('lalt', `a ${ALT.toFixed(1)}× higher ${d.cable ? 'cable' : 'arch'} carries the same load with ${(100 / ALT).toFixed(0)} % of the thrust — the shape is not unique`);
 
     panel.syncAll();
     player.apply(d, s);

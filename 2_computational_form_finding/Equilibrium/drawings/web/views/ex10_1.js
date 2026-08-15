@@ -130,8 +130,11 @@ const NR = 5;      // wall-rectangle slots per panel (b) needs five)
 // ------------------------------------------------------------------ layout
 // the enlarged panel lives in the left band, BETWEEN the two UI cards; the
 // six thumbnails fill the free right half.
-const EW = 6.8, EX = -33, EY = -6.2;           // enlarged panel, page width 1 -> EW
-const AXBOX = [-40, -7.0, -14.5, 8.0];         // how far the enlarged axes run
+// the enlarged panel is two page-units tall, and the two UI cards leave it a
+// strip from y ≈ 5.25 (caption) down to y ≈ -14.6 (RESULT) — the panel takes
+// the top of it and its three caption lines the bottom
+const EW = 6.8, EX = -33, EY = -8.7;           // enlarged panel, page width 1 -> EW
+const AXBOX = [-40, -9.6, -14.5, 5.0];         // how far the enlarged axes run
 const TW = 6, TGX = 9, TGY = 16;               // thumbnail width and grid pitch
 const TX0 = -2, TY0 = -15;                     // bottom-left of the bottom-left one
 const TEXT = 0.13;                             // thumbnail axis extension
@@ -149,10 +152,10 @@ export const meta = {
   about: 'Six floor plans, each with a few walls in it, and one question: does the slab stay put? A wall can only take a force along its own axis, so each wall is one force on one known line. Three lines against the three freedoms of a body in plane — two slides and a spin — and the whole of task 1 is the rule that follows: the axes must be neither all parallel nor all concurrent. Five of the six panels answer themselves. Panel e) does not: its three axes meet at a point eight tenths of a panel-width off the right edge, invisible unless you extend them, and that is why it fails. Drag a wall and watch the verdict flip.',
   result: (d) => [
     `answer key — a) ✗   b) ✓   c) ✗   d) ✓   e) ✗   f) ✓   (three of the six tick)`,
-    `the rule: three wall axes brace a slab unless they are all parallel or all concurrent; two collinear walls count once`,
+    `rule: 3 axes brace unless all parallel or concurrent; collinear = one`,
     `panel ${d.k}) — ${d.n} independent ${d.n === 1 ? 'axis' : 'axes'}: ${d.why}`,
     d.braced ? `panel ${d.k}) as drawn: ✓ BRACED`
-             : `panel ${d.k}) as drawn: ✗ NOT BRACED${d.pole && d.n >= 3 ? ` — all three axes meet at (u ${d.poleU.toFixed(2)}, v ${d.poleV.toFixed(2)}) in panel-widths` : ''}`],
+             : `panel ${d.k}) as drawn: ✗ NOT BRACED${d.pole && d.n >= 3 ? ` — axes concur at u ${d.poleU.toFixed(2)}, v ${d.poleV.toFixed(2)}` : ''}`],
   frame: [[-34, -22], [28, 22]],
 };
 

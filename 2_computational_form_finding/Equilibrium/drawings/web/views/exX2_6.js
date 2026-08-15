@@ -321,7 +321,9 @@ export const { meta, create } = makeJointTrussView({
   steps: STEPS,
   formTitle: (d) => `${d.tag} — Form diagram 1:100`,
   noPolyNote: 'the sheet prints this one; the load line below is where it starts',
-  titlePos: { form: [-14, -14.4], force: [16, 21.4], sub: [16, 19.8],
+  // force/sub sit at 20.6 / 19.35, not 21.4 / 19.8: the sheet's task text is
+  // pinned across the top of the canvas and its banner covers y > 21.30
+  titlePos: { form: [-14, -14.4], force: [16, 20.6], sub: [16, 19.35],
               note: [-14, -16.1], zero: [-14, -17.8] },
 
   // the beam outline that all five cases share, and — for d) and e), whose

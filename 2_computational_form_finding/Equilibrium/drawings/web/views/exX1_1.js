@@ -94,7 +94,10 @@ const HMIN = 2.0, HMAX = 6.8;                 // the sag depths the drawing has 
 // ------------------------------------------------------------ the layout ---
 
 const MPU = 1.75;                             // drawing units per metre
-const FX = -14.0, FY = 0.4;                   // IV/III chord midpoint anchor
+// the form diagram is boxed in by the two UI cards on the left: the step
+// caption reaches down to y ≈ 2.15 and the RESULT card up to y ≈ -15.8, so
+// the support chord sits well below the middle of the canvas
+const FX = -14.0, FY = -2.7;                  // IV/III chord midpoint anchor
 const SFD = 5.0;                              // kN per drawing unit, force diagram
 const LL = [10.0, 13.0];                      // top of the load line
 const SFN = 46.0;                             // kN per unit in the node subsystems
@@ -211,12 +214,13 @@ export const meta = {
   subtitle: 'Structural Design I · sheet EX X “Additional Exercises”, task 1 a) and b)',
   about: 'Two point loads, neither of them vertical, hanging on a three-segment cable between two level pins. The inclination is the trick: the two horizontal components cancel exactly, so the resultant is a plain 120 kN straight down, and it happens to fall on midspan — which is why the two reactions come out equal at 85 kN. Part b) then turns the exercise round. The cable is only good for 70 kN, so the form is no longer given; it is what you are looking for. Deepen the sag and every force drops, but not at the same rate: at the printed depth the middle segment is the biggest, at the depth b) asks for the two end segments are. They change places at h = 5.22 m, and watching that happen is the point of the page. Note that the sheet prints 92.2 kN where the correct maximum is 91.2 kN.',
   result: (d) => [
-    `a) A = ${Math.abs(d.pr.N[0]).toFixed(2)} and B = ${Math.abs(d.pr.N[2]).toFixed(2)} kN${d.sheet ? ' → 85 and 85 kN, which is what the key prints ✓' : ''}; all three members in TENSION: ${d.pr.N.map((n) => Math.abs(n).toFixed(2)).join(' · ')} kN`,
-    `a) N_d,max = ${d.prMax.toFixed(2)} kN in ${d.prWhich}${d.sheet ? ` → 91.2 kN. THE KEY PRINTS ${KEY_NMAX} kN, which is a typo for 91.2` : ''}`,
+    `a) A = ${Math.abs(d.pr.N[0]).toFixed(2)}, B = ${Math.abs(d.pr.N[2]).toFixed(2)} kN${d.sheet ? ' → 85 and 85 kN, as the key prints ✓' : ''}`,
+    `a) all three members in TENSION: ${d.pr.N.map((n) => Math.abs(n).toFixed(2)).join(' · ')} kN`,
+    `a) N_d,max = ${d.prMax.toFixed(2)} kN in ${d.prWhich}${d.sheet ? `; the key's ${KEY_NMAX} kN is a typo` : ''}`,
     d.Ncap <= d.Nfloor
-      ? `b) no form can hold ${d.Ncap.toFixed(0)} kN: however deep it hangs, A = B → R/2 = ${d.Nfloor.toFixed(2)} kN and no lower`
-      : `b) capacity ${d.Ncap.toFixed(0)} kN needs a sag of h = ${d.hFor.toFixed(3)} m${d.clipped ? ' (off the drawing — the sag shown is clamped)' : ''}; drawn at h = ${d.h.toFixed(3)} m the members carry ${d.dp.N.map((n) => Math.abs(n).toFixed(2)).join(' / ')} kN`,
-    `b) the maximum is now ${d.dpMax.toFixed(2)} kN in ${d.dpWhich} — it changes hands at h = ${d.hx ? d.hx.toFixed(4) : '—'} m, where all three carry the same force`],
+      ? `b) no form holds ${d.Ncap.toFixed(0)} kN: however deep, A = B → R/2 = ${d.Nfloor.toFixed(2)} kN and no lower`
+      : `b) ${d.Ncap.toFixed(0)} kN capacity needs h = ${d.hFor.toFixed(3)} m${d.clipped ? ' (clamped on screen)' : ''}: at h = ${d.h.toFixed(3)} m members carry ${d.dp.N.map((n) => Math.abs(n).toFixed(2)).join(' / ')} kN`,
+    `b) max ${d.dpMax.toFixed(2)} kN, now in ${d.dpWhich} — they swap at h = ${d.hx ? d.hx.toFixed(4) : '—'} m`],
   frame: [[-27, -22], [32, 17]],
 };
 
@@ -396,9 +400,11 @@ export function create(dw, panel, makePlayer) {
       arrAt(3, [2], { v: V.mul(uB, Math.abs(d.pr.N[2])), col: PAL.green, name: 'B' }),
     ];
 
-    dw.setLabel('t_form', [0.0, 7.2]);
-    dw.setLabel('t_force', [LL[0] + 1.5, LL[1] + 3.0]);
-    dw.setLabel('t_scale', [LL[0] + 1.5, LL[1] + 1.6]);
+    dw.setLabel('t_form', [-2.0, 5.2]);
+    // the task strip is an opaque bar across the whole top of the canvas,
+    // reaching down to y ≈ 15.8 here, so both titles sit under it
+    dw.setLabel('t_force', [LL[0] + 1.5, LL[1] + 1.9]);
+    dw.setLabel('t_scale', [LL[0] + 1.5, LL[1] + 0.75]);
     dw.setText('t_scale', `1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 10 kN) · joints 1 unit ≙ ${SFN} kN`);
     dw.setLabel('t_sub', [CELL[1][0] + 2.0, CELL[0][1] + 3.6]);
 
@@ -428,11 +434,11 @@ export function create(dw, panel, makePlayer) {
        fx(V.add(anchor, V.mul(dir, Math.max(V.dot(V.sub(node, anchor), dir), 0) + 1.9)))];
     dw.setDashLine('la2', reach(NII, D2, d.dp.nodes[1]));
     dw.setDashLine('la1', reach(NI, D1, d.dp.nodes[2]));
-    let tp = V.add(fx(NII), V.mul(D2, 4.4));
+    let tp = V.add(fx(NII), V.mul(D2, 3.8));
     dw.setArrow('fF2', V.add(fx(NII), V.mul(D2, 0.9)), tp);
-    dw.setLabel('lfF2', V.add(tp, [-2.2, -1.1]));
+    dw.setLabel('lfF2', V.add(tp, [-2.2, -0.9]));
     dw.setText('lfF2', `F₂d = ${(F2K * d.lam).toFixed(0)} kN`);
-    tp = V.add(fx(NI), V.mul(D1, 4.4));
+    tp = V.add(fx(NI), V.mul(D1, 3.8));
     dw.setArrow('fF1', V.add(fx(NI), V.mul(D1, 0.9)), tp);
     dw.setLabel('lfF1', V.add(tp, [2.8, -0.6]));
     dw.setText('lfF1', `F₁d = ${(F1K * d.lam).toFixed(0)} kN`);
@@ -469,13 +475,15 @@ export function create(dw, panel, makePlayer) {
     dw.setText('ldn2', 'II′');
     dw.setLabel('ldn1', V.add(q[2], [1.5, -0.9]));
     dw.setText('ldn1', 'I′');
-    dw.setArrow('dF2', V.add(q[1], V.mul(D2, 0.9)), V.add(q[1], V.mul(D2, 3.8)));
-    dw.setArrow('dF1', V.add(q[2], V.mul(D1, 0.9)), V.add(q[2], V.mul(D1, 3.8)));
+    dw.setArrow('dF2', V.add(q[1], V.mul(D2, 0.9)), V.add(q[1], V.mul(D2, 3.2)));
+    dw.setArrow('dF1', V.add(q[2], V.mul(D1, 0.9)), V.add(q[2], V.mul(D1, 3.2)));
     const duA = V.unit(V.sub(q[0], q[1])), duB = V.unit(V.sub(q[3], q[2]));
-    for (const [n, at, u, mag, off] of [['A', p[0], duA, Math.abs(d.dp.N[0]), 2.4],
-                                        ['B', p[3], duB, Math.abs(d.dp.N[2]), -2.4]]) {
-      dw.setArrow(`dre${n}`, at, V.add(at, V.mul(u, 4.4)));
-      dw.setLabel(`ldre${n}`, V.add(V.add(at, V.mul(u, 4.6)), [off, 0.5]));
+    // the b) reaction labels step OUTWARD, away from the midspan resultant
+    // label and from the a) reaction labels just below them
+    for (const [n, at, u, mag, off] of [['A', p[0], duA, Math.abs(d.dp.N[0]), -2.6],
+                                        ['B', p[3], duB, Math.abs(d.dp.N[2]), 2.6]]) {
+      dw.setArrow(`dre${n}`, at, V.add(at, V.mul(u, 3.8)));
+      dw.setLabel(`ldre${n}`, V.add(V.add(at, V.mul(u, 4.0)), [off, 0.5]));
       dw.setText(`ldre${n}`, `${n}′ = ${mag.toFixed(1)}`);
     }
 
@@ -485,7 +493,7 @@ export function create(dw, panel, makePlayer) {
     const P2 = V.add(P1, V.mul(d.F1, 1 / SFD));
     dw.setArrow('ff2', P0, P1);
     dw.setArrow('ff1', P1, P2);
-    dw.setLabel('lff2', V.add(V.mid(P0, P1), [-3.2, 0]));
+    dw.setLabel('lff2', V.add(V.mid(P0, P1), [-3.4, -1.0]));
     dw.setText('lff2', `F₂d ${(F2K * d.lam).toFixed(0)}`);
     dw.setLabel('lff1', V.add(V.mid(P1, P2), [-2.8, -0.4]));
     dw.setText('lff1', `F₁d ${(F1K * d.lam).toFixed(0)}`);

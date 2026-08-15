@@ -267,8 +267,10 @@ export function create(dw, panel, makePlayer) {
 
     dw.setLabel('form_title', [-14, -16.4]);
     dw.setText('form_title', `${d.tag} — Form diagram 1:100`);
-    dw.setLabel('force_title', [17, 21.4]);
-    dw.setLabel('force_sub', [17, 19.8]);
+    // 20.6 / 19.35, not 21.4 / 19.8: the sheet's task text is pinned across the
+    // top of the canvas and its banner covers everything above y = 21.30
+    dw.setLabel('force_title', [17, 20.6]);
+    dw.setLabel('force_sub', [17, 19.35]);
     dw.setText('force_sub', `1 unit ≙ ${(d.G / SFD).toFixed(2)} kN — the sheet asks for 1 cm ≙ 10 kN and gives no load`);
     dw.setLabel('note', [-14, -18.2]);
     dw.setText('note', d.c === 0

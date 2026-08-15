@@ -337,8 +337,20 @@ export function cremona(model, res) {
     if (f === E.outer) return;
     const p = [0, 0];
     for (const h of c) { p[0] += nodes[E.tail(h)][0]; p[1] += nodes[E.tail(h)][1]; }
-    at[innerIx.get(f)] = [p[0] / c.length, p[1] / c.length];
+    const g = [p[0] / c.length, p[1] / c.length];
+    // pull the label off the centroid toward the face's most distant corner:
+    // in a thin triangle the centroid is exactly where the diagonal's own force
+    // label wants to be, and two labels on one spot read as neither
+    let far = g, fd = 0;
+    for (const h of c) {
+      const q = nodes[E.tail(h)];
+      const dd = Math.hypot(q[0] - g[0], q[1] - g[1]);
+      if (dd > fd) { fd = dd; far = q; }
+    }
+    at[innerIx.get(f)] = [g[0] + (far[0] - g[0]) * 0.45, g[1] + (far[1] - g[1]) * 0.45];
   });
+  // an outer space sits against a RUN of boundary edges: write its name at the
+  // middle of that run by arc length, pushed out along the run's mean normal
   const runs = new Map();
   for (const h of ring0) {
     const s = spaceOfHalf.get(h);
@@ -346,12 +358,22 @@ export function cremona(model, res) {
     runs.get(s).push(h);
   }
   for (const [s, hs] of runs) {
-    const h = hs[(hs.length - 1) >> 1];
-    const a = nodes[E.tail(h)], b = nodes[E.head(h)];
-    const d = [b[0] - a[0], b[1] - a[1]];
-    const L = Math.hypot(d[0], d[1]) || 1e-12;
-    at[s] = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-    nrm[s] = [-d[1] / L, d[0] / L];        // the outer face is on the LEFT
+    const seg2 = hs.map((h) => {
+      const a = nodes[E.tail(h)], b = nodes[E.head(h)];
+      const d = [b[0] - a[0], b[1] - a[1]];
+      return { a, b, d, L: Math.hypot(d[0], d[1]) || 1e-12 };
+    });
+    const tot = seg2.reduce((t, g) => t + g.L, 0);
+    let want = tot / 2, mid = seg2[0].a;
+    for (const g of seg2) {
+      if (want <= g.L) { mid = [g.a[0] + g.d[0] * (want / g.L), g.a[1] + g.d[1] * (want / g.L)]; break; }
+      want -= g.L;
+    }
+    const n = [0, 0];
+    for (const g of seg2) { n[0] += -g.d[1] / g.L * g.L; n[1] += g.d[0] / g.L * g.L; }
+    const nl = Math.hypot(n[0], n[1]) || 1e-12;
+    at[s] = mid;
+    nrm[s] = [n[0] / nl, n[1] / nl];        // the outer face is on the LEFT
   }
 
   return { pts, nOuter, nf, name, seg, ext, ring, stage, order, read, err,

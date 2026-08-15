@@ -162,7 +162,9 @@ export const { meta, create } = makeJointTrussView({
   at: { form: 1, load: 1, reac: 3, mem: 4, poly: 5 },
   steps: STEPS,
   formTitle: () => 'Form diagram 1:100',
-  titlePos: { form: [-15, -14.6], force: [16, 21.4], sub: [16, 19.8],
+  // force/sub sit at 20.6 / 19.35, not 21.4 / 19.8: the sheet's task text is
+  // pinned across the top of the canvas and its banner covers y > 21.30
+  titlePos: { form: [-15, -14.6], force: [16, 20.6], sub: [16, 19.35],
               note: [-15, -16.3], zero: [-15, -18.0] },
 
   // the resultant R and its line of action through P1, which is the first

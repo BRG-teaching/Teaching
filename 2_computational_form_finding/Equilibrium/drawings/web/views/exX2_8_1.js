@@ -241,8 +241,10 @@ export function create(dw, panel, makePlayer) {
 
     dw.setLabel('form_title', [-11, -19.8]);
     dw.setText('form_title', `${d.nearest.tag} θ = ${d.th.toFixed(2)}° — form diagram`);
-    dw.setLabel('force_title', [17, 21.4]);
-    dw.setLabel('force_sub', [17, 19.8]);
+    // 20.6 / 19.35, not 21.4 / 19.8: the sheet's task text is pinned across the
+    // top of the canvas and its banner covers everything above y = 21.30
+    dw.setLabel('force_title', [17, 20.6]);
+    dw.setLabel('force_sub', [17, 19.35]);
     dw.setText('force_sub', `every length is a multiple of the load F · F drawn as ${SFD} units`);
     dw.setLabel('note', [15, -4.0]);
     dw.setText('note', 'all six support symbols on the sheet are pins — only the arrows differ');

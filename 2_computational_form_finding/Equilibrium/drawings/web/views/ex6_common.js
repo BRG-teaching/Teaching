@@ -209,7 +209,7 @@ export function makeTrussView(cfg) {
       Object.entries(d.loads).forEach(([k, v]) => {
         const q = ux(nodes[+k]);
         const u = V.unit(v);
-        const tail = V.sub(q, V.mul(u, 4.0));
+        const tail = V.sub(q, V.mul(u, 3.2));
         dw.setArrow(`f${k}`, tail, q);
         dw.setLabel(`lf${k}`, V.add(tail, [2.2, 0.4]));
         dw.setText(`lf${k}`, `${Math.hypot(v[0], v[1]).toFixed(0)} kN`);
@@ -220,8 +220,8 @@ export function makeTrussView(cfg) {
         const mag = Math.hypot(v[0], v[1]);
         const u = mag > 1e-6 ? V.unit(v) : [0, 1];
         // stop short of the joint, or the disk swallows the arrowhead
-        dw.setArrow(`re${k}`, V.sub(q, V.mul(u, 4.6)), V.sub(q, V.mul(u, 1.1)));
-        dw.setLabel(`lre${k}`, V.add(V.sub(q, V.mul(u, 4.2)), cfg.reacLabelOff(+k)));
+        dw.setArrow(`re${k}`, V.sub(q, V.mul(u, 4.0)), V.sub(q, V.mul(u, 1.0)));
+        dw.setLabel(`lre${k}`, V.add(V.sub(q, V.mul(u, 3.7)), cfg.reacLabelOff(+k)));
         dw.setText(`lre${k}`, `${nodeName(+k)} = ${mag.toFixed(1)}`);
       });
       const nz = d.zero.filter(Boolean).length;

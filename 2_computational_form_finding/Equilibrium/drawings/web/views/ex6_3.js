@@ -27,6 +27,14 @@
  *   bottom      −45 / −15 / 0 kN     (compression)
  *   diagonals   −63.64 / −42.43 / −21.21 kN
  * so the table reads F_c,max = 63.6 kN and F_t,max = 90.0 kN.
+ *
+ * THE FORCE DIAGRAM is the sheet's: one Cremona, built in `../lib/cremona.js`.
+ * Because the two supports stack on the wall, the load line is not a straight
+ * line here — the three 15 kN loads run down its left edge, the horizontal
+ * 90 kN reaction at T0 runs back along the top, and the inclined 100.6 kN pin
+ * reaction closes the triangle from the bottom back to the start, exactly the
+ * green triangle the sheet draws. Member 10, the 90 kN top chord at the wall,
+ * spans the diagram's whole width along the top, as it does on the sheet.
  */
 
 import { makeTrussView } from './ex6_common.js';
@@ -42,30 +50,28 @@ const members = [
   [0, 5], [1, 6], [2, 7],            // diagonals, all rising right
 ];
 const NAME = ['B0', 'B1', 'B2', 'B3', 'T0', 'T1', 'T2', 'T3'];
-const cells = [];
-for (let k = 0; k < 8; k++) cells.push([8 + (k % 2) * 15, 8 - Math.floor(k / 2) * 9]);
 
 const view = makeTrussView({
   title: 'EX 6.3 — a cantilevering truss, joint by joint',
   subtitle: 'Structural Design II · sheet EX 6 “Trusses”, task 3 a)–c)',
-  about: 'Three panels reaching out from a wall. The two supports are stacked one above the other, so they cannot share the load the way two supports across a span do — instead they form a couple, and the whole cantilever hangs from the top chord. That is the reversal worth seeing: in the spanning truss the bottom chord was in tension, and here it is the top. The empty table on the sheet wants the two governing forces, and the view fills it in.',
+  about: 'Three panels reaching out from a wall. The two supports are stacked one above the other, so they cannot share the load the way two supports across a span do — instead they form a couple, and the whole cantilever hangs from the top chord. That is the reversal worth seeing: in the spanning truss the bottom chord was in tension, and here it is the top. The force diagram is one Cremona, the same single reciprocal figure the sheet draws: the three loads down one edge, the horizontal reaction back along the top, the inclined pin reaction closing the green triangle. The empty table on the sheet wants the two governing forces, and the view fills it in.',
   nodes,
   members,
   supports: { 0: 'pin', 4: 'roller-h' },
   loads: { 5: [0, -15], 6: [0, -15], 7: [0, -15] },
-  MPU: 2.2,
-  ORG: [-22, -9],                 // dropped clear of the caption card
-  cells,
-  SFD: 16,
-  frame: [[-27, -31], [30, 22.5]],
-  titlePos: [[-16, -12.5], [15, 15.4], [15, 14.0]],
+  MPU: 2.6,
+  ORG: [-25, -8],                 // dropped clear of the caption card
+  fdCenter: [17, -7],
+  SFD: 3.5,
+  frame: [[-27, -27], [30, 16]],
+  titlePos: [[-16, -16.6], [17, 11.6], [17, 10.2]],
   nodeName: (i) => NAME[i],
   nodeLabelOff: (i) => (i < 4 ? [0, -2.0] : [0, 2.0]),
   labelSide: (m) => (m < 3 ? -1 : m < 6 ? 1 : m < 10 ? 1 : -1),
   reacLabelOff: (i) => (i === 0 ? [-3.6, -1.0] : [-3.6, 1.4]),
-  zeroLabelPos: [-16, -15.0],
+  zeroLabelPos: [-16, -18.4],
   supportDir: () => [-1, 0],
-  cellLabelOff: [0, 3.4],
+  bowOff: 5.2,
   result: (d) => [
     `a) the two supports form a couple: V = ${Math.abs(d.reactions[0][1]).toFixed(1)} kN up at the pin, and ±${Math.abs(d.reactions[0][0]).toFixed(1)} kN horizontal`,
     `b) ${d.zero.filter(Boolean).length} zero-force members: B0-T0, B2-B3 and B3-T3`,
@@ -75,19 +81,22 @@ const view = makeTrussView({
     { t: 'The truss', d: 'left: three square panels, all diagonals rising to the right. The two supports sit one above the other on the wall — the lower one a pin, the upper one a roller that can only push or pull horizontally',
       detail: (d) => [`three loads of ${Math.abs(d.loads[5][1]).toFixed(0)} kN; the joint against the wall at the top carries none`,
                       `${d.nm} members + ${d.nr} reactions = 2 × ${d.nn} joints → statically determinate`] },
-    { t: 'a) Global equilibrium', d: 'stacked supports cannot share a vertical load, so the pin takes all of it. What resists the overturning is the horizontal PAIR — the top pulling back and the bottom pushing out, one panel height apart',
+    { t: 'a) Global equilibrium — and the load line', d: 'stacked supports cannot share a vertical load, so the pin takes all of it. What resists the overturning is the horizontal PAIR — the top pulling back and the bottom pushing out, one panel height apart. Walk once round the outside laying those five external forces end to end and the load line appears on the right: it is a closed triangle here, not a straight line, because two of the forces are not vertical',
       detail: (d) => [`ΣV: the pin takes ${Math.abs(d.reactions[0][1]).toFixed(1)} kN`,
                       `ΣM about the pin: ${Math.abs(d.reactions[4][0]).toFixed(1)} kN each way, over the ${2.5} m between them`,
                       'that is why the top chord is in tension all along — it IS the top of the couple'] },
     { t: 'b) The zero members', d: 'three this time. The top wall joint has only two members and no load, so its vertical is zero; and the far bottom joint has two members and no load, so both of those are zero as well',
       detail: () => ['B0-T0 is zero: at T0 the reaction is horizontal, so nothing is left to balance a vertical',
-                     'B2-B3 and B3-T3 are zero: joint B3 has two members and no load'] },
-    { t: 'c) Now joint by joint', d: 'same rule as before — start where only two member forces are unknown, and close one polygon at a time. Watch the top chord: it is pink the whole way, which is what a cantilever looks like',
-      detail: () => ['pink is tension, navy compression, pale grey the three members carrying nothing'] },
+                     'B2-B3 and B3-T3 are zero: joint B3 has two members and no load',
+                     'each of the three shows up in the Cremona as a segment of zero length — its two spaces land on one point'] },
+    { t: 'c) Now joint by joint — one Cremona', d: 'same rule as before — start where only two member forces are unknown. Each joint adds its point to the ONE reciprocal figure and reuses the segments its neighbours already drew. Watch the top chord: it is pink the whole way, which is what a cantilever looks like',
+      detail: () => ['every space of the truss is a point, named a…e outside and 1…6 inside',
+                     'a member is the segment between the two points either side of it, parallel to it and to scale',
+                     'pink is tension, navy compression, pale grey the three members carrying nothing'] },
   ],
   nodeStep: (o, k) => ({
     t: `Joint ${NAME[o.node]}`,
-    d: `close the polygon at ${NAME[o.node]}. Every force meeting there, tip to tail, has to return to its start`,
+    d: `close ${NAME[o.node]} inside the Cremona. Every force meeting there, tip to tail, has to return to its start; the unknown members are lines parallel to them through points already fixed`,
     detail: (d) => {
       const at = members.map((mm, m) => [mm, m]).filter(([mm]) => mm.includes(o.node));
       const line = at.map(([mm, m]) => {

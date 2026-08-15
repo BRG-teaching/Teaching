@@ -125,7 +125,10 @@ const H_SHEET = 57.00;              // ... which is a 3.80 cm pole = 57.00 kN
 
 // ------------------------------------------------------------------ layout --
 const MPU = 1.95;                     // drawing units per metre (form diagram)
-const ORG = [-26.5, -4.4];            // support level of the form diagram
+// 1.3 units lower than the drawing wants: the load arrows and their labels
+// have to clear the step-caption card, whose lowest edge is y = 2.53, while
+// the form title still clears the RESULT card at y = -11.64
+const ORG = [-26.5, -5.7];            // support level of the form diagram
 const SFD = 5.5;                      // kN per drawing unit (force diagram)
 const KORG = [11.0, 13.6];            // q0, the top of the load line
 const KOFF = 2.20;                    // reactions on their own offset line
@@ -340,18 +343,18 @@ export const meta = {
   title: 'EX X · 15.1 + 15.2 — the roller that must not be pushed',
   subtitle: 'Structural Design I · sheet EX X “Additional Exercises”, page 15 (tasks 15.1 and 15.2)',
   about: 'A roller support cannot be pushed sideways, and that single fact is the whole of page 15. In 15.1 an arch is drawn for you and you have to design the cantilever that hangs past the roller so that its horizontal force exactly undoes the arch’s: one equation, one answer, the tip lands 1.480 m above the supports. In 15.2 a fourth load is added and nothing at all is drawn, so the thrust becomes a free design choice — and the roller condition turns out to be satisfied automatically, at the price of the tip height no longer being free. The sheet prints no numbers on either half, so every figure in this view is derived from the digitised geometry and then measured against the key’s drawing, which it matches everywhere inside 0.15 %. The check to watch is the horizontal one at B: it must come out zero, and when the tip is dragged off its answer a red arrow appears there to show exactly how far off it is.',
+  // four lines per stage, not five: the RESULT card is as tall as its text and
+  // the form diagram has to fit between it and the step caption
   result: (d) => (d.stage === 0 ? [
-    `15.1 given arch: the two nodes give H = ${d.hChk[0].toFixed(3)} and ${d.hChk[1].toFixed(3)} kN — it IS the funicular of ${d.F1.toFixed(0)}/${d.F2.toFixed(0)}; taken as H_arch = ${d.H.toFixed(2)} kN (a 3.80 cm pole)`,
-    `15.1 ANSWER — the cantilever tip goes y_T* = ${(d.F3 / (1 / (X3 - XB) - 1 / X3)).toFixed(3)}/${d.H.toFixed(2)} = ${d.yTstar.toFixed(4)} m above the supports, at x = ${X3.toFixed(2)} m; then H_cant = H_arch = ${d.H.toFixed(2)} kN`,
-    `15.1 members: 1 = ${d.mem[1].N.toFixed(2)} C · 2 = ${d.mem[2].N.toFixed(2)} C · 3 = ${d.mem[3].N.toFixed(2)} C · 4 = ${d.mem[4].N.toFixed(2)} T · 5 = ${d.mem[5].N.toFixed(2)} C${d.ok ? '   (2 and 4 are exactly parallel and exactly equal)' : '   — off the answer, so these are NOT an equilibrium state'}`,
-    `15.1 A = ${d.Av.toFixed(2)} kN ↑ · B = ${d.Bv.toFixed(2)} kN ↑, both vertical · unbalanced horizontal force at the roller B = ${Math.abs(d.resid).toFixed(2)} kN ${d.ok ? '✓' : '✗ — the tip is off its answer'}`,
-    `the key prints no numbers on page 15; its drawn tip is 1.480 m and its rays 88.26 / 57.41 / 61.20 / 57.41 / 68.15 kN — agreement to 0.15 %`,
+    `15.1 the given arch: both nodes give H = ${d.hChk[0].toFixed(3)} / ${d.hChk[1].toFixed(3)} kN — it IS the funicular of ${d.F1.toFixed(0)}/${d.F2.toFixed(0)}; take H_arch = ${d.H.toFixed(2)} kN`,
+    `15.1 ANSWER — the tip goes y_T* = ${(d.F3 / (1 / (X3 - XB) - 1 / X3)).toFixed(3)}/${d.H.toFixed(2)} = ${d.yTstar.toFixed(4)} m above the supports at x = ${X3.toFixed(2)} m; H_cant = H_arch = ${d.H.toFixed(2)} kN`,
+    `15.1 members: 1 = ${d.mem[1].N.toFixed(2)} C · 2 = ${d.mem[2].N.toFixed(2)} C · 3 = ${d.mem[3].N.toFixed(2)} C · 4 = ${d.mem[4].N.toFixed(2)} T · 5 = ${d.mem[5].N.toFixed(2)} C${d.ok ? '  (2 and 4 exactly parallel and equal)' : '  — off the answer, so NOT an equilibrium state'}`,
+    `15.1 A = ${d.Av.toFixed(2)} ↑ · B = ${d.Bv.toFixed(2)} ↑, both vertical · unbalanced horizontal force at B = ${Math.abs(d.resid).toFixed(2)} kN ${d.ok ? '✓ · the key’s drawn tip 1.480 m agrees to 0.15 %' : '✗ — the tip is off its answer'}`,
   ] : [
-    `15.2 R = ${d.Rtot.toFixed(0)} kN on x̄ = ${d.xbar.toFixed(3)} m → A = ${d.Av.toFixed(2)} kN ↑ · B = ${d.Bv.toFixed(2)} kN ↑, both vertical (the key’s point i on the load line)`,
-    `15.2 one free choice, the thrust H = ${d.H.toFixed(2)} kN → arch ${d.y1.toFixed(3)} / ${d.y2.toFixed(3)} / ${d.y3.toFixed(3)} m and the tip y_T = ${(d.F3 / (1 / (X3 - XB) - 1 / X3)).toFixed(3)}/H = ${d.yT.toFixed(4)} m`,
+    `15.2 R = ${d.Rtot.toFixed(0)} kN at x̄ = ${d.xbar.toFixed(3)} m → A = ${d.Av.toFixed(2)} kN ↑ · B = ${d.Bv.toFixed(2)} kN ↑, both vertical`,
+    `15.2 free choice H = ${d.H.toFixed(2)} kN → arch ${d.y1.toFixed(3)} / ${d.y2.toFixed(3)} / ${d.y3.toFixed(3)} m · tip y_T = ${(d.F3 / (1 / (X3 - XB) - 1 / X3)).toFixed(3)}/H = ${d.yT.toFixed(4)} m, and it still closes on B`,
     `15.2 members: 1 = ${d.mem[0].N.toFixed(2)} C · 2 = ${d.mem[1].N.toFixed(2)} C · 3 = ${d.mem[2].N.toFixed(2)} C · 4 = ${d.mem[3].N.toFixed(2)} C · 5 = ${d.mem[4].N.toFixed(2)} T · 6 = ${d.mem[5].N.toFixed(2)} C`,
-    `15.2 at the roller: member 4 delivers +${d.H.toFixed(2)} kN and member 6 −${d.H.toFixed(2)} kN → ΣH = 0.00 kN for every H, and the arch still closes on B (${d.yB.toExponential(1)} m)`,
-    `the key drew H ≈ 60.1 kN (a 4.007 cm pole); its nodes 2.058 / 2.900 / 2.619 and tip 1.403 m match this construction to 2 mm`,
+    `15.2 roller check: 4 gives +${d.H.toFixed(2)}, 6 −${d.H.toFixed(2)} kN → ΣH = 0.00 kN for every H · the key’s own drawing matches to 2 mm`,
   ]),
   frame: [[-31, -21], [27, 17]],
 };
@@ -536,7 +539,9 @@ export function create(dw, panel, makePlayer) {
 
     dw.setLabel('tForm', [ORG[0] + 5.6 * MPU, ORG[1] - 4.75]);
     dw.setText('tForm', `${PART[d.stage]}   ·   Form diagram 1:100`);
-    dw.setLabel('tForce', [KORG[0], KORG[1] + 2.4]);
+    // +1.4, not +2.4: the sheet's task text is pinned across the top of the
+    // canvas and its banner covers everything above y = 15.82
+    dw.setLabel('tForce', [KORG[0], KORG[1] + 1.4]);
 
     // the unbalanced horizontal force the roller would have to supply
     {
