@@ -295,11 +295,13 @@ export function create(dw, panel, makePlayer) {
     // the load, on its own line of action
     const yTip = d.c === 0 ? d.hinge[1] + 0.35 : d.hinge[1] + 0.35;
     const tip = ux([d.loadx, yTip]);
-    const tail = [tip[0], tip[1] + (d.loadDir < 0 ? 6.0 : -12.0)];
+    // 3.4 units, not 6: a longer downward load arrow — and its label — climb
+    // into the step-caption card, whose lowest edge is y = 2.06
+    const tail = [tip[0], tip[1] + (d.loadDir < 0 ? 3.4 : -12.0)];
     dw.setArrow('fG', tail, tip);
-    dw.setLabel('lfG', [tip[0] + 6.6, tip[1] + (d.loadDir < 0 ? 4.2 : -1.6)]);
+    dw.setLabel('lfG', [tip[0] + 6.6, tip[1] + (d.loadDir < 0 ? 2.4 : -1.6)]);
     dw.setText('lfG', `${d.c === 0 ? 'G_d' : 'Q_d'} = ${d.G.toFixed(0)} kN`);
-    dw.setDashLine('laG', [[tip[0], tip[1] + 7.0], ux([d.loadx, -1.4])]);
+    dw.setDashLine('laG', [[tip[0], tip[1] + 4.2], ux([d.loadx, -1.4])]);
 
     // the thrust line
     const tp = d.thrust.map(ux);

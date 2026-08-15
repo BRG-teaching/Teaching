@@ -139,7 +139,10 @@ const SEU = 0.080;                            // elevation arrows, drawing units
 
 const PO = [0, 8];                            // the plan, bottom-left
 const EO = [[0, -14], [15, -14], [30, -14]];  // the three elevations
-const FO = [-38, -2];                         // the force diagram origin
+// the force diagram sits in the strip the two UI cards leave free on the left:
+// the step caption reaches down to y ≈ 6.2 and the RESULT card up to y ≈ -9.2,
+// so the origin is low enough that the rectangle's title clears the caption
+const FO = [-38, -6];                         // the force diagram origin
 
 const DEFAULTS = { F: 100, yF: 6.00, xC: 15.80, edge: false, span46: true, lbl: true, _k: 99 };
 

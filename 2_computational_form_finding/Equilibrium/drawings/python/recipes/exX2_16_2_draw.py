@@ -17,24 +17,24 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-17, 4.2, 0), text='the member — support case 4)')
+add(0, 'label', Point(-17, 0.9, 0), text='the member — support case 4)')
 add(0, 'label', Point(15, 8.6, 0), text='Knickdiagramm — χ = N_allow / (A · f_cd) against l_cr / √A')
 add(0, 'label', Point(15, 7.2, 0), text="curves: European buckling curves, calibrated to the sheet's own read-offs")
 
 # step 1 — What is given
-add(1, 'segment', Line((-18, -8.2, 0), (-18, -0.2, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
-add(1, 'segment', Line((-19.8, -8.2, 0), (-16.2, -8.2, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
-add(1, 'segment', Line((-19.08, -8.2, 0), (-19.6457, -7.63431, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
-add(1, 'segment', Line((-18.36, -8.2, 0), (-18.9257, -7.63431, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
-add(1, 'segment', Line((-17.64, -8.2, 0), (-18.2057, -7.63431, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
-add(1, 'segment', Line((-16.92, -8.2, 0), (-17.4857, -7.63431, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
-add(1, 'segment', Line((-16.2, -8.2, 0), (-16.7657, -7.63431, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
-add(1, 'segment', Line((-19.5, 0.6, 0), (-16.5, 0.6, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
-add(1, 'point', Point(-18, -0.2, 0), color=Color.from_hex("#ffffff"), width=0.4144)
-add(1, 'arrow', Line((-18, 4.2, 0), (-18, 1.4, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
-add(1, 'label', Point(-13.6, 1.9, 0), color=Color.from_hex("#3f9c20"), text='N_cd = 300 kN')
-add(1, 'segment', Line((-21, -8.2, 0), (-21, -0.2, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
-add(1, 'label', Point(-23, -4.2, 0), color=Color.from_hex("#aaaaaa"), text='l = 5.00 m')
+add(1, 'segment', Line((-18, -8.8, 0), (-18, -3.6, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
+add(1, 'segment', Line((-19.8, -8.8, 0), (-16.2, -8.8, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
+add(1, 'segment', Line((-19.08, -8.8, 0), (-19.6457, -8.23432, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
+add(1, 'segment', Line((-18.36, -8.8, 0), (-18.9257, -8.23432, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
+add(1, 'segment', Line((-17.64, -8.8, 0), (-18.2057, -8.23432, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
+add(1, 'segment', Line((-16.92, -8.8, 0), (-17.4857, -8.23432, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
+add(1, 'segment', Line((-16.2, -8.8, 0), (-16.7657, -8.23432, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
+add(1, 'segment', Line((-19.5, -2.8, 0), (-16.5, -2.8, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
+add(1, 'point', Point(-18, -3.6, 0), color=Color.from_hex("#ffffff"), width=0.4144)
+add(1, 'arrow', Line((-18, 0.8, 0), (-18, -2, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
+add(1, 'label', Point(-13.6, -1.5, 0), color=Color.from_hex("#3f9c20"), text='N_cd = 300 kN')
+add(1, 'segment', Line((-21, -8.8, 0), (-21, -3.6, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
+add(1, 'label', Point(-23, -6.2, 0), color=Color.from_hex("#aaaaaa"), text='l = 5.00 m')
 add(1, 'segment', Line((2.6, -13, 0), (25.8, -13, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
 add(1, 'segment', Line((2.6, -13, 0), (2.6, 4.85, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
 add(1, 'segment', Line((2.6, -13, 0), (2.6, -13.6, 0)), color=Color.from_hex("#aaaaaa"), width=0.042336)
@@ -122,8 +122,8 @@ add(1, 'segment', Line((25.4133, -9.82113, 0), (25.8, -9.92204, 0)), color=Color
 add(1, 'label', Point(23.6667, -5.23017, 0), color=Color.from_hex("#1a1eb2"), text='square hollow section')
 
 # step 2 — The effective length
-add(2, 'segment', Line((-15, -8.2, 0), (-15, -2.6, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
-add(2, 'label', Point(-11.6, -5.4, 0), color=Color.from_hex("#1a1eb2"), text='l_cr = 3.500 m')
+add(2, 'segment', Line((-15, -8.8, 0), (-15, -5.16, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
+add(2, 'label', Point(-11.6, -6.98, 0), color=Color.from_hex("#1a1eb2"), text='l_cr = 3.500 m')
 
 # step 3 — The horizontal coordinate
 add(3, 'polyline', Polyline([(11.6784, -13, 0), (11.6784, 1.98299, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.5)

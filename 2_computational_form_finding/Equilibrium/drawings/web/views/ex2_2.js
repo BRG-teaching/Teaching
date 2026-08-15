@@ -20,7 +20,9 @@
  * thrust closes the polygon exactly on the right anchor: H = 52.8 kN.
  * Segment forces 74.7 / 54.4 / 59.5 kN, so N_d,max = 74.7 kN in the steep
  * segment at the left anchor.
- * b) f_td = 235/1.05 = 223.8 → A_req = 333.6 mm² → Ø 20.6 mm.
+ * b) f_td = 235/1.05 = 223.8 → A_req = 333.6 mm² → Ø 20.6 mm, and the sheet's
+ *    own answer is the next whole millimetre UP: Ø 21 mm. A 20 mm bar gives
+ *    314.2 mm² and 70.3 kN, which is less than the 74.7 kN it has to carry.
  * c) Ø18 S355: A = 254.5 mm², f_td = 338.1 → N_allow = 86.0 kN > 74.7 kN,
  *    so YES, the proof is satisfied at 87 % utilisation.
  */
@@ -33,7 +35,7 @@ export const meta = {
   subtitle: 'Structural Design I · sheet EX 2 “Dimensioning and Graphic Statics”, task 2',
   about: 'A cable bridge with its geometry given: two hangers carry the deck loads up to a cable slung between two anchors. Because the shape is given, the force diagram is fully determined — the rays parallel to the three cable segments meet in one pole, and the steepest segment carries the largest force. That force is then dimensioned: the required diameter in S235, and the axial force proof for a Ø18 mm S355 cable.',
   result: (d, st) => [`a) N_d,max = ${d.Nmax.toFixed(1)} kN in the steep segment (H = ${d.H.toFixed(1)} kN)`,
-                      `b) S235: A_req = ${d.Areq.toFixed(0)} mm² → Ø ${d.dreq.toFixed(1)} mm`,
+                      `b) S235: A_req = ${d.Areq.toFixed(0)} mm² → Ø ${d.dreq.toFixed(1)} mm → choose Ø ${d.dpick} mm (${d.Npick.toFixed(1)} kN; Ø ${d.dpick - 1} would carry only ${d.Nprev.toFixed(1)})`,
                       `c) Ø${st.d1} S355: N_allow = ${d.Nallow.toFixed(1)} kN ${d.safe ? '≥' : '<'} ${d.Nmax.toFixed(1)} kN → ${d.safe ? 'SAFE' : 'NOT SAFE'} (${(d.util * 100).toFixed(0)} %)`],
   frame: [[-25, -35], [47, 29.5]],
 };
@@ -80,7 +82,9 @@ const STEPS = [
     take: 'in a cable of given shape, every segment shares H — so the steepest one is always the critical one' },
   { t: 'b) The required diameter', d: 'with the relevant force known, the formulary does the rest: A_req = N_d / f_td and f_td = f_tk / γ_M',
     detail: (d) => [`S235: f_td = 235 / 1.05 = ${(235 / GM).toFixed(1)} N/mm²`,
-                    `A_req = ${(d.Nmax * 1000).toFixed(0)} / ${(235 / GM).toFixed(1)} = ${d.Areq.toFixed(0)} mm² → Ø ${d.dreq.toFixed(1)} mm`] },
+                    `A_req = ${(d.Nmax * 1000).toFixed(0)} / ${(235 / GM).toFixed(1)} = ${d.Areq.toFixed(0)} mm² → Ø ${d.dreq.toFixed(1)} mm`,
+                    `and a bar comes in whole millimetres: Ø ${d.dpick} mm, carrying ${d.Npick.toFixed(1)} kN — Ø ${d.dpick - 1} mm would carry only ${d.Nprev.toFixed(1)} kN and fail`],
+    take: 'round a diameter UP: rounding it down is not conservative, it is wrong' },
   { t: 'c) The proof for Ø18 in S355', d: 'the axial force proof asks one question: is the force the cable must carry smaller than the force it can carry?',
     detail: (d, st) => [`Ø${st.d1} mm → A = ${d.Aef.toFixed(0)} mm² · S355: f_td = ${(355 / GM).toFixed(1)} N/mm²`,
                         `N_allow = ${d.Nallow.toFixed(1)} kN ${d.safe ? '≥' : '<'} N_d = ${d.Nmax.toFixed(1)} kN → ${d.safe ? 'SAFE' : 'NOT SAFE'} (${(d.util * 100).toFixed(0)} % utilised)`],
@@ -109,11 +113,19 @@ function compute(s) {
   const ftd235 = STEEL.S235 / GM, ftd355 = STEEL.S355 / GM;
   const Areq = Nmax * 1000 / ftd235;
   const dreq = Math.sqrt(4 * Areq / Math.PI);
+  // a bar comes in whole millimetres, and rounding a diameter DOWN is not
+  // conservative -- the sheet's stated answer to b) is this, not dreq
+  const dpick = Math.ceil(dreq - 1e-9);
+  const Apick = (Math.PI * dpick ** 2) / 4;
+  const Npick = (Apick * ftd235) / 1000;
+  const Aprev = (Math.PI * (dpick - 1) ** 2) / 4;
+  const Nprev = (Aprev * ftd235) / 1000;
   const Aef = Math.PI * s.d1 * s.d1 / 4;
   const Nallow = Aef * ftd355 / 1000;
   return { s0, sl, n1, n2, H, N, Nmax, T, M, Bt, o,
            brk1: sl[1] - sl[0], brk2: sl[2] - sl[1],
-           Areq, dreq, Aef, Nallow, safe: Nallow >= Nmax, util: Nmax / Nallow };
+           Areq, dreq, dpick, Apick, Npick, Nprev,
+           Aef, Nallow, safe: Nallow >= Nmax, util: Nmax / Nallow };
 }
 
 export function create(dw, panel, makePlayer) {

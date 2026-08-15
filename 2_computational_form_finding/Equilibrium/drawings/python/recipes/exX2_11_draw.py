@@ -18,7 +18,7 @@ def add(step, kind, geometry, color=None, **style):
 
 # step 0 — The exercise
 add(0, 'label', Point(13.8875, 12.55, 0), text='Grundriss 1:200 — a) one beam across the middle')
-add(0, 'label', Point(-15, 2.8, 0), text='a) the single beam on its own')
+add(0, 'label', Point(-15, 1, 0), text='a) the single beam on its own')
 add(0, 'label', Point(10.2, -6.4, 0), text='R on every beam of every case — 1 unit ≙ 2.94 kN')
 
 # step 1 — The plate and its design load

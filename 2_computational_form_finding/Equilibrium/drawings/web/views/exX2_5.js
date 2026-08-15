@@ -182,7 +182,10 @@ export const { meta, create } = makeJointTrussView({
     // R itself, laid off backwards from P1 so it does not sit on top of F2
     dw.setArrow('rArr', [q[0] - u[0] * 11, q[1] - u[1] * 11],
                         [q[0] - u[0] * 4.2, q[1] - u[1] * 4.2]);
-    dw.setLabel('lR', [q[0] - u[0] * 11.5 - 1.0, q[1] - u[1] * 11.5 + 1.6]);
+    // below the line of action, not above it: above puts the label into the
+    // step-caption card, whose lowest edge sits at y = 2.06
+    dw.setLabel('lR', [q[0] - u[0] * 11 + u[1] * 2.6 - 0.8,
+                       q[1] - u[1] * 11 - u[0] * 2.6 - 0.2]);
     dw.setText('lR', `R = ${d.R.toFixed(2)} kN`);
   },
   controls: (panel, s, refresh) => {

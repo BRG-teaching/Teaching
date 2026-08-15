@@ -17,9 +17,9 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(14.5, 13.6, 0), text='a) isometric — 30 / 150 / 90°, foreshortening 0.8165')
-add(0, 'label', Point(-15, 2.373, 0), text='one deep beam, unrolled — 10.00 long × 1.21 deep')
-add(0, 'label', Point(14.5, 12.2, 0), text='no scale and no load magnitude are printed on this page')
+add(0, 'label', Point(14.5, 11.2, 0), text='a) isometric — 30 / 150 / 90°, foreshortening 0.8165')
+add(0, 'label', Point(-15, 1, 0), text='one deep beam, unrolled — 10.00 long × 1.21 deep')
+add(0, 'label', Point(14.5, 10, 0), text='no scale and no load magnitude are printed on this page')
 
 # step 1 — The skeleton
 add(1, 'segment', Line((14.5, -5.60263, 0), (23.9753, -0.132082, 0)), color=Color.from_hex("#aaaaaa"), width=0.06048)
@@ -77,20 +77,20 @@ add(3, 'segment', Line((9.76237, -2.86736, 0), (11.3416, -3.92621, 0)), color=Co
 add(3, 'segment', Line((11.3416, -3.92621, 0), (12.9208, -5.27926, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
 add(3, 'segment', Line((12.9208, -5.27926, 0), (14.5, -6.9265, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
 add(3, 'segment', Line((5.02473, -1.45596, 0), (14.5, -6.9265, 0)), color=Color.from_hex("#ce4095"), width=0.127411)
-add(3, 'segment', Line((-21.5, -3.6, 0), (-8.5, -3.6, 0)), color=Color.from_hex("#111111"), width=0.093542)
-add(3, 'segment', Line((-8.5, -3.6, 0), (-8.5, -2.027, 0)), color=Color.from_hex("#111111"), width=0.093542)
-add(3, 'segment', Line((-8.5, -2.027, 0), (-21.5, -2.027, 0)), color=Color.from_hex("#111111"), width=0.093542)
-add(3, 'segment', Line((-21.5, -2.027, 0), (-21.5, -3.6, 0)), color=Color.from_hex("#111111"), width=0.093542)
-add(3, 'segment', Line((-21.5, -3.6, 0), (-19.3333, -2.72611, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
-add(3, 'segment', Line((-19.3333, -2.72611, 0), (-17.1667, -2.20178, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
-add(3, 'segment', Line((-17.1667, -2.20178, 0), (-15, -2.027, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
-add(3, 'segment', Line((-15, -2.027, 0), (-12.8333, -2.20178, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
-add(3, 'segment', Line((-12.8333, -2.20178, 0), (-10.6667, -2.72611, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
-add(3, 'segment', Line((-10.6667, -2.72611, 0), (-8.5, -3.6, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
-add(3, 'segment', Line((-21.5, -3.6, 0), (-8.5, -3.6, 0)), color=Color.from_hex("#ce4095"), width=0.127411)
-add(3, 'label', Point(-3.8, -2.6562, 0), color=Color.from_hex("#1a1eb2"), text='compression arch')
-add(3, 'label', Point(-5, -5.3, 0), color=Color.from_hex("#ce4095"), text='tension tie')
-add(3, 'label', Point(-15, 0.873, 0), color=Color.from_hex("#3f9c20"), text='g3 — no value is given')
+add(3, 'segment', Line((-21.5, -5.6, 0), (-8.5, -5.6, 0)), color=Color.from_hex("#111111"), width=0.093542)
+add(3, 'segment', Line((-8.5, -5.6, 0), (-8.5, -4.027, 0)), color=Color.from_hex("#111111"), width=0.093542)
+add(3, 'segment', Line((-8.5, -4.027, 0), (-21.5, -4.027, 0)), color=Color.from_hex("#111111"), width=0.093542)
+add(3, 'segment', Line((-21.5, -4.027, 0), (-21.5, -5.6, 0)), color=Color.from_hex("#111111"), width=0.093542)
+add(3, 'segment', Line((-21.5, -5.6, 0), (-19.3333, -4.72611, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
+add(3, 'segment', Line((-19.3333, -4.72611, 0), (-17.1667, -4.20178, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
+add(3, 'segment', Line((-17.1667, -4.20178, 0), (-15, -4.027, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
+add(3, 'segment', Line((-15, -4.027, 0), (-12.8333, -4.20178, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
+add(3, 'segment', Line((-12.8333, -4.20178, 0), (-10.6667, -4.72611, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
+add(3, 'segment', Line((-10.6667, -4.72611, 0), (-8.5, -5.6, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)
+add(3, 'segment', Line((-21.5, -5.6, 0), (-8.5, -5.6, 0)), color=Color.from_hex("#ce4095"), width=0.127411)
+add(3, 'label', Point(-3.8, -4.6562, 0), color=Color.from_hex("#1a1eb2"), text='compression arch')
+add(3, 'label', Point(-5, -7.3, 0), color=Color.from_hex("#ce4095"), text='tension tie')
+add(3, 'label', Point(-15, -1.727, 0), color=Color.from_hex("#3f9c20"), text='g3 — no value is given')
 
 # step 4 — Where it lands
 add(4, 'arrow', Line((15.0124, -6.9265, 0), (15.0124, -8.56767, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
@@ -101,9 +101,9 @@ add(4, 'arrow', Line((15.0124, 4.01459, 0), (15.0124, 2.37343, 0)), color=Color.
 add(4, 'arrow', Line((3.99993, -1.45596, 0), (3.99993, -3.09712, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
 add(4, 'arrow', Line((4.51233, -1.45596, 0), (4.51233, -3.09712, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
 add(4, 'arrow', Line((15.5248, -6.9265, 0), (15.5248, -8.56767, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
-add(4, 'arrow', Line((-21.5, -4.2, 0), (-21.5, -7, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
-add(4, 'arrow', Line((-8.5, -4.2, 0), (-8.5, -7, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
-add(4, 'label', Point(-15, -7.8, 0), color=Color.from_hex("#3f9c20"), text='g·L/2 into each corner')
+add(4, 'arrow', Line((-21.5, -6.2, 0), (-21.5, -8.4, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
+add(4, 'arrow', Line((-8.5, -6.2, 0), (-8.5, -8.4, 0)), color=Color.from_hex("#3f9c20"), width=0.110477, head=(0.357235, 0.153216))
+add(4, 'label', Point(-15, -9.2, 0), color=Color.from_hex("#3f9c20"), text='g·L/2 into each corner')
 
 # step 5 — Down to the ground
 add(5, 'segment', Line((14.5, -6.9265, 0), (14.5, -10.2088, 0)), color=Color.from_hex("#1a1eb2"), width=0.127411)

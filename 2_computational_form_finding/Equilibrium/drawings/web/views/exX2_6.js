@@ -155,8 +155,11 @@ const E_MEM = [[0, 1], [0, 3], [1, 2], [1, 3], [2, 4], [3, 4], [2, 5], [3, 6],
 // ---------------------------------------------------------------------------
 
 const SFD = 14;
-const POLY_MPU = 2.3, POLY_ORG = [-26, -6];
-const WIDE_MPU = 4.2, WIDE_ORG = [-26, -8];
+// both origins sit low enough that the load arrows standing on top of the beam
+// clear the step-caption card, whose lowest edge is y = 2.06 once the sheet's
+// task text is pinned above the canvas
+const POLY_MPU = 2.3, POLY_ORG = [-26, -8];
+const WIDE_MPU = 4.2, WIDE_ORG = [-26, -10];
 
 const base = {
   supports: { 0: 'pin' },

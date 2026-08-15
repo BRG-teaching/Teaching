@@ -368,8 +368,8 @@ export function create(dw, panel, makePlayer) {
 
     dw.setLabel('t_form', [TX + 3.75 * TM, 11.0]);
     dw.setText('t_form', `Lageplan 1:100 — span ${NODE[4][0].toFixed(3)} m`);
-    dw.setLabel('t_force', [21.5, 11.0]);
-    dw.setText('t_force', `Kräfteplan — 1 unit ≙ ${(1 / SFD).toFixed(1)} kN (sheet: 1 cm ≙ 100 kN)`);
+    dw.setLabel('t_force', [23.0, 11.0]);
+    dw.setText('t_force', `Kräfteplan — 1 cm ≙ 100 kN`);
     dw.setLabel('t_sec', [-13.8, 1.15]);
     dw.setText('t_sec', `the two elements in section — 1 mm ≙ ${SECM} units`);
 

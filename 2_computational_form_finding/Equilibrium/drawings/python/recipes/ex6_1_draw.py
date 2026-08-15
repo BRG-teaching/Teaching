@@ -52,9 +52,9 @@ add(2, 'segment', Line((-9.06, -2.55, 0), (-9.6964, -1.9136, 0)), color=Color.fr
 add(2, 'segment', Line((-8.38, -2.55, 0), (-9.0164, -1.9136, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
 add(2, 'segment', Line((-7.7, -2.55, 0), (-8.3364, -1.9136, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
 add(2, 'segment', Line((-11.2, -3.5, 0), (-7.6, -3.5, 0)), color=Color.from_hex("#aaaaaa"), width=0.05616)
-add(2, 'label', Point(-24.4, 4.2, 0), text='A')
-add(2, 'label', Point(-16.2, -10.2, 0), color=Color.from_hex("#3f9c20"), text='11 + 3 − 14 = +0 determinate')
-add(2, 'label', Point(-15.2, 4.2, 0), text='Warren truss')
+add(2, 'label', Point(-24.4, 3, 0), text='A')
+add(2, 'label', Point(-16.2, -8.6, 0), color=Color.from_hex("#3f9c20"), text='11 + 3 − 14 = +0 determinate')
+add(2, 'label', Point(-15.2, 3, 0), text='Warren truss')
 
 # step 3 — B — the stepped truss
 add(3, 'segment', Line((-6.4, -2, 0), (-2.9898, 1.4102, 0)), color=Color.from_hex("#1a1eb2"), width=0.11831)
@@ -95,9 +95,9 @@ add(3, 'segment', Line((7.82932, -5.32749, 0), (6.92933, -5.32749, 0)), color=Co
 add(3, 'segment', Line((8.31016, -4.84666, 0), (7.41016, -4.84666, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
 add(3, 'segment', Line((8.79099, -4.36583, 0), (7.89099, -4.36583, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
 add(3, 'segment', Line((6.98787, -7.51245, 0), (9.53345, -4.96687, 0)), color=Color.from_hex("#aaaaaa"), width=0.05616)
-add(3, 'label', Point(-7.8, 4.2, 0), text='B')
-add(3, 'label', Point(0.4, -12.6, 0), color=Color.from_hex("#3f9c20"), text='17 + 3 − 20 = +0 determinate')
-add(3, 'label', Point(1.4, 4.2, 0), text='stepped truss')
+add(3, 'label', Point(-7.8, 3, 0), text='B')
+add(3, 'label', Point(0.4, -9.4, 0), color=Color.from_hex("#3f9c20"), text='17 + 3 − 20 = +0 determinate')
+add(3, 'label', Point(1.4, 3, 0), text='stepped truss')
 
 # step 4 — C — the X-braced panels
 add(4, 'segment', Line((10.2, -2, 0), (15.2932, -2, 0)), color=Color.from_hex("#ce4095"), width=0.11831)
@@ -117,6 +117,8 @@ add(4, 'point', Point(20.3864, -2, 0), color=Color.from_hex("#ffffff"), width=0.
 add(4, 'point', Point(10.2, 1.4102, 0), color=Color.from_hex("#ffffff"), width=0.26936)
 add(4, 'point', Point(15.2932, 1.4102, 0), color=Color.from_hex("#ffffff"), width=0.26936)
 add(4, 'point', Point(20.3864, 1.4102, 0), color=Color.from_hex("#ffffff"), width=0.26936)
+add(4, 'point', Point(12.7466, -0.2949, 0), color=Color.from_hex("#ffffff"), width=0.26936)
+add(4, 'point', Point(17.8398, -0.2949, 0), color=Color.from_hex("#ffffff"), width=0.26936)
 add(4, 'segment', Line((9.18, -2.55, 0), (8.5436, -1.9136, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
 add(4, 'segment', Line((9.86, -2.55, 0), (9.2236, -1.9136, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
 add(4, 'segment', Line((10.54, -2.55, 0), (9.9036, -1.9136, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
@@ -128,9 +130,9 @@ add(4, 'segment', Line((20.7264, -2.55, 0), (20.09, -1.9136, 0)), color=Color.fr
 add(4, 'segment', Line((21.4064, -2.55, 0), (20.77, -1.9136, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
 add(4, 'segment', Line((22.0864, -2.55, 0), (21.45, -1.9136, 0)), color=Color.from_hex("#aaaaaa"), width=0.039312)
 add(4, 'segment', Line((18.5864, -3.5, 0), (22.1864, -3.5, 0)), color=Color.from_hex("#aaaaaa"), width=0.05616)
-add(4, 'label', Point(8.8, 4.2, 0), text='C')
-add(4, 'label', Point(15.2932, -10.2, 0), color=Color.from_hex("#ce4095"), text='11 + 3 − 12 = +2 OVER-determined ×2')
-add(4, 'label', Point(16.2932, 4.2, 0), text='two X-braced panels')
+add(4, 'label', Point(8.8, 3, 0), text='C')
+add(4, 'label', Point(15.2932, -8.6, 0), color=Color.from_hex("#ce4095"), text='15 + 3 − 16 = +2 OVER-determined ×2')
+add(4, 'label', Point(16.2932, 3, 0), text='two X-braced panels')
 
 
 if __name__ == "__main__":

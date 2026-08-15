@@ -24,8 +24,12 @@ export const meta = {
   title: 'EX 1.3 — Resultant of several parallel forces',
   subtitle: 'Structural Design I · sheet EX 1 “Equilibrium”, task 3',
   about: 'Three welded steel boxes, each contributing its own weight. Parallel forces have no crossing point at all, so the trial funicular is the only way to place their resultant — and here the position IS the answer: if the resultant falls outside the patch where the sculpture touches the ground, it tips. Drag the boxes and watch the verdict flip.',
-  result: (d) => [`R = ${d.R.toFixed(0)} kN vertical, at x̄ = ${d.xbar.toFixed(2)}`,
-                  `contact patch ${d.foot[0].toFixed(2)} … ${d.foot[1].toFixed(2)} → ${d.stable ? 'STABLE' : 'NOT STABLE, the sculpture tips'}`],
+  // measured from the foot's LEFT EDGE, which is the origin the sheet uses
+  result: (d) => [`R = ${d.R.toFixed(0)} kN vertical, on the line x̄ = ${mm(d, d.xbar).toFixed(3)} m`,
+                  `contact patch ${mm(d, d.foot[0]).toFixed(3)} … ${mm(d, d.foot[1]).toFixed(3)} m`,
+                  d.stable
+                    ? `STABLE — the resultant lands ${(d.margin * M_PER_UNIT).toFixed(3)} m inside the nearer edge`
+                    : `NOT STABLE — the resultant misses the patch by ${(d.margin * M_PER_UNIT).toFixed(3)} m, so the sculpture tips`],
   frame: [[2, -36], [72, 17.5]],
 };
 
@@ -43,6 +47,12 @@ const DEFAULTS = {
 };
 
 // box sizes in drawing units (1.5x1.0, 3.0x0.5, 1.0x1.0 m at 1:50)
+// 6.80 drawing units is the 1.000 m bottom box, so this converts back to the
+// metres the sheet works in -- quoting a stability margin in drawing units is
+// no use to anyone
+const M_PER_UNIT = 1.0 / 6.80;
+// positions in metres from the foot's left edge, the sheet's own origin
+const mm = (d, u) => (u - d.foot[0]) * M_PER_UNIT;
 const GY = -18.0;                        // ground level in the view's frame
 const BOX = [
   { w: 10.20, h: 6.79, y: GY + 10.20 }, // top
@@ -60,10 +70,11 @@ const STEPS = [
   { t: 'Close it: the point S', d: 'left: the first and last strings, extended (dashed), meet at S — the resultant passes through it',
     take: 'for parallel forces this is the ONLY way to find the position — there is no intersection of lines of action to use' },
   { t: 'The resultant — in both diagrams', d: 'right: R closes the load line — left: the same vector on the vertical through S, dashed green',
-    detail: (d) => [`R = ${d.R.toFixed(0)} kN, vertical, at x̄ = ${d.xbar.toFixed(2)}`] },
+    detail: (d) => [`R = ${d.R.toFixed(0)} kN, vertical, on the line x̄ = ${mm(d, d.xbar).toFixed(3)} m`] },
   { t: 'Stable or not?', d: 'left: the sculpture only touches the ground under the bottom box (heavy line). The resultant falls OUTSIDE that patch, so the weight cannot be balanced by a contact force — the sculpture tips over the near edge',
-    detail: (d) => [`resultant at x̄ = ${d.xbar.toFixed(2)} · contact patch ${d.foot[0].toFixed(2)} … ${d.foot[1].toFixed(2)}`,
-                    d.stable ? 'inside the patch → STABLE' : `outside by ${d.margin.toFixed(2)} units → NOT STABLE`],
+    detail: (d) => [`resultant at x̄ = ${mm(d, d.xbar).toFixed(3)} m · contact patch ${mm(d, d.foot[0]).toFixed(3)} … ${mm(d, d.foot[1]).toFixed(3)} m`,
+                    d.stable ? 'inside the patch → STABLE'
+                             : `outside by ${(d.margin * M_PER_UNIT).toFixed(3)} m → NOT STABLE`],
     take: 'a body standing free is stable only while the resultant of its weight lands inside the contact patch' },
 ];
 

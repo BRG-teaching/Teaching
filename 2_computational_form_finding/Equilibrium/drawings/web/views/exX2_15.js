@@ -302,7 +302,7 @@ export function create(dw, panel, makePlayer) {
     dw.setText('t_plan', `Grundriss 1:200 — arrows here at 1 unit ≙ ${(1 / FARR).toFixed(0)} kN`);
     dw.setLabel('t_fd', [FDX, 1.0]);
     dw.setText('t_fd', `Kräfteplan — this page says 1 cm ≙ 20 kN`);
-    dw.setLabel('t_elev', [14.0, -5.6]);
+    dw.setLabel('t_elev', [14.0, -7.0]);
     dw.setText('t_elev', `Wandansichten 1:100 — the arrows are symbols, the numbers exact`);
 
     // ---- the plan

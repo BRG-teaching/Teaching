@@ -17,7 +17,7 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-15, 3.6, 0), text='one column, l = 5.00 m — drawn at 1 m ≙ 1.40 units')
+add(0, 'label', Point(-15, 0.8, 0), text='one column, l = 5.00 m — drawn at 1 m ≙ 1.40 units')
 add(0, 'label', Point(15.7, 8.6, 0), text="the sheet's five conditions, and their l_cr to the same scale")
 
 # step 1 — One column, three switches

@@ -56,6 +56,13 @@ const DIA = [
     nodes: [[0, 0], [1.498, 0], [2.996, 0], [0, 1.003], [1.498, 1.003], [2.996, 1.003]],
     members: [[0, 1], [1, 2], [3, 4], [4, 5], [0, 3], [1, 4], [2, 5],
               [3, 1], [0, 4], [4, 2], [1, 5]],
+    // The sheet counts the two crossings AS JOINTS: pin them and each panel's
+    // two diagonals become four half-diagonals, so S goes 11 → 15 and K goes
+    // 6 → 8, and the sheet prints "15 + 3 > 16". The degree is +2 either way,
+    // because pinning a crossing adds two members and one joint, and a joint
+    // is worth two equations: +4 members against +2 joints × 2 = 0.
+    xnodes: [[0.749, 0.5015], [2.247, 0.5015]],
+    xS: 15, xK: 8,
     A: 3, supports: [0, 2], roller: 2,
     why: 'each panel is already rigid with ONE diagonal, so the second one in each is surplus',
   },
@@ -75,7 +82,8 @@ export const meta = {
   result: (d) => [
     `A  ${d[0].S} + ${d[0].A} − 2 × ${d[0].K} = ${d[0].deg >= 0 ? '+' : ''}${d[0].deg} → statically determinate`,
     `B  ${d[1].S} + ${d[1].A} − 2 × ${d[1].K} = ${d[1].deg >= 0 ? '+' : ''}${d[1].deg} → statically determinate`,
-    `C  ${d[2].S} + ${d[2].A} − 2 × ${d[2].K} = +${d[2].deg} → OVER-determined by two, one surplus diagonal per panel`],
+    `C  ${d[2].S} + ${d[2].A} − 2 × ${d[2].K} = +${d[2].deg} → OVER-determined by two, one surplus diagonal per panel`,
+    'C counts either way: pin the two crossings and it reads 15 + 3 > 16 as the sheet prints it; leave them unpinned and it reads 11 + 3 − 12. Pinning a crossing adds two members and one joint, and a joint is worth two equations, so the degree cannot change'],
   frame: [[-26, -19], [26, 20]],
 };
 
@@ -105,15 +113,20 @@ const STEPS = [
     take: 'determinate is not a synonym for good — it is a statement about whether statics alone can answer you' },
 ];
 
-function compute() {
-  return DIA.map((D) => ({
-    S: D.members.length, A: D.A, K: D.nodes.length,
-    deg: D.members.length + D.A - 2 * D.nodes.length,
-  }));
+function compute(s) {
+  return DIA.map((D) => {
+    // the sheet's own count for C pins the two crossings; both readings are
+    // legitimate and both give the same degree, which is the point worth making
+    const pin = s.pinX && D.xS;
+    const S = pin ? D.xS : D.members.length;
+    const K = pin ? D.xK : D.nodes.length;
+    return { S, A: D.A, K, deg: S + D.A - 2 * K,
+             alt: D.xS ? { S: D.xS, K: D.xK, deg: D.xS + D.A - 2 * D.xK } : null };
+  });
 }
 
 export function create(dw, panel, makePlayer) {
-  const s = { lbl: true, surplus: true, _k: 99 };
+  const s = { lbl: true, surplus: true, pinX: true, _k: 99 };
 
   dw.label('form_title', 'Form diagrams — no loads, no scale: this task is a count',
     { cls: 'title', flash: false });
@@ -131,6 +144,10 @@ export function create(dw, panel, makePlayer) {
     });
     D.nodes.forEach((p, i) => {
       dw.disk(`n${k}_${i}`, { intro: 2 + k, r: dw.W.disk * 0.7, when: shown });
+    });
+    (D.xnodes || []).forEach((p, i) => {
+      dw.disk(`x${k}_${i}`, { intro: 2 + k, r: dw.W.disk * 0.7,
+        when: (st) => shown(st) && st.pinX });
     });
     D.supports.forEach((i) => {
       dw.strokes(`h${k}_${i}`, 5, { intro: 2 + k, w: dw.W.dim, color: PAL.grey,
@@ -152,7 +169,7 @@ export function create(dw, panel, makePlayer) {
   let d = null;
   function refresh() {
     s._k = player.k;
-    d = compute();
+    d = compute(s);
     dw.setLabel('form_title', [12, 12.4]);
     dw.setLabel('rule', [12, 10.6]);
     dw.setText('rule', 'S members + A reaction components  vs  2 × K joints');
@@ -161,6 +178,7 @@ export function create(dw, panel, makePlayer) {
       const ux = (p) => [ORG[k][0] + p[0] * MPU, ORG[k][1] + p[1] * MPU];
       D.members.forEach((mm, m) => dw.setSeg(`m${k}_${m}`, ux(D.nodes[mm[0]]), ux(D.nodes[mm[1]])));
       D.nodes.forEach((p, i) => dw.setDisk(`n${k}_${i}`, ux(p)));
+      (D.xnodes || []).forEach((p, i) => dw.setDisk(`x${k}_${i}`, ux(p)));
       D.supports.forEach((i) => {
         const q = ux(D.nodes[i]);
         // diagram B's right support rolls on a plane at 45 degrees
@@ -180,7 +198,8 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`tag${k}`, [ORG[k][0] - 1.4, ORG[k][1] + 5.0]);
       dw.setLabel(`nm${k}`, [cx + 1.0, ORG[k][1] + 5.0]);
       // staggered, because three long lines side by side would collide
-      dw.setLabel(`cnt${k}`, [cx, ORG[k][1] - (k === 1 ? 10.6 : 8.2)]);
+      // staggered, and kept above the RESULT card, whose top is at y = -9.4
+      dw.setLabel(`cnt${k}`, [cx, ORG[k][1] - (k === 1 ? 7.4 : 6.6)]);
       dw.setText(`cnt${k}`,
         `${c.S} + ${c.A} − ${2 * c.K} = ${c.deg >= 0 ? '+' : ''}${c.deg}`
         + (c.deg === 0 ? ' determinate' : ` OVER-determined ×${c.deg}`));
@@ -193,6 +212,7 @@ export function create(dw, panel, makePlayer) {
   const player = makePlayer(STEPS, refresh);
   const par = panel.section('Show');
   panel.toggle(par, s, 'surplus', 'grey out C’s two surplus diagonals', refresh);
+  panel.toggle(par, s, 'pinX', 'C: count the crossings as joints (as the sheet does)', refresh);
   panel.toggle(par, s, 'lbl', 'show labels', refresh);
 
   refresh();

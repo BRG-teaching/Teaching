@@ -326,8 +326,8 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('t_plan', [PORG[0] + (SLW / 2) * SC.plan, 11.0]);
     dw.setText('t_plan', `Grundriss 1:200 — arrows here at 1 unit ≙ ${(1 / FARR).toFixed(0)} kN`);
     dw.setLabel('t_fd', [FDX, 1.2]);
-    dw.setText('t_fd', `Kräfteplan — the sheet's own 1 cm ≙ 10 kN (${SC.force.toFixed(2)} units/kN)`);
-    dw.setLabel('t_elev', [14.0, -5.6]);
+    dw.setText('t_fd', `Kräfteplan — 1 cm ≙ 10 kN`);
+    dw.setLabel('t_elev', [14.0, -7.0]);
     dw.setText('t_elev', `Wandansichten 1:100 — the arrows are symbols, the numbers exact`);
 
     // ---- the plan
@@ -379,7 +379,7 @@ export function create(dw, panel, makePlayer) {
     const p0 = [FDX - (d.F * SC.force) / 2, FDY];
     const p1 = [p0[0] + d.F * SC.force, FDY];
     dw.setArrow('fdF', p0, p1);
-    dw.setLabel('lfdF', V.add(V.mid(p0, p1), [0, 1.4]));
+    dw.setLabel('lfdF', V.add(V.mid(p0, p1), [0, -1.3]));
     dw.setText('lfdF', `F = ${d.F.toFixed(2)}`);
     const q1 = [p1[0] + d.lam[0] * SC.force, FDY - 2.2];
     dw.setArrow('fdA', [p1[0], FDY - 2.2], q1);
@@ -461,7 +461,7 @@ export function create(dw, panel, makePlayer) {
       [eC(over[0], over[1]), eC(PANL - INSET, 0)]]);
     dw.setSeg('cTie', eC(INSET, 0), eC(PANL - INSET, 0));
     dw.setSeg('cHang', eC(INSET, 0), eC(INSET, HCLR));
-    dw.setLabel('lcPath', eC(over[0] + 1.75, over[1] - 2.05));
+    dw.setLabel('lcPath', [eC(PANL / 2, 0)[0], eC(0, 0)[1] - 3.0]);
     dw.setText('lcPath', 'over the hole');
 
     panel.syncAll();

@@ -131,8 +131,11 @@ const SEU = 0.080;                            // elevation arrows, drawing units
 // ------------------------------------------------------------------ layout
 const PO = [0, 8];                                    // plan, bottom-left
 const EO = [[0, -14], [15, -14], [30, -14]];          // the three elevations
-const FO = [-41, 5];                                  // entry-node force polygon
-const GO = [-41, -9];                                 // the P₁ force polygon
+// the force polygons live in the strip the two UI cards leave free on the
+// left: the step caption reaches down to y ≈ 6.2 and the RESULT card up to
+// y ≈ -15.8, so the column sits between them with the title just under 6.2
+const FO = [-41, 2.6];                                // entry-node force polygon
+const GO = [-41, -11.4];                              // the P₁ force polygon
 
 const DEFAULTS = { F: 100, yF: 6.00, ang: 0, span46: true, lbl: true, _k: 99 };
 
@@ -141,13 +144,14 @@ export const meta = {
   subtitle: 'Structural Design II · sheet EX 10 “Bracing & Horizontal Forces”, task 2 a)–b)',
   about: 'A 16 by 12 metre floor slab with three walls in it — two along the top and bottom edges, one standing free in the middle — and a horizontal force pushed in from the left. The two edge walls take it in equal halves and the middle wall takes nothing at all, because the force arrives exactly on the line of symmetry. That zero is the lesson of the sheet, and it is also the thing the sheet never admits. Slide the force up and down: the halves become unequal, and the middle wall stays at zero, because it is the only wall that could take a force across the slab and the load has no component that way. Only turning the force does anything to it.',
   result: (d) => [
-    `walls take force ALONG THEIR OWN AXIS · A and C on y = 11.80 / 0.20 take x · B on x = 8.80 takes y`,
-    `A = ${Math.abs(d.A).toFixed(2)} kN in ${d.A < 0 ? '−x' : '+x'} · B = ${Math.abs(d.B) < 5e-3 ? '0.00' : Math.abs(d.B).toFixed(2) + ' kN in ' + (d.B < 0 ? '−y' : '+y')} · C = ${Math.abs(d.C).toFixed(2)} kN in ${d.C < 0 ? '−x' : '+x'}   (F = ${d.F.toFixed(1)} kN at y = ${d.yF.toFixed(2)} m, ${d.ang.toFixed(0)}°)`,
+    `a wall works only along its own axis: A, C take x · B takes y`,
+    `A = ${Math.abs(d.A).toFixed(2)} ${d.A < 0 ? '−x' : '+x'} · B = ${Math.abs(d.B) < 5e-3 ? '0.00' : Math.abs(d.B).toFixed(2) + ' ' + (d.B < 0 ? '−y' : '+y')} · C = ${Math.abs(d.C).toFixed(2)} kN ${d.C < 0 ? '−x' : '+x'}  (F ${d.F.toFixed(1)}, y ${d.yF.toFixed(2)} m, ${d.ang.toFixed(0)}°)`,
     d.pure
-      ? `B = 0 exactly: F has no y component, and B is the only wall that can take one — Σ F_y = 0 settles it for EVERY position of F`
-      : `turning F to ${d.ang.toFixed(0)}° gives it a y component of ${d.Fy.toFixed(2)} kN, and wall B is the only wall that can take it: B = ${Math.abs(d.B).toFixed(2)} kN`,
-    `slab flow: struts ${d.N1.toFixed(2)} / ${d.N2.toFixed(2)} kN to the two axis crossings · ties ${Math.abs(d.T3).toFixed(2)} / ${Math.abs(d.T6).toFixed(2)} kN into A and C · ${Math.abs(d.T4).toFixed(2)} kN along wall B, equal and opposite at its two ends`,
-    `wall bases (z = ${ZMID.toFixed(2)} m, span ${d.span.toFixed(2)} m): A → H ${Math.abs(d.A).toFixed(2)}, V ±${d.VA.toFixed(2)} kN · C → H ${Math.abs(d.C).toFixed(2)}, V ±${d.VC.toFixed(2)} kN · B → H ${Math.abs(d.B).toFixed(2)}, V ±${d.VB.toFixed(2)} kN`],
+      ? `B = 0 exactly — F has no y component, and only B could take one`
+      : `F at ${d.ang.toFixed(0)}° has F_y = ${d.Fy.toFixed(2)} kN, and only wall B can take it: B = ${Math.abs(d.B).toFixed(2)}`,
+    `slab: struts ${d.N1.toFixed(2)}/${d.N2.toFixed(2)} · ties ${Math.abs(d.T3).toFixed(2)}/${Math.abs(d.T6).toFixed(2)} into A, C · ${Math.abs(d.T4).toFixed(2)} kN along B`,
+    `wall bases, the slab force landing at z = ${ZMID.toFixed(2)} m over a ${d.span.toFixed(2)} m span:`,
+    `A → H ${Math.abs(d.A).toFixed(2)}, V ±${d.VA.toFixed(2)} · B → H ${Math.abs(d.B).toFixed(2)}, V ±${d.VB.toFixed(2)} · C → H ${Math.abs(d.C).toFixed(2)}, V ±${d.VC.toFixed(2)} kN`],
   frame: [[-40, -26], [40, 26]],
 };
 

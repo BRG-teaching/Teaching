@@ -154,8 +154,12 @@ function chartCurve(x) {
 // ------------------------------------------------------------------ layout
 const CX0 = 2, CY0 = -22, KX = 38 / 190, KY = 24 / 1.1;   // the chart box
 const XMAX = 190, VMAX = 1.1;
-const COL = [-37, -3], CH = 3.0;              // the column sketch, units per metre
-const FIX = [-25, -3];                        // the braced column beside it
+// the two column sketches live in the strip the UI cards leave free on the
+// left: the step caption reaches down to y ≈ 6.2 and the RESULT card up to
+// y ≈ -11.8, so their bases sit low enough for the N_d arrow and the titles
+// above them to clear the caption
+const COL = [-37, -8.5], CH = 3.0;            // the column sketch, units per metre
+const FIX = [-25, -8.5];                      // the braced column beside it
 const STRIP = { y: 9.5, x0: 2, dx: 8.2, h: 4.0 };
 
 const DEFAULTS = { l: 2.4, A: 400, Nd: 54, cas: 0, sect: 0, euler: true, lbl: true, _k: 99 };
@@ -165,15 +169,17 @@ export const meta = {
   subtitle: 'Structural Design II · sheet EX 10 “Bracing & Horizontal Forces”, task 4 a)–b)',
   about: 'A 2.4 metre steel column, 400 square millimetres of solid round bar, pinned at both ends, asked to carry 54 kilonewtons. The cross-section itself is fine — it could squash at 135 kN — but a solid round bar is the worst possible shape for its area, and at this length it goes sideways long before it goes short. Two numbers put it on the sheet\'s chart, and the point lands far above the curve. Euler agrees and is harsher: it buckles at 4.58 kN, so the column is overloaded almost twelvefold. The view also carries the sheet\'s own problem honestly: the printed chart is not self-consistent, and reads about 1.6 times kinder than theory.',
   result: (d) => [
-    `f_cd = ${F_CK}/${GAM_M} = ${F_CD.toFixed(2)} N/mm² (compendium 2.6 — not printed on the sheet) · √A = ${d.rA.toFixed(3)} mm`,
-    `case ${d.cas.k}) ${d.cas.s} ⇒ l_cr = ${d.lcr.toFixed(0)} mm · l_cr/√A = ${d.x.toFixed(1)} · N_d/(A·f_cd) = ${d.v.toFixed(4)}`,
-    `chart read-off ${d.vChart.toFixed(4)} ⇒ N_allow = ${d.NallowChart.toFixed(2)} kN · Euler ${d.vEuler.toFixed(4)} ⇒ N_cr = ${d.Ncr.toFixed(3)} kN`,
+    `f_cd = ${F_CK}/${GAM_M} = ${F_CD.toFixed(2)} N/mm² (compendium 2.6) · √A = ${d.rA.toFixed(3)} mm`,
+    `case ${d.cas.k}) ${d.cas.s} ⇒ ${d.lcr.toFixed(0)} mm · l_cr/√A = ${d.x.toFixed(1)} · N_d/(A·f_cd) = ${d.v.toFixed(4)}`,
+    `chart ${d.vChart.toFixed(4)} ⇒ N_allow = ${d.NallowChart.toFixed(2)} kN · Euler ${d.vEuler.toFixed(4)} ⇒ N_cr = ${d.Ncr.toFixed(3)} kN`,
     d.fails
-      ? `VERDICT: the point lies ABOVE the curve — it BUCKLES. N_d/N_cr = ${d.util.toFixed(2)} (Euler) · ${(d.Nd / d.NallowChart).toFixed(2)} (chart)`
-      : `VERDICT: the point lies below the curve — stable. N_d/N_cr = ${d.util.toFixed(2)} (Euler)`,
-    `the longest it could be: ${d.lmaxE.toFixed(0)} mm by Euler, ${d.lmaxC.toFixed(0)} mm by the chart — the given column is ${(d.lcr / d.lmaxE).toFixed(1)}× too long`,
-    `fixes: ${d.nRes} lateral restraint${d.nRes === 1 ? '' : 's'} at ${(d.lcr / (d.nRes + 1)).toFixed(0)} mm ⇒ N_cr = ${d.NcrRes.toFixed(1)} kN ✓ · or the same ${d.A.toFixed(0)} mm² as a ⌀${(2 * d.Rt).toFixed(1)} × ${(d.Rt - d.rt).toFixed(2)} mm tube ⇒ N_cr = ${d.NcrTube.toFixed(1)} kN`,
-    `section fine on material: N_pl,d = A·f_cd = ${d.Npl.toFixed(2)} kN — buckling governs by ${(d.Npl / d.Ncr).toFixed(1)}×. The chart itself is soft to ~1.6× (see the caption)`],
+      ? `it BUCKLES — above the curve. N_d/N_cr = ${d.util.toFixed(2)} Euler · ${(d.Nd / d.NallowChart).toFixed(2)} chart`
+      : `it HOLDS — below the curve. N_d/N_cr = ${d.util.toFixed(2)} (Euler)`,
+    `longest possible: ${d.lmaxE.toFixed(0)} mm Euler, ${d.lmaxC.toFixed(0)} mm chart — this one is ${(d.lcr / d.lmaxE).toFixed(1)}× that`,
+    `fix 1: ${d.nRes} lateral restraint${d.nRes === 1 ? '' : 's'} at ${(d.lcr / (d.nRes + 1)).toFixed(0)} mm ⇒ N_cr = ${d.NcrRes.toFixed(1)} kN ✓`,
+    `fix 2: the same ${d.A.toFixed(0)} mm² as a ⌀${(2 * d.Rt).toFixed(1)} × ${(d.Rt - d.rt).toFixed(2)} mm tube ⇒ N_cr = ${d.NcrTube.toFixed(1)} kN`,
+    `material is fine: N_pl,d = A·f_cd = ${d.Npl.toFixed(2)} kN — buckling governs by ${(d.Npl / d.Ncr).toFixed(1)}×`,
+    `and the printed chart itself reads ~1.6× kinder than theory`],
   frame: [[-42, -26], [42, 26]],
 };
 

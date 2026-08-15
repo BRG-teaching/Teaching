@@ -55,7 +55,10 @@ const DRAWN = 25.77;                                  // ° below the horizontal
 // the inclination at which the load's line of action runs through A
 const FLIP = (Math.atan2(T[1], T[0]) * 180) / Math.PI;
 
-const MPU = 2.4, ORG = [-26, -6], SFD = 14;
+// ORG sits 4 units lower than the drawing wants, so the load arrow and its
+// label at the apex clear the step-caption card (whose lowest edge is y = 2.06
+// once the sheet's task text is pinned above the canvas)
+const MPU = 2.4, ORG = [-26, -10], SFD = 14;
 
 const CASE = {
   tag: 'p.2', name: 'asymmetric truss, one inclined 100 kN load',

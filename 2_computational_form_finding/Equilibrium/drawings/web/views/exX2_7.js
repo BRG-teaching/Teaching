@@ -87,7 +87,10 @@ import { makeJointTrussView, funicular } from '../lib/exx2first.js';
 const W = 8.997, HGT = 3.093;
 const XA = 0.127, XB = 8.875;                 // the pin and roller of a) – c)
 const XA_D = 5.399;                           // d)'s pin, at 0.6 × the width
-const MPU = 2.3, ORG = [-26, -7], SFD = 10;
+// ORG is set low enough that the crown of the slab, its node label and the
+// load standing on it clear the step-caption card, whose lowest edge is
+// y = 2.06 once the sheet's task text is pinned above the canvas
+const MPU = 2.3, ORG = [-26, -8.6], SFD = 10;
 
 // ------------------------------------------------------------------- a) ----
 const QPT = [3.331, HGT];                     // where F's line crosses the top

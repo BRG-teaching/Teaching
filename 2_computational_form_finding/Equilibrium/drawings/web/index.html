@@ -108,8 +108,15 @@
     padding: 9px 18px 10px;
     background: #f7f8f9; border-bottom: 1px solid #e4e6e9;
     font-size: 12px; line-height: 1.5; color: #44474d;
-    pointer-events: none; z-index: 3;
+    /* CAPPED, for the same reason the caption card is: the drawing below is
+       composed against a known band, and a banner that grows with its text
+       silently eats the top of every view. The caption card is pinned 76 px
+       down, so anything past that would cover it. Scrollable past the cap. */
+    max-height: 66px; overflow-y: auto; overscroll-behavior: contain;
+    pointer-events: auto; z-index: 3;
   }
+  .eq-task::-webkit-scrollbar { width: 6px; }
+  .eq-task::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 3px; }
   .eq-task b { color: #18181b; margin-right: 10px; }
   .eq-task em {
     display: block; margin-top: 2px; font-style: normal;
