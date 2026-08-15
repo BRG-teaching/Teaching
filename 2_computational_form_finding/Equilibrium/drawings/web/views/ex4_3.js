@@ -61,15 +61,15 @@ export const meta = {
   title: 'EX 4 Creative — a cathedral that stands up',
   subtitle: 'Structural Design I · sheet EX 4 “Arch structures”, Creative task a)–c)',
   about: 'The nave vault is given; everything holding it up is yours to design. Stone only works in compression, so the whole job is keeping one line of thrust inside the masonry all the way to the ground. The pier between nave and aisle can only be pushed straight down, and that single condition fixes how deep the aisle vault has to be. Then the buttress has to turn a sideways shove into a vertical one — drag its width and its weight until the thrust line stays inside it.',
-  result: (d) => [`the given nave vault: H = ${d.Hn.toFixed(2)} kN, 400 kN per springing → ${d.Rn.toFixed(1)} kN at ${d.angN.toFixed(2)}° off vertical`,
+  result: (d) => [`the given nave vault: H = ${d.Hn.toFixed(2)} kN, 400 kN per springing → ${d.Rspring.toFixed(1)} kN at ${d.angN.toFixed(2)}° off vertical`,
                   `a) the aisle vault must match that thrust → rise f = ${d.fa.toFixed(3)} m; the pier head then takes ${d.pier.toFixed(0)} kN straight down`,
                   d.ok ? `b) buttress ${d.b.toFixed(2)} m wide with G = ${d.G.toFixed(0)} kN: the thrust line lands ${d.inside.toFixed(2)} m inside the base — IT STANDS`
                        : `b) buttress ${d.b.toFixed(2)} m wide with G = ${d.G.toFixed(0)} kN: the thrust line falls ${(-d.inside).toFixed(2)} m OUTSIDE the base — it overturns`],
-  frame: [[-25, -17], [25, 18]],
+  frame: [[-25, -22], [25, 18]],
 };
 
-const MPU = 1.05;                     // drawing units per metre (1:100 sheet)
-const OX = -20, GY = -13.5;           // metre-zero, and the ground line
+const MPU = 1.00;                     // drawing units per metre (1:100 sheet)
+const OX = -20, GY = -13.2;           // metre-zero, and the ground line
 const PIER = [5.0, 10.0];             // pier axes, m
 const BUT = [0.0, 15.0];              // buttress axes, m
 const SPR = 6.956;                    // springing level, m
@@ -86,7 +86,7 @@ const DEFAULTS = {
   auto: true,                         // aisle rise solved, or dragged
   fa: 2.199,
   lbl: true, _k: 99,
-  o1: true, sIF: 0.0035,
+  o1: true, sIF: 0.0013,
 };
 
 const SHAPED = 3;
@@ -100,8 +100,7 @@ const STEPS = [
     detail: () => [`g₁d = ${G1} kN/m over the ${NAVE} m nave → R₁d = ${G1 * NAVE} kN, exactly the sheet's printed value`,
                    `g₂d = g₃d = ${G2} kN/m over each ${AISLE} m aisle`] },
   { t: 'What the nave pushes with', d: 'right: the nave’s own force triangle. 400 kN down at each springing, and a thrust read off the given rise. It is remarkably small — a pointed arch is steep where it meets the pier, so it barely pushes sideways',
-    detail: (d) => [`H = q·L²/(8f) = ${G1}·${NAVE}²/(8·${RISE_N}) = ${d.Hn.toFixed(2)} kN`,
-                    `each springing: ${d.Rn.toFixed(1)} kN, only ${d.angN.toFixed(2)}° off vertical`],
+    detail: (d) => [`H = q·L²/(8f) = ${d.Hn.toFixed(2)} kN · each springing ${d.Rspring.toFixed(1)} kN, only ${d.angN.toFixed(2)}° off vertical`],
     take: 'the pointed arch was not a style decision — it is how you keep the thrust nearly vertical' },
   { t: 'a) The aisle vault, from one condition', d: 'the pier between nave and aisle is a thin wall: it can carry weight straight down but nothing sideways. So whatever the nave pushes with, the aisle has to push back with exactly the same — and that fixes the aisle vault’s depth completely',
     detail: (d) => [`required H = ${d.Hn.toFixed(2)} kN · aisle load ${G2 * AISLE} kN → V = ${(G2 * AISLE / 2).toFixed(0)} kN`,
@@ -110,17 +109,13 @@ const STEPS = [
   { t: 'a) The pier is quiet', d: 'left: at the pier head the two thrusts arrive pointing at each other and cancel. What is left goes straight down the pier into the ground — which is why the pier can be as thin as it is',
     detail: (d) => [`pier head: ${(G1 * NAVE / 2).toFixed(0)} + ${(G2 * AISLE / 2).toFixed(0)} = ${d.pier.toFixed(0)} kN vertical, 0 kN horizontal`] },
   { t: 'b) The buttress has a problem', d: 'at the outer end there is nothing to push back. The aisle arrives with 113.68 kN of sideways push almost seven metres above the ground, and that is a large overturning moment for a thin wall to swallow',
-    detail: (d) => [`at the wall head: ${(G2 * AISLE / 2).toFixed(0)} kN down and ${d.Hn.toFixed(2)} kN outward, ${SPR.toFixed(3)} m up`,
-                    `overturning moment about the base: ${(d.Hn * SPR).toFixed(1)} kNm`] },
+    detail: (d) => [`${(G2 * AISLE / 2).toFixed(0)} kN down and ${d.Hn.toFixed(2)} kN outward, ${SPR.toFixed(2)} m up → ${(d.Hn * SPR).toFixed(0)} kNm of overturning`] },
   { t: 'b) Weight is the answer', d: 'the only thing that turns a sideways push into a vertical one is weight. Add enough of it, over a wide enough base, and the thrust line bends down inside the masonry. Drag the width and the weight and watch the line move',
-    detail: (d) => [`G₁d ≥ ${(d.Hn * SPR * 2).toFixed(0)}/b − ${(G2 * AISLE / 2).toFixed(0)} kN to stay inside a base of width b`,
-                    `at b = ${d.b.toFixed(2)} m that is G ≥ ${d.Gmin.toFixed(0)} kN — you have ${d.G.toFixed(0)} kN`,
-                    d.ok ? `the resultant lands ${d.e.toFixed(3)} m off the axis, inside the ${(d.b / 2).toFixed(2)} m half-width ✓`
-                         : `the resultant lands ${d.e.toFixed(3)} m off the axis, outside the ${(d.b / 2).toFixed(2)} m half-width ✗`],
+    detail: (d) => [`G₁d ≥ ${(d.Hn * SPR * 2).toFixed(0)}/b − ${(G2 * AISLE / 2).toFixed(0)} kN · at b = ${d.b.toFixed(2)} m that is ${d.Gmin.toFixed(0)} kN, and you have ${d.G.toFixed(0)}`,
+                    `the resultant lands ${d.e.toFixed(2)} m off the axis, ${d.ok ? 'inside' : 'OUTSIDE'} the ${(d.b / 2).toFixed(2)} m half-width`],
     take: 'a pinnacle is not decoration — it is ballast, and the drawn 0.70 m one is nowhere near enough' },
   { t: 'c) And the same on the right', d: 'the right side is the mirror image and the numbers are identical. Every force in the building now has a continuous path of compression from the vault to the ground, which is all a stone cathedral ever needed',
-    detail: (d) => [`right aisle: the same ${d.fa.toFixed(3)} m rise, the same ${d.pier.toFixed(0)} kN at the pier head`,
-                    `total vertical into the ground: ${(G1 * NAVE + 2 * G2 * AISLE).toFixed(0)} kN of roof + the two buttresses`],
+    detail: (d) => [`the same ${d.fa.toFixed(3)} m rise, the same ${d.pier.toFixed(0)} kN at the pier head · ${(G1 * NAVE + 2 * G2 * AISLE).toFixed(0)} kN of roof in total`],
     take: 'every arch needs something to lean on, and the whole plan of a gothic cathedral is that argument worked outward' },
 ];
 
@@ -181,6 +176,7 @@ function pointed(x0, x1, ys, cx0, cx1, r, n) {
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
+  s.sIF = dw.bandScale(compute(s).Rspring);
   const ARR = dw.W.arrow, NARR = dw.W.narrow;
   const THR = { pending: PAL.black, final: (dd, st) => (st._k >= SHAPED ? PAL.blue : PAL.grey) };
 
@@ -265,9 +261,9 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-14, -15.6]);
-    dw.setLabel('force_title', [10, -11.4]);
-    dw.setLabel('force_sub', [10, -12.8]);
+    dw.setLabel('form_title', [-2, -18.0]);
+    dw.setLabel('force_title', [14, -13.0]);
+    dw.setLabel('force_sub', [14, -14.4]);
     dw.setText('force_sub', `to scale · 1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 100 kN)`);
 
     dw.setSeg('ground', [ux(-3.5), GY], [ux(18.5), GY]);
@@ -287,7 +283,7 @@ export function create(dw, panel, makePlayer) {
       const ptop = k === 0 ? 10.913 : 8.284;
       dw.setPoly(`pin${k}`, [[ux(bx - 0.35), uy(SPR)], [ux(bx + 0.35), uy(SPR)],
                              [ux(bx), uy(ptop)]]);
-      dw.setDashLine(`ax${k}`, [[ux(px), uy(17.2)], [ux(px), GY - 1.0]]);
+      dw.setDashLine(`ax${k}`, [[ux(px), uy(15.2)], [ux(px), GY - 1.0]]);
       dw.setDashLine(`bx${k}`, [[ux(bx), uy(13.0)], [ux(bx), GY - 1.0]]);
     }
     // the vault outline
@@ -299,7 +295,7 @@ export function create(dw, panel, makePlayer) {
       [[ux(ep[i][0]), uy(ep[i][1])], [ux(ep[i + 1][0]), uy(ep[i + 1][1])]]));
 
     // the loads
-    const bars = [['g1', PIER[0], PIER[1], 15.698, `g₁d = ${G1} kN/m`],
+    const bars = [['g1', PIER[0], PIER[1], 13.60, `g₁d = ${G1} kN/m`],
                   ['g2', BUT[0], PIER[0], 11.540, `g₂d = ${G2} kN/m`],
                   ['g3', PIER[1], BUT[1], 11.540, `g₃d = ${G2} kN/m`]];
     for (const [n, x0, x1, yy, txt] of bars) {
@@ -311,8 +307,8 @@ export function create(dw, panel, makePlayer) {
       dw.setLabel(`l_${n}`, [ux((x0 + x1) / 2), uy(yy + 1.5)]);
       dw.setText(`l_${n}`, txt);
     }
-    dw.setDashArrow('R1d', [ux(7.5), uy(18.3)], [ux(7.5), uy(16.9)]);
-    dw.setLabel('lR1d', [ux(7.5) + 6.0, uy(17.6)]);
+    dw.setDashArrow('R1d', [ux(7.5), uy(16.3)], [ux(7.5), uy(15.0)]);
+    dw.setLabel('lR1d', [ux(7.5) + 6.2, uy(15.7)]);
 
     // force diagram — the nave
     dw.setArrow('ffn', d.T, d.Mn);
@@ -355,23 +351,23 @@ export function create(dw, panel, makePlayer) {
     // the pier heads: purely vertical
     for (const k of [0, 1]) {
       dw.setArrow(`pierF${k}`, [ux(PIER[k]), uy(SPR)], [ux(PIER[k]), uy(SPR) - 3.0]);
-      dw.setLabel(`lpierF${k}`, [ux(PIER[k]) + (k ? 4.2 : -4.2), uy(SPR) - 1.6]);
+      dw.setLabel(`lpierF${k}`, [ux(PIER[k]) + (k ? 3.6 : -3.6), uy(SPR) - 3.4]);
       dw.setText(`lpierF${k}`, `${d.pier.toFixed(0)} kN`);
     }
     // the buttress: what arrives, the ballast, and where the thrust lands
     const head = [ux(BUT[0]), uy(SPR)];
     const uHead = V.unit([-d.Hn, -d.Va]);
     dw.setArrow('bhead', head, V.add(head, V.mul(uHead, 3.2)));
-    dw.setLabel('lbhead', V.add(head, V.mul(uHead, 4.6)));
+    dw.setLabel('lbhead', V.add(head, V.mul(uHead, 5.4)));
     dw.setText('lbhead', `${d.Va.toFixed(0)} ↓ · ${d.Hn.toFixed(0)} →`);
     dw.setArrow('gwt', [ux(BUT[0]), uy(SPR * 0.62) + 1.8], [ux(BUT[0]), uy(SPR * 0.62) - 0.6]);
-    dw.setLabel('lgwt', [ux(BUT[0]) - 3.4, uy(SPR * 0.62) + 0.6]);
+    dw.setLabel('lgwt', [ux(BUT[0]) - 4.2, uy(SPR * 0.62) + 1.6]);
     dw.setText('lgwt', `G₁d = ${d.G.toFixed(0)} kN`);
     const land = [ux(BUT[0] - d.e), GY];
     dw.setStrokes('bthrust', [[head, [ux(BUT[0]), uy(SPR * 0.62)]],
                               [[ux(BUT[0]), uy(SPR * 0.62)], land]]);
     dw.setDisk('bland', land);
-    dw.setLabel('lbland', [land[0] - 1.0, GY - 2.0]);
+    dw.setLabel('lbland', [land[0] - 6.0, GY - 1.4]);
     dw.setText('lbland', d.ok ? `inside by ${d.inside.toFixed(2)} m`
                               : `outside by ${(-d.inside).toFixed(2)} m`);
     dw.setSeg('bbase', [ux(BUT[0] - s.b / 2), GY - 0.35], [ux(BUT[0] + s.b / 2), GY - 0.35]);
@@ -390,7 +386,7 @@ export function create(dw, panel, makePlayer) {
   const giv = panel.section('Given');
   panel.toggle(giv, s, 'lbl', 'show labels', refresh);
   panel.toggle(giv, s, 'o1', 'thickness ∝ force (off: uniform)', refresh);
-  panel.slider(giv, s, 'sIF', 'scale internal forces', 0, 0.008, 0.0002, refresh);
+  panel.slider(giv, s, 'sIF', 'scale internal forces', 0, s.sIF * 2.5, s.sIF / 20, refresh);
 
   refresh();
   return player;
