@@ -24,6 +24,8 @@ export const meta = {
   title: 'EX 1.3 — Resultant of several parallel forces',
   subtitle: 'Structural Design I · sheet EX 1 “Equilibrium”, task 3',
   about: 'Three welded steel boxes, each contributing its own weight. Parallel forces have no crossing point at all, so the trial funicular is the only way to place their resultant — and here the position IS the answer: if the resultant falls outside the patch where the sculpture touches the ground, it tips. Drag the boxes and watch the verdict flip.',
+  result: (d) => [`R = ${d.R.toFixed(0)} kN vertical, at x̄ = ${d.xbar.toFixed(2)}`,
+                  `contact patch ${d.foot[0].toFixed(2)} … ${d.foot[1].toFixed(2)} → ${d.stable ? 'STABLE' : 'NOT STABLE, the sculpture tips'}`],
   frame: [[2, -26], [60, 14]],
 };
 

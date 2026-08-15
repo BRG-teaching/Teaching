@@ -25,6 +25,9 @@ export const meta = {
   title: 'EX 2.1 — Analysing cables with a given geometry',
   subtitle: 'Structural Design I · sheet EX 2 “Dimensioning and Graphic Statics”, task 1',
   about: 'The same span, the same load, two different sags. Closing the force polygon at the middle node gives the cable force directly, and the supports simply take the two ends of it. Halving the sag doubles the horizontal thrust and very nearly doubles the cable force — the flatter a cable, the harder it pulls. Drag the sag of either cable and watch both diagrams follow.',
+  result: (d) => [`a) sag h:   N = ${d.a.N.toFixed(1)} kN tension, thrust H = ${d.a.H.toFixed(1)} kN`,
+                  `b) sag h/2: N = ${d.b.N.toFixed(1)} kN tension, thrust H = ${d.b.H.toFixed(1)} kN`,
+                  `halving the sag doubles the thrust (×${(d.b.H / d.a.H).toFixed(2)})`],
   frame: [[-37, -45], [33, 5]],
 };
 

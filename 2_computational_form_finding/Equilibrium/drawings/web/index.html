@@ -96,9 +96,39 @@
   .eq-label.flash { color: #111; font-weight: 700; }
   .eq-label.hover { color: #c99700; }
 
+  /* ---- the exercise task, pinned across the top of the viewport ----- */
+  .eq-task {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 9px 18px 10px;
+    background: #f7f8f9; border-bottom: 1px solid #e4e6e9;
+    font-size: 12px; line-height: 1.5; color: #44474d;
+    pointer-events: none; z-index: 3;
+  }
+  .eq-task b { color: #18181b; margin-right: 10px; }
+  .eq-task em {
+    display: block; margin-top: 2px; font-style: normal;
+    font: 11px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #8a9099;
+  }
+  /* ---- the answer, pinned at the bottom ----------------------------- */
+  .eq-result {
+    position: absolute; left: 18px; bottom: 30px;
+    max-width: min(560px, calc(100% - 36px));
+    padding: 9px 14px 10px;
+    background: rgba(255, 255, 255, 0.97);
+    border: 1px solid #e2e4e7; border-left: 3px solid #3f9c20; border-radius: 6px;
+    font: 12px/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: #24303a; pointer-events: none;
+    box-shadow: 0 2px 10px rgba(20, 20, 30, 0.07);
+  }
+  .eq-result .res-h {
+    font: 700 10px/1 inherit; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #3f9c20; margin-bottom: 4px;
+  }
+
   /* ---- step caption card, top-left like the reference video --------- */
   .eq-caption {
     position: absolute; top: 14px; left: 18px;
+    /* an exercise view pins its task across the top; the card sits under it */
     width: max-content;
     max-width: min(500px, calc(100% - 36px));
     padding: 11px 15px 10px;
@@ -141,6 +171,8 @@
     font: 600 12px/1.45 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     color: var(--pink); margin-top: 5px;
   }
+
+  #viewport.has-task .eq-caption { top: 76px; }
 
   #error {
     position: absolute; inset: 0; display: none; place-content: center;
@@ -233,6 +265,13 @@
         const v = exMeta.views.find((x) => x.id === id);
         const sh = v && exMeta.sheets[v.sheet];
         if (sh) {
+          const banner = document.createElement('div');
+          banner.className = 'eq-task';
+          banner.innerHTML = `<b>${sh.code} · Task ${v.n ?? ''} — ${v.title}</b>
+            <span>${v.task}</span>${v.given ? `<em>${v.given}</em>` : ''}`;
+          const vp = document.getElementById('viewport');
+          vp.appendChild(banner);
+          vp.classList.add('has-task');
           const sec = panel.section('The exercise');
           const link = (u, t) => (u ? `<a href="${u}" target="_blank" rel="noopener">${t}</a>` : '');
           sec.innerHTML += `<p class="about"><b>${sh.code} · ${sh.title}</b><br>${v.task}</p>

@@ -26,6 +26,9 @@ export const meta = {
   title: 'EX 1.4 — Single node equilibrium',
   subtitle: 'Structural Design I · sheet EX 1 “Equilibrium”, task 4',
   about: 'Six little nodes, one lesson: at a loaded node the force polygon must CLOSE, and the shape of the polygon tells you everything. Where the members straddle the load, both are in tension or both in compression; where they lie on one side, one pushes while the other pulls; and where both are horizontal, no polygon can close at all — case e) is a mechanism, not a structure.',
+  result: (d) => d.r.map((x, i) => ('abcdef'[i] + ') ' + (x.ok
+    ? `N₁ = ${Math.abs(x.N1).toFixed(1)} ${x.N1 < 0 ? 'C' : 'T'}   N₂ = ${Math.abs(x.N2).toFixed(1)} ${x.N2 < 0 ? 'C' : 'T'}`
+    : 'no solution — both members are horizontal, so the polygon cannot close'))),
   frame: [[-46, -32], [58, 16]],
 };
 

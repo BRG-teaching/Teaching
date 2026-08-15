@@ -1173,6 +1173,14 @@ export class StepPlayer {
       <div class="cap-d"></div><div class="cap-x"></div><div class="cap-take"></div>`;
     dw.container.appendChild(this.caption);
 
+    // the answer, kept in view at the bottom: exercise views declare
+    // meta.result(d, state) -> [lines] and it is shown as soon as it exists
+    if (dw.meta && dw.meta.result) {
+      this.result = document.createElement('div');
+      this.result.className = 'eq-result';
+      dw.container.appendChild(this.result);
+    }
+
     // progress bar of the complete drawing (click / drag scrubs the steps)
     this.progress = document.createElement('div');
     this.progress.className = 'eq-progress';
@@ -1263,6 +1271,14 @@ export class StepPlayer {
     tk.style.display = take ? '' : 'none';
     this.progress.querySelector('.fill').style.width
       = `${(100 * this.k) / (this.steps.length - 1)}%`;
+
+    if (this.result) {
+      const lines = this.dw.meta.result(d, state) || [];
+      this.result.innerHTML = lines.length
+        ? `<div class="res-h">Result</div>${lines.map((l) => `<div>${l}</div>`).join('')}`
+        : '';
+      this.result.style.display = lines.length ? '' : 'none';
+    }
   }
 
   _start() {
