@@ -25,6 +25,15 @@
   header .count { font: 12px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
                   color: rgba(255,255,255,0.72); }
   header a { color: #fff; }
+  nav.wings { background: #1b7fc4; }
+  nav.wings .inner { max-width: 1440px; margin: 0 auto; padding: 0 40px; display: flex; gap: 2px; }
+  nav.wings a { display: block; padding: 13px 20px 12px; font-size: 14px; font-weight: 500;
+                letter-spacing: 0.02em; color: rgba(255,255,255,0.85); text-decoration: none; }
+  nav.wings a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+  nav.wings a.on { background: #eef0f2; color: #1b7fc4; font-weight: 700; }
+  @media (max-width: 599.98px) { nav.wings .inner { padding: 0 16px; } }
+  .given { font: 12px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+           color: #7a8a95; margin-top: 8px; display: block; }
   main { max-width: 1440px; margin: 0 auto; padding: 40px 40px 64px; }
   .sheet { margin-bottom: 44px; }
   .sheet h2 {
@@ -85,6 +94,11 @@
     </div>
   </header>
 
+  <nav class="wings"><div class="inner">
+    <a href="gallery.html">Drawings</a>
+    <a class="on" href="exercises.html">Exercises</a>
+  </div></nav>
+
   <main id="main"></main>
 
   <footer>
@@ -138,14 +152,20 @@
           <span class="d">the sheet and its material are linked above</span></div></div>`;
       }
       for (const v of mine) {
-        const a = document.createElement('a');
-        a.className = 'card';
-        a.href = `index.html?ex=${v.id}`;
+        const ok = await fetch(`./views/ex${v.id}.js`, { method: 'HEAD' })
+          .then((r) => r.ok).catch(() => false);
+        const a = document.createElement(ok ? 'a' : 'div');
+        a.className = ok ? 'card' : 'card todo';
+        if (ok) a.href = `index.html?ex=${v.id}`;
         a.innerHTML = `<div class="thumb"><div class="placeholder"></div></div>
-          <div class="meta-b"><span class="t">${v.title}</span><span class="d">${v.task}</span></div>`;
+          <div class="meta-b"><span class="t">${v.n ? 'Task ' + v.n + ' — ' : ''}${v.title}</span>
+          <span class="d">${v.task}</span>
+          ${v.given ? `<span class="given">${v.given}</span>` : ''}
+          ${ok ? '' : '<span class="given">worked drawing in preparation</span>'}</div>`;
         row.appendChild(a);
         const thumb = a.querySelector('.thumb');
         const my = idx++;
+        if (!ok) continue;
         fetch(`./movies/ex${v.id}.mp4`, { method: 'HEAD' }).then((r) => {
           if (!r.ok) return;
           thumb.textContent = '';

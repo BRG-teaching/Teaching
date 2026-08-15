@@ -22,12 +22,12 @@ export const meta = {
   title: 'EX 1.1 — Resultant of two non-parallel forces',
   subtitle: 'Structural Design I · sheet EX 1 “Equilibrium”, task 1',
   about: 'Two forces on different lines of action have one resultant, and finding it needs BOTH diagrams: the force diagram gives its size and direction (lay the two vectors tip to tail and close), the form diagram gives its position (it must pass through the point where the two lines of action cross). Drag the magnitudes and the angle — the answer follows live.',
-  frame: [[-4.2, -2.6], [8.6, 3.4]],
+  frame: [[-16.5, -9.5], [30.5, 11.5]],
 };
 
 const RESOLVE = 6;   // last step index (STEPS has 7 entries)
-const SFD = 20;                    // kN per drawing unit (1 cm ≙ 10 kN at 1:50)
-const FD0 = [4.6, 1.9];            // where the load line starts
+const SFD = 5;                     // kN per drawing unit (the sheet: 1 cm ≙ 10 kN)
+const FD0 = [19.5, 7.0];           // where the load line starts
 
 const DEFAULTS = {
   F1: 20, F2: 30,                  // kN, as printed on the sheet
@@ -68,15 +68,17 @@ function compute(s) {
   const p1 = V.add(p0, V.mul(v1, 1 / SFD));
   const p2 = V.add(p1, V.mul(v2, 1 / SFD));
   // form diagram: the arrows sit on their lines of action, tips at P's side
-  const t1 = V.sub(P, V.mul(d1, 1.15));           // F₁ arrow tail
-  const t2 = V.sub(P, V.mul(d2, 1.15));           // F₂ arrow tail
+  const t1 = V.sub(P, V.mul(d1, 5.2));            // F₁ arrow tail
+  const t2 = V.sub(P, V.mul(d2, 5.2));            // F₂ arrow tail
   return { d1, d2, P, v1, v2, Rv, R, ang, p0, p1, p2, t1, t2,
            uR: V.unit(Rv) };
 }
 
 export function create(dw, panel, makePlayer) {
   const s = { ...DEFAULTS };
-  const W = 0.16, ARR = { w: W, headLen: 0.42, headW: 0.17 };
+  // house line weights (identical to the drawing views, e.g. view_9)
+  const W_DIM = 0.05;
+  const ARR = { w: 0.18, headLen: 0.62, headW: 0.24 };   // big green vectors
 
   dw.label('form_title', 'Form Diagram', { cls: 'title', flash: false });
   dw.label('force_title', 'Force Diagram', { cls: 'title', flash: false });
@@ -93,11 +95,11 @@ export function create(dw, panel, makePlayer) {
   // the crossing point
   dw.dashLine('ext1', { intro: 4, color: PAL.grey, dash: 0.28 });
   dw.dashLine('ext2', { intro: 4, color: PAL.grey, dash: 0.28 });
-  dw.disk('ptP', { intro: 4, r: 0.11 });
+  dw.disk('ptP', { intro: 4, r: 0.42 });
   dw.label('lP', 'P', { cls: 'num', intro: 4, when: (st) => st.lbl });
   // the resultant, in the form diagram (house rule: dashed thick green)
   dw.dashArrow('Rform', { intro: RESOLVE - 1, color: PAL.green, w: 0.2,
-                          headLen: 0.5, headW: 0.21, dash: 0.3, flash: false });
+                          headLen: 0.68, headW: 0.26, dash: 1.0, flash: false });
   dw.label('lRform', 'R', { cls: 'num', intro: RESOLVE - 1, color: PAL.green });
 
   // ---- force diagram -------------------------------------------------
@@ -106,7 +108,7 @@ export function create(dw, panel, makePlayer) {
   dw.label('lff1', 'F₁', { cls: 'num', intro: 2, color: PAL.green, when: (st) => st.lbl });
   dw.label('lff2', 'F₂', { cls: 'num', intro: 3, color: PAL.green, when: (st) => st.lbl });
   dw.dashArrow('Rforce', { intro: RESOLVE - 1, color: PAL.green, w: 0.2,
-                           headLen: 0.5, headW: 0.21, dash: 0.3, flash: false });
+                           headLen: 0.68, headW: 0.26, dash: 1.0, flash: false });
   dw.label('lRforce', 'R', { cls: 'num', intro: RESOLVE - 1, color: PAL.green });
   // the answer, spelled out at the resolve step
   dw.label('ro1', '', { intro: RESOLVE, flash: false, color: PAL.green });
@@ -125,41 +127,41 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-2.6, -1.9]);
-    dw.setLabel('form_sub', [-2.6, -2.28]);
-    dw.setLabel('force_title', [6.3, -1.9]);
-    dw.setLabel('force_sub', [6.3, -2.28]);
+    dw.setLabel('form_title', [-13.5, -7.2]);
+    dw.setLabel('form_sub', [-13.5, -8.3]);
+    dw.setLabel('force_title', [19.0, -7.2]);
+    dw.setLabel('force_sub', [19.0, -8.3]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
-    dw.setDashLine('la1', [V.sub(d.P, V.mul(d.d1, 3.0)), V.add(d.P, V.mul(d.d1, 1.0))]);
-    dw.setDashLine('la2', [V.sub(d.P, V.mul(d.d2, 2.4)), V.add(d.P, V.mul(d.d2, 1.2))]);
-    dw.setArrow('f1', d.t1, V.sub(d.P, V.mul(d.d1, 0.30)));
-    dw.setArrow('f2', d.t2, V.sub(d.P, V.mul(d.d2, 0.30)));
-    dw.setLabel('lf1', V.add(V.mid(d.t1, d.P), V.mul(V.perp(d.d1), 0.32)));
-    dw.setLabel('lf2', V.add(V.mid(d.t2, d.P), V.mul(V.perp(d.d2), 0.32)));
+    dw.setDashLine('la1', [V.sub(d.P, V.mul(d.d1, 13.5)), V.add(d.P, V.mul(d.d1, 4.5))]);
+    dw.setDashLine('la2', [V.sub(d.P, V.mul(d.d2, 9.5)), V.add(d.P, V.mul(d.d2, 5.5))]);
+    dw.setArrow('f1', d.t1, V.sub(d.P, V.mul(d.d1, 1.3)));
+    dw.setArrow('f2', d.t2, V.sub(d.P, V.mul(d.d2, 1.3)));
+    dw.setLabel('lf1', V.add(V.mid(d.t1, d.P), V.mul(V.perp(d.d1), 1.2)));
+    dw.setLabel('lf2', V.add(V.mid(d.t2, d.P), V.mul(V.perp(d.d2), 1.2)));
 
-    dw.setDashLine('ext1', [d.P, V.add(d.P, V.mul(d.d1, 1.9))]);
-    dw.setDashLine('ext2', [d.P, V.add(d.P, V.mul(d.d2, 1.6))]);
+    dw.setDashLine('ext1', [d.P, V.add(d.P, V.mul(d.d1, 8.0))]);
+    dw.setDashLine('ext2', [d.P, V.add(d.P, V.mul(d.d2, 6.5))]);
     dw.setDisk('ptP', d.P);
-    dw.setLabel('lP', V.add(d.P, [0.3, 0.3]));
+    dw.setLabel('lP', V.add(d.P, [1.1, 1.1]));
 
     dw.setArrow('ff1', d.p0, d.p1);
     dw.setArrow('ff2', d.p1, d.p2);
-    dw.setLabel('lff1', V.add(V.mid(d.p0, d.p1), V.mul(V.perp(d.d1), 0.34)));
-    dw.setLabel('lff2', V.add(V.mid(d.p1, d.p2), [-0.36, 0]));
+    dw.setLabel('lff1', V.add(V.mid(d.p0, d.p1), V.mul(V.perp(d.d1), 1.25)));
+    dw.setLabel('lff2', V.add(V.mid(d.p1, d.p2), [-1.3, 0]));
     dw.setDashArrow('Rforce', d.p0, d.p2);
-    dw.setLabel('lRforce', V.add(V.mid(d.p0, d.p2), [0.42, 0.1]));
+    dw.setLabel('lRforce', V.add(V.mid(d.p0, d.p2), [1.5, 0.3]));
 
     // the resultant in the form diagram: through P, same direction
     const len = d.R / SFD;
     const rTail = V.sub(d.P, V.mul(d.uR, len * 0.35));
     const rTip = V.add(rTail, V.mul(d.uR, len));
     dw.setDashArrow('Rform', rTail, rTip);
-    dw.setLabel('lRform', V.add(rTip, [0.36, -0.16]));
+    dw.setLabel('lRform', V.add(rTip, [1.3, -0.6]));
 
-    dw.setLabel('ro1', [3.0, -1.9]);
+    dw.setLabel('ro1', [2.0, -7.2]);
     dw.setText('ro1', `R = ${d.R.toFixed(1)} kN`);
-    dw.setLabel('ro2', [3.0, -2.28]);
+    dw.setLabel('ro2', [2.0, -8.3]);
     dw.setText('ro2', `${d.ang.toFixed(1)}° below horizontal`);
 
     panel.syncAll();
