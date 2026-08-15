@@ -17,9 +17,9 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-30, -41.5, 0), text='Form Diagram')
-add(0, 'label', Point(14, -41.5, 0), text='Force Diagram')
-add(0, 'label', Point(14, -43.1, 0), text='1 unit :: 8 kN')
+add(0, 'label', Point(-4, -50, 0), text='Form Diagram')
+add(0, 'label', Point(14, -50, 0), text='Force Diagram')
+add(0, 'label', Point(14, -51.6, 0), text='1 unit :: 8 kN')
 
 # step 1 — Two cables, same span
 add(1, 'label', Point(-35.5, 1.4, 0), text='a)')

@@ -133,7 +133,8 @@ export function create(dw, panel, makePlayer) {
   }
   // the uniform load: a run of equal arrows onto a bar, the way the sheet draws it
   dw.seg('qbar', { intro: 1, w: dw.W.thin, color: PAL.green });
-  dw.strokes('qarr', 11, { intro: 1, w: dw.W.thin, color: PAL.green });
+  dw.arrows('qarr', 11, { intro: 1, w: dw.W.thin, color: PAL.green,
+    headLen: dw.W.narrow.headLen * 0.8, headW: dw.W.narrow.headW * 0.8 });
   dw.label('lq', '', { cls: 'num', intro: 1, color: PAL.green, when: (st) => st.lbl });
 
   dw.dashLine('chord', { intro: 2, color: PAL.grey, dash: dw.W.dash });
@@ -209,7 +210,7 @@ export function create(dw, panel, makePlayer) {
     // the load run, sitting just above the chord
     const qy = AY + 3.4;
     dw.setSeg('qbar', [AX, qy], [BX, qy]);
-    dw.setStrokes('qarr', Array.from({ length: 11 }, (_, i) => {
+    dw.setArrows('qarr', Array.from({ length: 11 }, (_, i) => {
       const X = AX + (SPU * i) / 10;
       return [[X, qy], [X, qy - 1.5]];
     }));

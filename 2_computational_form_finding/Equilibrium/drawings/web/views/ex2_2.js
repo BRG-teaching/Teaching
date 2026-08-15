@@ -35,7 +35,7 @@ export const meta = {
   result: (d, st) => [`a) N_d,max = ${d.Nmax.toFixed(1)} kN in the steep segment (H = ${d.H.toFixed(1)} kN)`,
                       `b) S235: A_req = ${d.Areq.toFixed(0)} mm² → Ø ${d.dreq.toFixed(1)} mm`,
                       `c) Ø${st.d1} S355: N_allow = ${d.Nallow.toFixed(1)} kN ${d.safe ? '≥' : '<'} ${d.Nmax.toFixed(1)} kN → ${d.safe ? 'SAFE' : 'NOT SAFE'} (${(d.util * 100).toFixed(0)} %)`],
-  frame: [[-25, -27], [47, 15]],
+  frame: [[-25, -35], [47, 29.5]],
 };
 
 const RESOLVE = 8;
@@ -174,9 +174,9 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-8, -20.5]);
-    dw.setLabel('force_title', [24, -20.5]);
-    dw.setLabel('force_sub', [24, -22.1]);
+    dw.setLabel('form_title', [8, -31.5]);
+    dw.setLabel('force_title', [24, -31.5]);
+    dw.setLabel('force_sub', [24, -33.1]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
     dw.setSeg('deck', [DECK[0], DECK_Y], [DECK[1], DECK_Y]);

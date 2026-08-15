@@ -336,6 +336,29 @@ export class Drawing {
       e.head.geometry.attributes.position.array.set([
         tp[0], tp[1], zE, bx + ox, by + oy, zE, bx - ox, by - oy, zE]);
       e.head.geometry.attributes.position.needsUpdate = true;
+    } else if (e.kind === 'arrows') {
+      const pairs = e.geo;
+      const lens = pairs.map(([a, b]) => dist2(a, b));
+      let reveal = f * lens.reduce((s2, l) => s2 + l, 0);
+      pairs.forEach(([tail, tip], i) => {
+        const ff = lens[i] <= 1e-9 ? 1 : Math.max(0, Math.min(1, reveal / lens[i]));
+        reveal -= lens[i];
+        const tp = lerp2(tail, tip, Math.max(ff, 0.02));
+        const dx = tp[0] - tail[0], dy = tp[1] - tail[1];
+        const l = Math.hypot(dx, dy) || 1e-6;
+        const ux = dx / l, uy = dy / l;
+        const hl = Math.min(e.headLen * ls, 0.55 * l);
+        const bx = tp[0] - ux * hl, by = tp[1] - uy * hl;
+        const sh = e.shafts[i], hd = e.heads[i];
+        if (!sh) return;
+        sh.position.set((tail[0] + bx) / 2, (tail[1] + by) / 2, zE);
+        sh.rotation.z = Math.atan2(dy, dx);
+        sh.scale.set(Math.max(l - hl, 1e-6), wE, 1);
+        const ox = -uy * hwE, oy = ux * hwE;
+        hd.geometry.attributes.position.array.set([
+          tp[0], tp[1], zE, bx + ox, by + oy, zE, bx - ox, by - oy, zE]);
+        hd.geometry.attributes.position.needsUpdate = true;
+      });
     } else if (e.kind === 'strokes') {
       const pairs = e.geo;
       const lens = pairs.map(([a, b]) => dist2(a, b));
@@ -476,11 +499,24 @@ export class Drawing {
       if (ga === gb) return;
       for (const m of movers) if (gid.get(m.name) === gb) gid.set(m.name, ga);
     };
+    // ...but a RESULTANT laid along the very chain it sums also shares its
+    // end points, and merging it in would move the whole lot together and
+    // separate nothing. So only join links that meet end to end WITHOUT
+    // lying on top of each other.
+    const covers = (a, b) => {
+      if (Math.abs(a.u[0] * b.u[1] - a.u[1] * b.u[0]) > 0.035) return false;
+      const px = b.p[0][0] - a.p[0][0], py = b.p[0][1] - a.p[0][1];
+      const t0 = px * a.u[0] + py * a.u[1];
+      const t1 = (b.p[1][0] - a.p[0][0]) * a.u[0] + (b.p[1][1] - a.p[0][1]) * a.u[1];
+      const lo = Math.min(t0, t1), hi = Math.max(t0, t1);
+      return Math.min(hi, a.L) - Math.max(lo, 0) > 0.30 * Math.min(a.L, b.L);
+    };
     for (let i = 0; i < movers.length; i++) {
       for (let j = i + 1; j < movers.length; j++) {
         const a = movers[i], b = movers[j];
-        if (near(a.p[1], b.p[0]) || near(b.p[1], a.p[0])
-            || near(a.p[0], b.p[0]) || near(a.p[1], b.p[1])) merge(a, b);
+        const joined = near(a.p[1], b.p[0]) || near(b.p[1], a.p[0])
+          || near(a.p[0], b.p[0]) || near(a.p[1], b.p[1]);
+        if (joined && !covers(a, b)) merge(a, b);
       }
     }
     const groups = new Map();
@@ -609,6 +645,34 @@ export class Drawing {
   setDashArrow(name, tail, tip) {
     const e = this.elems.get(name);
     e.geo = { tail, tip };
+    this._applyGeo(e);
+  }
+
+  /**
+   * A RUN OF ARROWS sharing one material — a distributed load, drawn the way
+   * the sheets draw it: a bar with real arrowheads hanging off it, not a comb
+   * of plain vertical lines. Use with setArrows(name, [[tail, tip], ...]).
+   */
+  arrows(name, count, { w = 0.4, z = Z.arrow, intro = 0, outro, when, color = PAL.green,
+                        flash = true, headLen = 1.2, headW = 0.45 } = {}) {
+    const mat = this._mat(color);
+    const shafts = [], heads = [];
+    for (let i = 0; i < count; i++) {
+      shafts.push(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat));
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+      const h = new THREE.Mesh(g, mat);
+      h.frustumCulled = false;
+      heads.push(h);
+    }
+    return this._register(name, { kind: 'arrows', objs: [...shafts, ...heads],
+                                  shafts, heads, mats: [mat], w, z, headLen, headW,
+                                  intro, outro, when, color, flash });
+  }
+
+  setArrows(name, pairs) {
+    const e = this.elems.get(name);
+    e.geo = pairs;
     this._applyGeo(e);
   }
 
@@ -792,6 +856,13 @@ export class Drawing {
           }
           g = { kind: 'darrow', meshes, head, objs: [...meshes, head] };
         }
+      } else if (e.kind === 'arrows') {
+        e.geo.forEach(([a, b], i) => {
+          if (dist2(a, b) < 1e-9) return;
+          ops.push({ op: 'arrow', ...base, name: `${name}[${i}]`,
+                     p: [nd(a), nd(b)], width: w(e.w),
+                     head: [w(e.headLen), w(e.headW)] });
+        });
       } else if (e.kind === 'strokes') {
         const meshes = [];
         for (let i = 0; i < e.meshes.length; i++) {
@@ -839,7 +910,7 @@ export class Drawing {
     };
     if (e.kind === 'seg') return dseg(g.p0, g.p1);
     if (e.kind === 'arrow' || e.kind === 'darrow') return dseg(g.tail, g.tip);
-    if (e.kind === 'strokes') return Math.min(...g.map(([a, b]) => dseg(a, b)));
+    if (e.kind === 'strokes' || e.kind === 'arrows') return Math.min(...g.map(([a, b]) => dseg(a, b)));
     if (e.kind === 'dline') {
       let best = Infinity;
       for (let i = 0; i < g.length - 1; i++) best = Math.min(best, dseg(g[i], g[i + 1]));
@@ -958,7 +1029,7 @@ export class Drawing {
     if (!g) return;
     if (e.kind === 'seg') out.push(g.p0, g.p1);
     else if (e.kind === 'arrow' || e.kind === 'darrow') out.push(g.tail, g.tip);
-    else if (e.kind === 'strokes') g.forEach(([a, b]) => out.push(a, b));
+    else if (e.kind === 'strokes' || e.kind === 'arrows') g.forEach(([a, b]) => out.push(a, b));
     else if (e.kind === 'dline' || e.kind === 'poly') out.push(...g);
     else if (e.kind === 'circle' || e.kind === 'dcircle') {
       out.push([g.c[0] - g.r, g.c[1] - g.r], [g.c[0] + g.r, g.c[1] + g.r]);

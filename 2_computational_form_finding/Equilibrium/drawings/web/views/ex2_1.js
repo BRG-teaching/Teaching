@@ -28,7 +28,7 @@ export const meta = {
   result: (d) => [`a) sag h:   N = ${d.a.N.toFixed(1)} kN tension, thrust H = ${d.a.H.toFixed(1)} kN`,
                   `b) sag h/2: N = ${d.b.N.toFixed(1)} kN tension, thrust H = ${d.b.H.toFixed(1)} kN`,
                   `halving the sag doubles the thrust (×${(d.b.H / d.a.H).toFixed(2)})`],
-  frame: [[-37, -45], [33, 5]],
+  frame: [[-37, -53], [33, 28.5]],
 };
 
 const SFD = 8;                       // kN per drawing unit
@@ -138,9 +138,9 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [-30, -41.5]);
-    dw.setLabel('force_title', [14, -41.5]);
-    dw.setLabel('force_sub', [14, -43.1]);
+    dw.setLabel('form_title', [-4, -50.0]);
+    dw.setLabel('force_title', [14, -50.0]);
+    dw.setLabel('force_sub', [14, -51.6]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
     for (const c of CASES) {

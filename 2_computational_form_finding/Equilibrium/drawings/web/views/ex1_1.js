@@ -24,7 +24,7 @@ export const meta = {
   about: 'Two forces on different lines of action have one resultant, and finding it needs BOTH diagrams: the force diagram gives its size and direction (lay the two vectors tip to tail and close), the form diagram gives its position (it must pass through the point where the two lines of action cross). Drag the magnitudes and the angle — the answer follows live.',
   result: (d) => [`R = ${d.R.toFixed(1)} kN at ${d.ang.toFixed(1)}° below the horizontal,`,
                   `through the crossing point P of the two lines of action.`],
-  frame: [[-16.5, -9.5], [30.5, 11.5]],
+  frame: [[-16.5, -9.5], [30.5, 15.0]],
 };
 
 const RESOLVE = 6;   // last step index (STEPS has 7 entries)

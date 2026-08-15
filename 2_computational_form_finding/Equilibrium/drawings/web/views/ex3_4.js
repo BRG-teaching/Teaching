@@ -149,7 +149,8 @@ export function create(dw, panel, makePlayer) {
     dw.label(`lsup${n}`, n, { cls: 'num', intro: n === 'A' ? 1 : 3, when: (st) => st.lbl });
   }
   dw.seg('barq', { intro: 1, w: dw.W.thin, color: PAL.green });
-  dw.strokes('arrq', 14, { intro: 1, w: dw.W.thin, color: PAL.green });
+  dw.arrows('arrq', 14, { intro: 1, w: dw.W.thin, color: PAL.green,
+    headLen: dw.W.narrow.headLen * 0.8, headW: dw.W.narrow.headW * 0.8 });
   dw.label('lq', '', { cls: 'num', intro: 1, color: PAL.green, when: (st) => st.lbl });
 
   dw.dashLine('Rline', { intro: 2, color: PAL.grey, dash: dw.W.dash });
@@ -231,7 +232,7 @@ export function create(dw, panel, makePlayer) {
 
     const qy = Math.max(d.B[1], AYU) + 2.4;
     dw.setSeg('barq', [AX, qy], [BX, qy]);
-    dw.setStrokes('arrq', Array.from({ length: 14 }, (_, i) => {
+    dw.setArrows('arrq', Array.from({ length: 14 }, (_, i) => {
       const x = AX + ((BX - AX) * i) / 13;
       return [[x, qy], [x, qy - 0.9]];
     }));

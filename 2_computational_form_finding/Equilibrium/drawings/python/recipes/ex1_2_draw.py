@@ -22,16 +22,16 @@ add(0, 'label', Point(17, -12.5, 0), text='Force Diagram')
 add(0, 'label', Point(17, -13.6, 0), text='1 unit :: 6 kN')
 
 # step 1 — The four given forces
-add(1, 'polyline', Polyline([(-20.5567, 9.96107, 0), (-16.9382, -15.7859, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3304)
+add(1, 'polyline', Polyline([(-20.4175, 8.9708, 0), (-18.1908, -6.87348, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3304)
 add(1, 'arrow', Line((-20, 6, 0), (-19.4155, 1.84087, 0)), color=Color.from_hex("#3f9c20"), width=0.153216, head=(0.528192, 0.204019))
 add(1, 'label', Point(-18.4204, 4.10136, 0), color=Color.from_hex("#3f9c20"), text='F₁')
-add(1, 'polyline', Polyline([(-10.74, 13.32, 0), (-10.74, -12.68, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3304)
+add(1, 'polyline', Polyline([(-10.74, 12.32, 0), (-10.74, -3.68, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3304)
 add(1, 'arrow', Line((-10.74, 9.32, 0), (-10.74, 5.12, 0)), color=Color.from_hex("#3f9c20"), width=0.153216, head=(0.528192, 0.204019))
 add(1, 'label', Point(-9.44, 7.22, 0), color=Color.from_hex("#3f9c20"), text='F₂')
-add(1, 'polyline', Polyline([(-5.94862, 8.88478, 0), (-3.68257, -17.0163, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3304)
+add(1, 'polyline', Polyline([(-5.86147, 7.88858, 0), (-4.46697, -8.05053, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3304)
 add(1, 'arrow', Line((-5.6, 4.9, 0), (-5.23395, 0.715982, 0)), color=Color.from_hex("#3f9c20"), width=0.153216, head=(0.528192, 0.204019))
 add(1, 'label', Point(-4.12192, 2.92129, 0), color=Color.from_hex("#3f9c20"), text='F₃')
-add(1, 'polyline', Polyline([(5.26808, 0.43877, 0), (-3.62444, -23.9932, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3304)
+add(1, 'polyline', Polyline([(4.92606, -0.500922, 0), (-0.546262, -15.536, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3304)
 add(1, 'arrow', Line((3.9, -3.32, 0), (2.46352, -7.26671, 0)), color=Color.from_hex("#3f9c20"), width=0.153216, head=(0.528192, 0.204019))
 add(1, 'label', Point(4.40336, -5.73798, 0), color=Color.from_hex("#3f9c20"), text='F₄')
 
@@ -74,9 +74,9 @@ add(6, 'label', Point(-8.08802, 6.83536, 0), text='S')
 
 # step 7 — The resultant — in both diagrams
 add(7, 'arrow', Line((-9.1535, 11.8201, 0), (-9.60191, -7.79581, 0)), color=Color.from_hex("#3f9c20"), width=0.176198, dash=0.52864, head=(0.528192, 0.204019))
-add(7, 'arrow', Line((14.7007, 10.564, 0), (14.2523, -9.05197, 0)), color=Color.from_hex("#3f9c20"), width=0.176198, dash=0.52864, head=(0.528192, 0.204019))
+add(7, 'arrow', Line((16.4755, 10.5234, 0), (16.0271, -9.09254, 0)), color=Color.from_hex("#3f9c20"), width=0.176198, dash=0.52864, head=(0.528192, 0.204019))
 add(7, 'label', Point(-8.20191, -8.29581, 0), color=Color.from_hex("#3f9c20"), text='R')
-add(7, 'label', Point(12.7765, 0.75601, 0), color=Color.from_hex("#3f9c20"), text='R')
+add(7, 'label', Point(14.5513, 0.71544, 0), color=Color.from_hex("#3f9c20"), text='R')
 
 # step 8 — The answer
 add(8, 'label', Point(0.5, -12.5, 0), color=Color.from_hex("#3f9c20"), text='R = 117.7 kN at 91.3°')

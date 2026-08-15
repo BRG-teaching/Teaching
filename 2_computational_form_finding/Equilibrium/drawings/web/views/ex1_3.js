@@ -26,24 +26,24 @@ export const meta = {
   about: 'Three welded steel boxes, each contributing its own weight. Parallel forces have no crossing point at all, so the trial funicular is the only way to place their resultant — and here the position IS the answer: if the resultant falls outside the patch where the sculpture touches the ground, it tips. Drag the boxes and watch the verdict flip.',
   result: (d) => [`R = ${d.R.toFixed(0)} kN vertical, at x̄ = ${d.xbar.toFixed(2)}`,
                   `contact patch ${d.foot[0].toFixed(2)} … ${d.foot[1].toFixed(2)} → ${d.stable ? 'STABLE' : 'NOT STABLE, the sculpture tips'}`],
-  frame: [[2, -26], [60, 14]],
+  frame: [[2, -36], [72, 17.5]],
 };
 
 const RESOLVE = 7;    // last step index (STEPS has 8 entries)
 const SFD = 8;                          // kN per drawing unit
-const LLX = 49.5, LLY = 9.0;           // top of the load line
+const LLX = 61.5, LLY = -1.0;           // top of the load line
 
 const DEFAULTS = {
   F1: 60, F2: 60, F3: 40,               // kN, the three box weights
-  b1x: 12.58, b2x: 16.62, b3x: 26.29,   // left edge of each box (draggable)
-  ox: 41.0, oy: 1.0,                    // trial pole
-  a0: -12.0,                            // funicular start height (it hangs BELOW)
+  b1x: 22.58, b2x: 26.62, b3x: 36.29,   // left edge of each box (draggable)
+  ox: 53.0, oy: -9.0,                    // trial pole
+  a0: -22.0,                            // funicular start height (it hangs BELOW)
   lbl: true,
   _k: 99,
 };
 
 // box sizes in drawing units (1.5x1.0, 3.0x0.5, 1.0x1.0 m at 1:50)
-const GY = -8.0;                        // ground level in the view's frame
+const GY = -18.0;                        // ground level in the view's frame
 const BOX = [
   { w: 10.20, h: 6.79, y: GY + 10.20 }, // top
   { w: 20.40, h: 3.41, y: GY + 6.79 },  // middle
@@ -158,14 +158,14 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [10, -23.5]);
-    dw.setLabel('force_title', [45, -23.5]);
-    dw.setLabel('force_sub', [45, -24.7]);
+    dw.setLabel('form_title', [38, -33.0]);
+    dw.setLabel('force_title', [57, -33.0]);
+    dw.setLabel('force_sub', [57, -34.3]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
-    dw.setSeg('ground', [6, GY], [42, GY]);
+    dw.setSeg('ground', [16, GY], [54, GY]);
     const h = [];
-    for (let x = 6.4; x < 42; x += 1.35) h.push([[x, GY], [x - 0.7, GY - 0.9]]);
+    for (let x = 16.4; x < 54; x += 1.45) h.push([[x, GY], [x - 0.7, GY - 0.9]]);
     dw.setStrokes('hatch', h.slice(0, 26));
 
     d.boxes.forEach((b, i) => {
@@ -173,10 +173,10 @@ export function create(dw, panel, makePlayer) {
       dw.setPoly(`box${i}`, c);
       dw.setStrokes(`edge${i}`, c.map((p, k) => [p, c[(k + 1) % 4]]));
       const x = d.cx[i];
-      dw.setDashLine(`la${i}`, [[x, b.y1 + 5], [x, GY - 8]]);
+      dw.setDashLine(`la${i}`, [[x, b.y1 + 0.3], [x, GY - 8]]);
       const tip = [x, b.y1 - (b.y1 - b.y0) * 0.42];
-      dw.setArrow(`f${i}`, [x, tip[1] + 4.6], tip);
-      dw.setLabel(`lf${i}`, [x + 1.4, tip[1] + 2.4]);
+      dw.setArrow(`f${i}`, [x, tip[1] + 3.2], tip);
+      dw.setLabel(`lf${i}`, [x + 1.5, tip[1] + 1.7]);
       dw.setArrow(`ff${i}`, d.L[i], d.L[i + 1]);
       dw.setLabel(`lff${i}`, V.add(V.mid(d.L[i], d.L[i + 1]), [1.5, 0]));
     });
@@ -193,9 +193,9 @@ export function create(dw, panel, makePlayer) {
     dw.setDisk('ptS', d.S);
     dw.setLabel('lS', V.add(d.S, [1.1, 0.9]));
 
-    dw.setDashLine('Rline', [[d.xbar, GY + 15], [d.xbar, d.S[1] - 2]]);
-    dw.setDashArrow('Rform', [d.xbar, GY + 12], [d.xbar, GY + 12 - d.R / SFD]);
-    dw.setLabel('lRform', [d.xbar - 1.9, GY + 12 - d.R / SFD * 0.5]);
+    dw.setDashLine('Rline', [[d.xbar, GY + 26], [d.xbar, d.S[1] - 2]]);
+    dw.setDashArrow('Rform', [d.xbar, GY + 24], [d.xbar, GY + 18.6]);
+    dw.setLabel('lRform', [d.xbar + 2.4, GY + 21.3]);
     dw.setDashArrow('Rforce', V.add(d.L[0], d.off), V.add(d.L[3], d.off));
     dw.setLabel('lRforce', V.add(V.add(V.mid(d.L[0], d.L[3]), d.off), [1.7, 0]));
 

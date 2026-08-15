@@ -17,9 +17,9 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(-8, -20.5, 0), text='Form Diagram')
-add(0, 'label', Point(24, -20.5, 0), text='Force Diagram')
-add(0, 'label', Point(24, -22.1, 0), text='1 unit :: 5 kN')
+add(0, 'label', Point(8, -31.5, 0), text='Form Diagram')
+add(0, 'label', Point(24, -31.5, 0), text='Force Diagram')
+add(0, 'label', Point(24, -33.1, 0), text='1 unit :: 5 kN')
 
 # step 1 — The bridge
 add(1, 'segment', Line((-12.736, -18.044, 0), (14.684, -18.044, 0)), color=Color.from_hex("#aaaaaa"), width=0.163814)

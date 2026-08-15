@@ -29,7 +29,7 @@ export const meta = {
   result: (d) => d.r.map((x, i) => ('abcdef'[i] + ') ' + (x.ok
     ? `N₁ = ${Math.abs(x.N1).toFixed(1)} ${x.N1 < 0 ? 'C' : 'T'}   N₂ = ${Math.abs(x.N2).toFixed(1)} ${x.N2 < 0 ? 'C' : 'T'}`
     : 'no solution — both members are horizontal, so the polygon cannot close'))),
-  frame: [[-46, -32], [70, 16]],
+  frame: [[-46, -32], [70, 24.0]],
 };
 
 const RESOLVE = 7;

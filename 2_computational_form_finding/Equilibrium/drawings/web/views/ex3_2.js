@@ -31,7 +31,7 @@ export const meta = {
   result: (d) => [`H = ${d.H.toFixed(1)} kN · N_d,max = ${d.Nmax.toFixed(1)} kN in segment ${d.imax + 1}`,
                   `reactions: A = ${d.NA.toFixed(1)} kN, B = ${d.NB.toFixed(1)} kN (both pulling along the cable)`,
                   `the sheet’s answer table: N_d,max = 94 kN`],
-  frame: [[-25, -34], [43, 18]],
+  frame: [[-25, -39.5], [43, 29]],
 };
 
 const U = 0.09;                       // drawing units per PDF point
@@ -178,9 +178,9 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [0, 15.5]);
-    dw.setLabel('force_title', [-22, -30]);
-    dw.setLabel('force_sub', [-22, -31.6]);
+    dw.setLabel('form_title', [10, 20.0]);
+    dw.setLabel('force_title', [7, -33.5]);
+    dw.setLabel('force_sub', [7, -35.1]);
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
     dw.setDisk('supA', A); dw.setDisk('supB', B);

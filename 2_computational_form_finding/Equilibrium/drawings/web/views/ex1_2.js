@@ -24,7 +24,7 @@ export const meta = {
   about: 'Four forces on four different lines: the force diagram still gives the resultant by laying them tip to tail, but there is no longer a single crossing point to place it on. The trial funicular solves that — any pole, any starting point: draw one string per ray between the action lines, and where the FIRST and LAST strings meet is a point on the resultant’s line of action. Drag the pole and the starting point: the funicular changes shape completely, the answer does not move.',
   result: (d) => [`R = ${d.R.toFixed(1)} kN at ${d.ang.toFixed(1)}° below the horizontal,`,
                   `on the line of action through S — found with the trial funicular.`],
-  frame: [[-26, -15], [30, 14]],
+  frame: [[-26, -25], [30, 29]],
 };
 
 const RESOLVE = 8;
@@ -160,7 +160,7 @@ export function create(dw, panel, makePlayer) {
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
     d.lines.forEach((ln, i) => {
-      dw.setDashLine(`la${i}`, [V.sub(ln.p, V.mul(ln.d, 4)), V.add(ln.p, V.mul(ln.d, 22))]);
+      dw.setDashLine(`la${i}`, [V.sub(ln.p, V.mul(ln.d, 3)), V.add(ln.p, V.mul(ln.d, 13))]);
       const tail = ln.p;
       const tip = V.add(tail, V.mul(ln.d, 4.2));
       dw.setArrow(`f${i}`, tail, tip);

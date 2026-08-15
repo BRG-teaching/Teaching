@@ -17,9 +17,9 @@ def add(step, kind, geometry, color=None, **style):
 
 
 # step 0 — The exercise
-add(0, 'label', Point(0, 15.5, 0), text='Lageplan — form diagram')
-add(0, 'label', Point(-22, -30, 0), text='Kräfteplan — force diagram')
-add(0, 'label', Point(-22, -31.6, 0), text='1 unit :: 7 kN')
+add(0, 'label', Point(10, 20, 0), text='Lageplan — form diagram')
+add(0, 'label', Point(7, -33.5, 0), text='Kräfteplan — force diagram')
+add(0, 'label', Point(7, -35.1, 0), text='1 unit :: 7 kN')
 
 # step 1 — What is given
 add(1, 'point', Point(-2, 3, 0), color=Color.from_hex("#ffffff"), width=0.5032)

@@ -147,7 +147,8 @@ export function create(dw, panel, makePlayer) {
   // the two load runs, permanent and snow, as the sheet stacks them
   for (const [i, k] of [[0, 'g'], [1, 'q']]) {
     dw.seg(`bar${k}`, { intro: 1, w: dw.W.thin, color: PAL.green });
-    dw.strokes(`arr${k}`, 14, { intro: 1, w: dw.W.thin, color: PAL.green });
+    dw.arrows(`arr${k}`, 14, { intro: 1, w: dw.W.thin, color: PAL.green,
+      headLen: dw.W.narrow.headLen * 0.8, headW: dw.W.narrow.headW * 0.8 });
     dw.label(`l${k}`, '', { cls: 'num', intro: 1, color: PAL.green, when: (st) => st.lbl });
   }
 
@@ -235,11 +236,11 @@ export function create(dw, panel, makePlayer) {
     // the two stacked load runs
     [['g', 3.0, s.gk], ['q', 4.4, s.qk]].forEach(([k, yy, val]) => {
       dw.setSeg(`bar${k}`, [AX, yy], [BX, yy]);
-      dw.setStrokes(`arr${k}`, Array.from({ length: 14 }, (_, i) => {
+      dw.setArrows(`arr${k}`, Array.from({ length: 14 }, (_, i) => {
         const x = AX + ((BX - AX) * i) / 13;
         return [[x, yy], [x, yy - 1.0]];
       }));
-      dw.setLabel(`l${k}`, [AX + 4.0, yy + 0.62]);
+      dw.setLabel(`l${k}`, [BX + 2.6, yy]);
       dw.setText(`l${k}`, `${k}_d = ${(val * (k === 'g' ? 1.35 : 1.5)).toFixed(2)} kN/m²`);
     });
 
