@@ -729,8 +729,737 @@ under the load resultant) and go into uplift beyond it.
 
 ---
 
-<!--INSERT_AGENT_SECTIONS_HERE-->
+### [G 8.1] p.6 — Qualitative Inner Force Distribution in a Reinforced Concrete Frame (English: "Task 3")
 
+**Text (verbatim).** "Three identical reinforced concrete frames with different
+support conditions are given. Draw the possible inner force distribution for
+each case. Indicate tension forces with red and compression forces with blue."
+
+**Givens.** Nothing numeric. **No scale is printed for this block** (unlike the
+task below it on the same page). Three frames a), b), c), each with one vertical
+load arrow and two reaction arrows.
+
+**Geometry.** Origin = bottom-left **outer** corner of the frame, y up. Values in
+metres-at-1:100 (the block carries no printed scale, so read them as
+proportions; on paper 1 unit = 10 mm). All three frames are the same drawing to
+within 0.023 m, so "identical" is confirmed numerically.
+
+| item | value |
+|---|---|
+| outer outline | (0,0) - (0,3.2027) - (6.0070,3.2027) - (6.0070,0) - (5.2855,0) - (5.2855,2.4529) - (0.7216,2.4529) - (0.7216,0) - (0,0) |
+| overall | **6.0070 wide x 3.2027 high** |
+| left leg | x 0 … 0.7216 (**0.7216** wide) |
+| right leg | x 5.2855 … 6.0070 (0.7215 wide) |
+| beam depth | **0.7498** (soffit at y = 2.4529) |
+| clear opening | 4.5639 wide x 2.4529 high |
+| support A / B | apexes at x = 0.3608 and x = 5.6462, y = 0 (the leg centrelines) |
+| load | vertical, down, at x = 3.0036 = exact midspan |
+
+**All six supports are drawn identically: hatched triangle = pinned.** The
+"different support conditions" of the task title exist **only** in the drawn
+reaction arrows and dash-dot lines of action — the symbols are the same in all
+three. Say this in the view; it is the single most confusing thing about the
+task.
+
+**Answers (directions only — no magnitudes exist).**
+
+| case | left reaction | right reaction | the two reaction lines meet at |
+|---|---|---|---|
+| a) | **90.00 deg** (vertical, up) at x = 0.3608 | **90.00 deg** (vertical, up) at x = 5.6462 | infinity (parallel) — no arch action, the frame works in bending |
+| b) | **47.11 deg** up-and-right | **47.12 deg** up-and-left | **(2.9922, 2.8363)** — inside the beam, at its mid-depth on the midspan axis |
+| c) | **62.37 deg** up-and-right | **62.37 deg** up-and-left | **(3.0036, 5.0461)** — **1.84 m above the top of the frame**, which is why c)'s load arrow is drawn high (tip at y = 5.306) |
+
+*Independent check.* In b) the ray from support (0.3594, 0) to the intersection
+(2.9922, 2.8361) computes to 47.13 deg against the 47.11 deg drawn; in c) the
+ray from (0.3608, 0) to (3.0036, 5.0461) computes to 62.36 deg against 62.37
+drawn. Both dash-dot systems are therefore genuine three-force concurrency
+constructions, drawn to better than 0.02 deg.
+
+**What the drawings must show.** a) inclined struts inside the legs are
+impossible (the reactions are vertical), so the beam must work as a
+tie-and-strut couple over its 0.75 m depth with the legs in pure compression.
+b) the shallow thrust line lets an arch form inside the frame: compression from
+the load down through the haunches to the supports, tension tie along the beam
+soffit. c) the steep reactions put the concurrency point above the frame, so the
+thrust line has to be pushed up out of the beam — the tie is now on the *top* of
+the beam and the legs are in tension over part of their height.
+
+**Interactive view:** one switch between a) / b) / c) that redraws the two
+reaction rays and their concurrency point, so the reader sees the thrust line
+migrate from "no arch" (a) to "arch in the beam" (b) to "arch above the frame"
+(c).
+
+---
+
+### [G 8.2] p.6 — Additional Statically indetermined supported frame (English: "Task 1")
+
+**Text (verbatim).** "Two equal frames in reinforced concrete with different
+supports are given. In situation a) draw a possible internal force distribution
+as an arch-cable-construction with the aid of the force diagram. Draw the
+corresponding force diagram to the given force distribution in b). Indicate in
+both a) and b) tension forces with red and compression forces with blue."
+
+**Givens.** Q = 30 kN, vertical, down, at midspan, in both a) and b).
+Form diagram 1:100; force diagram 1 cm = 10 kN.
+
+**Geometry (identical for a) and b)).** Origin = support point A, y up.
+
+| vertex | x [m] | y [m] |
+|---|---|---|
+| outer bottom-left | -0.1336 | 0 |
+| outer top-left | -0.1336 | 3.0926 |
+| outer top-right | 8.8634 | 3.0926 |
+| outer bottom-right | 8.8634 | 0 |
+| right leg inner face, base | 7.5221 | 0 |
+| right leg inner face, soffit | 7.5199 | 2.0873 |
+| left leg inner face, soffit | 1.2099 | 2.0873 |
+| left leg inner face, base | 1.2099 | 0 |
+
+Overall **8.997 m x 3.0926 m**; left leg 1.3435 m, right leg 1.3413 m; beam
+depth **1.0053 m**; clear opening 6.3100 x 2.0873 m. Support A is 0.1336 m
+inside the left outer face; **support spacing 8.7298 m**.
+Q at **x = 4.3649 m = exact midspan**.
+
+**Both supports in both cases are pinned** (hatched triangles): 4 reaction
+components, 3 equations -> **statically indeterminate to degree 1**. The drawn
+reaction arrows are therefore *given data*, not a result.
+
+**a) Answers.** Drawn reaction angles: A at **31.282 deg**, B at **31.889 deg**
+above the horizontal (both extensions pass through their supports to within
+0.2 mm on paper). Using the symmetric mean **theta = 31.586 deg**:
+
+- Vertical: A_v = B_v = Q/2 = **15.000 kN**
+- Horizontal thrust: H = 15.000 / tan(31.586 deg) = **24.395 kN**
+- Resultant: |A| = |B| = 15.000 / sin(31.586 deg) = **28.635 kN**
+
+Taking each drawn arrow separately gives |A| = 28.888 kN (H = 24.688) and
+|B| = 28.392 kN (H = 24.105); the 2.4 % spread is drafting error, and one H must
+serve both.
+*Independent check.* Moments about B: 30 x 4.3649 - 15.000 x 8.7298
+= 130.95 - 130.95 = 0.000 kNm. Sum H = +24.395 - 24.395 = 0.
+**State plainly:** theta is not fixed by statics; these numbers are the
+consequence of the angle the sheet draws.
+
+**b) Answers.** The internal force distribution is given. Nodes (origin = A):
+
+| node | x [m] | y [m] | role |
+|---|---|---|---|
+| A | 0.0000 | 0.0000 | left support (pinned) |
+| B | 8.7298 | 0.0000 | right support (pinned) |
+| n1 | 0.0000 | 2.9796 | top of the left vertical tie |
+| n2 | 8.7298 | 2.9796 | top of the right vertical tie |
+| n3 | 4.3649 | 2.9749 | crown of the upper "lambda" — Q applies here |
+| n4 | 4.3649 | 2.2652 | crown of the lower "V" |
+| n5 | 1.1418 | 2.1337 | left knee |
+| n6 | 7.5880 | 2.1337 | right knee |
+
+| # | member | L [m] | N [kN] |
+|---|---|---|---|
+| 1 | A–n1 | 2.9796 | **+14.742 T** |
+| 2 | B–n2 | 2.9796 | +14.742 T |
+| 3 | A–n5 | 2.4200 | **-33.732 C** |
+| 4 | B–n6 | 2.4200 | -33.732 C |
+| 5 | n5–n1 | 1.4210 | -31.786 C |
+| 6 | n6–n2 | 1.4210 | -31.786 C |
+| 7 | n5–n3 | 3.3311 | **-42.845 C (largest force)** |
+| 8 | n6–n3 | 3.3311 | -42.845 C |
+| 9 | n3–n4 | 0.7097 | -8.361 C (central post) |
+| 10 | n4–n1 | 4.4230 | **+25.881 T (largest tension)** |
+| 11 | n4–n2 | 4.4230 | +25.881 T |
+
+Reactions implied by the given distribution:
+**A = (+15.916, +15.000) kN -> 21.870 kN at 43.304 deg**; B the mirror image;
+horizontal thrust **H = 15.916 kN**.
+
+*Independent checks.* (i) 8 nodes -> 16 equations; 11 members + 4 reaction
+components = 15 unknowns; matrix rank 15, residual 5.7e-14 kN — so the drawn
+geometry is exactly self-consistent, not merely approximately. (ii) Sum V =
+15 + 15 - 30 = 0; sum H = 0; moment about A = 21.870 sin(43.304) x 8.7298
+- 30 x 4.3649 = 0. (iii) The sheet's own drawn reaction arrows in b) measure
+43.30 deg and 43.08 deg — statics gives **43.304 deg**, agreeing with the left
+arrow to 0.004 deg. (iv) Node n3 closure: -0.5050 x (-42.845) - (-8.361)
+= 29.996 ~ 30.000 kN.
+
+At 1 cm = 10 kN the largest vector is 4.28 cm and the reactions are 2.19 cm.
+
+**Note the contrast the task is built on:** a) with the shallow drawn thrust
+(31.6 deg) needs H = 24.40 kN; b) with the steeper given distribution
+(43.3 deg) needs only H = 15.92 kN. Same frame, same load, 35 % less thrust —
+because the frame is indeterminate and the designer picks.
+
+**Interactive view:** one slider for the reaction inclination theta (20 … 70
+deg) with H, |A| and the whole strut-and-tie figure redrawing live, and the two
+printed cases marked on the slider at 31.6 deg and 43.3 deg.
+
+---
+
+### [G 9.1] p.7 — Internal Force Flow in Frames (English: "Task 1")
+
+**Text (verbatim).** "Draw a possible internal force flow for the reinforced
+concrete frame with help of the thrust line. Draw the corresponding force
+diagram and indicate tension forces with red, compression forces with blue and
+reaction forces with green."
+
+**Givens.** a) load labelled **G_d**; b) load labelled **Q_d**.
+**Neither carries a number, on this page or anywhere else in the booklet.**
+Form diagrams 1:100; force diagrams 1 cm = 10 kN.
+
+**a) Geometry.** Origin = bottom-left outer corner, y up. A portal frame with a
+hinged crown.
+
+| vertex (walking the closed outline) | x [m] | y [m] |
+|---|---|---|
+| outer bottom-left | 0.0000 | 0.0000 |
+| left leg inner face, base | 1.8217 | 0.0000 |
+| left shoulder (soffit) | 1.8217 | 3.6593 |
+| soffit, start of rise | 4.0823 | 3.6593 |
+| crown underside, left of hinge | 5.4661 | 5.0209 |
+| crown underside, right of hinge | 5.5235 | 5.0209 |
+| soffit, end of fall | 6.9072 | 3.6593 |
+| right shoulder | 9.1678 | 3.6593 |
+| right leg inner face, base | 9.1678 | 0.0000 |
+| outer bottom-right | 10.9895 | 0.0000 |
+| outer top-right | 10.9895 | 5.4095 |
+| outer top-left | 0.0000 | 5.4095 |
+
+Overall **10.9895 m x 5.4095 m**; both legs **1.8217 m** wide; clear span
+7.3461 m; clear height 3.6593 m; beam **1.7502 m** deep at the haunches thinning
+to **0.3886 m** at the crown; soffit rise segments at **+-44.54 deg**.
+**Hinge**: circle centre **(5.4948, 5.2176)**, diameter **0.200 m**, on the
+centreline at the crown, tangent to the top edge.
+**Supports: both pinned**, apexes at (0.1499, 0) and (10.8396, 0), spacing
+**10.6897 m**.
+**Load G_d**: vertical, **downward**, at x = 5.4948 (exact centreline),
+arrowhead apex at y = 5.8596.
+
+**b) Geometry.** Not a portal — a **solid rectangular panel** with the thrust
+line drawn inside it. Origin = bottom-left corner.
+
+| item | value |
+|---|---|
+| panel | 0 … **9.4901** m x 0 … **4.6717** m |
+| bottom edge | drawn only as two stubs, x 0 … 0.2906 and 9.1263 … 9.4901 |
+| hinge circle | centre **(4.7451, 4.5242)**, diameter 0.200 m, interrupting the top edge |
+| supports | **both pinned**, apexes at (0.1499, 0) and (9.3401, 0), spacing 9.1902 m |
+
+Drawn thrust line (asymmetric — two segments left, one straight run right):
+
+| node | x [m] | y [m] | to next | L [m] | angle |
+|---|---|---|---|---|---|
+| T1 (left foot) | 0.2897 | 0.0000 | T1->T2 | 3.4004 | **+68.24 deg** |
+| T2 (kink) | 1.5512 | 3.1576 | T2->T3 | 3.3853 | **+20.78 deg** |
+| T3 (hinge, left) | 4.7163 | 4.3585 | hinge | | |
+| T4 (hinge, right) | 4.7738 | 4.2834 | T4->T5 | 6.1067 | **-44.53 deg** |
+| T5 (right foot) | 9.1263 | 0.0000 | | | |
+
+**Load Q_d**: at x = 4.7450, and it points **UPWARD** (the arrowhead apex sits
+above the shaft in the path data and the render confirms it). Case b) is an
+**uplift / suction** case, deliberately drawn as the mirror of a).
+
+**Answers.** **No absolute number can be given** — neither G_d nor Q_d has a
+magnitude. What *is* fully determined is every ratio:
+
+**a)** Two pinned bases plus the crown hinge = a **three-hinged frame**, so it
+is statically determinate and the thrust line must pass through all three
+hinges. With G_d applied at the crown hinge and the frame symmetric:
+- V_A = V_B = **0.5000 x G_d**
+- Half-span support-to-crown = 5.4948 - 0.1499 = 5.3449 m; crown hinge height
+  = 5.2176 m. Moments about the crown for the left half:
+  **H = 0.5000 x G_d x 5.3449 / 5.2176 = 0.5122 x G_d**
+- |R_A| = |R_B| = sqrt(0.5000^2 + 0.5122^2) x G_d = **0.7158 x G_d**, at
+  **44.31 deg** above the horizontal, pointing inward and up.
+*Check:* 2 x 0.5000 G_d = G_d vertically; the two horizontal components
+0.5122 G_d cancel; the thrust line from (0.1499, 0) at 44.31 deg reaches
+x = 5.4948 at y = 5.3449 x tan(44.31 deg) = 5.2176 m = the crown hinge. Closes.
+
+**b)** The thrust line is given, so the reaction *directions* are given: at the
+left foot **68.24 deg**, at the right foot **-44.53 deg**. Resolving those two
+directions against a vertical Q_d:
+- **H = 0.2868 x Q_d**
+- |A| = **0.7731 x Q_d** (vertical component 0.7179 Q_d)
+- |B| = **0.4023 x Q_d** (vertical component 0.2821 Q_d)
+*Check:* 0.7179 + 0.2821 = 1.0000 x Q_d vertically; horizontals cancel.
+
+**A REAL DEFECT IN b), worth stating.** The drawn thrust line is **not in
+equilibrium** with a single vertical load at x = 4.7450:
+(i) the two foot directions, extended, concur at **(2.7823, 6.2384)** — outside
+the 4.6717 m tall panel and 1.96 m away from the load's line of action, whereas
+three coplanar forces must be concurrent; and
+(ii) the line kinks at T2 (1.5512, 3.1576) from 68.24 deg to 20.78 deg, and a
+kink in a thrust line requires a force at that point — none is drawn.
+So the given figure is indicative, not a true funicular. Any view built from it
+must either accept it as a sketch or straighten it. The correct three-hinged
+line for a load at the crown runs straight from each *support* to the crown
+hinge: from (0.1499, 0) to (4.7451, 4.5242) is **+44.56 deg** and from
+(9.3401, 0) to the same point is **-44.56 deg** — perfectly symmetric, giving
+V = 0.5000 Q_d, **H = 0.5084 Q_d**, |A| = |B| = **0.7129 Q_d**. Note that the
+sheet's drawn *right-hand* segment (-44.53 deg) is already that correct line to
+0.03 deg; only the left-hand side, with its spurious kink at T2, departs from
+it.
+
+**MISSING, stated plainly:** one number. Give G_d (and Q_d) a value and both
+sub-parts close in two lines. Until then nothing on this page is a number.
+
+**Interactive view:** make the missing number the control — a slider for G_d
+(0 … 200 kN) with the thrust line and the force diagram scaling live. This turns
+the sheet's defect into the view's feature.
+
+---
+
+### [G 9.2] p.7 — Additional Axial Force Proof (English: "Task 2")
+
+**Text (verbatim).** "Check whether the reinforcement in the reinforced concrete
+in additional task 1a) can withstand the relevant tension force. The
+reinforcement has a round section with a diameter of 16 mm and is made of steel
+S235."
+
+**Givens.** D = 16 mm; S235.
+
+**Answer — the capacity side, which is fully determinable:**
+- A = pi x 16^2 / 4 = **201.0619 mm2**
+- f_td = f_tk / gamma_M = 235 / 1.05 = **223.8095 N/mm2**
+- **N_allow = 201.0619 x 223.8095 = 44 999.6 N = 45.000 kN**
+
+*Independent check.* 201.0619 mm2 x 223.81 N/mm2 = 45.00 kN; equivalently
+0.2011 x 10^-3 m2 x 223 810 kN/m2 = 45.00 kN.
+
+**Answer — the demand side: NOT DETERMINABLE.** Two compounding faults:
+1. The referent is ambiguous. Page 7's own frames are labelled "**Task** 1 a)/b)"
+   in English; the only block actually called "Additional Task 1 a)" is on
+   **page 6** (Q = 30 kN). The German resolves it — "aus Aufgabe **9.1** a)" —
+   i.e. the frame on page 7 itself.
+2. Under that (correct) reading, G_d has no value, so there is no tension force
+   to check.
+
+For orientation only: if the intended referent were page 6's given distribution
+[G 8.2] b), the largest tension there is 25.881 kN -> utilisation 57.5 %, and
+the bar would pass.
+
+**Interactive view:** slider for the tension force (0 … 60 kN) against the fixed
+45.00 kN capacity line, with the bar diameter as a second control (8 … 32 mm).
+
+---
+
+### [G 10.1] p.8 — Additional Reinforced Concrete Frame (English: "Task 3")
+
+**Text (verbatim).** "Given is the possible distribution of the internal forces
+for a reinforced concrete frame. Draw the corresponding force diagram. Indicate
+tension forces with red and compression forces with blue."
+
+**Givens.** **Q_d = 35 kN**, horizontal, pointing right, labelled "(earthquake)".
+Form diagram 1:100; force diagram 1 cm = 10 kN. An empty "subsystem" panel sits
+below.
+
+**Geometry.** Origin = the **left support point P1**, y up. Outer outline
+(splayed legs plus a slab with cantilevers on both sides):
+
+| # | x [m] | y [m] | description |
+|---|---|---|---|
+| O1 | -1.3645 | 4.4374 | slab top, left end |
+| O2 | -1.3645 | 3.9662 | slab underside, left tip |
+| O3 | 0.0744 | 3.7850 | left cantilever underside meets the leg |
+| O4 | -0.4024 | 0.0000 | left leg outer face at the base |
+| O5 | 0.4024 | 0.0000 | left leg inner face at the base |
+| O6 | 1.1041 | 2.7124 | leg inner face, kink |
+| O7 | 2.4729 | 3.6314 | haunch meets the slab soffit |
+| O8 | 5.0450 | 3.6314 | slab soffit, right of midspan |
+| O9 | 6.4140 | 2.7124 | right haunch kink |
+| O10 | 7.1157 | 0.0000 | right leg inner face at the base |
+| O11 | 7.9204 | 0.0000 | right leg outer face at the base |
+| O12 | 7.4435 | 3.7850 | right leg meets the cantilever underside |
+| O13 | 8.8826 | 3.9662 | slab underside, right tip |
+| O14 | 8.8826 | 4.4374 | slab top, right end |
+
+Overall **10.2471 m wide x 4.4374 m high**; slab **0.8060 m** thick at midspan
+tapering to 0.4712 m at the tips; leg base width 0.8048 m; **support spacing
+7.5180 m**; the legs lean outward 0.4768 m over their height.
+
+Q_d arrow: horizontal, **+x**, line of action at **y = 4.2445**; arrowhead apex
+at x = -1.4848. The "point of application of Q" leader runs from (4.6421,
+5.3681) to (3.7967, 4.3616) and lands on node **P4**. A small circle
+(diameter 0.190 m) at (1.1026, 3.2622) marks where members P1–P3 and P2–P4
+**cross without connecting** (their true intersection is (1.1034, 3.2586)).
+
+Internal strut-and-tie nodes:
+
+| node | x [m] | y [m] | role |
+|---|---|---|---|
+| P1 | 0.0000 | 0.0000 | left support (pinned) |
+| P2 | 0.0735 | 2.8722 | left knee |
+| P3 | 1.4392 | 4.2549 | left top node |
+| P4 | 3.7590 | 4.2549 | midspan top node — Q_d enters here |
+| P5 | 7.3210 | 4.2549 | right top node |
+| P6 | 6.4160 | 3.2581 | right knee |
+| P7 | 7.5180 | 0.0000 | right support (pinned) |
+
+**Answers.** 7 nodes -> 14 equations; 10 members + 4 reaction components = 14
+unknowns; rank 14, residual 8.8e-14 kN — exactly determinate and the drawn
+geometry is internally exact.
+
+| # | member | L [m] | N [kN] |
+|---|---|---|---|
+| 1 | P1–P2 | 2.8731 | **-34.554 C** |
+| 2 | P2–P3 | 1.9434 | **-76.393 C (largest force)** |
+| 3 | P1–P3 | 4.4917 | **+57.376 T (largest tension)** |
+| 4 | P2–P4 | 3.9363 | +56.392 T |
+| 5 | P3–P4 | 2.3198 | -35.299 C |
+| 6 | P4–P5 | 3.5620 | +35.301 T |
+| 7 | P4–P6 | 2.8378 | -56.394 C |
+| 8 | P5–P6 | 1.3463 | -49.968 C |
+| 9 | P5–P7 | 4.2595 | +37.034 T |
+| 10 | P6–P7 | 3.4394 | -59.965 C |
+
+Reactions: **R(P1) = (-17.500, -19.809) kN = 26.432 kN at 48.54 deg below the
+horizontal** — the windward base is **held down**; **R(P7) = (-17.500, +19.809)
+kN = 26.432 kN at 48.54 deg above the horizontal**.
+
+*Independent check, done by hand against the matrix solve.* Shear splits equally
+by the symmetry of the base pattern: H = 35/2 = 17.500 kN each. Overturning:
+35 x 4.2549 = **148.92 kNm** over the 7.5180 m base spacing -> V = **19.809 kN**
+down at P1, up at P7. Sum Fx = 35 - 17.5 - 17.5 = 0; sum Fy = 0; moment about
+P1 = 0. Node P1 closure: (-0.884, -34.542) + (18.384, +54.351) +
+(-17.500, -19.809) = (0.000, 0.000).
+Using the arrow's own line (y = 4.2445) instead of the chord (y = 4.2549)
+changes V from 19.809 to 19.760 kN, i.e. 0.25 % — quote 19.81 kN.
+
+**Interactive view:** one slider for Q_d (-70 … +70 kN) so the reader watches
+the earthquake force reverse and the uplift jump from one base to the other.
+
+---
+
+### [G 10.2] p.8 — Additional Dimensioning (English: "Task 2")
+
+**Text (verbatim).** "a) Dimension the reinforcement within the reinforced
+concrete for the relevant tension force of task 2 a). Use steel S235 to
+calculate the diameter and round the result off to mm. (Round up!)
+b) Verify whether the frame in task 2 b) can keep up with the relevant
+compression force. The slab is 8 cm thick and is constructed in concrete C12/15.
+Presume the force would affect the frame over the width of 10 cm."
+
+**BROKEN REFERENCES.** There is no "task 2 a)" or "task 2 b)" anywhere in the
+booklet that supplies a force. The German version reads *"Dimensionieren Sie die
+Bewehrung … für die massgebende Zugkraft aus **Aufgabe 10.1**"* — i.e. the
+Q_d = 35 kN frame immediately above on the same page — **and has no part b) at
+all**. The English b) is an orphan.
+
+**a) Answer, taking the German referent [G 10.1].** Governing tension there is
+member 3 (P1–P3) = **57.376 kN**.
+- A_req = 57 376 / 223.8095 = **256.36 mm2**
+- D = 2 sqrt(A/pi) = 2 sqrt(256.36 / pi) = **18.067 mm -> 19 mm** (round up)
+
+*Independent check.* A 19 mm bar has A = 283.53 mm2 and N_allow =
+283.53 x 223.8095 = **63.45 kN > 57.376 kN**; an 18 mm bar gives 56.96 kN, which
+is just short — so 19 mm is the first size that works. Correct.
+
+**b) Answer, the part that is determinable regardless of the referent.**
+Compressive resistance of an 80 mm x 100 mm C12/15 bearing area:
+- A = 80 x 100 = **8000 mm2**
+- f_cd = 12 / 1.5 = **8.000 N/mm2**
+- **N_allow = 8000 x 8.000 = 64 000 N = 64.00 kN**
+
+Against [G 10.1]'s own governing compression of 76.393 kN this **fails** at
+119.4 % utilisation; against the slab-chord compression P3–P4 = 35.299 kN it
+passes at 55.2 %; against [G 8.2] b)'s largest compression of 42.845 kN it
+passes at 66.9 %. Which of these the sheet meant cannot be decided from the
+sheet.
+
+**Interactive view:** two coupled readouts — bar diameter vs tension force, and
+bearing width vs compression force — with the 64.00 kN concrete limit drawn as a
+hard line the reader can push a force slider across.
+
+---
+### [G 11] p.9 — Load-influenced Area (English: "Task 1")
+
+**Text (verbatim).** "The plate is loaded by a dead area load of s_k = 1 kN/m2.
+Calculate the design value of the constant area load.
+Draw the relevant load-influenced area into the floor plan for both of the
+following cases, a) and b).
+Then calculate the point load R and the line load g over the relevant beam and
+complete the table."
+
+(The German says "für die Situationen **a) bis d)**" and asks for **R_d** and
+**g_d**. Four cases are drawn, each with its own table. See error E6.)
+
+**Givens.** s_k = **1 kN/m2**, explicitly a **dead** area load, so only
+gamma_G = 1.35 applies; no live load is given. Plate **7.5 m x 5 m** (printed;
+digitises to 7.497 x 4.998, a 0.04 % drawing error — use the printed values).
+Plans 1:200. Four cases a)–d), each with an axonometric, a plan, a side section,
+a front elevation and a table with rows A, s_d, R, g.
+
+**Geometry.** Origin = lower-left corner of the plan; x along the 7.5 m side,
+y along the 5 m side. From the sections: **plate 0.400 m thick, beams 0.500 m
+wide and 1.271 m deep.**
+
+| case | beams | position (m) | span direction | beam length |
+|---|---|---|---|---|
+| a | **one** | y 2.249 … 2.749, centreline **y = 2.499** (mid-depth) | along x | 7.500 m |
+| b | **two** | y 0 … 0.500 (CL 0.250) and y 4.498 … 4.998 (CL 4.748) | along x | 7.500 m each |
+| c | **two** | x 0 … 0.499 (CL 0.250) and x 6.997 … 7.497 (CL 7.247) | along y | 5.000 m each |
+| d | **four** (closed ring) | a 0.5 m perimeter band; inner dashed rectangle x 0.499 … 6.997, y 0.500 … 4.498 | two along x, two along y | 7.500 / 5.000 m |
+
+The small orthographic views are what disambiguate the axonometrics: a) side
+section shows one 0.5 m stub at mid-depth; b) side section is a **C**, stubs at
+both ends; c) side section is one full-height block and the front elevation is a
+"table with two legs"; d) side section is a closed box. The sequence a -> d is
+the classic teaching progression: one beam, then two spanning the long way, then
+two spanning the short way, then a two-way ring.
+
+**Design area load.**
+**s_d = 1.35 x 1.000 = 1.3500 kN/m2**; total on the plate = 1.3500 x 7.500 x
+5.000 = **50.625 kN**.
+
+**Answers.**
+
+| case | relevant beam (and why) | A [m2] | s_d [kN/m2] | R [kN] | g [kN/m] |
+|---|---|---|---|---|---|
+| a | the single beam — the only support, the plate cantilevers 2.5 m each side onto it | **37.500** | 1.3500 | **50.625** | **6.7500** |
+| b | either edge beam (identical by symmetry); tributary width = half the 5.0 m one-way span | **18.750** | 1.3500 | **25.3125** | **3.3750** |
+| c | either edge beam; tributary width = half the 7.5 m one-way span | **18.750** | 1.3500 | **25.3125** | **5.0625** |
+| d | the **long (7.5 m)** beam — the largest tributary area, so it governs | **12.500** | 1.3500 | **16.875** | **3.3750** peak / **2.2500** equivalent uniform |
+| d | (the short 5 m beam, for completeness) | **6.2500** | 1.3500 | **8.4375** | **3.3750** peak / **1.6875** equivalent uniform |
+
+Working:
+- a) g = 1.3500 x 5.000 = 6.7500 kN/m; R = 6.7500 x 7.500 = 50.625 kN.
+- b) g = 1.3500 x 2.500 = 3.3750 kN/m; R = 3.3750 x 7.500 = 25.3125 kN.
+- c) g = 1.3500 x 3.750 = 5.0625 kN/m; R = 5.0625 x 5.000 = 25.3125 kN.
+- d) 45 deg lines from the corners. Long beam: trapezoid,
+  A = (7.500 + 2.500)/2 x 2.500 = 12.500 m2, R = 16.875 kN, peak ordinate
+  g = s_d x 2.500 = 3.3750 kN/m over the middle 2.500 m tapering to zero at the
+  corners. Short beam: triangle, A = 0.5 x 5.000 x 2.500 = 6.2500 m2,
+  R = 8.4375 kN, same 3.3750 kN/m peak at midspan.
+
+*Independent checks (all exact).*
+
+| case | sum of tributary areas | = 37.500 m2? | sum of R | = 50.625 kN? |
+|---|---|---|---|---|
+| a | 37.500 | yes | 50.625 | yes |
+| b | 2 x 18.750 | yes | 2 x 25.3125 | yes |
+| c | 2 x 18.750 | yes | 2 x 25.3125 | yes |
+| d | 2 x 12.500 + 2 x 6.2500 | yes | 2 x 16.875 + 2 x 8.4375 | yes |
+
+Second route, R = g x L: 6.7500 x 7.500 = 50.625; 3.3750 x 7.500 = 25.3125;
+5.0625 x 5.000 = 25.3125; 2.2500 x 7.500 = 16.875; 1.6875 x 5.000 = 8.4375.
+
+**AMBIGUITY.** The table row is labelled "g" (English) / "g_d" (German) and the
+sheet never says whether case d) wants the peak ordinate or the equivalent
+uniform value. Quote both. Also: the axonometrics of a) and b) show stub columns
+that appear in no other view and are not dimensioned — the plate's own supports
+are undefined and irrelevant to the tributary question.
+
+**Interactive view:** one control that switches between a), b), c) and d) with
+the tributary area shaded live on the plan and R and g printed — the point is
+that the same plate under the same load gives four different beam loads.
+
+---
+
+### [G 12] p.10 — Qualitative internal Force Flow (English: "Task 3")
+
+**Text (verbatim).** "Draw a qualitative internal force flow in the axonometric
+drawing of the supporting structure. Use red for tension, blue for compression
+and green for the external forces."
+
+**Givens.** Two axonometrics, a) and b). g1 … g4 (a) and g (b) are symbols only.
+**No scale, no dimension line and no load magnitude appears anywhere on this
+page.** The answer is a coloured sketch, not a number.
+
+**Geometry.** Both axonometrics are **true isometrics** (axes at 30 / 150 / 90
+deg, all three foreshortened by 0.8165 — verified on p.9, whose printed 7.5 m
+edge is drawn 6.122 m at 1:200 and 6.122 / 0.8165 = 7.498). Dividing the drawn
+lengths by 0.8165 therefore recovers exact **proportions**; the absolute scale
+is not stated. Values below are in those recovered units.
+
+**a) Two-level square skeleton.**
+
+| element | units |
+|---|---|
+| top ring, outer plan square | **10.00 x 10.00** |
+| ring beams | **0.50 wide**, 0.47 deep |
+| second ring, same 10 x 10 outline | 1.21 below the top ring |
+| corner columns | **1.00 x 1.00**, **3.00** long to the lower square, then 1.50 more to the ground |
+| lower square | 10 x 10, 3.00 below the second ring |
+| central column | 1.00 x 1.00 x **1.50**, between the top-ring and second-ring levels |
+
+A closed square ring of four beams carries a full-length uniform line load on
+each edge: g1 on the NW edge, g2 NE, g3 SW, g4 SE (24–26 load arrows drawn per
+edge, corner to corner). Four 1.0 x 1.0 corner columns take it down.
+**Unresolved from the drawing:** the fifth, central column's head sits at about
+(4.2 … 4.7, 4.2 … 4.7) of the 10-unit square rather than exactly (5, 5), and two
+6.00-unit horizontal members radiate from its head toward the perimeter. Its
+role cannot be pinned down from the geometry alone.
+
+**b) Four deep beams (walls) at two levels.**
+
+| element | units |
+|---|---|
+| every wall | **10.00 long x 3.00 deep** |
+| the two upper (loaded) walls | parallel, **~4.60 apart** |
+| column stubs | **0.50 x 0.50 x 1.50** |
+
+Two parallel deep beams at the upper level, each with a uniform g over its full
+10-unit length, sitting on two more identical deep beams running perpendicular
+below. Three 0.5 x 0.5 x 1.5 column stubs are visible under the lower beams (two
+solid, one dashed) at roughly the quarter points; **the true column count cannot
+be established** because any further columns would be hidden behind the near
+wall.
+
+**Answers (qualitative — what a correct drawing must show).**
+- a) Each edge beam carries its own g corner to corner; inside each beam the
+  flow resolves into a **compression arch in the top fibre (blue)** and a
+  **tension tie in the bottom fibre (red)** between the two corner nodes. The
+  four beam-end reactions collect at the four corners (green, downward), the
+  corner columns take them in pure **compression** to the lower level, the lower
+  square distributes, and the lower columns carry on to the ground in
+  compression. Because the plan is square and all four loads act, the four
+  corner reactions are equal. Nothing is in net tension except the beam bottom
+  chords.
+- b) In each loaded upper wall, g is picked up by a **compression fan/arch
+  (blue)** running to the two points where that wall crosses a lower wall, with
+  a **horizontal tie (red)** along the bottom edge between them. Those two
+  crossing points are the green external forces on the lower walls, which repeat
+  the pattern down to their columns. All columns are in compression.
+
+**MISSING.** No load and no span is given, so nothing on this page is a number.
+Say so plainly.
+
+**Interactive view:** a toggle between a) and b), plus a slider that moves a)'s
+central column off-centre so the reader watches the share between the corner
+columns and the central column change.
+
+---
+
+### [G 13] p.11 — Additional Transferring vertical Loads (English: "Task 1")
+
+**Text (verbatim, English).** "The plate is loaded by the same dead area load of
+task 4.
+a) The reaction forces of the five beams in task 4a) (subsystem A) are further
+transferred to two other beams (Subsystem B). Note the different support
+condition of subsystem B. Find the inner force flow by the aid of the force
+diagram. Use red for tension, blue for compression and green for the reaction
+forces.
+b) Again the reaction forces found in a) are further transferred to subsystems C
+and D. Draw the external forces in the marked position. Find an internal force
+flow and draw the corresponding force diagram."
+
+**THE MISSING NUMBER.** "task 4" and "task 4a)" do not exist — the only "Task 4"
+in the booklet is the p.2 truss. The German (**Aufgabe 13**) does not
+cross-reference at all; it states the load: *"Aus der Flächenlast resultieren
+fünf Punktlasten A1 bis A5 = **50 kN**, welche von den Querbalken (Subsystem A)
+auf die beiden Längsbalken (Subsystem B) wirken."* — **A1 … A5 = 50 kN each.**
+Use that.
+
+*Cross-check that validates it.* Running the chain from p.9's area load instead
+(s_k = 1 kN/m2 -> s_d = 1.350 kN/m2) on this page's own 25 x 15 m plate: each of
+the five subsystem-A beams takes a 5.000 m strip, q = 1.3500 x 5.000 =
+6.7500 kN/m over 15.000 m = 101.25 kN, giving end reactions of **50.625 kN**.
+The German's 50 kN is that number rounded — the two derivations agree to 1.25 %.
+Everything below uses the printed **50 kN**; multiply by 1.0125 for the
+area-load-derived variant.
+
+**Givens.** A1 … A5 = 50 kN each. Plans 1:500; form diagrams for subsystems B,
+C, D at 1:200; force diagram **1 cm = 50 kN** (so 1 kN = 0.200 mm, and about
+400 kN is the largest force that fits across the sheet).
+
+**Geometry — plan, 1:500.** Origin = lower-left corner of the plate; x along the
+25 m direction, y along the 15 m direction.
+
+| item | digitised [m] | nominal |
+|---|---|---|
+| plate | 24.991 x 14.994 | **25.00 x 15.00 m** (375.0 m2) |
+| plate thickness | 0.750 | 0.75 m |
+
+| subsystem | members | centrelines | section |
+|---|---|---|---|
+| **A** | 5 beams spanning y (15.0 m) | x = **2.4995, 7.4975, 12.496, 17.494, 22.493** (spacing exactly 5.00 m, outer two 2.50 m from the edges) | 0.500 wide x 2.499 deep |
+| **B** | 2 beams spanning x (25.0 m) | y = **0.250** and **14.744** (one along each 25 m edge) | 0.500 wide x 2.999 deep |
+| **C / D** | 2 beams spanning y (15.0 m) | x = **0.250** (labelled *subsystem D*) and **9.9965** (labelled *subsystem C*) | 0.500 wide x 2.50 deep |
+| **columns** | 4 | (0.250, 4.000), (0.250, 11.000), (9.9965, 4.000), (9.9965, 11.000) | symmetric about y = 7.5, 7.0 m apart |
+
+Vertical stack below the plate: A (2.499) -> B (2.999) -> C/D (2.50) ->
+columns (~2.26); total about 10.07 m. **Caveat:** the C/D naming rests only on
+where the two labels sit in the 1:500 elevation, so quote the forces **by
+position** as well as by name.
+
+**Geometry — form diagram subsystem B, 1:200.** Origin = the beam's left end.
+
+| item | x [m] | note |
+|---|---|---|
+| beam | 0 … **24.991** | depth **2.999 m** |
+| **support 1 — ROLLER** | **0.250** | = the C/D edge-beam centreline |
+| A1 | 2.499 | 50 kN down |
+| A2 | 7.498 | 50 kN down |
+| **support 2 — PIN** (hatched) | **9.9965** | = the inner C/D beam centreline |
+| A3 | 12.496 | 50 kN down |
+| A4 | 17.494 | 50 kN down |
+| A5 | 22.492 | 50 kN down |
+
+The five load positions match the five subsystem-A centrelines to 0.002 m and
+the two supports match the two C/D centrelines to 0.001 m. **This is what "note
+the different support condition of subsystem B" means:** a 9.746 m span with a
+**14.995 m cantilever** carrying three of the five loads.
+
+**a) Answers.** Total 5 x 50 = **250.00 kN**, resultant at x = 12.4965 — beyond
+the second support.
+- Moments about the pin: 50 x [(2.499-9.9965) + (7.498-9.9965) + (12.496-9.9965)
+  + (17.494-9.9965) + (22.492-9.9965)] = 50 x 12.4965 = **624.83 kNm**
+- **R(roller, x = 0.250) = -624.83 / 9.7465 = -64.11 kN**, i.e. **64.11 kN
+  acting DOWNWARD** — the roller end is a hold-down.
+- **R(pin, x = 9.9965) = 250.00 + 64.11 = +314.11 kN** up.
+
+*Independent check.* Sum of vertical forces: 314.11 - 64.11 - 250.00 = 0.00.
+Moments about the roller: 250 x (12.4965 - 0.250) = 3061.6 kNm and
+314.11 x 9.7465 = 3061.5 kNm. At 1 cm = 50 kN these plot as 6.28 cm and 1.28 cm.
+(With the area-load-derived 50.625 kN loads: -64.90 kN and +318.03 kN.)
+
+**Geometry — form diagrams subsystems C and D, 1:200.** Origin = the beam's left
+end, running along the 15 m direction.
+
+| item | y [m] | note |
+|---|---|---|
+| beam | 0 … **14.995** | depth **2.498 m** |
+| external force 1 | **0.250** | = the B1 centreline |
+| support 1 — **PIN** (hatched) | **3.9985** | column |
+| support 2 — **ROLLER** | **10.9965** | column |
+| external force 2 | **14.745** | = the B2 centreline |
+
+The two diagrams are geometrically identical **except** that subsystem D carries
+a **circular opening, diameter 0.999 m, centred 3.044 m from the left end and
+0.914 m above the soffit**. Subsystem C's interior was checked explicitly and
+has no such arc. The text never mentions the hole; it is presumably there so
+that D's force flow has to detour around it.
+
+**b) Answers.** Each of C and D receives one reaction from **each** of the two
+subsystem-B beams, one at each end of its 14.995 m length. From the plan, B's
+left (uplift) support lands on the **x = 0.250** beam (*subsystem D*) and B's
+right support on the **x = 9.9965** beam (*subsystem C*).
+
+Loads and supports are both symmetric about y = 7.5, so each column takes
+exactly half of the two end forces, i.e. one whole end force each:
+
+| beam | end force at y = 0.250 and 14.745 | each column (y = 4.000 and 11.000) |
+|---|---|---|
+| x = 0.250 (*subsystem D*) | **64.11 kN upward** (it holds B down) | **64.11 kN TENSION** — the columns are anchors |
+| x = 9.9965 (*subsystem C*) | **314.11 kN downward** | **314.11 kN COMPRESSION** |
+
+*Check on the arithmetic.* Moments about the pin at 3.9985 with equal end forces
+P: R x (10.9965 - 3.9985) = P(0.250 - 3.9985) + P(14.745 - 3.9985)
+= P(-3.7485 + 10.7465) = 6.998 P, and 10.9965 - 3.9985 = 6.998, so R = P exactly.
+
+*Independent check on the whole chain.* Two B beams x 5 x 50 kN =
+**500.00 kN** delivered by the plate. Columns:
+2 x 314.11 - 2 x 64.11 = 628.22 - 128.22 = **500.00 kN**. Closes exactly.
+(Area-load variant: 2 x 318.03 - 2 x 64.90 = 506.25 kN = 1.3500 x 375.0 m2.)
+
+**Flag this.** Two things a reader will trip over, both of which follow
+inevitably from the drawn support positions and are almost certainly the
+intended lesson: subsystem B's left support is a **roller in uplift** (it must
+really be an anchored bearing), and subsystem D's columns are therefore in
+**tension**.
+
+**Interactive view:** one slider that moves subsystem B's pair of supports along
+the 25 m beam; the reader watches the left reaction cross zero into uplift and
+subsystem D's columns flip from compression to tension.
+
+---
 ### [G 14] p.12 — Additional Horizontal Forces (quantitatively) (English: "Task 1")
 
 **Text (verbatim, English).** "Analyse the force flow within the ceiling due to
@@ -795,26 +1524,27 @@ the applied force) is **2.599 m**. Supports in every elevation: pin at
 x = 0.200, roller at x = 4.798.
 
 - **Wall A** is drawn as a braced frame: a diagonal from (0.200, 0) to
-  (4.470, 2.599) — length 4.999 m, **31.33 deg** — plus a vertical post at
-  x = 4.598 running the full 2.599 m.
-- **Wall B** is drawn with a parabolic arch springing from the two supports to
-  the top of the panel.
-- **Wall C** is a solid panel with a circular opening, diameter **1.62 m**,
-  centred at about (2.49, 1.40) m from the panel's bottom-left corner — i.e.
-  almost exactly the middle of the panel. (The circle is drawn as Bezier arcs
-  that `sheetvec.py` does not report; these figures are measured off a 300 dpi
-  render against the vector panel outline, so they carry about 2 % error.)
+  (4.470, 2.599) — length 4.999 m, **31.30 deg** — plus a vertical member
+  0.400 m wide (x = 4.598 … 4.998) running the full 2.599 m.
+- **Wall B** is drawn with an arch springing from (0.400, 0) and (4.598, 0) to
+  an apex at (2.499, 2.499) — span 4.198 m, rise 2.499 m. It is a true
+  **parabola** (quarter-point rise measures 1.874 m against the parabolic
+  1.874 m, exact to 0.1 mm on paper).
+- **Wall C** is a solid panel with a circular opening of diameter
+  **1.5995 m**, centred at **(2.499, 1.400)** m from the panel's bottom-left
+  corner — exactly mid-length, 1.400 m above the base; it occupies
+  x 1.700 … 3.299 and y 0.600 … 2.199.
 
 **Answers — b) the walls.**
 *Wall A*, 84.48 kN entering at the top:
-- diagonal: N = 84.48 / cos 31.33 deg = **98.91 kN**
-- vertical post: N = 84.48 x tan 31.33 deg = **51.43 kN** (opposite sign to the
+- diagonal: N = 84.48 / cos 31.30 deg = **98.90 kN**
+- vertical post: N = 84.48 x tan 31.30 deg = **51.34 kN** (opposite sign to the
   diagonal)
-- support couple: +-51.43 kN vertical, plus 84.48 kN horizontal at the pin.
+- support couple: +-51.34 kN vertical, plus 84.48 kN horizontal at the pin.
 *Check:* overturning 84.48 x 2.599 = 219.6 kNm over the 4.398 m between the
-diagonal foot and the post foot gives 49.9 kN — the 3 % gap against 51.43 kN is
+diagonal foot and the post foot gives 49.9 kN — the 3 % gap against 51.34 kN is
 because the drawn diagonal head (x = 4.470) and the post (x = 4.598) do not
-quite meet. Use 51.4 kN.
+quite meet. Use 51.3 kN.
 Sense: with F pushing the slab in +x the diagonal is a **tie** and the post a
 **strut**; reverse F and the two swap.
 
@@ -864,47 +1594,54 @@ All three walls 4.998 m long, 0.400 m thick.
 - Sum Fx: **B = 100.00 kN** (wall B is the only x-bracing wall)
 - Sum Fy: A + C = 0 -> A and C form a **couple**
 - Sum M: F and B are a couple of 100 x (11.795 - 5.997) = **579.8 kNm**,
-  balanced by A and C over their spacing 15.795 - 7.998 = **7.797 m**
+  balanced by A and C over their spacing 15.795 - 7.997 = **7.798 m**
 
--> **A = C = 579.8 / 7.797 = 74.36 kN**, equal and opposite (A pushes one way in
+-> **A = C = 579.76 / 7.798 = 74.35 kN**, equal and opposite (A pushes one way in
 y, C the other).
 
 | wall | force [kN] | direction |
 |---|---|---|
 | **B** | **100.00** | along the wall (x), opposing F |
-| **A** | **74.36** | along the wall (y) |
-| **C** | **74.36** | along the wall (y), opposite sense to A |
+| **A** | **74.35** | along the wall (y) |
+| **C** | **74.35** | along the wall (y), opposite sense to A |
 
 *Independent check.* Take moments about the slab origin:
 F gives -5.997 x 100 = -599.7 kNm; B gives -11.795 x (-100) = +1179.5 kNm;
 A at x = 7.998 gives 7.998 A; C at x = 15.795 gives -15.795 A.
-Sum: 579.8 - 7.797 A = 0 -> A = 74.36 kN. Sum Fy: 74.36 - 74.36 = 0. Closes.
+Sum: 579.76 - 7.798 A = 0 -> A = 74.35 kN. Sum Fy: 74.35 - 74.35 = 0. Closes.
+Couple route: F and B are equal, opposite and 5.798 m apart -> 579.76 kNm;
+A and C are equal, opposite and 7.798 m apart -> 74.35 x 7.798 = 579.76 kNm.
+Identical.
 
 **Geometry — wall elevations, 1:100.** Origin = bottom-left corner of each
 panel. All three panels **4.998 m x 2.999 m**; clear height to the slab
 soffit **2.599 m**; supports pin/roller at x = 0.200 and x = 4.798.
-- **Wall A**: a plain solid panel, nothing drawn inside.
+- **Wall A**: a plain solid panel, nothing drawn inside. Pin left, roller right.
 - **Wall B**: a solid panel with a rectangular door opening, **2.199 m wide
-  x 1.599 m high**, sitting on the base, from x = 1.400 to x = 3.599.
+  x 1.599 m high**, sitting on the base, from x = 1.3995 to x = 3.5987 —
+  centred on the wall's mid-length, leaving 1.400 m piers each side.
+  Pin left, roller right.
 - **Wall C**: a cross-braced panel, X-bracing over a rectangle
-  **3.568 m x 2.171 m** placed from x = 0.693 to 4.261 and y = 0.327 to 2.499;
-  each diagonal is 4.176 m long at **31.33 deg**.
+  **3.5676 m x 2.1714 m** placed from x = 0.6926 to 4.2602 and y = 0.3275 to
+  2.4989; each diagonal is 4.176 m long at **+-31.30 deg**. Note its supports
+  are **swapped** relative to walls A and B on this page and relative to every
+  wall on p.12: **roller left, pin right**.
 
 **Answers — b) the walls.**
 - **Wall B**, 100.00 kN at 2.599 m: overturning 259.9 kNm over the 4.598 m
   support spacing -> vertical couple **+-56.53 kN**; the force path must arch
   over the 2.199 m door opening.
-- **Wall A**, 74.36 kN at 2.599 m: overturning 193.3 kNm / 4.598 m ->
+- **Wall A**, 74.35 kN at 2.599 m: overturning 193.24 kNm / 4.598 m ->
   **+-42.03 kN** vertical couple. A plain panel, so a single diagonal strut plus
   a tie is the natural answer.
-- **Wall C**, 74.36 kN at 2.599 m: the X-brace takes it directly.
-  Tension-only diagonal: N = 74.36 / cos 31.33 deg = **86.97 kN**; if both
-  diagonals act, **+-43.49 kN** each. Chord force = 74.36 x tan 31.33 deg
-  = **45.27 kN**.
+- **Wall C**, 74.35 kN at 2.599 m: the X-brace takes it directly.
+  Tension-only diagonal: N = 74.35 / cos 31.30 deg = **87.04 kN**; if both
+  diagonals act, **+-43.52 kN** each. Chord force = 74.35 x tan 31.30 deg
+  = **45.18 kN**.
 
 **Interactive view:** one slider moving F up and down the left edge. Wall B's
 force never changes (always 100 kN) while the A/C couple runs from +74 kN,
-through zero when F is level with wall B, to reversed — the cleanest possible
+through zero when F is level with wall B (y = 11.795), to reversed — the cleanest possible
 demonstration of what a bracing couple does.
 
 ---
@@ -1109,9 +1846,11 @@ Span A–B = **14.995 m**; C1 at **4.998 m** from A, C2 at **9.997 m** from A
 | line load g | 0.000 … 9.997 | full length |
 | C (single support, pin) | 4.998 | exact midspan; reaction arrow up |
 
-**a) Answers.** The longitudinal beam is symmetric, so
-A = B = (C1 + C2) / 2. Setting both columns to their limit,
-A = B = 400 kN gives **C1 = C2 = 400.0 kN**.
+**a) Answers.** With C1 and C2 at the third points of a 15.000 m span,
+A = C1 x (15.000 - 4.998)/15.000 + C2 x (15.000 - 9.997)/15.000
+= C x (0.6668 + 0.3335) = **C** exactly, and B = C by symmetry. So each column
+load equals each crossbeam force, one for one. Setting both columns to their
+400 kN limit gives **C1 = C2 = 400.0 kN**.
 
 Internal force flow (arch-and-tie over the full 2.499 m depth):
 - M at C1 = 400 x 4.998 = **1999.2 kNm**; lever arm z = 2.499 m ->
@@ -1130,6 +1869,13 @@ back-to-back 4.998 m cantilevers.
 C = g x 9.997 m. With C = 400 kN:
 
 **g_d = 400 / 9.997 = 40.01 kN/m -> 40.0 kN/m.**
+
+*If instead the English cross-reference is honoured* and the column capacity is
+taken from [G 13] rather than from the German's 400 kN, the largest column load
+there is 314.11 kN (or 318.03 kN on the area-load-derived variant), giving
+C1 = C2 = 314.11 kN and **g_d = 31.42 kN/m** (or 31.80 kN/m). The 21 %
+disagreement with the German's 400 kN is the proof that the English
+cross-reference is spurious rather than merely vague.
 
 Internal force flow in the crossbeam: hogging over the whole length, so the
 **tie is on top** and the compression arch below.
@@ -1160,19 +1906,26 @@ the full mapping. **Fix: renumber to the German scheme.**
 forces of the five beams in task 4a) (subsystem A) …". There is no "task 4a)"
 with five beams anywhere on the sheet. German: "Aus der Flächenlast resultieren
 fünf Punktlasten A1 bis A5 = **50 kN**". The task is unanswerable in English and
-trivial once you have the 50 kN.
+trivial once you have the 50 kN. (Running the area-load chain from p.9 instead
+gives 50.625 kN per load, so the German's 50 kN is that number rounded — the two
+routes agree to 1.25 %.)
 
 **E3 — p.16 [G 18]: the load magnitude was dropped in translation.** English:
 "In additional task 1, you have determined the maximum load of a column …".
 German: "Die maximale Belastung einer Stütze … beträgt **400 kN**." Same
-failure mode as E2.
+failure mode as E2 — and note that 400 kN does **not** equal any column load
+derivable from [G 13] (whose columns come out at 314.11 kN and 64.11 kN), which
+confirms the English cross-reference is spurious rather than merely vague: the
+400 kN is a fresh given.
 
 **E4 — p.8 [G 10.2]: the cross-reference points nowhere, and part b) does not
 exist in German.** English a) says "for the relevant tension force of task 2 a)"
-and b) says "the frame in task 2 b)". German says "für die massgebende Zugkraft
-aus **Aufgabe 10.1**" — i.e. the Q_d = 35 kN earthquake frame on the same page —
-and has **no part b) at all**. The English b) (8 cm C12/15 slab, 10 cm width) is
-an orphan with no identifiable source force.
+and b) says "the frame in task 2 b)". There is no "task 2 a)/b)" anywhere in the
+booklet that supplies a force — every block called "Task 2" was checked. German
+says "für die massgebende Zugkraft aus **Aufgabe 10.1**" — i.e. the Q_d = 35 kN
+earthquake frame on the same page — and has **no part b) at all**. The English
+b) (8 cm C12/15 slab, 10 cm width) is an orphan with no identifiable source
+force.
 
 **E5 — p.7 [G 9.1]: the loads G_d and Q_d have no numeric value.** Both frames
 are labelled only "G_d" and "Q_d". Consequently [G 9.2] ("check whether the
@@ -1231,7 +1984,50 @@ graphically.** The German title is "Statisch unbestimmt gelagerter Rahmen". Both
 frames have two pinned supports (four reaction components, three equations), so
 the solution is not unique; the drawn reaction directions are what makes it
 determinate. The reader has to be told that the arrows are part of the given
-data, not part of the answer.
+data, not part of the answer. Worse, the two drawn arrows in a) are 0.6 deg out
+of symmetry (31.282 deg vs 31.889 deg), which yields two different horizontal
+thrusts (24.688 vs 24.105 kN) where physics demands one.
+
+**E16 — p.7 [G 9.1] b): the given thrust line is not in equilibrium.** Its two
+foot directions (+68.24 deg and -44.53 deg), extended, concur at (2.7823,
+6.2384) — outside the panel and 1.96 m away from the load's line of action,
+whereas three coplanar forces must be concurrent. It also kinks at (1.5512,
+3.1576) with no force drawn there. The correct three-hinged line is symmetric at
++-44.56 deg; the sheet's right-hand segment already is that line, the left-hand
+one is not.
+
+**E17 — p.6 [G 8.1] carries no scale.** Every other drawing block on the sheet
+is captioned with its scale; this one is not, so the frame dimensions can only
+be read as proportions.
+
+**E18 — p.13 [G 15]: wall C's supports are swapped.** Walls A and B on p.13 and
+all three walls on p.12 are drawn pin-left / roller-right; wall C on p.13 is
+roller-left / pin-right. Almost certainly a mirrored block rather than intent,
+but it changes which base takes the horizontal force.
+
+**E19a — p.11 [G 13]: subsystem D carries an undocumented opening.** Its 1:200
+form diagram has a circular hole, diameter 0.999 m, centred 3.044 m from the
+left end and 0.914 m above the soffit. Subsystem C, otherwise the identical
+drawing, has none. The task text never mentions it, yet it changes the force
+flow the student is asked to draw.
+
+**E19b — p.11 [G 13]: the C / D naming is only a label position.** Nothing in
+the geometry distinguishes "subsystem C" from "subsystem D"; the names come from
+where the two captions sit in the 1:500 elevation. Quote the forces by position
+(x = 0.250 m -> 64.11 kN uplift; x = 9.9965 m -> 314.11 kN compression) as well
+as by name.
+
+**E19c — p.10 [G 12]: two features of the drawing cannot be resolved.** In a)
+the fifth (central) column's head sits at about (4.2 … 4.7, 4.2 … 4.7) of the
+10-unit square rather than at (5, 5), and two 6.00-unit members radiate from it
+with no stated role. In b) the number of columns under the lower walls cannot be
+counted because any further ones are hidden behind the near wall.
+
+**E19 — p.12 [G 14]: wall B is a zero-force support.** F is exactly parallel to
+walls A and C, so equilibrium in y forces wall B to zero for any position of F.
+The task nevertheless asks for an internal force flow in wall B and provides a
+parabolic arch in its form diagram. The correct answer is "nothing"; the arch is
+there for stability, not for this load case.
 
 ---
 
@@ -1249,17 +2045,17 @@ data, not part of the answer.
 | 8 | [G 6] | internal depth d, 0.5 … 1.44 m, shared by all five variants |
 | 9 | [G 7] | position of support A, 0 … 8.875 m; B goes into uplift past 4.4985 m |
 | 10 | [G 8.1] | switch between the three support conditions a) / b) / c) |
-| 11 | [G 8.2] | inclination of the A and B reaction arrows |
-| 12 | [G 9.1] | magnitude of G_d / Q_d (the sheet leaves it open — make it the slider) |
+| 11 | [G 8.2] | reaction inclination theta, 20 … 70 deg; the two printed cases sit at 31.6 and 43.3 deg |
+| 12 | [G 9.1] | magnitude of G_d / Q_d (the sheet leaves it open — make the gap the slider) |
 | 13 | [G 9.2] | bar diameter 8 … 32 mm against a tension slider |
 | 14 | [G 10.1] | Q_d, 0 … 70 kN, with the earthquake force reversing direction |
-| 15 | [G 10.2] | required diameter vs the tension force |
-| 16 | [G 11] | switch a) / b) / c) / d) with the tributary area shaded live |
-| 17 | [G 12] | switch a) / b) |
-| 18 | [G 13] | the five point loads A1..A5 (0 … 100 kN each, default 50) |
-| 19 | [G 14] | position of F along the left edge; watch the wall forces redistribute |
-| 20 | [G 15] | position of F along the left edge |
+| 15 | [G 10.2] | tension force vs bar diameter, and compression force against the fixed 64.00 kN C12/15 bearing limit |
+| 16 | [G 11] | switch a) / b) / c) / d) with the tributary area shaded live and R, g printed |
+| 17 | [G 12] | switch a) / b), plus move a)'s central column off-centre |
+| 18 | [G 13] | position of subsystem B's support pair; the left reaction crosses into uplift and drags subsystem D's columns into tension |
+| 19 | [G 14] | position of F along the left edge; A and C swap dominance, B stays at zero |
+| 20 | [G 15] | position of F along the left edge; B stays at 100 kN, the A/C couple reverses at y = 11.795 |
 | 21 | [G 16.1] | toggle each column end between held and free |
 | 22 | [G 16.2] | member length 1 … 12 m, dot sliding along the buckling curve |
 | 23 | [G 17] | bar diameter 40 … 140 mm; material check vs stability check disagree below ~100 mm |
-| 24 | [G 18] | column capacity 100 … 800 kN driving the whole chain down to g_d |
+| 24 | [G 18] | column capacity 100 … 800 kN driving the whole chain down to g_d (400 kN -> 40.0 kN/m) |
