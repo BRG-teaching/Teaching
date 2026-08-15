@@ -44,14 +44,17 @@
  *      cancel that thrust exactly: H_aisle = 113.68 kN. Its load is
  *      80 × 5 = 400 kN, so f = 250/113.68 = 2.199 m — exactly HALF the nave's
  *      rise, since it carries half the load at the same thrust. The pier head
- *      then takes 600 kN straight down.
+ *      then takes 600 kN straight down — on the LEFT. See c) for the right.
  *   b) At the buttress head the aisle delivers 200 kN down and 113.68 kN
  *      outward, 6.956 m above the base, i.e. 790.8 kNm of overturning. The
  *      resultant stays inside a base of width b only while
  *      G₁d ≥ 1581.6/b − 200 kN. The drawn 0.70 m pinnacle cannot do it at any
  *      sane weight — which is exactly the "adjust your design if necessary"
  *      the task asks for.
- *   c) is the mirror image, with identical numbers.
+ *   c) is NOT the mirror image. The sheet lands the right aisle 3.00 m below
+ *      its pier on an inclined closing line, so that aisle hands the pier
+ *      only 131.8 kN instead of 200, and the RIGHT pier carries 531.8 kN
+ *      against the left pier's 600.0 — which is what the solution prints.
  */
 
 import { PAL } from '../lib/eqdraw.js';
@@ -61,26 +64,38 @@ export const meta = {
   title: 'EX 4 Creative — a cathedral that stands up',
   subtitle: 'Structural Design I · sheet EX 4 “Arch structures”, Creative task a)–c)',
   about: 'The nave vault is given; everything holding it up is yours to design. Stone only works in compression, so the whole job is keeping one line of thrust inside the masonry all the way to the ground. The pier between nave and aisle can only be pushed straight down, and that single condition fixes how deep the aisle vault has to be. Then the buttress has to turn a sideways shove into a vertical one — drag its width and its weight until the thrust line stays inside it.',
-  result: (d) => [`the given nave vault: H = ${d.Hn.toFixed(2)} kN, 400 kN per springing → ${d.Rspring.toFixed(1)} kN at ${d.angN.toFixed(2)}° off vertical`,
-                  `a) the aisle vault must match that thrust → rise f = ${d.fa.toFixed(3)} m; the pier head then takes ${d.pier.toFixed(0)} kN straight down`,
+  result: (d) => [`nave vault: H = ${d.Hn.toFixed(2)} kN → ${d.Rspring.toFixed(1)} kN per springing, ${d.angN.toFixed(2)}° off vertical`,
+                  `a) aisle rise f = ${d.fa.toFixed(3)} m matches that thrust → LEFT pier ${d.pier.toFixed(1)} kN, straight down`,
+                  d.dropR > 0
+                    ? `c) the right aisle lands ${d.dropR.toFixed(2)} m lower → it hands over ${d.VaR.toFixed(1)} kN, so the RIGHT pier takes ${d.pierR.toFixed(1)} kN, not 600`
+                    : `c) as a mirror: both piers ${d.pier.toFixed(1)} kN — untick to see what the sheet draws`,
                   d.ok ? `b) buttress ${d.b.toFixed(2)} m wide with G = ${d.G.toFixed(0)} kN: the thrust line lands ${d.inside.toFixed(2)} m inside the base — IT STANDS`
                        : `b) buttress ${d.b.toFixed(2)} m wide with G = ${d.G.toFixed(0)} kN: the thrust line falls ${(-d.inside).toFixed(2)} m OUTSIDE the base — it overturns`],
-  frame: [[-25, -22], [25, 18]],
+  frame: [[-25, -23], [25, 19]],
 };
 
 const MPU = 1.00;                     // drawing units per metre (1:100 sheet)
-const OX = -20, GY = -13.2;           // metre-zero, and the ground line
+// the ground sits above the RESULT card's top edge (occlusion.py --cards):
+// the whole base of the cathedral used to be behind it
+const OX = -20, GY = -12.1;           // metre-zero, and the ground line
 const PIER = [5.0, 10.0];             // pier axes, m
 const BUT = [0.0, 15.0];              // buttress axes, m
 const SPR = 6.956;                    // springing level, m
 const RISE_N = 4.398;                 // the given nave thrust line's rise, m
 const G1 = 160, G2 = 80;              // kN/m over the nave and each aisle
 const NAVE = 5.0, AISLE = 5.0;        // m
+// THE RIGHT SIDE IS NOT A MIRROR. The sheet springs the right aisle from the
+// pier at springing level and lands it on the right buttress head 3.00 m
+// LOWER, on an inclined closing line it draws and labels. That drop changes
+// what the right pier carries -- 531.8 kN against the left pier's 600.0 -- and
+// the view used to assert "the same numbers, by symmetry".
+const DROP_R = 3.00;                  // m, the right aisle's chord fall
 const SFD = 45;                       // kN per drawing unit
 const LLX = 6, LLY = 9;
 const NSEG = 22;
 
 const DEFAULTS = {
+  mirror: false,                      // c) the sheet's asymmetric right aisle
   b: 3.0,                             // m — the buttress base width (your design)
   G: 420,                             // kN — the buttress weight (your design)
   auto: true,                         // aisle rise solved, or dragged
@@ -114,8 +129,11 @@ const STEPS = [
     detail: (d) => [`G₁d ≥ ${(d.Hn * SPR * 2).toFixed(0)}/b − ${(G2 * AISLE / 2).toFixed(0)} kN · at b = ${d.b.toFixed(2)} m that is ${d.Gmin.toFixed(0)} kN, and you have ${d.G.toFixed(0)}`,
                     `the resultant lands ${d.e.toFixed(2)} m off the axis, ${d.ok ? 'inside' : 'OUTSIDE'} the ${(d.b / 2).toFixed(2)} m half-width`],
     take: 'a pinnacle is not decoration — it is ballast, and the drawn 0.70 m one is nowhere near enough' },
-  { t: 'c) And the same on the right', d: 'the right side is the mirror image and the numbers are identical. Every force in the building now has a continuous path of compression from the vault to the ground, which is all a stone cathedral ever needed',
-    detail: (d) => [`the same ${d.fa.toFixed(3)} m rise, the same ${d.pier.toFixed(0)} kN at the pier head · ${(G1 * NAVE + 2 * G2 * AISLE).toFixed(0)} kN of roof in total`],
+  { t: 'c) The right side is NOT a mirror', d: 'the sheet lands the right aisle on a buttress head three metres LOWER than its pier, on a closing line that falls. The thrust is the same — it has to be, or the right pier would be pushed sideways — but the aisle no longer hands over half its own weight. It hands over less, and the right pier ends up carrying seventy kilonewtons less than the left one',
+    detail: (d) => [`right aisle: same rise ${d.fa.toFixed(3)} m and same thrust ${d.Hn.toFixed(2)} kN, but a chord falling ${d.dropR.toFixed(2)} m`,
+                    `so it hands the pier (${(G2 * AISLE).toFixed(0)}·${(AISLE / 2).toFixed(1)} − ${d.Hn.toFixed(2)}·${d.dropR.toFixed(2)})/${AISLE.toFixed(1)} = ${d.VaR.toFixed(1)} kN, not ${d.Va.toFixed(0)}`,
+                    `LEFT pier ${d.pier.toFixed(1)} kN · RIGHT pier ${d.pierR.toFixed(1)} kN · ${(G1 * NAVE + 2 * G2 * AISLE).toFixed(0)} kN of roof in total`,
+                    `and the right buttress head takes ${d.headR.toFixed(1)} kN, ${d.dropR.toFixed(2)} m lower, so it needs ${d.GminR.toFixed(0)} kN of ballast against the left one's ${d.Gmin.toFixed(0)}`],
     take: 'every arch needs something to lean on, and the whole plan of a gothic cathedral is that argument worked outward' },
 ];
 
@@ -129,7 +147,16 @@ function compute(s) {
   const Va = Ra / 2;
   const fa = s.auto ? (G2 * AISLE * AISLE / 8) / Hn : s.fa;
   const Ha = (G2 * AISLE * AISLE) / (8 * fa);
+  // the LEFT pier: a level chord, so the aisle hands it half its own load
   const pier = Vn + Va;
+  // the RIGHT pier: moments of the right aisle about the (lower) buttress head
+  const dropR = s.mirror ? 0 : DROP_R;
+  const VaR = (Ra * (AISLE / 2) - Hn * dropR) / AISLE;
+  const pierR = Vn + VaR;
+  const headR = Ra - VaR;             // what reaches the right buttress head
+  // and its ballast, over a shorter overturning lever than the left one
+  const MR = Hn * (SPR - dropR);
+  const GminR = (2 * MR) / s.b - headR;
   // the buttress: what arrives at its head, and where the resultant lands
   const M = Hn * SPR;
   const Ntot = Va + s.G;
@@ -143,13 +170,20 @@ function compute(s) {
   });
   const nave = par(PIER[0], PIER[1], RISE_N);
   const aisleL = par(BUT[0], PIER[0], fa);
-  const aisleR = par(PIER[1], BUT[1], fa);
+  // the right aisle hangs from a chord that falls, so its thrust line is the
+  // parabola measured from that inclined chord
+  const aisleR = Array.from({ length: NSEG + 1 }, (_, i) => {
+    const u = i / NSEG;
+    const chord = SPR - dropR * u;
+    return [ux(PIER[1] + AISLE * u), uy(chord + 4 * fa * u * (1 - u))];
+  });
   // force diagram: the nave triangle and one aisle triangle
   const T = [LLX, LLY], Mn = [LLX, LLY - Rn / SFD];
   const on = [LLX + Hn / SFD, LLY - Vn / SFD];
   const Ta = [LLX + 9, LLY - 2], Ma = [LLX + 9, LLY - 2 - Ra / SFD];
   const oa = [LLX + 9 + Ha / SFD, LLY - 2 - Va / SFD];
   return { Rn, Hn, Vn, Rspring, angN, Ra, Va, fa, Ha, pier, M, Ntot, e, inside,
+           dropR, VaR, pierR, headR, MR, GminR,
            Gmin, ok: inside >= 0, b: s.b, G: s.G, nave, aisleL, aisleR,
            T, Mn, on, Ta, Ma, oa };
 }
@@ -265,9 +299,9 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [4, -13.4]);
-    dw.setLabel('force_title', [14, -13.0]);
-    dw.setLabel('force_sub', [14, -14.4]);
+    dw.setLabel('form_title', [-2, -13.4]);
+    dw.setLabel('force_title', [16, -15.4]);
+    dw.setLabel('force_sub', [16, -16.8]);
     dw.setText('force_sub', `to scale · 1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 100 kN)`);
 
     dw.setSeg('ground', [ux(-3.5), GY], [ux(18.5), GY]);
@@ -305,7 +339,9 @@ export function create(dw, panel, makePlayer) {
         const x = ux(x0 + ((x1 - x0) * i) / 11);
         return [[x, uy(yy + 0.5)], [x, uy(yy - 0.35)]];
       }));
-      dw.setLabel(`l_${n}`, [ux((x0 + x1) / 2), uy(yy + 1.5)]);
+      // the nave's load label rides BELOW its arrow row: above it, the caption
+      // card is in the way at the steps where the caption is longest
+      dw.setLabel(`l_${n}`, [ux((x0 + x1) / 2), uy(yy + (n === 'g1' ? -1.5 : 1.5))]);
       dw.setText(`l_${n}`, txt);
     }
     dw.setDashArrow('R1d', [ux(7.5), uy(15.4)], [ux(7.5), uy(14.1)]);
@@ -353,7 +389,8 @@ export function create(dw, panel, makePlayer) {
     for (const k of [0, 1]) {
       dw.setArrow(`pierF${k}`, [ux(PIER[k]), uy(SPR)], [ux(PIER[k]), uy(SPR) - 3.0]);
       dw.setLabel(`lpierF${k}`, [ux(PIER[k]) + (k ? 3.6 : -3.6), uy(SPR) - 3.4]);
-      dw.setText(`lpierF${k}`, `${d.pier.toFixed(0)} kN`);
+      // the two piers do NOT carry the same load once the right aisle drops
+      dw.setText(`lpierF${k}`, `${(k ? d.pierR : d.pier).toFixed(1)} kN`);
     }
     // the buttress: what arrives, the ballast, and where the thrust lands
     const head = [ux(BUT[0]), uy(SPR)];
@@ -385,6 +422,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(des, s, 'b', 'buttress base width b (m)', 0.7, 6, 0.05, refresh);
   panel.slider(des, s, 'G', 'buttress weight G₁d (kN)', 0, 1400, 10, refresh);
   panel.toggle(des, s, 'auto', 'a) solve the aisle rise for me', refresh);
+  panel.toggle(des, s, 'mirror', 'c) draw the right side as a mirror instead', refresh);
   panel.slider(des, s, 'fa', 'aisle rise (m, when not solved)', 0.8, 5, 0.02, refresh);
   const giv = panel.section('Given');
   panel.toggle(giv, s, 'lbl', 'show labels', refresh);
