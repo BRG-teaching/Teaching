@@ -62,6 +62,9 @@
     transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .card:hover { box-shadow: 0 3px 14px rgba(20, 30, 40, 0.13); }
+  .links.chapters { margin-top: -2px; }
+  .links.chapters .lbl { color: #8a8a90; font-size: 12px; margin-right: 2px; }
+  .links.chapters a { font-variant-numeric: tabular-nums; }
   .thumb { aspect-ratio: 660 / 430; background: #fff; position: relative;
            display: grid; place-content: center; overflow: hidden; }
   .thumb img.poster { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -131,18 +134,33 @@
       const sec = document.createElement('section');
       sec.className = 'sheet';
       const link = (u, t) => (u ? `<a href="${u}" target="_blank" rel="noopener">${t}</a>` : '');
-      const sol = sh.solution_en || sh.solution_de;
+      // Be exact about the solutions. Almost every sheet HAS one — the course
+      // platform lists it by name — but the download link is stripped for
+      // anyone not logged in to ETH, so it cannot be mirrored here. Saying
+      // "no official solution" would be untrue and would suggest the worked
+      // drawings are guesses; they are derived, and the header of each view
+      // file shows the derivation.
+      const gated = sh.solution_gated || [];
+      const solLinks = [link(sh.solution_en, 'official solution (EN)'),
+                        link(sh.solution_de, 'offizielle Lösung (DE)')].filter(Boolean);
+      const solNote = solLinks.length ? solLinks.join('')
+        : gated.length
+          ? `<span class="none" title="${gated.join(' · ')}">official solution exists`
+            + ` (${gated.join(', ')}) but the platform serves it only to signed-in`
+            + ` ETH users — every answer here is derived instead</span>`
+          : '<span class="none">the platform lists no official solution for this sheet</span>';
+      const chapters = (sh.chapter_pdfs || []).map((c) =>
+        link(c.en || c.de, c.n)).filter(Boolean).join('');
       sec.innerHTML = `
         <h2><span class="code">${sh.code}</span> · ${sh.title}</h2>
-        <p class="meta">${sh.course}${sh.chapters && sh.chapters !== '—'
-          ? ` · compendium ${sh.chapters}` : ''}</p>
+        <p class="meta">${sh.course}${sh.source ? ' · ' : ''}${link(sh.source, 'source ↗')}</p>
         <p class="links">
           ${link(sh.task_en, 'exercise sheet (EN)')}
           ${link(sh.task_de, 'Aufgabenblatt (DE)')}
-          ${sol ? link(sol, 'official solution') : '<span class="none">no official solution in the archive</span>'}
-          ${link(sh.compendium, 'compendium')}
+          ${solNote}
           ${link(sh.lecture, 'lecture slides ↗')}
         </p>
+        ${chapters ? `<p class="links chapters"><span class="lbl">compendium</span>${chapters}</p>` : ''}
         <div class="row"></div>`;
       const row = sec.querySelector('.row');
       const mine = data.views.filter((v) => v.sheet === key);
