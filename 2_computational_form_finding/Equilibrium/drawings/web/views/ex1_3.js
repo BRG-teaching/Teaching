@@ -164,9 +164,7 @@ export function create(dw, panel, makePlayer) {
     dw.setText('force_sub', `1 unit :: ${SFD} kN`);
 
     dw.setSeg('ground', [16, GY], [54, GY]);
-    const h = [];
-    for (let x = 16.4; x < 54; x += 1.45) h.push([[x, GY], [x - 0.7, GY - 0.9]]);
-    dw.setStrokes('hatch', h.slice(0, 26));
+    dw.setStrokes('hatch', V.hatch([16, GY], [54, GY], 1, 1.3, 26));
 
     d.boxes.forEach((b, i) => {
       const c = [[b.x0, b.y0], [b.x1, b.y0], [b.x1, b.y1], [b.x0, b.y1]];

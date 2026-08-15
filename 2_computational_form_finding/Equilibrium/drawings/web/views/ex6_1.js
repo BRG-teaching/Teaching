@@ -61,8 +61,12 @@ const DIA = [
   },
 ];
 
-const MPU = 5.2;
-const ORG = [[-22, -3], [-6, -3], [11, -3]];
+// each diagram is 4.0, 4.0 and 3.0 m wide, so at 3.4 units/m they are 13.6,
+// 13.6 and 10.2 units — laid out with a 3-unit gap they fit the frame without
+// running into each other, which the first attempt did badly
+const MPU = 3.4;
+const ORG = [[-23, -2], [-6.4, -2], [10.2, -2]];
+const WID = [4.0, 4.0, 2.996];
 
 export const meta = {
   title: 'EX 6.1 — is it determinate? Count it',
@@ -149,8 +153,8 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute();
-    dw.setLabel('form_title', [-4, 8.0]);
-    dw.setLabel('rule', [0, 5.6]);
+    dw.setLabel('form_title', [12, 12.4]);
+    dw.setLabel('rule', [12, 10.6]);
     dw.setText('rule', 'S members + A reaction components  vs  2 × K joints');
 
     DIA.forEach((D, k) => {
@@ -163,24 +167,23 @@ export function create(dw, panel, makePlayer) {
         const inc = k === 1 && i === D.roller;
         const dir = inc ? V.unit([1, -1]) : [0, -1];
         const perp = [-dir[1], dir[0]];
-        dw.setStrokes(`h${k}_${i}`, Array.from({ length: 5 }, (_, t) => {
-          const base = V.add(q, V.mul(dir, 0.6));
-          const a = V.add(base, V.mul(perp, -1.3 + t * 0.65));
-          return [a, V.add(V.add(a, V.mul(perp, -0.55)), V.mul(dir, 0.75))];
-        }));
+        const hb = V.add(q, V.mul(dir, 0.55));
+        dw.setStrokes(`h${k}_${i}`, V.hatch(V.add(hb, V.mul(perp, -1.7)),
+          V.add(hb, V.mul(perp, 1.7)), -1, 0.9, 5));
         if (i === D.roller) {
           const base = V.add(q, V.mul(dir, 1.5));
           dw.setSeg(`r${k}_${i}`, V.add(base, V.mul(perp, -1.8)), V.add(base, V.mul(perp, 1.8)));
         }
       });
       const c = d[k];
-      const cx = ORG[k][0] + 2.0 * MPU * 0.5;
-      dw.setLabel(`tag${k}`, [ORG[k][0] - 1.0, ORG[k][1] + 8.0]);
-      dw.setLabel(`nm${k}`, [cx, ORG[k][1] + 8.0]);
-      dw.setLabel(`cnt${k}`, [cx, ORG[k][1] - 4.4]);
+      const cx = ORG[k][0] + (WID[k] * MPU) / 2;
+      dw.setLabel(`tag${k}`, [ORG[k][0] - 1.4, ORG[k][1] + 6.2]);
+      dw.setLabel(`nm${k}`, [cx + 1.0, ORG[k][1] + 6.2]);
+      // staggered, because three long lines side by side would collide
+      dw.setLabel(`cnt${k}`, [cx, ORG[k][1] - (k === 1 ? 10.6 : 8.2)]);
       dw.setText(`cnt${k}`,
-        `S ${c.S} + A ${c.A} − 2K ${2 * c.K} = ${c.deg >= 0 ? '+' : ''}${c.deg}`
-        + (c.deg === 0 ? '  determinate' : `  over-determined ×${c.deg}`));
+        `${c.S} + ${c.A} − ${2 * c.K} = ${c.deg >= 0 ? '+' : ''}${c.deg}`
+        + (c.deg === 0 ? ' determinate' : ` OVER-determined ×${c.deg}`));
     });
 
     panel.syncAll();

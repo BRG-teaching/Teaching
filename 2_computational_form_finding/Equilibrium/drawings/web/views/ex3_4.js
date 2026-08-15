@@ -218,10 +218,7 @@ export function create(dw, panel, makePlayer) {
     dw.setText('force_sub', `to scale · 1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 500 kN)`);
 
     dw.setSeg('ground', [AX - 3.4, GY], [BX + 3.4, GY]);
-    dw.setStrokes('gHatch', Array.from({ length: 14 }, (_, i) => {
-      const x = AX - 3.0 + i * ((BX - AX + 6) / 13);
-      return [[x, GY], [x - 0.5, GY - 0.5]];
-    }));
+    dw.setStrokes('gHatch', V.hatch([AX - 3.2, GY], [BX + 3.2, GY], 1, 0.95, 14));
     const wt = 1.9;
     dw.setPoly('wallA', [[AX - wt, GY], [AX, GY], [AX, d.A[1]], [AX - wt, d.A[1]]]);
     dw.setPoly('wallB', [[BX, GY], [BX + wt, GY], [BX + wt, d.B[1]], [BX, d.B[1]]]);

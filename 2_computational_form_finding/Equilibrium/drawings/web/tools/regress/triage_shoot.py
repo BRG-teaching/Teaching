@@ -20,11 +20,12 @@ SIDEBAR = 250  # CSS px, our viewer
 
 class Chrome:
     def __init__(self, w=1500, h=980):
+        self.profile = tempfile.mkdtemp(prefix="eqtriage-")
         self.proc = subprocess.Popen(
             ["google-chrome", "--headless=new", "--remote-debugging-port=0",
              f"--window-size={w},{h}", "--hide-scrollbars",
              "--force-device-scale-factor=1",
-             "--user-data-dir=" + tempfile.mkdtemp(prefix="eqtriage-"),
+             "--user-data-dir=" + self.profile,
              "about:blank"],
             stderr=subprocess.PIPE, text=True)
         port = None
@@ -87,6 +88,11 @@ class Chrome:
             self.ws.close()
         finally:
             self.proc.terminate()
+            try:
+                self.proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
+            shutil.rmtree(self.profile, ignore_errors=True)
 
 
 def not_blank(path):

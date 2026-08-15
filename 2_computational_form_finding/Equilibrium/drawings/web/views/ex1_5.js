@@ -31,6 +31,24 @@
  * task asks: a 3 m box cantilevering right off a 1 m foot, with the tall
  * narrow box hung off the left end as a counterweight. x̄ = 0.918 m against a
  * patch of 0 … 1.0 m — stable by 82 mm.
+ *
+ * WHAT "STABLE" MEANS HERE. The first version of this view checked one thing
+ * only: does the total resultant land inside the ground contact patch? That is
+ * not enough, and dragging a box makes it obvious -- slide one clear off the
+ * stack and it hangs in mid-air while the verdict still reads STABLE, because
+ * its weight is still in the resultant and the resultant is still over the
+ * foot. Three things are now checked:
+ *
+ *   1. CONNECTION. Every box must rest on the ground or overlap the top of a
+ *      box below it. A box touching nothing is welded to nothing.
+ *   2. NO INTERPENETRATION. Two boxes may not be dragged through each other.
+ *   3. OVERTURNING at the ground, as before.
+ *
+ * And because the welds are an assumption worth seeing, the view also reports
+ * the answer WITHOUT them: at every joint in the stack, the weight carried
+ * through that joint against the patch that actually touches. That is the
+ * check that matches the eye -- it is what says a box balanced on a sliver of
+ * its neighbour will go over, even while the welded verdict says it stands.
  */
 
 import { PAL } from '../lib/eqdraw.js';
@@ -41,9 +59,15 @@ export const meta = {
   subtitle: 'Structural Design I · sheet EX 1 “Equilibrium”, Creative task a) and b)',
   about: 'The same trial funicular as task 3, now used as a design tool rather than a measuring one. A free-standing stack is stable exactly while the resultant of its weight lands inside the patch where it touches the ground — so finding that resultant tells you where the foot has to be. Two arrangements: a) task 3’s stack, fixed by moving one box, and b) a four-box cantilever built to be alarming but stable. Drag any box and watch the verdict flip.',
   result: (d) => [`R = ${d.tot} kN vertical, acting at x̄ = ${d.xbar.toFixed(3)} m`,
-                  `contact patch ${d.foot[0].toFixed(3)} … ${d.foot[1].toFixed(3)} m`,
-                  d.stable ? `STABLE — the resultant lands ${d.margin.toFixed(3)} m inside the nearer edge`
-                           : `NOT STABLE — the resultant misses the patch by ${d.margin.toFixed(3)} m, so it tips`],
+                  `contact patch on the ground ${d.foot[0].toFixed(3)} … ${d.foot[1].toFixed(3)} m`,
+                  d.why ? `NOT STABLE — ${d.why}`
+                    : d.stable ? `STABLE (welded) — the resultant lands ${d.margin.toFixed(3)} m inside the nearer edge`
+                               : `NOT STABLE — the resultant misses the patch by ${d.margin.toFixed(3)} m, so it tips`,
+                  !d.connected ? 'the stack is not even connected, so no weld can help it'
+                    : !d.stable ? 'and no weld can save it: the joint that lets go is the ground itself, which nothing is welded to'
+                      : d.freeStanding
+                        ? `it would stand without the welds too — the tightest joint is ${d.weakest.what}, ${d.weakest.margin.toFixed(3)} m to spare`
+                        : `but it is standing on its welds: ${d.loose.map((j) => j.what).join(' and ')} would let go on its own`],
   frame: [[-21, -18], [21, 15]],
 };
 
@@ -77,6 +101,7 @@ const DEFAULTS = {
   d0: 0, d1: 0, d2: 0, d3: 0,         // per-box nudge (m), the design freedom
   ox: 15.0, oy: 0.0,                  // trial pole
   a0: -8.6,                           // where the trial funicular starts
+  joints: true,                       // show where each box actually touches
   lbl: true, _k: 99,
 };
 
@@ -94,11 +119,18 @@ const STEPS = [
   { t: 'The trial funicular', d: 'left: start anywhere on the first line of action and draw one string parallel to each ray, turning at every line of action' },
   { t: 'Close it: the point S', d: 'left: extend the first and last strings until they meet at S. The resultant passes through S — for parallel forces there is no other way to place it',
     detail: (d) => [`R = ${d.tot} kN on the vertical at x̄ = ${d.xbar.toFixed(3)} m`] },
-  { t: 'The verdict', d: 'left: the stack only touches the ground under the bottom box. A contact force can only push up from inside that patch, so the stack stands if — and only if — the resultant lands within it',
+  { t: 'The verdict', d: 'left: the stack only touches the ground under the bottom box. A contact force can only push up from inside that patch, so the stack stands if — and only if — the resultant lands within it. Two things have to be true before that even matters: every box must actually TOUCH something, or there is no weld holding it, and no two boxes may occupy the same space',
     detail: (d) => [`x̄ = ${d.xbar.toFixed(3)} m · contact patch ${d.foot[0].toFixed(3)} … ${d.foot[1].toFixed(3)} m`,
-                    d.stable ? `inside by ${d.margin.toFixed(3)} m → STABLE`
-                             : `outside by ${d.margin.toFixed(3)} m → NOT STABLE, it tips`],
+                    d.why ? `NOT STABLE — ${d.why}`
+                      : d.stable ? `inside by ${d.margin.toFixed(3)} m → STABLE`
+                                 : `outside by ${d.margin.toFixed(3)} m → NOT STABLE, it tips`],
     take: 'stability is not about weight, it is about where the weight lands' },
+  { t: 'What the welds are doing', d: 'the task tells you the boxes are welded, and that is a bigger assumption than it sounds. A weld carries moment, so every joint above the ground is rigid and only the ground can let go. Take the welds away and each joint has to stand on its own: a box balanced on a sliver of its neighbour goes over even though the total resultant is still comfortably over the foot',
+    detail: (d) => (!d.connected ? [d.why] : [
+      ...d.joints.map((j) => `${j.what}: ${j.F.toFixed(0)} kN at x̄ = ${j.x.toFixed(3)} m on a patch ${j.patch[0].toFixed(3)} … ${j.patch[1].toFixed(3)} m → ${j.ok ? 'holds' : 'LETS GO'}`),
+      d.freeStanding ? 'so this arrangement needs no welds at all'
+                     : 'so this arrangement is standing on its welds']),
+    take: 'welded and merely stacked are two different structures — the drawing looks identical' },
   { t: 'Now design it', d: 'a) tick “task 3’s original foot” to see the stack the sheet gives you: its resultant falls 0.32 m clear of the patch, so it tips. Untick it and the foot slides 1.094 m left, right under the resultant — one box moved, nothing else. b) switch to four boxes for a cantilever that only just holds',
     detail: (d, st) => [st.four
       ? `b) four boxes: x̄ = ${d.xbar.toFixed(3)} m against a patch ending at ${d.foot[1].toFixed(3)} m — ${d.margin.toFixed(3)} m to spare`
@@ -118,16 +150,105 @@ function layout(s) {
   });
 }
 
+const EPS = 1e-6;
+
+/**
+ * Who holds up whom.
+ *
+ * A box rests on the ground if its underside is on it; otherwise it rests on
+ * every box whose TOP it shares and whose plan it actually overlaps. A box
+ * that overlaps nothing is standing in mid-air: it is welded to nothing, and
+ * no arrangement containing it stands up, however well the total resultant
+ * happens to land. That is the case the first version of this view got wrong.
+ */
+function support(boxes) {
+  const sup = boxes.map(() => []);
+  boxes.forEach((b, i) => {
+    if (Math.abs(b.y0) < EPS) { sup[i].push(-1); return; }     // -1 = the ground
+    boxes.forEach((u, j) => {
+      if (i === j || Math.abs(u.y1 - b.y0) > EPS) return;
+      if (Math.min(b.x1, u.x1) - Math.max(b.x0, u.x0) > EPS) sup[i].push(j);
+    });
+  });
+  return sup;
+}
+
 function compute(s) {
   const boxes = layout(s);
   const tot = boxes.reduce((a, b) => a + b.F, 0);
   const cx = boxes.map((b) => (b.x0 + b.x1) / 2);
   const xbar = boxes.reduce((a, b, i) => a + cx[i] * b.F, 0) / tot;
-  // the box that stands on the ground is the one at y0 = 0
-  const foot = boxes.filter((b) => b.y0 === 0)
-    .reduce((acc, b) => [Math.min(acc[0], b.x0), Math.max(acc[1], b.x1)], [Infinity, -Infinity]);
-  const stable = xbar >= foot[0] && xbar <= foot[1];
-  const margin = Math.min(Math.abs(xbar - foot[0]), Math.abs(xbar - foot[1]));
+
+  const sup = support(boxes);
+  const floating = boxes.map((b, i) => sup[i].length === 0);
+  // two boxes may not occupy the same space; dragging one through another is
+  // not a design, it is a drawing mistake
+  const clash = boxes.some((b, i) => boxes.some((u, j) => j > i
+    && Math.min(b.x1, u.x1) - Math.max(b.x0, u.x0) > EPS
+    && Math.min(b.y1, u.y1) - Math.max(b.y0, u.y0) > EPS));
+
+  // everything carried THROUGH box i: itself, plus whatever stands on it
+  const dep = boxes.map(() => []);
+  boxes.forEach((b, i) => sup[i].forEach((j) => { if (j >= 0) dep[j].push(i); }));
+  const carried = (i, acc = new Set()) => {
+    acc.add(i);
+    dep[i].forEach((k) => { if (!acc.has(k)) carried(k, acc); });
+    return acc;
+  };
+  const weight = (grp) => [...grp].reduce((a, k) => a + boxes[k].F, 0);
+  const centre = (grp) => [...grp].reduce((a, k) => a + cx[k] * boxes[k].F, 0) / weight(grp);
+
+  // every horizontal joint in the stack: the ground first, then each box's
+  // underside. At each one, the load coming down through it must land inside
+  // the patch that actually touches.
+  const joints = [];
+  const onGround = boxes.map((b, i) => i).filter((i) => sup[i].includes(-1));
+  const foot = onGround.length
+    ? onGround.reduce((acc, i) => [Math.min(acc[0], boxes[i].x0),
+                                   Math.max(acc[1], boxes[i].x1)], [Infinity, -Infinity])
+    : [0, 0];
+  if (onGround.length) {
+    const grp = new Set();
+    onGround.forEach((i) => carried(i, grp));
+    joints.push({ ground: true, what: 'the ground contact', patch: foot,
+                  x: centre(grp), F: weight(grp) });
+  }
+  boxes.forEach((b, i) => {
+    if (sup[i].includes(-1) || !sup[i].length) return;
+    const iv = sup[i].map((j) => [Math.max(b.x0, boxes[j].x0), Math.min(b.x1, boxes[j].x1)]);
+    const patch = [Math.min(...iv.map((v) => v[0])), Math.max(...iv.map((v) => v[1]))];
+    const grp = carried(i);
+    joints.push({ ground: false, what: `box ${b.i + 1}’s underside`, patch,
+                  x: centre(grp), F: weight(grp), i });
+  });
+  const rate = (j) => {
+    const ok = j.x >= j.patch[0] - EPS && j.x <= j.patch[1] + EPS;
+    return { ...j, ok,
+             margin: Math.min(Math.abs(j.x - j.patch[0]), Math.abs(j.x - j.patch[1])),
+             len: j.patch[1] - j.patch[0] };
+  };
+  const J = joints.map(rate);
+  const gj = J.find((j) => j.ground);
+
+  // THE TASK'S QUESTION. The boxes are welded, so every joint above the ground
+  // can carry moment and only the ground joint can let go -- but a box welded
+  // to nothing at all is still just falling.
+  const bad = floating.findIndex(Boolean);
+  const connected = bad < 0 && !clash && onGround.length > 0;
+  const stable = connected && !!gj && gj.ok;
+  const margin = gj ? gj.margin : 0;
+  const why = clash ? 'two boxes are drawn through each other'
+    : bad >= 0 ? `box ${boxes[bad].i + 1} is standing in mid-air — it touches nothing to be welded to`
+    : !onGround.length ? 'nothing is standing on the ground'
+    : null;
+
+  // AND THE QUESTION THE EYE ASKS. Take the welds away and every joint has to
+  // stand on its own; this is the check that says a box balanced on a sliver
+  // of its neighbour will go over.
+  const loose = J.filter((j) => !j.ok);
+  const freeStanding = connected && !loose.length;
+  const weakest = J.reduce((a, j) => (a && a.margin <= j.margin ? a : j), null);
+
   // force diagram: the load line, in the boxes' left-to-right order
   const order = boxes.map((b, i) => i).sort((a, b) => cx[a] - cx[b]);
   const L = [[LLX, LLY]];
@@ -140,7 +261,10 @@ function compute(s) {
     A.push(V.intersect(A[i], dir, [toU(xs[i + 1]), 0], [0, 1]) || A[i]);
   }
   const S = V.intersect(A[0], V.sub(L[0], o), A[A.length - 1], V.sub(L[L.length - 1], o)) || A[0];
-  return { boxes, cx, tot, xbar, foot, stable, margin, L, o, A, S, order, n: boxes.length };
+  return { boxes, cx, tot, xbar, foot, stable, margin, L, o, A, S, order,
+           n: boxes.length,
+           sup, floating, clash, connected, why, joints: J, gj,
+           freeStanding, loose, weakest };
 }
 
 const toU = (m) => OX + m * MPU;
@@ -202,7 +326,17 @@ export function create(dw, panel, makePlayer) {
   dw.label('verdict', '', { cls: 'num', intro: RESOLVE, flash: false,
     color: { final: (dd) => (dd.stable ? PAL.green : PAL.red) } });
   dw.seg('miss', { intro: RESOLVE, w: dw.W.bar, color: PAL.red, flash: false,
-    when: (st, dd) => !!dd && !dd.stable });
+    when: (st, dd) => !!dd && !dd.stable && dd.connected });
+  // the second opinion: what the stack would do if it were NOT welded
+  dw.label('welds', '', { cls: 'point', intro: RESOLVE, flash: false,
+    color: { final: (dd) => (dd.freeStanding ? PAL.green : PAL.grey) } });
+  // every joint above the ground, drawn where it actually touches, so a box
+  // balanced on a sliver shows the sliver
+  for (let i = 0; i < 4; i++) {
+    dw.seg(`jt${i}`, { intro: RESOLVE, w: dw.W.bar * 1.4, flash: false,
+      color: { final: (dd) => (dd.joints[i] && dd.joints[i].ok ? PAL.green : PAL.red) },
+      when: (st, dd) => !!dd && st.joints && !!dd.joints[i] && !dd.joints[i].ground });
+  }
 
   dw.instant('form_title', 'force_title', 'force_sub', 'ground', 'hatch');
   dw.ghostable('ff0', 'ff1', 'ff2', 'ff3', 'Rforce');
@@ -217,9 +351,7 @@ export function create(dw, panel, makePlayer) {
     dw.setText('force_sub', `1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 20 kN)`);
 
     dw.setSeg('ground', [OX - 13, GY], [OX + 13, GY]);
-    const h = [];
-    for (let x = OX - 12.6; x < OX + 13; x += 1.0) h.push([[x, GY], [x - 0.55, GY - 0.7]]);
-    dw.setStrokes('hatch', h.slice(0, 26));
+    dw.setStrokes('hatch', V.hatch([OX - 13, GY], [OX + 13, GY], 1, 0.95, 26));
 
     // boxes, in the slot order of the current arrangement
     const byIdx = new Map(d.boxes.map((b) => [b.i, b]));
@@ -265,12 +397,25 @@ export function create(dw, panel, makePlayer) {
     dw.setSeg('foot', [toU(d.foot[0]), GY - 0.3], [toU(d.foot[1]), GY - 0.3]);
     dw.setLabel('lfoot', [toU((d.foot[0] + d.foot[1]) / 2) - 4.6, GY - 1.4]);
     dw.setLabel('verdict', [toU(d.xbar) + 5.0, GY - 2.6]);
-    dw.setText('verdict', d.stable
-      ? `STABLE — ${d.margin.toFixed(3)} m to spare`
-      : `NOT STABLE — misses by ${d.margin.toFixed(3)} m`);
+    dw.setText('verdict', d.why ? `NOT STABLE — ${d.why}`
+      : d.stable ? `STABLE — ${d.margin.toFixed(3)} m to spare`
+                 : `NOT STABLE — misses by ${d.margin.toFixed(3)} m`);
     const near = Math.abs(d.xbar - d.foot[0]) < Math.abs(d.xbar - d.foot[1])
       ? d.foot[0] : d.foot[1];
     dw.setSeg('miss', [toU(near), GY - 0.3], [toU(d.xbar), GY - 0.3]);
+
+    dw.setLabel('welds', [toU(d.xbar) + 5.0, GY - 4.0]);
+    dw.setText('welds', !d.connected || !d.stable ? ''
+      : d.freeStanding
+        ? `and it would stand WITHOUT the welds too — tightest joint ${d.weakest.what}, ${d.weakest.margin.toFixed(3)} m to spare`
+        : `but only BECAUSE it is welded: ${d.loose.map((j) => j.what).join(' and ')} would let go`);
+    // draw each joint on the line where it actually touches
+    for (let i = 0; i < 4; i++) {
+      const j = d.joints[i];
+      if (!j || j.ground) { dw.setSeg(`jt${i}`, [0, 0], [0, 0]); continue; }
+      const y = toY(d.boxes[j.i].y0);
+      dw.setSeg(`jt${i}`, [toU(j.patch[0]), y], [toU(j.patch[1]), y]);
+    }
 
     panel.syncAll();
     player.apply(d, s);
@@ -300,6 +445,7 @@ export function create(dw, panel, makePlayer) {
     refresh();
   });
   panel.toggle(arr, s, 'orig', 'a) task 3’s original foot (it tips)', refresh);
+  panel.toggle(arr, s, 'joints', 'show where the boxes actually touch', refresh);
   panel.toggle(arr, s, 'lbl', 'show labels', refresh);
   const des = panel.section('Slide a box (m)');
   panel.slider(des, s, 'd0', 'box 1 · 1.5 × 1.0 m · 60 kN', -2, 2, 0.02, refresh);

@@ -1247,6 +1247,9 @@ export class Drawing {
       about: meta.about ?? '',
       frame: meta.frame,
       steps: player.steps.map((s) => ({ title: live(s.t), caption: live(s.d) ?? '' })),
+      // what the view CLAIMS are counterparts, so a checker can insist they
+      // are actually drawn parallel (web/tools/regress/parallel.py)
+      links: this._links.map((g) => [...g]),
       ops,
     };
   }

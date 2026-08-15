@@ -89,6 +89,12 @@
     position: absolute; transform: translate(-50%, -50%);
     font: 12px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     color: #55555c; white-space: nowrap;
+    /* a halo, so a label stays readable wherever a line runs under it.
+       Drawings are dense and a number struck through by its own member is
+       worse than useless. */
+    text-shadow:
+      0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff,
+      1px 0 2px #fff, -1px 0 2px #fff, 0 1px 2px #fff, 0 -1px 2px #fff;
   }
   .eq-label.title { font-size: 14px; font-weight: 650; color: #18181b; }
   .eq-label.point { font-size: 11px; color: #a0a0a7; }

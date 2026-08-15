@@ -208,10 +208,7 @@ export function create(dw, panel, makePlayer) {
 
     // ground + hatch
     dw.setSeg('ground', [AX - 3.4, GY], [BX + 3.4, GY]);
-    dw.setStrokes('gHatch', Array.from({ length: 14 }, (_, i) => {
-      const x = AX - 3.0 + i * ((BX - AX + 6) / 13);
-      return [[x, GY], [x - 0.55, GY - 0.55]];
-    }));
+    dw.setStrokes('gHatch', V.hatch([AX - 3.2, GY], [BX + 3.2, GY], 1, 0.95, 14));
     const wt = 2.0;                       // wall thickness in units
     dw.setPoly('wallA', [[AX - wt, GY], [AX, GY], [AX, CHORD], [AX - wt, CHORD]]);
     dw.setPoly('wallB', [[BX, GY], [BX + wt, GY], [BX + wt, CHORD], [BX, CHORD]]);

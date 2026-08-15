@@ -76,16 +76,16 @@ add(1, 'point', Point(-9, -1, 0), color=Color.from_hex("#ffffff"), width=0.31635
 add(1, 'label', Point(-9, 1, 0), text='T3')
 add(1, 'point', Point(-4, -1, 0), color=Color.from_hex("#ffffff"), width=0.31635)
 add(1, 'label', Point(-4, 1, 0), text='T4')
-add(1, 'segment', Line((-25.4, -6.6, 0), (-26, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-24.7, -6.6, 0), (-25.3, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-24, -6.6, 0), (-24.6, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-23.3, -6.6, 0), (-23.9, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-22.6, -6.6, 0), (-23.2, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-10.4, -6.6, 0), (-11, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-9.7, -6.6, 0), (-10.3, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-9, -6.6, 0), (-9.6, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-8.3, -6.6, 0), (-8.9, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
-add(1, 'segment', Line((-7.6, -6.6, 0), (-8.2, -7.4, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-25.08, -6.55, 0), (-25.7518, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-24.36, -6.55, 0), (-25.0318, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-23.64, -6.55, 0), (-24.3118, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-22.92, -6.55, 0), (-23.5918, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-22.2, -6.55, 0), (-22.8718, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-10.08, -6.55, 0), (-10.7518, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-9.36, -6.55, 0), (-10.0318, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-8.64, -6.55, 0), (-9.31175, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-7.92, -6.55, 0), (-8.59175, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
+add(1, 'segment', Line((-7.2, -6.55, 0), (-7.87175, -5.87825, 0)), color=Color.from_hex("#aaaaaa"), width=0.043092)
 add(1, 'segment', Line((-10.9, -7.5, 0), (-7.1, -7.5, 0)), color=Color.from_hex("#aaaaaa"), width=0.06156)
 add(1, 'arrow', Line((-19, 3, 0), (-19, -1, 0)), color=Color.from_hex("#3f9c20"), width=0.155952, head=(0.537624, 0.207662))
 add(1, 'label', Point(-16.8, 3.4, 0), color=Color.from_hex("#3f9c20"), text='60 kN')
@@ -95,46 +95,33 @@ add(1, 'arrow', Line((-4, 3, 0), (-4, -1, 0)), color=Color.from_hex("#3f9c20"), 
 add(1, 'label', Point(-1.8, 3.4, 0), color=Color.from_hex("#3f9c20"), text='30 kN')
 
 # step 2 — a) Global equilibrium
-add(2, 'arrow', Line((-24, -10.2, 0), (-24, -6, 0)), color=Color.from_hex("#3f9c20"), width=0.11245, head=(0.363614, 0.155952))
+add(2, 'arrow', Line((-24, -10.6, 0), (-24, -7.1, 0)), color=Color.from_hex("#3f9c20"), width=0.11245, head=(0.363614, 0.155952))
 add(2, 'label', Point(-27.6, -10.8, 0), color=Color.from_hex("#3f9c20"), text='B0 = 40.0')
-add(2, 'arrow', Line((-9, -10.2, 0), (-9, -6, 0)), color=Color.from_hex("#3f9c20"), width=0.11245, head=(0.363614, 0.155952))
+add(2, 'arrow', Line((-9, -10.6, 0), (-9, -7.1, 0)), color=Color.from_hex("#3f9c20"), width=0.11245, head=(0.363614, 0.155952))
 add(2, 'label', Point(-12.6, -10.8, 0), color=Color.from_hex("#3f9c20"), text='B3 = 80.0')
 
 # step 3 — b) The zero members
 add(3, 'label', Point(-16, -16, 0), color=Color.from_hex("#b9b9bd"), text='6 zero-force members')
 
-# step 4 — c) Now joint by joint
-add(4, 'label', Point(-21.5, -8.03856, 0), color=Color.from_hex("#ce4095"), text='40.0')
-add(4, 'label', Point(-16.5, -7.86928, 0), color=Color.from_hex("#ce4095"), text='20.0')
-add(4, 'label', Point(-11.5, -7.86928, 0), color=Color.from_hex("#ce4095"), text='20.0')
-add(4, 'label', Point(-6.5, -7.7, 0), color=Color.from_hex("#b9b9bd"), text='0')
-add(4, 'label', Point(-21.5, 0.7, 0), color=Color.from_hex("#b9b9bd"), text='0')
-add(4, 'label', Point(-16.5, 1.03856, 0), color=Color.from_hex("#1a1eb2"), text='-40.0')
-add(4, 'label', Point(-11.5, 0.953922, 0), color=Color.from_hex("#ce4095"), text='30.0')
-add(4, 'label', Point(-6.5, 0.953922, 0), color=Color.from_hex("#ce4095"), text='30.0')
-add(4, 'label', Point(-25.7, -3.5, 0), color=Color.from_hex("#b9b9bd"), text='0')
-add(4, 'label', Point(-20.8693, -3.5, 0), color=Color.from_hex("#1a1eb2"), text='-20.0')
-add(4, 'label', Point(-15.7, -3.5, 0), color=Color.from_hex("#b9b9bd"), text='0')
-add(4, 'label', Point(-10.7, -3.5, 0), color=Color.from_hex("#b9b9bd"), text='0')
-add(4, 'label', Point(-5.7, -3.5, 0), color=Color.from_hex("#b9b9bd"), text='0')
-add(4, 'label', Point(-19.9594, -5.04064, 0), color=Color.from_hex("#1a1eb2"), text='-56.6')
-add(4, 'label', Point(-15.1286, -4.87136, 0), color=Color.from_hex("#ce4095"), text='28.3')
-add(4, 'label', Point(-9.87472, -1.87471, 0), color=Color.from_hex("#1a1eb2"), text='-70.7')
-add(4, 'label', Point(-5.044, -4.956, 0), color=Color.from_hex("#1a1eb2"), text='-42.4')
-
 # step 5 — Joint B4
+add(5, 'label', Point(-6.5, -7.7, 0), color=Color.from_hex("#b9b9bd"), text='0')
+add(5, 'label', Point(-5.7, -3.5, 0), color=Color.from_hex("#b9b9bd"), text='0')
 add(5, 'segment', Line((8, 8, 0), (8, 8, 0)), color=Color.from_hex("#b9b9bd"), width=0.110233)
 add(5, 'segment', Line((8, 8, 0), (8, 8, 0)), color=Color.from_hex("#b9b9bd"), width=0.110233)
 add(5, 'label', Point(8, 11.4, 0), color=Color.from_hex("#aaaaaa"), text='joint B4')
 add(5, 'point', Point(8, 8, 0), color=Color.from_hex("#ffffff"), width=0.25308)
 
 # step 6 — Joint T0
+add(6, 'label', Point(-21.5, 0.7, 0), color=Color.from_hex("#b9b9bd"), text='0')
+add(6, 'label', Point(-25.7, -3.5, 0), color=Color.from_hex("#b9b9bd"), text='0')
 add(6, 'segment', Line((23, 8, 0), (23, 8, 0)), color=Color.from_hex("#b9b9bd"), width=0.110233)
 add(6, 'segment', Line((23, 8, 0), (23, 8, 0)), color=Color.from_hex("#b9b9bd"), width=0.110233)
 add(6, 'label', Point(23, 11.4, 0), color=Color.from_hex("#aaaaaa"), text='joint T0')
 add(6, 'point', Point(23, 8, 0), color=Color.from_hex("#ffffff"), width=0.25308)
 
 # step 7 — Joint T4
+add(7, 'label', Point(-6.5, 0.953922, 0), color=Color.from_hex("#ce4095"), text='30.0')
+add(7, 'label', Point(-5.044, -4.956, 0), color=Color.from_hex("#1a1eb2"), text='-42.4')
 add(7, 'segment', Line((8, 0, 0), (8, -1.875, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(7, 'segment', Line((8, -1.875, 0), (9.875, 0, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(7, 'segment', Line((9.875, 0, 0), (8, 0, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
@@ -146,6 +133,8 @@ add(7, 'label', Point(8, 3.4, 0), color=Color.from_hex("#aaaaaa"), text='joint T
 add(7, 'point', Point(8, 0, 0), color=Color.from_hex("#ffffff"), width=0.25308)
 
 # step 8 — Joint B0
+add(8, 'label', Point(-21.5, -8.03856, 0), color=Color.from_hex("#ce4095"), text='40.0')
+add(8, 'label', Point(-19.9594, -5.04064, 0), color=Color.from_hex("#1a1eb2"), text='-56.6')
 add(8, 'segment', Line((23, 0, 0), (20.5, -2.5, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(8, 'segment', Line((20.5, -2.5, 0), (23, -2.5, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(8, 'segment', Line((23, -2.5, 0), (23, 0, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
@@ -157,6 +146,8 @@ add(8, 'label', Point(23, 3.4, 0), color=Color.from_hex("#aaaaaa"), text='joint 
 add(8, 'point', Point(23, 0, 0), color=Color.from_hex("#ffffff"), width=0.25308)
 
 # step 9 — Joint T1
+add(9, 'label', Point(-16.5, 1.03856, 0), color=Color.from_hex("#1a1eb2"), text='-40.0')
+add(9, 'label', Point(-20.8693, -3.5, 0), color=Color.from_hex("#1a1eb2"), text='-20.0')
 add(9, 'segment', Line((8, -8, 0), (5.5, -8, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(9, 'segment', Line((5.5, -8, 0), (5.5, -11.75, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(9, 'segment', Line((5.5, -11.75, 0), (8, -9.25, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
@@ -170,6 +161,8 @@ add(9, 'label', Point(8, -4.6, 0), color=Color.from_hex("#aaaaaa"), text='joint 
 add(9, 'point', Point(8, -8, 0), color=Color.from_hex("#ffffff"), width=0.25308)
 
 # step 10 — Joint T3
+add(10, 'label', Point(-11.5, 0.953922, 0), color=Color.from_hex("#ce4095"), text='30.0')
+add(10, 'label', Point(-10.7, -3.5, 0), color=Color.from_hex("#b9b9bd"), text='0')
 add(10, 'segment', Line((23, -8, 0), (24.875, -8, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(10, 'segment', Line((24.875, -8, 0), (23, -8, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(10, 'segment', Line((23, -8, 0), (24.875, -8, 0)), color=Color.from_hex("#ce4095"), width=0.110233)
@@ -179,6 +172,8 @@ add(10, 'label', Point(23, -4.6, 0), color=Color.from_hex("#aaaaaa"), text='join
 add(10, 'point', Point(23, -8, 0), color=Color.from_hex("#ffffff"), width=0.25308)
 
 # step 11 — Joint B1
+add(11, 'label', Point(-16.5, -7.86928, 0), color=Color.from_hex("#ce4095"), text='20.0')
+add(11, 'label', Point(-15.1286, -4.87136, 0), color=Color.from_hex("#ce4095"), text='28.3')
 add(11, 'segment', Line((8, -16, 0), (8, -17.25, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(11, 'segment', Line((8, -17.25, 0), (9.25, -17.25, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(11, 'segment', Line((9.25, -17.25, 0), (10.5, -16, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
@@ -191,6 +186,8 @@ add(11, 'label', Point(8, -12.6, 0), color=Color.from_hex("#aaaaaa"), text='join
 add(11, 'point', Point(8, -16, 0), color=Color.from_hex("#ffffff"), width=0.25308)
 
 # step 12 — Joint B2
+add(12, 'label', Point(-11.5, -7.86928, 0), color=Color.from_hex("#ce4095"), text='20.0')
+add(12, 'label', Point(-15.7, -3.5, 0), color=Color.from_hex("#b9b9bd"), text='0')
 add(12, 'segment', Line((23, -16, 0), (24.25, -16, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(12, 'segment', Line((24.25, -16, 0), (23, -16, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(12, 'segment', Line((23, -16, 0), (24.25, -16, 0)), color=Color.from_hex("#ce4095"), width=0.110233)
@@ -200,6 +197,7 @@ add(12, 'label', Point(23, -12.6, 0), color=Color.from_hex("#aaaaaa"), text='joi
 add(12, 'point', Point(23, -16, 0), color=Color.from_hex("#ffffff"), width=0.25308)
 
 # step 13 — Joint B3
+add(13, 'label', Point(-9.87472, -1.87471, 0), color=Color.from_hex("#1a1eb2"), text='-70.7')
 add(13, 'segment', Line((8, -24, 0), (6.125, -25.875, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(13, 'segment', Line((6.125, -25.875, 0), (9.25, -29, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)
 add(13, 'segment', Line((9.25, -29, 0), (9.25, -24, 0)), color=Color.from_hex("#aaaaaa"), width=0.095213)

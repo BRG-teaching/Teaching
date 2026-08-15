@@ -56,7 +56,11 @@ const MPU = 3.0;                      // drawing units per metre
 const AX = -18, AY = -4;              // support A
 const LX = [1.5, 3.0, 4.5];           // load axes, m from A
 const SFD = 10;                       // kN per drawing unit
-const LLX = 6, LLY = 6;               // top of the load line
+const LLX = 18, LLY = 6;              // top of the load line
+// The load line sits at the RIGHT of the force diagram and the pole stands on
+// the far side of it from the loads, because that is the side on which the
+// rays come out PARALLEL to the members rather than mirrored. It flips with
+// the arch/cable toggle; web/tools/regress/parallel.py enforces both cases.
 const SYM = 3.4;
 
 const DEFAULTS = {
@@ -135,7 +139,7 @@ function compute(s) {
   const T = [LLX, LLY];
   const div = [T];
   F.forEach((f) => div.push([LLX, div[div.length - 1][1] - f / SFD]));
-  const o = [LLX + H / SFD, LLY - Av / SFD];
+  const o = [LLX - sgn * H / SFD, LLY - Av / SFD];
   return { F, tot, H, Av, Bv, nodes, N, Nmax, rise, P, A, B, T, div, o,
            NA: N[0], NB: N[N.length - 1], caseB: s.caseB, cable: s.cable, dropB };
 }
@@ -205,19 +209,25 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [2, -14.4]);
-    dw.setLabel('force_title', [8, -12.4]);
-    dw.setLabel('force_sub', [8, -13.8]);
+    // each title under its own diagram, and both clear of the two UI cards:
+    // the caption covers the top-left corner, the RESULT card the bottom-left
+    dw.setLabel('form_title', [-9, -10.4]);
+    dw.setLabel('force_title', [12, -10.4]);
+    dw.setLabel('force_sub', [12, -11.8]);
     dw.setText('force_sub', `to scale · 1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 20 kN)`);
 
     dw.setDisk('supA', d.A); dw.setDisk('supB', d.B);
     dw.setLabel('lsupA', V.add(d.A, [-1.5, -0.9]));
     dw.setLabel('lsupB', V.add(d.B, [1.5, -0.9]));
     for (const [n, p] of [['A', d.A], ['B', d.B]]) {
-      dw.setStrokes(`hat${n}`, Array.from({ length: 5 }, (_, i) =>
-        [[p[0] - 1.6 + i * 0.8, p[1] - 0.5], [p[0] - 2.2 + i * 0.8, p[1] - 1.3]]));
+      dw.setStrokes(`hat${n}`, V.hatch([p[0] - 2.0, p[1] - 0.55],
+        [p[0] + 2.0, p[1] - 0.55], -1, 1.05, 5));
     }
     dw.setDashLine('chord', [V.add(d.A, [-2.4, 0]), V.add(d.B, [2.4, 0])]);
+
+    // the pole is on the far side of the load line, so everything ANNOTATING
+    // the load line has to move to the other side of it to stay clear
+    const ls = d.cable ? -1 : 1;
 
     const top = Math.max(...d.P.map((p) => p[1]));
     LX.forEach((x, i) => {
@@ -227,13 +237,13 @@ export function create(dw, panel, makePlayer) {
       dw.setArrow(`f${i}`, [px, node[1] + SYM + 0.9], [px, node[1] + 0.5]);
       dw.setLabel(`lf${i}`, [px + 2.0, node[1] + SYM * 1.05]);
       dw.setArrow(`ff${i}`, d.div[i], d.div[i + 1]);
-      dw.setLabel(`lff${i}`, V.add(V.mid(d.div[i], d.div[i + 1]), [-2.2, 0]));
+      dw.setLabel(`lff${i}`, V.add(V.mid(d.div[i], d.div[i + 1]), [2.2 * ls, 0]));
     });
 
     dw.setDisk('ptO', d.o);
-    dw.setLabel('lO', V.add(d.o, [1.4, 0.7]));
+    dw.setLabel('lO', V.add(d.o, [-1.4 * ls, 0.7]));
     dw.setDisk('ptI', [LLX, d.o[1]]);
-    dw.setLabel('lI', [LLX - 1.3, d.o[1]]);
+    dw.setLabel('lI', [LLX + 1.3 * ls, d.o[1]]);
     dw.setSeg('dimH', [LLX, d.T[1] + 1.7], [d.o[0], d.T[1] + 1.7]);
     dw.setLabel('lH', [(LLX + d.o[0]) / 2, d.T[1] + 2.8]);
     dw.setText('lH', `H = ${d.H.toFixed(1)} kN`);
@@ -273,7 +283,8 @@ export function create(dw, panel, makePlayer) {
       const mir = (p, k) => [p[0], AY + (AY - p[1]) + (d.dropB * MPU) * (d.nodes[k].x / SPAN) * 2];
       return [mir(d.P[i], i), mir(d.P[i + 1], i + 1)];
     }));
-    dw.setLabel('lalt', [AX + SPAN * MPU * 0.5 + 20, AY - (d.cable ? -1 : 1) * (d.rise * MPU + 3.4)]);
+    // inside the empty bowl of the mirrored shape, which is where it belongs
+    dw.setLabel('lalt', [AX + SPAN * MPU * 0.5, AY - (d.cable ? -1 : 1) * 2.4]);
     dw.setText('lalt', d.cable ? 'the arch does the same job in compression'
                                : 'the cable does the same job in tension');
 

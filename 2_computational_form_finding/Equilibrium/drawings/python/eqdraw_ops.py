@@ -150,11 +150,17 @@ class Drawing(Data):
     ops : list[:class:`Op`]
         The drawing operations, ordered by construction: reading the
         list top to bottom is the drawing recipe.
+    links : list[list[str]]
+        Groups of op names the drawing declares to be COUNTERPARTS of one
+        another -- a member in the form diagram and the ray that represents
+        it in the force diagram. Hovering any one of a group highlights them
+        all, and they must be drawn parallel; see
+        ``web/tools/regress/parallel.py``.
 
     """
 
     def __init__(self, view=0, title="", about="", frame=None, steps=None,
-                 ops=None, name=None):
+                 ops=None, links=None, name=None):
         super().__init__(name=name)
         self.view = view
         self.title = title
@@ -162,6 +168,7 @@ class Drawing(Data):
         self.frame = frame or [[0, 0], [1, 1]]
         self.steps = steps or []
         self.ops = ops or []
+        self.links = links or []
 
     @property
     def __data__(self):
@@ -171,6 +178,7 @@ class Drawing(Data):
             "about": self.about,
             "frame": self.frame,
             "steps": self.steps,
+            "links": self.links,
             "ops": self.ops,
         }
 
@@ -244,4 +252,5 @@ class Drawing(Data):
                 name=o["name"],
             ))
         return cls(view=raw["view"], title=raw["title"], about=raw["about"],
-                   frame=raw["frame"], steps=raw["steps"], ops=ops)
+                   frame=raw["frame"], steps=raw["steps"],
+                   links=raw.get("links", []), ops=ops)

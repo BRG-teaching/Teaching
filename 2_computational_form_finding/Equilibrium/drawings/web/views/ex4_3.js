@@ -267,10 +267,7 @@ export function create(dw, panel, makePlayer) {
     dw.setText('force_sub', `to scale · 1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 100 kN)`);
 
     dw.setSeg('ground', [ux(-3.5), GY], [ux(18.5), GY]);
-    dw.setStrokes('gHatch', Array.from({ length: 22 }, (_, i) => {
-      const x = ux(-3.2) + i * ((ux(18.5) - ux(-3.2)) / 21);
-      return [[x, GY], [x - 0.6, GY - 0.75]];
-    }));
+    dw.setStrokes('gHatch', V.hatch([ux(-3.4), GY], [ux(18.5), GY], 1, 1.0, 22));
 
     // piers, buttresses, pinnacles
     for (const k of [0, 1]) {

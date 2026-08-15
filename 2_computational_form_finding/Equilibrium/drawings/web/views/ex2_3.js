@@ -222,8 +222,8 @@ export function create(dw, panel, makePlayer) {
     for (const [n, p] of [['A', d.A], ['B', d.B]]) {
       dw.setDisk(`an${n}`, p);
       dw.setLabel(`lan${n}`, V.add(p, [n === 'A' ? -1.8 : 1.8, 1.0]));
-      dw.setStrokes(`rock${n}`, Array.from({ length: 5 }, (_, i) =>
-        [[p[0] - 1.4 + i * 0.7, p[1] + 0.5], [p[0] - 2.0 + i * 0.7, p[1] + 1.3]]));
+      dw.setStrokes(`rock${n}`, V.hatch([p[0] + 1.8, p[1] + 0.55],
+        [p[0] - 1.8, p[1] + 0.55], -1, 0.95, 5));
     }
     dw.setDisk('ptO', d.o);
     dw.setLabel('lO', V.add(d.o, [1.4, 0.7]));

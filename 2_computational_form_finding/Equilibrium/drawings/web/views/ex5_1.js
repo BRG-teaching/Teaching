@@ -212,8 +212,7 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lsupB', V.add(d.B, [1.6, -1.0]));
     for (const [n, p] of [['A', d.A], ['B', d.B]]) {
       const y = p[1] - (n === 'A' && d.tied ? 1.5 : 0.5);
-      dw.setStrokes(`hat${n}`, Array.from({ length: 5 }, (_, i) =>
-        [[p[0] - 1.5 + i * 0.75, y], [p[0] - 2.1 + i * 0.75, y - 0.8]]));
+      dw.setStrokes(`hat${n}`, V.hatch([p[0] - 1.9, y], [p[0] + 1.9, y], -1, 1.0, 5));
     }
     dw.setSeg('roller', [d.A[0] - 1.9, d.A[1] - 1.2], [d.A[0] + 1.9, d.A[1] - 1.2]);
     dw.setDashLine('chord', [V.add(d.A, [-2.6, 0]), V.add(d.B, [2.6, 0])]);

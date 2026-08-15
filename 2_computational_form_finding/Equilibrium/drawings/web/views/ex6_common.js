@@ -55,14 +55,31 @@ export function makeTrussView(cfg) {
     const ARR = dw.W.arrow, NARR = dw.W.narrow;
     const FIRST_NODE = steps.length;               // where the node walk starts
 
+    // THE FORM AND THE FORCE DIAGRAM HAVE TO GROW TOGETHER. A member stays grey
+    // until the joint that actually solves it is reached, and at that step it
+    // takes its colour, its number appears, it flashes, and the matching edge
+    // of that joint's polygon is drawn beside it. Every member is also LINKED
+    // to every polygon edge that stands for it, so hovering either highlights
+    // the whole family.
+    const solvedAt = members.map(() => FIRST_NODE + res0.order.length - 1);
+    res0.order.forEach((o, k) => {
+      for (const m of o.solved) solvedAt[m] = Math.min(solvedAt[m], FIRST_NODE + k);
+    });
+    const edgesOf = members.map(() => []);
+    res0.order.forEach((o, k) => {
+      polygonAt(model, res0, o.node).forEach((part, e) => {
+        if (part.kind === 'member') edgesOf[part.m].push(`pe${k}_${e}`);
+      });
+    });
+
     const colOf = (m) => ({ pending: PAL.black, final: (dd, st) => {
-      if (st._k < 2) return PAL.grey;
+      if (st._k < solvedAt[m]) return PAL.grey;
       const f = dd.forces[m];
       if (Math.abs(f) < 1e-7) return st.zero ? PAL.zero : PAL.grey;
       return f > 0 ? PAL.red : PAL.blue;
     } });
     const bandOf = (m) => ({ pending: PAL.zeroBand, final: (dd, st) => {
-      if (st._k < 2) return PAL.zeroBand;
+      if (st._k < solvedAt[m]) return PAL.zeroBand;
       const f = dd.forces[m];
       if (Math.abs(f) < 1e-7) return PAL.zeroBand;
       return f > 0 ? PAL.redBand : PAL.blueBand;
@@ -76,8 +93,9 @@ export function makeTrussView(cfg) {
       dw.poly(`bd${m}`, 4, { intro: 1, opacity: 1.0, z: -0.18, flash: false,
         color: bandOf(m), when: (st) => st.o1 });
       dw.seg(`mem${m}`, { intro: 1, w: dw.W.bar, color: colOf(m) });
-      dw.label(`lm${m}`, '', { cls: 'point', intro: 4, flash: false, color: colOf(m),
-        when: (st) => st.lbl });
+      dw.highlight(`mem${m}`, [solvedAt[m]]);
+      dw.label(`lm${m}`, '', { cls: 'point', intro: solvedAt[m], flash: false,
+        color: colOf(m), when: (st) => st.lbl });
     });
     nodes.forEach((p, i) => {
       dw.disk(`nd${i}`, { intro: 1, r: dw.W.disk * 0.75 });
@@ -100,12 +118,18 @@ export function makeTrussView(cfg) {
     // one polygon per joint, in solve order, each in its own cell
     res0.order.forEach((o, k) => {
       const at = polygonAt(model, res0, o.node).length;
-      dw.strokes(`pg${k}`, at + 1, { intro: FIRST_NODE + k, w: dw.W.str, color: PAL.grey });
+      dw.strokes(`pg${k}`, at + 1, { intro: FIRST_NODE + k, w: dw.W.str,
+        color: PAL.grey, flash: false });
       for (let e = 0; e < at; e++) {
-        dw.seg(`pe${k}_${e}`, { intro: FIRST_NODE + k, w: dw.W.bar * 0.85, color: PAL.grey });
+        dw.seg(`pe${k}_${e}`, { intro: FIRST_NODE + k, w: dw.W.bar * 0.85,
+          color: PAL.grey, flash: false });
       }
       dw.label(`pl${k}`, '', { cls: 'point', intro: FIRST_NODE + k, flash: false, color: PAL.grey });
       dw.disk(`pd${k}`, { intro: FIRST_NODE + k, r: dw.W.disk * 0.6 });
+    });
+
+    members.forEach((mm, m) => {
+      if (edgesOf[m].length) dw.link(`mem${m}`, `lm${m}`, ...edgesOf[m]);
     });
 
     dw.instant('form_title', 'force_title', 'force_sub');
@@ -138,11 +162,9 @@ export function makeTrussView(cfg) {
         const q = ux(nodes[+k]);
         const dir = cfg.supportDir ? cfg.supportDir(+k) : [0, -1];
         const perp = [-dir[1], dir[0]];
-        dw.setStrokes(`hat${k}`, Array.from({ length: 5 }, (_, i2) => {
-          const base = V.add(q, V.mul(dir, 0.6));
-          const a = V.add(base, V.mul(perp, -1.4 + i2 * 0.7));
-          return [a, V.add(V.add(a, V.mul(perp, -0.6)), V.mul(dir, 0.8))];
-        }));
+        const hb = V.add(q, V.mul(dir, 0.55));
+        dw.setStrokes(`hat${k}`, V.hatch(V.add(hb, V.mul(perp, -1.8)),
+          V.add(hb, V.mul(perp, 1.8)), -1, 0.95, 5));
         if (kind !== 'pin') {
           const base = V.add(q, V.mul(dir, 1.5));
           dw.setSeg(`roll${k}`, V.add(base, V.mul(perp, -1.9)), V.add(base, V.mul(perp, 1.9)));
@@ -161,7 +183,8 @@ export function makeTrussView(cfg) {
         const v = d.reactions[+k] || [0, 0];
         const mag = Math.hypot(v[0], v[1]);
         const u = mag > 1e-6 ? V.unit(v) : [0, 1];
-        dw.setArrow(`re${k}`, V.sub(q, V.mul(u, 4.2)), q);
+        // stop short of the joint, or the disk swallows the arrowhead
+        dw.setArrow(`re${k}`, V.sub(q, V.mul(u, 4.6)), V.sub(q, V.mul(u, 1.1)));
         dw.setLabel(`lre${k}`, V.add(V.sub(q, V.mul(u, 4.2)), cfg.reacLabelOff(+k)));
         dw.setText(`lre${k}`, `${nodeName(+k)} = ${mag.toFixed(1)}`);
       });

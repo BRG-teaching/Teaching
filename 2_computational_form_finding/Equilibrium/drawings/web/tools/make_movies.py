@@ -21,6 +21,7 @@ import base64
 import itertools
 import json
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -47,11 +48,15 @@ class Chrome:
     """Minimal DevTools-protocol driver for one headless-Chrome page."""
 
     def __init__(self):
+        # kept on the instance so close() can delete it again: a headless
+        # profile is ~30 MB, and leaving them behind fills /tmp within a day
+        # of running the regressions
+        self.profile = tempfile.mkdtemp(prefix="eqmovie-chrome-")
         self.proc = subprocess.Popen(
             ["google-chrome", "--headless=new", "--remote-debugging-port=0",
              f"--window-size={WINDOW[0]},{WINDOW[1]}", "--hide-scrollbars",
              f"--force-device-scale-factor={DSF}",
-             "--user-data-dir=" + tempfile.mkdtemp(prefix="eqmovie-chrome-"),
+             "--user-data-dir=" + self.profile,
              "about:blank"],
             stderr=subprocess.PIPE, text=True)
         port = None
@@ -103,6 +108,17 @@ class Chrome:
     def close(self):
         self.ws.close()
         self.proc.terminate()
+        try:
+            self.proc.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            self.proc.kill()
+        shutil.rmtree(self.profile, ignore_errors=True)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
 
 
 def make_movie(chrome, view):

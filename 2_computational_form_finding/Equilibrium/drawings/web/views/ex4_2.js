@@ -209,8 +209,8 @@ export function create(dw, panel, makePlayer) {
     for (const [n, x] of Object.entries(sup)) {
       dw.setDisk(`sup${n}`, [x, SPR]);
       dw.setLabel(`lsup${n}`, [x, SPR - 2.2]);
-      dw.setStrokes(`hat${n}`, Array.from({ length: 5 }, (_, i) =>
-        [[x - 1.4 + i * 0.7, SPR - 0.4], [x - 1.9 + i * 0.7, SPR - 1.1]]));
+      dw.setStrokes(`hat${n}`, V.hatch([x - 1.8, SPR - 0.5], [x + 1.8, SPR - 0.5],
+        -1, 0.95, 5));
       dw.setDashLine(`drop${n}`, [[x, 4.2], [x, SPR - 1.4]]);
     }
     dw.setSeg('roll', [d.xB - 1.8, SPR - 1.3], [d.xB + 1.8, SPR - 1.3]);

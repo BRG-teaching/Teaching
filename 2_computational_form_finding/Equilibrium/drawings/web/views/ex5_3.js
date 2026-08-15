@@ -196,8 +196,8 @@ export function create(dw, panel, makePlayer) {
     dw.setLabel('lsupA', V.add(A, [-1.6, -1.2]));
     dw.setLabel('lsupB', V.add(B, [1.6, -1.2]));
     for (const [n, p, drop] of [['A', A, 0.5], ['B', B, 1.5]]) {
-      dw.setStrokes(`hat${n}`, Array.from({ length: 5 }, (_, i) =>
-        [[p[0] - 1.4 + i * 0.7, p[1] - drop], [p[0] - 2.0 + i * 0.7, p[1] - drop - 0.8]]));
+      dw.setStrokes(`hat${n}`, V.hatch([p[0] - 1.8, p[1] - drop],
+        [p[0] + 1.8, p[1] - drop], -1, 0.95, 5));
     }
     dw.setSeg('rollLine', [B[0] - 1.8, B[1] - 1.2], [B[0] + 1.8, B[1] - 1.2]);
 

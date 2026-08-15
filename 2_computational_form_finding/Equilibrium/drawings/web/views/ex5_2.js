@@ -207,10 +207,8 @@ export function create(dw, panel, makePlayer) {
 
     const P = [ux(0), uy(0)], R = [ux(0), uy(-SEP)];
     dw.setSeg('wall', [ux(0), uy(2.2)], [ux(0), uy(-SEP - 2.2)]);
-    dw.setStrokes('wHatch', Array.from({ length: 12 }, (_, i) => {
-      const y = uy(2.0) - i * ((uy(2.0) - uy(-SEP - 2.0)) / 11);
-      return [[ux(0), y], [ux(0) - 0.9, y + 0.9]];
-    }));
+    dw.setStrokes('wHatch', V.hatch([ux(0), uy(-SEP - 2.0)], [ux(0), uy(2.0)],
+      -1, 1.0, 12));
     dw.setDisk('supP', P); dw.setDisk('supR', R);
     dw.setLabel('lsupP', V.add(P, [-3.2, 0.9]));
     dw.setLabel('lsupR', V.add(R, [-3.4, -0.9]));
