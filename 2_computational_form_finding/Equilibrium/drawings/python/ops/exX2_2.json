@@ -1,0 +1,3441 @@
+{
+    "data": {
+        "about": "A five-member truss with one 100 kN load raked down and to the left. The task asks for global equilibrium first, and that is where the interest is: taking moments about the pin gives the right-hand reaction as NEGATIVE, 21.43 kN downward, and the support drawn under it is a roller. A roller cannot pull. So the sheet is arithmetically right and physically impossible, and the honest answer is to say so. Drag the load\u2019s inclination and the reaction changes sign at 51.18\u00b0, exactly where the load\u2019s line of action passes through the pin \u2014 which is also the slope of the top member.",
+        "frame": [
+            [
+                -28,
+                -32
+            ],
+            [
+                34,
+                23
+            ]
+        ],
+        "links": [
+            [
+                "mm0_0",
+                "lm0_0",
+                "pe0_0_1",
+                "pe0_1_2"
+            ],
+            [
+                "mm0_1",
+                "lm0_1",
+                "pe0_1_3",
+                "pe0_2_0"
+            ],
+            [
+                "mm0_2",
+                "lm0_2",
+                "pe0_0_0",
+                "pe0_2_1"
+            ],
+            [
+                "mm0_3",
+                "lm0_3",
+                "pe0_2_2",
+                "pe0_3_1"
+            ],
+            [
+                "mm0_4",
+                "lm0_4",
+                "pe0_1_1",
+                "pe0_3_2"
+            ]
+        ],
+        "ops": [
+            {
+                "data": {
+                    "color": null,
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -15.0,
+                            -13.4,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "ad36075c-8c10-44ac-9c9c-b5f3372a7cd3"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "form_title",
+                    "opacity": 1.0,
+                    "step": 0,
+                    "style": "title",
+                    "text": "Form diagram 1:100 \u2014 the sheet prints no dimensions",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "3f75f5b8-6838-4702-9b8a-7cff3679c955",
+                "name": "form_title"
+            },
+            {
+                "data": {
+                    "color": null,
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            16.0,
+                            21.4,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "fac74601-36cb-4462-8330-86f75d1ee2cf"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "force_title",
+                    "opacity": 1.0,
+                    "step": 0,
+                    "style": "title",
+                    "text": "Force diagram \u2014 one closed polygon per joint",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "a9321e1d-051a-43e0-9ec0-ef4073f47f95",
+                "name": "force_title"
+            },
+            {
+                "data": {
+                    "color": null,
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            16.0,
+                            19.8,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "1898fbe9-ab8d-4892-a11a-c4d897d7dac4"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "force_sub",
+                    "opacity": 1.0,
+                    "step": 0,
+                    "style": "point",
+                    "text": "1 unit \u2259 14 kN  (sheet: 1 cm \u2259 10 kN)",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "fcc50bc3-0da8-404c-810d-f633975c5c5f",
+                "name": "force_sub"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "b5eeb486-6543-460c-8da9-2d5b3f981538"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -15.0,
+                            -15.4,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "dba6d1e2-ed7d-426a-8f12-9abebb5ec390"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "note",
+                    "opacity": 1.0,
+                    "step": 0,
+                    "style": "point",
+                    "text": "the roller at B comes out in UPLIFT \u2014 as drawn, this truss lifts off its right-hand bearing",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "10806cba-e38e-4713-8348-a54a6aa051dc",
+                "name": "note"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.9098039215686274,
+                            "green": 0.7490196078431373,
+                            "red": 0.7411764705882353
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "9c36b7eb-3d86-423b-8d71-44a66f3ae88f"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "points": [
+                                [
+                                    -25.746404,
+                                    -6.204058,
+                                    0.0
+                                ],
+                                [
+                                    -26.253596,
+                                    -5.795942,
+                                    0.0
+                                ],
+                                [
+                                    -19.867196,
+                                    2.140858,
+                                    0.0
+                                ],
+                                [
+                                    -19.360004,
+                                    1.732742,
+                                    0.0
+                                ]
+                            ]
+                        },
+                        "dtype": "compas.geometry/Polygon",
+                        "guid": "5d575fe4-919e-468c-9770-d21d77c41470"
+                    },
+                    "head": null,
+                    "kind": "polygon",
+                    "name": "bd0_0",
+                    "opacity": 1,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "38bda1a0-6747-4464-886b-ad92691580be",
+                "name": "bd0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "9ce60b83-05ba-427a-bc97-f8d831361df7"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -19.6136,
+                                1.9367999999999999,
+                                0.0
+                            ],
+                            "start": [
+                                -26.0,
+                                -6.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "bf97a202-6098-45ed-b77d-35d9c5aaabf2"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "mm0_0",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.141062
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "04ded0e2-7648-45bf-b7d9-5c67950eef6e",
+                "name": "mm0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.9098039215686274,
+                            "green": 0.7490196078431373,
+                            "red": 0.7411764705882353
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "534a02bc-fbc1-4a27-8472-f7d04666c390"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "points": [
+                                [
+                                    -19.75681,
+                                    1.9368,
+                                    0.0
+                                ],
+                                [
+                                    -19.47039,
+                                    1.9368,
+                                    0.0
+                                ],
+                                [
+                                    -19.47039,
+                                    -4.1496,
+                                    0.0
+                                ],
+                                [
+                                    -19.75681,
+                                    -4.1496,
+                                    0.0
+                                ]
+                            ]
+                        },
+                        "dtype": "compas.geometry/Polygon",
+                        "guid": "a8df5722-20cd-4e08-8bbf-e1249f8eaf8a"
+                    },
+                    "head": null,
+                    "kind": "polygon",
+                    "name": "bd0_1",
+                    "opacity": 1,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "a5d660b0-dd90-4d99-97e8-86015e7b639b",
+                "name": "bd0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "655f5a25-cc37-4fa4-b917-0b0d02b51767"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -19.6136,
+                                -4.1496,
+                                0.0
+                            ],
+                            "start": [
+                                -19.6136,
+                                1.9368,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "59f96ae9-2226-4e7e-87a7-a69b44cb6b81"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "mm0_1",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.141062
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "8d1ee879-4428-4daf-b011-d0aaeb29027d",
+                "name": "mm0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.9098039215686274,
+                            "green": 0.7490196078431373,
+                            "red": 0.7411764705882353
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "ed1ae7a1-2c26-42c7-87c2-c1490cef13df"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "points": [
+                                [
+                                    -25.928384,
+                                    -6.247171,
+                                    0.0
+                                ],
+                                [
+                                    -26.071616,
+                                    -5.752829,
+                                    0.0
+                                ],
+                                [
+                                    -19.685216,
+                                    -3.902429,
+                                    0.0
+                                ],
+                                [
+                                    -19.541984,
+                                    -4.396771,
+                                    0.0
+                                ]
+                            ]
+                        },
+                        "dtype": "compas.geometry/Polygon",
+                        "guid": "a1910c4b-b699-498c-af14-529ccad8176e"
+                    },
+                    "head": null,
+                    "kind": "polygon",
+                    "name": "bd0_2",
+                    "opacity": 1,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "e9ab6c8e-4058-41c1-938a-e4ed9a5ed95e",
+                "name": "bd0_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "ac95c756-aa05-4a2a-a020-ea419b908b1c"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -19.6136,
+                                -4.1496,
+                                0.0
+                            ],
+                            "start": [
+                                -26.0,
+                                -6.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "f292463b-9e1d-4a2e-bfe4-2c2fa95d60da"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "mm0_2",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.141062
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "c8e97b99-7c73-45ee-b571-93dee22a0ce4",
+                "name": "mm0_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.9098039215686274,
+                            "green": 0.7490196078431373,
+                            "red": 0.7411764705882353
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "4c6997be-2b77-4894-9306-ca1dabbe1528"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "points": [
+                                [
+                                    -19.685194,
+                                    -4.396771,
+                                    0.0
+                                ],
+                                [
+                                    -19.542006,
+                                    -3.902429,
+                                    0.0
+                                ],
+                                [
+                                    -5.530806,
+                                    -7.960829,
+                                    0.0
+                                ],
+                                [
+                                    -5.673994,
+                                    -8.455171,
+                                    0.0
+                                ]
+                            ]
+                        },
+                        "dtype": "compas.geometry/Polygon",
+                        "guid": "45c1d4e2-11b5-4cc6-8d3a-63166cbdf1c3"
+                    },
+                    "head": null,
+                    "kind": "polygon",
+                    "name": "bd0_3",
+                    "opacity": 1,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "b56abda2-6f8f-47e5-9649-212860d26b65",
+                "name": "bd0_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "5a4b891c-4be6-42d2-866f-cf82be9d5875"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -5.602399999999999,
+                                -8.208,
+                                0.0
+                            ],
+                            "start": [
+                                -19.6136,
+                                -4.1496,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "c2707891-4ea7-4895-9e40-b1cfd3cd6bc7"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "mm0_3",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.141062
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "d44a2d37-62c6-4edc-bbb8-c205e8e99c70",
+                "name": "mm0_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.8588235294117647,
+                            "green": 0.7372549019607844,
+                            "red": 0.9411764705882353
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "9c7992b7-018f-40c8-8742-c459b096e996"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "points": [
+                                [
+                                    -19.792564,
+                                    1.689629,
+                                    0.0
+                                ],
+                                [
+                                    -19.434636,
+                                    2.183971,
+                                    0.0
+                                ],
+                                [
+                                    -5.423436,
+                                    -7.960829,
+                                    0.0
+                                ],
+                                [
+                                    -5.781364,
+                                    -8.455171,
+                                    0.0
+                                ]
+                            ]
+                        },
+                        "dtype": "compas.geometry/Polygon",
+                        "guid": "a5d970d7-06d5-4a87-b741-14e2d69538a2"
+                    },
+                    "head": null,
+                    "kind": "polygon",
+                    "name": "bd0_4",
+                    "opacity": 1,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "8dbbc94c-40fa-491d-944d-9b056e14a607",
+                "name": "bd0_4"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.5843137254901961,
+                            "green": 0.25098039215686274,
+                            "red": 0.807843137254902
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "589de6ee-ae36-45dc-b6c1-da71022a0c9b"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -5.602399999999999,
+                                -8.208,
+                                0.0
+                            ],
+                            "start": [
+                                -19.6136,
+                                1.9368,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "b92c56d8-e9e2-4efc-bc36-76f0db67bea8"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "mm0_4",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.141062
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "93b0c526-295c-41ee-8058-3b8d92bd5267",
+                "name": "mm0_4"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 1.0,
+                            "green": 1.0,
+                            "red": 1.0
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "29fbd074-2249-402b-9f6a-676fc313fe8c"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -26.0,
+                            -6.0,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "ed6f7715-6797-468e-99b5-c491b56f068d"
+                    },
+                    "head": null,
+                    "kind": "point",
+                    "name": "nd0_0",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.3441
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "3924d115-ca5b-493d-8581-866558239567",
+                "name": "nd0_0"
+            },
+            {
+                "data": {
+                    "color": null,
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -29.2,
+                            -6.4,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "c468bb27-fedc-4bbb-9695-7e381b78f679"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "ln0_0",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": "point",
+                    "text": "A",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "f2f7a1fc-1fc5-400a-9e74-62f9cedc58f8",
+                "name": "ln0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 1.0,
+                            "green": 1.0,
+                            "red": 1.0
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "f1dcaf14-bce8-49cb-84cd-4a26e175c7f9"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -19.6136,
+                            1.9368,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "7b12fa12-2b56-4d2a-bcec-1ca217bf084a"
+                    },
+                    "head": null,
+                    "kind": "point",
+                    "name": "nd0_1",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.3441
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "1a67fa38-4fdf-478c-af85-6aee4356197c",
+                "name": "nd0_1"
+            },
+            {
+                "data": {
+                    "color": null,
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -22.2136,
+                            3.7368,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "f481f9bc-e4f8-4ee3-8222-944933bcae5e"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "ln0_1",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": "point",
+                    "text": "T",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "9b40789e-4b3e-42ee-9c11-a31cfb79c2b9",
+                "name": "ln0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 1.0,
+                            "green": 1.0,
+                            "red": 1.0
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "8ff850a4-42a6-4dd7-8fc3-a2ff2586c275"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -19.6136,
+                            -4.1496,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "e67b257d-7872-4926-a628-8510a4b507c8"
+                    },
+                    "head": null,
+                    "kind": "point",
+                    "name": "nd0_2",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.3441
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "61a2435f-f976-445c-8cbb-e1107ff5e97f",
+                "name": "nd0_2"
+            },
+            {
+                "data": {
+                    "color": null,
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -17.2136,
+                            -2.9496,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "51ea2d3b-5431-481e-88e2-3622afc4cf53"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "ln0_2",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": "point",
+                    "text": "M",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "d1f10db9-c46b-4de6-a439-044bfbaddf7c",
+                "name": "ln0_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 1.0,
+                            "green": 1.0,
+                            "red": 1.0
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "cc3f7c5d-6c1f-4678-9bf5-25a1eb9c6675"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -5.6024,
+                            -8.208,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "c134098a-ebd9-4b2d-9438-c4220d16cd4e"
+                    },
+                    "head": null,
+                    "kind": "point",
+                    "name": "nd0_3",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.3441
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "05d369ae-30db-444b-8fce-e7f3ec9dcbc1",
+                "name": "nd0_3"
+            },
+            {
+                "data": {
+                    "color": null,
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -2.8024,
+                            -9.608,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "1c858902-608d-4a06-9efb-967c0aa439bb"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "ln0_3",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": "point",
+                    "text": "B",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "9b0185d9-4ed2-4da0-a316-9b760f60b036",
+                "name": "ln0_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "8d43a89f-f98d-4132-973e-bc6f031d6d03"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -27.751751,
+                                -5.878249,
+                                0.0
+                            ],
+                            "start": [
+                                -27.08,
+                                -6.55,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "21aad3e6-cd9c-4de3-8813-3cf70e0dce58"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_0[0]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "689867ca-9f90-4722-a38e-81806a9d1d5d",
+                "name": "hat0_0[0]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "606c4270-87c6-42a9-bd3a-613ae39e69ce"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -27.031751,
+                                -5.878249,
+                                0.0
+                            ],
+                            "start": [
+                                -26.36,
+                                -6.55,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "7d13e5ec-6d6e-4961-b234-dd200ef4da6d"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_0[1]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "63f66942-00c0-48a1-8b12-1b600e7e86d0",
+                "name": "hat0_0[1]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "32e2ec83-1b1c-4973-b9da-ebf3de6c8379"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -26.311751,
+                                -5.878249,
+                                0.0
+                            ],
+                            "start": [
+                                -25.64,
+                                -6.55,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "3ce8778e-8717-4d93-a134-638a806e6340"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_0[2]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "2761da68-3c7d-4e4d-bfd3-f60852d366ae",
+                "name": "hat0_0[2]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "9c270f0b-61f6-4a9f-8cf6-257e503ec9d1"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -25.591751,
+                                -5.878249,
+                                0.0
+                            ],
+                            "start": [
+                                -24.92,
+                                -6.55,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "7fce0692-bcaa-46d0-abe9-33e78a928f9b"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_0[3]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "8c2dc84d-b76b-47cc-ac7c-6a255063a964",
+                "name": "hat0_0[3]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "126ba83a-8881-47e1-9463-c0f618f86ade"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -24.871751,
+                                -5.878249,
+                                0.0
+                            ],
+                            "start": [
+                                -24.2,
+                                -6.55,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "36631931-9d66-4132-926b-2f8faf595a0a"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_0[4]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "382b4036-f176-4b61-9345-624a19b82eea",
+                "name": "hat0_0[4]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "80b41a9a-a839-4236-9882-d78ee8b73222"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -7.354151,
+                                -8.086249,
+                                0.0
+                            ],
+                            "start": [
+                                -6.6824,
+                                -8.758,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "ba30c0b1-99d8-4ad8-9276-311852f3ce4e"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_3[0]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "b798f3b8-e49a-4044-8a93-40ce9f863085",
+                "name": "hat0_3[0]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "c84f0775-3f9c-47c3-9887-4fcb59b7c277"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -6.634151,
+                                -8.086249,
+                                0.0
+                            ],
+                            "start": [
+                                -5.9624,
+                                -8.758,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "fedd9ef0-c1c0-408a-bf46-6c86e15f3d01"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_3[1]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "b82ab8cc-34f7-4ee5-a208-fea8a612f273",
+                "name": "hat0_3[1]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "e369f52b-f162-4898-9b7a-7c74c58b639c"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -5.914151,
+                                -8.086249,
+                                0.0
+                            ],
+                            "start": [
+                                -5.2424,
+                                -8.758,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "356d4ca1-46f7-407c-bca9-ae710b143d03"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_3[2]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "dd598bd3-e068-4660-8351-ee6972fbae27",
+                "name": "hat0_3[2]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "f126806b-7cb0-45a1-95f2-42a106823143"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -5.194151,
+                                -8.086249,
+                                0.0
+                            ],
+                            "start": [
+                                -4.5224,
+                                -8.758,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "5aa20e21-9395-42be-b2dd-97ca03e84890"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_3[3]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "40f586f6-8d6b-4f47-aa93-fa7d8eb10b4a",
+                "name": "hat0_3[3]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "49c23833-fe28-4fa9-9933-955af3d61251"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -4.474151,
+                                -8.086249,
+                                0.0
+                            ],
+                            "start": [
+                                -3.8024,
+                                -8.758,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "1e5e5dac-e9ab-478b-a280-c4c4d777ef38"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "hat0_3[4]",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.046872
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "1ff97364-98aa-435d-9b36-2a6056f1a931",
+                "name": "hat0_3[4]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "a81ab425-3bd6-48f5-81f0-cf27cccf2067"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -3.7024,
+                                -9.708,
+                                0.0
+                            ],
+                            "start": [
+                                -7.5024,
+                                -9.708,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "7e3d3282-43bb-413d-8d3d-4eea972a4a36"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "rol0_3",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.06696
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "d87ceeba-3920-44ec-b661-6360ed4d16a2",
+                "name": "rol0_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "590a9986-3f1a-4750-8cd2-7b8941495b2a"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -19.073272,
+                                2.197656,
+                                0.0
+                            ],
+                            "start": [
+                                -15.110867,
+                                4.110598,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "f2366be9-9fc1-4b2c-b9c1-eaf1359d02c6"
+                    },
+                    "head": [
+                        0.584784,
+                        0.225878
+                    ],
+                    "kind": "arrow",
+                    "name": "fl0_1",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.169632
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "8f184180-72e7-4ffa-b080-ba5f132acba8",
+                "name": "fl0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "b39ede01-0904-4baf-a4c7-55d0f613f1ee"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -18.310867,
+                            4.910598,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "3aa3c9d3-c1f8-4c52-aebf-c84222cf2c2d"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lfl0_1",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": "num",
+                    "text": "100.0 kN",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "7b69f6f0-7224-403c-88d9-783333384e5c",
+                "name": "lfl0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "262da6b4-5af7-4c0a-bbcf-8c740229be51"
+                    },
+                    "dash": 0.3658,
+                    "geometry": {
+                        "data": {
+                            "points": [
+                                [
+                                    -27.718519,
+                                    -1.976037,
+                                    0.0
+                                ],
+                                [
+                                    -7.906495,
+                                    7.588675,
+                                    0.0
+                                ]
+                            ]
+                        },
+                        "dtype": "compas.geometry/Polyline",
+                        "guid": "8e390aa8-e4d8-43d2-a368-d42bfc0d83c7"
+                    },
+                    "head": null,
+                    "kind": "polyline",
+                    "name": "loa",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "026c8be4-8dfa-4186-b922-b95fd3bd2cba",
+                "name": "loa"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "c70d9c21-0da4-4bf9-a60f-686d5703dd2e"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -3.506495,
+                            8.088675,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "69ac8c08-b4c9-424a-b076-27943f82d466"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lloa",
+                    "opacity": 1.0,
+                    "step": 1,
+                    "style": "point",
+                    "text": "F: line of action",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "7772fd6a-7a91-4937-b35e-b3dcad977855",
+                "name": "lloa"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "58ec166d-d653-4a4e-81ee-c4744f6bd4f7"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -26.973507,
+                                -6.701629,
+                                0.0
+                            ],
+                            "start": [
+                                -29.894028,
+                                -8.806518,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "7bb951b5-38ae-4a13-8ad6-2968b79b26d6"
+                    },
+                    "head": [
+                        0.39551,
+                        0.169632
+                    ],
+                    "kind": "arrow",
+                    "name": "re0_0",
+                    "opacity": 1.0,
+                    "step": 2,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.122314
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "3543be5b-132d-4c1d-aa47-2c37f2ea41d4",
+                "name": "re0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "fc15f77a-7654-4ea7-8657-69d2e930ce23"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -33.369526,
+                            -9.572641,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "7a9dbed5-63f3-4e6f-aa79-b0ac7cf8c9fc"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lre0_0",
+                    "opacity": 1.0,
+                    "step": 2,
+                    "style": "num",
+                    "text": "A = 111.01",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "400e4540-3233-40bd-bf66-005daf450bb9",
+                "name": "lre0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "b8131953-7568-4812-8a09-01b89c4022f4"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                -5.6024,
+                                -7.008,
+                                0.0
+                            ],
+                            "start": [
+                                -5.6024,
+                                -3.408,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "1e1beaf7-98b9-4a5f-900b-d125a01e27e3"
+                    },
+                    "head": [
+                        0.39551,
+                        0.169632
+                    ],
+                    "kind": "arrow",
+                    "name": "re0_3",
+                    "opacity": 1.0,
+                    "step": 2,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.122314
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "85e484f2-f6bd-402e-9307-bf1a95f73879",
+                "name": "re0_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "3123ca43-1925-4888-9119-483624f459e9"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -1.6024,
+                            -3.208,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "753cd433-5f8b-416e-8a3b-12ef007f8243"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lre0_3",
+                    "opacity": 1.0,
+                    "step": 2,
+                    "style": "num",
+                    "text": "B = 21.43",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "8788a941-a465-4d35-8046-2c262ae40d99",
+                "name": "lre0_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.7411764705882353,
+                            "green": 0.7254901960784313,
+                            "red": 0.7254901960784313
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "7ef3fffe-1ad0-4816-a192-644dce299853"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -15.0,
+                            -17.4,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "b280cd23-1735-4c65-a196-371448c232fc"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lzero",
+                    "opacity": 1.0,
+                    "step": 3,
+                    "style": "num",
+                    "text": "no zero-force members",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "f4f384d2-4d44-48fc-b28d-3168318a1a87",
+                "name": "lzero"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "c8588f66-7285-4931-9a33-324337820688"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -24.638454,
+                            -0.557747,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "03b0ecfd-3bdb-443c-a9d0-11b9f867f2d3"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lm0_0",
+                    "opacity": 1.0,
+                    "step": 3,
+                    "style": "point",
+                    "text": "-65.0",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "046856ad-fdc4-47f4-8f3d-80e2fc0362a4",
+                "name": "lm0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "4e431c62-5655-46de-8284-64779a7d35e5"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -17.62718,
+                            -1.1064,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "4caeb5ff-eb2f-4cf7-9ccf-776fbf7b50f8"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lm0_1",
+                    "opacity": 1.0,
+                    "step": 3,
+                    "style": "point",
+                    "text": "-28.6",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "defd864f-b211-4fe7-a5a2-26229395392f",
+                "name": "lm0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "4b055f8d-7741-4115-9802-e427305de986"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -22.190468,
+                            -7.201986,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "3dbc1fc9-2350-496b-9f60-26e994ddb21a"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lm0_2",
+                    "opacity": 1.0,
+                    "step": 3,
+                    "style": "point",
+                    "text": "-51.4",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "3abdd670-0f71-405b-b698-4d5bba08ee47",
+                "name": "lm0_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "be20dd6d-0ed9-409f-bfa7-cdc60af077ef"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -13.224159,
+                            -8.306024,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "1889741f-450f-4c15-abaa-20eabebf6654"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lm0_3",
+                    "opacity": 1.0,
+                    "step": 3,
+                    "style": "point",
+                    "text": "-51.4",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "e057fa89-9772-4abd-a34f-177fc795e237",
+                "name": "lm0_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.5843137254901961,
+                            "green": 0.25098039215686274,
+                            "red": 0.807843137254902
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "d2f99555-0172-47af-8ea1-a21895ad8e89"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            -11.253085,
+                            -1.264298,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "1d638d5c-7804-4548-82ae-946a6ee9af07"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "lm0_4",
+                    "opacity": 1.0,
+                    "step": 3,
+                    "style": "point",
+                    "text": "60.9",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "5376a016-cd9f-42ce-b6ce-653a0a58b00b",
+                "name": "lm0_4"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "88a73c42-e75c-48e4-8cc0-c1fefc667984"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                4.476458,
+                                8.979086,
+                                0.0
+                            ],
+                            "start": [
+                                8.0,
+                                10.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "266f8521-986d-4658-8686-d794285c94e4"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_0[0]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "f37565ee-46e0-4ad8-9405-9bb2656a00e8",
+                "name": "pg0_0[0]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "76046bae-abbd-443c-b803-1232ac821b0c"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                1.5675249999999998,
+                                5.363964,
+                                0.0
+                            ],
+                            "start": [
+                                4.476458,
+                                8.979086,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "70e88684-6d2f-493f-870b-aee166ac95a6"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_0[1]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "796b7e96-d459-4bb2-ad68-209e78bf71a7",
+                "name": "pg0_0[1]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "77486a31-710a-44f3-8c0b-61ad9a082dce"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                8.0,
+                                10.0,
+                                0.0
+                            ],
+                            "start": [
+                                1.567525,
+                                5.363964,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "95be02e5-54a9-46da-977d-b128eb38dbf8"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_0[2]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "8515bdeb-aaa7-4676-9daa-6ee09d3f1b30",
+                "name": "pg0_0[2]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "7664399c-b1a2-42c3-a53e-dc4a1b13deea"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                4.476458,
+                                8.979086,
+                                0.0
+                            ],
+                            "start": [
+                                8.0,
+                                10.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "e3a0099c-2e1b-4e23-a45a-b75e82be8e1a"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_0_0",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "22bd8458-735b-4fba-801d-f7fee6d1d0fd",
+                "name": "pe0_0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "75d71613-7ba3-40fc-bc73-ee41f06192a1"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                1.5675249999999998,
+                                5.363964,
+                                0.0
+                            ],
+                            "start": [
+                                4.476458,
+                                8.979086,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "c04fc347-4cd4-47d5-a79d-cbb18a06bb09"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_0_1",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "bb0023b7-9cea-477e-bd67-97afd838d4ff",
+                "name": "pe0_0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "3eff928e-c7e2-404f-9497-2249753b780c"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                8.0,
+                                10.0,
+                                0.0
+                            ],
+                            "start": [
+                                1.567525,
+                                5.363964,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "0183193d-2549-4bf5-9329-8986a7116ff3"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_0_2",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "27fb3429-659e-4204-a3de-6b6c90c36574",
+                "name": "pe0_0_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 1.0,
+                            "green": 1.0,
+                            "red": 1.0
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "38489a9e-5496-44b7-b268-3e14e2f294fc"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            8.0,
+                            10.0,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "11336edb-5383-4573-b33d-c5987a485fc1"
+                    },
+                    "head": null,
+                    "kind": "point",
+                    "name": "pd0_0",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.27528
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "2a557098-0b22-4c22-95c1-e18beb485291",
+                "name": "pd0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "dd782a2e-b7da-48f7-9c04-e175c1a19b33"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            8.0,
+                            15.6,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "c6059af7-93ba-477a-a648-04d8c28acbae"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "pl0_0",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": "point",
+                    "text": "joint A",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "3026cec2-4423-4615-95ad-f4c367bfe49e",
+                "name": "pl0_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "fff4956a-5368-46f1-be2d-87ef3cfe71b8"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                17.567525,
+                                6.894574,
+                                0.0
+                            ],
+                            "start": [
+                                24.0,
+                                10.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "a7f85c9c-2959-4a8c-bbc0-5f077e13a318"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_1[0]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "89de2e61-d5fa-4c6a-9d00-8359c6edbd60",
+                "name": "pg0_1[0]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "6f5b552e-1204-4645-bb66-e37d60ef1947"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                21.091067,
+                                4.343356,
+                                0.0
+                            ],
+                            "start": [
+                                17.567525,
+                                6.894574,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "5bc573a1-e1ef-4898-980e-12091d63c613"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_1[1]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "70141bcf-de0e-4c51-ba6a-3d6be14be2ad",
+                "name": "pg0_1[1]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "2bf238f8-8227-4bea-8f4f-dde5ba3007af"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                24.0,
+                                7.958478,
+                                0.0
+                            ],
+                            "start": [
+                                21.091067,
+                                4.343356,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "9a052f82-02aa-417a-8243-8ef35b9e131b"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_1[2]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "26574a48-5536-43b1-8151-0e30f8e914a6",
+                "name": "pg0_1[2]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "53230230-f47e-4cc8-9277-c89cd80caf09"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                24.0,
+                                10.0,
+                                0.0
+                            ],
+                            "start": [
+                                24.0,
+                                7.958478,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "d3133d35-f4b8-4003-8002-050ed1df82e2"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_1[3]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "0bdde067-457b-4b62-8e7b-5660fa519f54",
+                "name": "pg0_1[3]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "a035e55f-edcd-46db-864a-974b443db33c"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                17.567525,
+                                6.894574,
+                                0.0
+                            ],
+                            "start": [
+                                24.0,
+                                10.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "6453b8e1-dcc6-401e-a7ad-2e5573770743"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_1_0",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "5d2c3ecf-e129-4ba5-b0d2-5bc352fc6670",
+                "name": "pe0_1_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.5843137254901961,
+                            "green": 0.25098039215686274,
+                            "red": 0.807843137254902
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "ba34dae6-9b74-4f03-a4ef-7c1cd69ec95f"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                21.091067,
+                                4.343356,
+                                0.0
+                            ],
+                            "start": [
+                                17.567525,
+                                6.894574,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "3687541b-45a6-4624-bdd3-13ec61c89ebf"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_1_1",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "cb66853a-864b-4674-8beb-a67163056e1e",
+                "name": "pe0_1_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "e908e72d-09cf-4826-aeca-4a7b0ab16f95"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                24.0,
+                                7.958478,
+                                0.0
+                            ],
+                            "start": [
+                                21.091067,
+                                4.343356,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "567f62d6-c1d5-4899-9f1d-52e0eb2dbef3"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_1_2",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "3b6415ac-01c2-492b-be27-14f98a6b5605",
+                "name": "pe0_1_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "371d9b58-482c-4284-8dd3-ae90d7d9e48f"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                24.0,
+                                10.0,
+                                0.0
+                            ],
+                            "start": [
+                                24.0,
+                                7.958478,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "e03e1e26-b642-4254-9741-ed843f71b36a"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_1_3",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "39623424-3798-430d-b8da-68b03d8f3610",
+                "name": "pe0_1_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 1.0,
+                            "green": 1.0,
+                            "red": 1.0
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "a6464bf4-48a4-4d0c-b073-971122d97ffb"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            24.0,
+                            10.0,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "7a39e53f-6b22-46c7-8a54-e09e5dec9d0d"
+                    },
+                    "head": null,
+                    "kind": "point",
+                    "name": "pd0_1",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.27528
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "48734e5d-8a94-4faf-a944-b7307bbc9a6d",
+                "name": "pd0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "fe34d553-0042-4197-afb4-9a89ca43152e"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            24.0,
+                            15.6,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "892b5756-47fa-42f8-9185-7dee314996c0"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "pl0_1",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": "point",
+                    "text": "joint T",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "3c249aef-3221-4e2c-82ba-3f2a3e1fb173",
+                "name": "pl0_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "85092699-e9d3-4f7b-8638-7cb9a0b41e3f"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                8.0,
+                                -7.041522,
+                                0.0
+                            ],
+                            "start": [
+                                8.0,
+                                -5.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "268dd40b-7af0-41d8-a3e1-be2ab2582c56"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_2[0]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "cf31481f-d1b3-4b02-994c-47ece10765d3",
+                "name": "pg0_2[0]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "265ea2e3-0e79-4247-afe7-2e10461185b3"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                11.523542,
+                                -6.020608,
+                                0.0
+                            ],
+                            "start": [
+                                8.0,
+                                -7.041522,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "4104e4dc-f958-4dec-abc0-bf09570d87da"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_2[1]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "783e1359-8adf-4f04-9385-127d9bb2f95a",
+                "name": "pg0_2[1]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "0dc77241-5b3f-41da-9b15-8dc1b40cef6f"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                8.0,
+                                -5.0,
+                                0.0
+                            ],
+                            "start": [
+                                11.523542,
+                                -6.020608,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "87a45be0-27a4-48ce-8cf6-f4176e3cece2"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_2[2]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "d30f87fd-d382-4070-a806-ad1e7abec43d",
+                "name": "pg0_2[2]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "5c1b6c7f-c52c-45fd-a673-66aa27a39fa7"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                8.0,
+                                -7.041522,
+                                0.0
+                            ],
+                            "start": [
+                                8.0,
+                                -5.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "8f98441c-29e1-44a1-bef1-7996e23c43b7"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_2_0",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "a79bd781-4cdb-4b43-9dfc-ce0303436aa0",
+                "name": "pe0_2_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "a4b9cd7a-4213-48fd-94e9-e14c240c92b4"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                11.523542,
+                                -6.020608,
+                                0.0
+                            ],
+                            "start": [
+                                8.0,
+                                -7.041522,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "eb4107d8-9ada-4e7f-ad9b-abe8b522f45c"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_2_1",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "b4e445cd-731b-4e91-bfcd-7b2d734cb673",
+                "name": "pe0_2_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "3571b868-d1af-4c60-96e8-901652c0c169"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                8.0,
+                                -5.0,
+                                0.0
+                            ],
+                            "start": [
+                                11.523542,
+                                -6.020608,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "809615f2-feea-4212-b68b-0d7f0fbf8412"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_2_2",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "906b7642-1909-4bb5-a26e-abafbc175cd5",
+                "name": "pe0_2_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 1.0,
+                            "green": 1.0,
+                            "red": 1.0
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "dddfad30-656e-4d6f-a53a-59a68bbd6364"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            8.0,
+                            -5.0,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "118c9204-ff6f-4526-89cf-9a51ddbe12f4"
+                    },
+                    "head": null,
+                    "kind": "point",
+                    "name": "pd0_2",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.27528
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "09892676-59d1-4ecf-9236-ed16be6ff327",
+                "name": "pd0_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "19a4a3f5-584d-4416-8d65-7f7f7e8924a3"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            8.0,
+                            0.6,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "57a1a0e4-6ab6-40d8-a0d8-9a93fc46cd82"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "pl0_2",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": "point",
+                    "text": "joint M",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "10d167a2-3203-4aab-affe-7faaf7c618c3",
+                "name": "pl0_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "42f81c3d-5e80-4768-8573-f0fa8bc538c1"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                24.0,
+                                -6.53061,
+                                0.0
+                            ],
+                            "start": [
+                                24.0,
+                                -5.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "5b51deb9-1240-4cd4-8870-218f7eaa4670"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_3[0]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "7c10fe3a-04fe-4fa2-8d25-a3058c6e4988",
+                "name": "pg0_3[0]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "806f9021-e091-49af-aafa-5ec0cf60be7f"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                27.523542,
+                                -7.551218,
+                                0.0
+                            ],
+                            "start": [
+                                24.0,
+                                -6.53061,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "b34d4d3b-ee41-40d6-8041-192f67288a61"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_3[1]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "6d95befa-9a12-4d22-8249-849cee96bd83",
+                "name": "pg0_3[1]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "a0d6f585-70c4-42c4-ac17-ba3c8a426abf"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                24.0,
+                                -5.0,
+                                0.0
+                            ],
+                            "start": [
+                                27.523542,
+                                -7.551218,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "5f4f831d-d0b2-4bce-98a6-4b51bd3db8c7"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pg0_3[2]",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.103565
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "86fc95fa-aaaf-42e9-8ee8-4a07ea251f39",
+                "name": "pg0_3[2]"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.12549019607843137,
+                            "green": 0.611764705882353,
+                            "red": 0.24705882352941178
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "9d8329d9-be4e-404f-adc2-59c81396239e"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                24.0,
+                                -6.53061,
+                                0.0
+                            ],
+                            "start": [
+                                24.0,
+                                -5.0,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "38a65761-f518-4477-bb82-cb435515d9b7"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_3_0",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "7faffcf8-d37a-4be2-a4db-51441b0aa1f4",
+                "name": "pe0_3_0"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6980392156862745,
+                            "green": 0.11764705882352941,
+                            "red": 0.10196078431372549
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "e335fb03-1fe4-426a-94c8-b9f740831d9e"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                27.523542,
+                                -7.551218,
+                                0.0
+                            ],
+                            "start": [
+                                24.0,
+                                -6.53061,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "f0330968-8b5e-4fa2-aa14-64416924b71c"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_3_1",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "0abb87ad-9257-44e7-9562-e2e5e5f997fc",
+                "name": "pe0_3_1"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.5843137254901961,
+                            "green": 0.25098039215686274,
+                            "red": 0.807843137254902
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "eb788146-18d2-4b94-b3cf-101dc4351b02"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": {
+                            "end": [
+                                24.0,
+                                -5.0,
+                                0.0
+                            ],
+                            "start": [
+                                27.523542,
+                                -7.551218,
+                                0.0
+                            ]
+                        },
+                        "dtype": "compas.geometry/Line",
+                        "guid": "b21940f6-7cb5-40ab-99c4-1c07916752be"
+                    },
+                    "head": null,
+                    "kind": "segment",
+                    "name": "pe0_3_2",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.119903
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "f007cf9c-99f6-444d-bf9c-10405e84b933",
+                "name": "pe0_3_2"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 1.0,
+                            "green": 1.0,
+                            "red": 1.0
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "ff16bc35-9062-4c47-9449-9f1edbb64cc0"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            24.0,
+                            -5.0,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "c07a9e00-76e6-41cf-80cd-c6e91115f72e"
+                    },
+                    "head": null,
+                    "kind": "point",
+                    "name": "pd0_3",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": null,
+                    "text": null,
+                    "until": null,
+                    "url": null,
+                    "width": 0.27528
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "7e4feb0d-02e1-4ad3-9b7f-c2c478fad21a",
+                "name": "pd0_3"
+            },
+            {
+                "data": {
+                    "color": {
+                        "data": {
+                            "alpha": 1.0,
+                            "blue": 0.6666666666666666,
+                            "green": 0.6666666666666666,
+                            "red": 0.6666666666666666
+                        },
+                        "dtype": "compas.colors/Color",
+                        "guid": "21cc919b-e217-4116-8af5-afb7a68a3bc3"
+                    },
+                    "dash": null,
+                    "geometry": {
+                        "data": [
+                            24.0,
+                            0.6,
+                            0.0
+                        ],
+                        "dtype": "compas.geometry/Point",
+                        "guid": "362d395d-a35f-4e0e-9ffa-b3f8c1be2564"
+                    },
+                    "head": null,
+                    "kind": "label",
+                    "name": "pl0_3",
+                    "opacity": 1.0,
+                    "step": 4,
+                    "style": "point",
+                    "text": "joint B",
+                    "until": null,
+                    "url": null,
+                    "width": 0.0
+                },
+                "dtype": "eqdraw_ops/Op",
+                "guid": "1d3ee3a8-3c93-48ec-a9df-af446ee953d1",
+                "name": "pl0_3"
+            }
+        ],
+        "steps": [
+            {
+                "caption": "page 2 of the sheet: an asymmetric truss with one inclined 100 kN load at the apex. The task says to find the global equilibrium first, and it is right to \u2014 nothing else can start until the reactions are known",
+                "title": "The exercise"
+            },
+            {
+                "caption": "left: five members between four joints, a pin at A and a roller at B, and B sits almost a metre lower than A. Digitised at the sheet\u2019s 1:100, since it prints no dimensions",
+                "title": "The truss"
+            },
+            {
+                "caption": "resolve the load, take moments about A to get B, then close the two force sums to get A. Three equations, three unknowns, and no member is involved yet",
+                "title": "Global equilibrium"
+            },
+            {
+                "caption": "now the joints. B has two members and a known reaction, so it can be closed first; then M, then T, and A is the check",
+                "title": "The member forces"
+            },
+            {
+                "caption": "right: one closed polygon per joint, drawn to scale, every edge parallel to the member it stands for. Hover any member to light up its edges",
+                "title": "The force diagram"
+            },
+            {
+                "caption": "B\u2019s reaction is negative: it points DOWN. A roller can only push, so the support the sheet draws cannot deliver it \u2014 the truss would simply lift off. Drag the load\u2019s inclination and watch where the sign changes",
+                "title": "The roller is a lie"
+            }
+        ],
+        "title": "EX X \u00b7 2 \u2014 the truss whose roller lifts off",
+        "view": "exX2_2"
+    },
+    "dtype": "eqdraw_ops/Drawing",
+    "guid": "48210155-bc25-4ec3-acc1-821d65bc2b13"
+}

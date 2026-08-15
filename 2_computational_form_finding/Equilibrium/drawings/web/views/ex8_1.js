@@ -67,6 +67,7 @@
 
 import { PAL } from '../lib/eqdraw.js';
 import * as V from '../lib/vec.js';
+import { threeHinge, redirectHalf } from '../lib/redirect.js';
 
 const SPAN = 8.0;                     // m, digitised (7.998)
 const RISE = 4.0;                     // m to the crown hinge (3.996–3.999)
@@ -85,7 +86,7 @@ const SIT = [
   {
     tag: 'a)', name: 'the funicular itself',
     axis: [[0, 0], [4, 4]],
-    out: null, inn: null,
+    out: null, inn: null, O: null, K: null,
     note: 'no shape is drawn: whatever line you choose IS the structure',
   },
   {
@@ -93,6 +94,7 @@ const SIT = [
     axis: [[0, 0], [1.043, 3.270], [3.955, 4.0]],
     out: [[-1.070, 0], [0.420, 3.922], [3.499, 4.926], [3.955, 4.0]],
     inn: [[0.777, 0], [1.666, 2.618], [3.636, 3.145], [3.955, 4.0]],
+    O: [0.420, 3.922], K: [1.666, 2.618],
     note: 'tapered legs, and the section narrows to nothing at the crown hinge',
   },
   {
@@ -100,6 +102,7 @@ const SIT = [
     axis: [[0, 0], [0, 4.0], [3.955, 4.0]],
     out: [[-1.0, 0], [-1.0, 4.999], [3.499, 4.999], [3.955, 4.0]],
     inn: [[1.0, 0], [1.0, 2.999], [3.499, 2.999], [3.955, 4.0]],
+    O: [-1.0, 4.999], K: [1.0, 2.999],
     note: 'the same centreline as d), with twice the depth to contain the thrust',
   },
   {
@@ -107,6 +110,7 @@ const SIT = [
     axis: [[0, 0], [0, 4.0], [3.955, 4.0]],
     out: [[-0.5, 0], [-0.5, 4.498], [3.499, 4.498], [3.955, 4.0]],
     inn: [[0.5, 0], [0.5, 3.498], [3.499, 3.498], [3.955, 4.0]],
+    O: [-0.5, 4.498], K: [0.5, 3.498],
     note: 'a real frame: the thrust line is nowhere near the material at the corner',
   },
 ];
@@ -115,12 +119,16 @@ const DEFAULTS = {
   sit: 3,                             // start on d), the one that surprises
   Gd: GD,
   thrust: true,                       // show the thrust line
+  flow: true,                         // show the redirected five-element flow
   ecc: true,                          // show how far it leaves the material
   o1: true, sIF: 0.02,
   lbl: true, _k: 99,
 };
 
 const SHAPED = 4;
+const FLOW = 7;
+const SFDJ = 14.0;                    // kN per unit in the joint polygons
+const JCELL = [[3, -14], [12, -14], [21, -14]];
 const NOUT = 12;                      // polygon slots (left half, out + inn)
 
 /** Bring a ring up to exactly n vertices WITHOUT repeating any of them.
@@ -148,16 +156,12 @@ export const meta = {
   subtitle: 'Structural Design II · sheet EX 8 “Frames”, task 1 a)–e)',
   about: 'Four shapes, from a bare funicular triangle to a slender portal, each spanning eight metres with a hinge at both feet and one at the crown, each carrying the same 30 kN. Three hinges make a structure determinate, and the thrust line of a determinate structure must pass through every hinge — so all four have the SAME thrust line, the same reactions and the same force diagram. Step through them with the slider and watch the force diagram not move. What changes is how far the thrust line strays from the material, which is exactly the bending the frame corner has to carry.',
   result: (d) => [
-    `${d.tag} A = B = ${d.N.toFixed(3)} kN at 45° — vertical ${d.Av.toFixed(1)} kN, horizontal H = ${d.H.toFixed(1)} kN`,
-    `the thrust line runs through all three hinges: (0,0) — (${(SPAN / 2).toFixed(0)}, ${RISE.toFixed(0)}) — (${SPAN.toFixed(0)}, 0), the same line in all four situations`,
-    d.eMax < 1e-6
-      ? 'the centreline IS the thrust line, so there is no bending anywhere: pure compression of 21.213 kN'
-      : `worst eccentricity of the centreline ${d.eMax.toFixed(3)} m → M = ${d.Mmax.toFixed(1)} kNm at ${d.eWhere}`,
+    `${d.tag} A = B = ${d.N.toFixed(3)} kN at 45° (${d.Av.toFixed(1)} up, H = ${d.H.toFixed(1)} in) — the same in all four`,
+    `thrust line through the three hinges (0,0)–(${(SPAN / 2).toFixed(0)},${RISE.toFixed(0)})–(${SPAN.toFixed(0)},0) — also the same in all four`,
     d.out === null
-      ? 'no section is drawn, so nothing constrains where the line may go'
-      : d.escape < 1e-6
-        ? 'and the thrust line stays inside the section everywhere'
-        : `the thrust line leaves the material, at worst by ${d.escape.toFixed(3)} m`],
+      ? 'nothing constrains the shape here: put it ON the line and 21.21 kN of pure compression is the only force anywhere'
+      : `the corner is ${d.escape.toFixed(2)} m off that line, so it redirects — largest force IN THE FRAME ${d.Nmax.toFixed(2)} kN`,
+    'a) 21.21 · b) 30.00 · c) 35.57 · d) 79.46 kN — further from the thrust line, and less material, means larger forces'],
   frame: [[-27, -19], [25, 17]],
 };
 
@@ -190,13 +194,19 @@ const STEPS = [
          d.escape < 1e-6 ? 'and the line still lies inside the section'
                          : `the line leaves the section by up to ${d.escape.toFixed(3)} m — drawn in red`]),
     take: 'M = N × e. That one product is the whole difference between an arch and a frame' },
-  { t: 'e) What you notice', d: 'the reactions, the thrust and the force diagram are identical in all four. Only the bending changes — nothing in a), a little in b), a great deal in the two portals. An arch carries its load by being the right shape; a frame carries it by being stiff enough to bend',
-    detail: () => ['a) M = 0.0 kNm, and the line never leaves the material',
-                   'b) M = 33.4 kNm at the knee · 0.59 m outside',
-                   'c) M = 60.0 kNm at the corner · 1.00 m outside',
-                   'd) M = 60.0 kNm at the corner · 1.50 m outside',
-                   'c) and d) share a centreline, so they share the moment exactly — depth changes only how far outside the material the thrust line ends up, and therefore the stress'],
-    take: 'the frame corner is where an arch’s geometry has been given up and a moment has to be paid for it' },
+  { t: 'Redirect it through the material', d: 'so the corner carries the load around itself instead, along five elements that all lie inside the concrete: 1 down the outer face from the crown, 2 down the inner face, 3 the diagonal between them, then 4 and 5 down to the support. Right: the three joints that produce them, each a closed triangle of forces',
+    detail: (d) => (d.flowR
+      ? [...d.mem.map((m, i) => `${i + 1}  ${m.name}  ${Math.abs(m.N).toFixed(2)} kN ${m.tension ? 'tension' : 'compression'}`),
+         `largest force in the frame: ${d.Nmax.toFixed(2)} kN, against ${d.N.toFixed(2)} kN along the thrust line itself`]
+      : ['a) needs no redirection at all: the thrust line IS the structure, so the only force anywhere is 21.21 kN of pure compression']),
+    take: 'the outer face of a frame corner is in TENSION — that is what the reinforcement is for' },
+  { t: 'e) What you notice', d: 'the sheet answers its own question: “the further the frame corner deviates from the thrust line and the less material there is available, the larger the forces in the frame become.” The reactions never move — 21.21 kN in all four — but the forces INSIDE the frame more than treble from a) to d)',
+    detail: () => ['a) 21.21 kN · the funicular itself, nothing to redirect',
+                   'b) 30.00 kN · a polygonal arch, close to the thrust line',
+                   'c) 35.57 kN · a portal 2.0 m deep',
+                   'd) 79.46 kN · the same portal at half the depth',
+                   'c) and d) share a centreline exactly, so the whole difference between 35.6 and 79.5 kN is DEPTH — the lever arm the corner has to work with'],
+    take: 'the reactions belong to the load; the forces inside belong to the shape' },
 ];
 
 // ---------------------------------------------------------------- statics --
@@ -265,13 +275,28 @@ function compute(s) {
     }
   }
 
+  // THE FORCE FLOW THE SHEET ACTUALLY WANTS. In b), c) and d) the thrust line
+  // is not inside the material, so the corner redirects around itself through
+  // compendium 8.1's five elements. a) has nothing to redirect: the funicular
+  // IS the structure.
+  const A = [0, 0], B = [SPAN, 0], C = [SPAN / 2, RISE];
+  const g = threeHinge(A, B, C, [0, -tot]);
+  const mir = (p) => [SPAN - p[0], p[1]];
+  let flowL = null, flowR = null, Nmax = N;
+  if (S.O) {
+    flowL = redirectHalf({ C, O: S.O, K: S.K, S: A }, g.atCL);
+    flowR = redirectHalf({ C, O: mir(S.O), K: mir(S.K), S: B }, g.atCR);
+    Nmax = Math.max(...flowR.members.map((m) => Math.abs(m.N)));
+  }
+
   const T = [LLX, LLY];
   const Bo = [LLX, LLY - tot / SFD];
   // pole to the LEFT of the load line: that is the side on which the rays come
   // out parallel to the thrust line rather than mirrored (see ex4_1)
   const o = [LLX - H / SFD, LLY - Av / SFD];
   return { ...S, tot, Av, H, N, eMax, eWhere, escape, escAt,
-           Mmax: N * eMax, T, Bo, o };
+           Mmax: N * eMax, T, Bo, o, g, flowL, flowR, Nmax,
+           mem: flowR ? flowR.members : [] };
 }
 
 // ------------------------------------------------------------------ view --
@@ -344,6 +369,33 @@ export function create(dw, panel, makePlayer) {
   dw.label('leax', '', { cls: 'num', intro: 6, color: PAL.red, flash: false,
     when: (st, dd) => !!dd && st.ecc && dd.eMax > 1e-6 });
 
+  // The five-element redirection the sheet's own solution draws, numbered 1-5
+  // exactly as it numbers them: 1 along the outer face from the crown, 2 along
+  // the inner face, 3 the diagonal between them, 4 the inner face down to the
+  // support, 5 the outer face down to the support.
+  const FCOL = (i) => ({ pending: PAL.black,
+    final: (dd) => (dd.mem[i] ? (dd.mem[i].tension ? PAL.red : PAL.blue) : PAL.grey) });
+  for (const side of ['L', 'R']) {
+    for (let i = 0; i < 5; i++) {
+      dw.seg(`fl${side}${i}`, { intro: FLOW, w: dw.W.bar, color: FCOL(i),
+        when: (st, dd) => !!dd && st.flow && !!dd.flowR });
+      dw.label(`lfl${side}${i}`, `${i + 1}`, { cls: 'num', intro: FLOW, color: FCOL(i),
+        when: (st, dd) => !!dd && st.flow && !!dd.flowR && st.lbl });
+    }
+  }
+  const JN = ['C', 'O', 'K'];
+  for (let j = 0; j < 3; j++) {
+    dw.label(`jt${j}`, '', { cls: 'point', intro: FLOW, flash: false,
+      when: (st, dd) => !!dd && st.flow && !!dd.flowR });
+    for (let e = 0; e < 3; e++) {
+      dw.arrow(`pe${j}_${e}`, { intro: FLOW, ...NARR, flash: false,
+        color: { pending: PAL.black, final: (dd) => dd.polys[j].parts[e].col },
+        when: (st, dd) => !!dd && st.flow && !!dd.flowR });
+    }
+  }
+  dw.label('lNmax', '', { cls: 'num', intro: FLOW, flash: false,
+    color: { final: () => PAL.black }, when: (st, dd) => !!dd && !!dd.flowR });
+
   for (const n of ['A', 'B']) {
     dw.arrow(`re${n}`, { intro: 5, color: PAL.green, ...NARR });
     dw.arrow(`fre${n}`, { intro: 5, color: PAL.green, ...NARR });
@@ -360,16 +412,16 @@ export function create(dw, panel, makePlayer) {
   function refresh() {
     s._k = player.k;
     d = compute(s);
-    dw.setLabel('form_title', [AX + (SPAN / 2) * MPU, -11.0]);
+    dw.setLabel('form_title', [AX + (SPAN / 2) * MPU, -10.3]);
     dw.setText('form_title', `${d.tag} ${d.name} — Lageplan 1:100`);
-    dw.setLabel('force_title', [LLX - 3, -11.0]);
-    dw.setLabel('force_sub', [LLX - 3, -12.4]);
+    dw.setLabel('force_title', [12, -9.4]);
+    dw.setLabel('force_sub', [12, -10.8]);
     dw.setText('force_sub', `to scale · 1 unit ≙ ${SFD} kN  (sheet: 1 cm ≙ 10 kN)`);
 
     const A = ux([0, 0]), B = ux([SPAN, 0]), C = ux([SPAN / 2, RISE]);
     dw.setDisk('supA', A); dw.setDisk('supB', B); dw.setDisk('hinge', C);
-    dw.setLabel('lsupA', V.add(A, [-1.8, -1.0]));
-    dw.setLabel('lsupB', V.add(B, [1.8, -1.0]));
+    dw.setLabel('lsupA', V.add(A, [-2.4, 0.9]));
+    dw.setLabel('lsupB', V.add(B, [2.4, 0.9]));
     dw.setLabel('lhinge', V.add(C, [0, 2.0]));
     for (const [n, p] of [['A', A], ['B', B]]) {
       dw.setStrokes(`hat${n}`, V.hatch([p[0] - 1.9, p[1] - 0.5],
@@ -433,7 +485,7 @@ export function create(dw, panel, makePlayer) {
       const t = (worst[0] + k * worst[1]) / (1 + k * k);      // foot on the leg
       const foot = [t, k * t];
       dw.setSeg('eax', ux(worst), ux(foot));
-      dw.setLabel('leax', V.add(V.mid(ux(worst), ux(foot)), [-3.4, 0.9]));
+      dw.setLabel('leax', V.add(V.mid(ux(worst), ux(foot)), [-3.8, -1.3]));
       dw.setText('leax', `e = ${d.eMax.toFixed(2)} m`);
     }
     if (d.escape > 1e-6 && d.escAt) {
@@ -465,6 +517,56 @@ export function create(dw, panel, makePlayer) {
     dw.setArrow('freA', d.o, d.T);
     dw.setArrow('freB', d.Bo, d.o);
 
+    // the five-element redirection, in both halves, numbered as the sheet does
+    const mirp = (p) => [SPAN - p[0], p[1]];
+    d.polys = [];
+    if (d.flowR) {
+      for (const [side, fl, mp] of [['L', d.flowL, (p) => p], ['R', d.flowR, (p) => p]]) {
+        fl.members.forEach((m, i) => {
+          dw.setSeg(`fl${side}${i}`, ux(mp(m.a)), ux(mp(m.b)));
+          // the number rides beside its own element, alternating sides, and
+          // set a little way along so five of them do not pile up at the crown
+          const A2 = ux(m.a), B2 = ux(m.b);
+          const nb = V.mul(V.unit(V.perp(V.sub(B2, A2))), i % 2 ? -1.4 : 1.4);
+          const t = 0.62;
+          dw.setLabel(`lfl${side}${i}`,
+            V.add([A2[0] + (B2[0] - A2[0]) * t, A2[1] + (B2[1] - A2[1]) * t], nb));
+        });
+      }
+      // the joint polygons that produced them, for the RIGHT half
+      // in METRES, unlike the drawing-space A/B/C above
+      const P = { C: [SPAN / 2, RISE], O: mirp(d.O), K: mirp(d.K), S: [SPAN, 0] };
+      const fetch = (a, b) => d.mem.find((m) => m.name === `${a}–${b}` || m.name === `${b}–${a}`);
+      const colOf = (m) => (m.tension ? PAL.red : PAL.blue);
+      const at = (node, others, ext) => {
+        const parts = others.map((o) => {
+          const m = fetch(node, o);
+          return { v: V.mul(V.unit(V.sub(P[node], P[o])), m.N), col: colOf(m), name: m.name };
+        });
+        if (ext) parts.unshift({ v: ext, col: PAL.green, name: 'reaction' });
+        return { parts };
+      };
+      d.polys = [at('C', ['O', 'K'], d.g.atCR),
+                 at('O', ['C', 'K', 'S'], null),
+                 at('K', ['C', 'O', 'S'], null)];
+      d.polys.forEach((pl, j) => {
+        const pts = [[0, 0]];
+        pl.parts.forEach((q) => pts.push(V.add(pts[pts.length - 1], V.mul(q.v, 1 / SFDJ))));
+        const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
+        const off = V.sub(JCELL[j], [(Math.min(...xs) + Math.max(...xs)) / 2,
+                                     (Math.min(...ys) + Math.max(...ys)) / 2]);
+        dw.setLabel(`jt${j}`, V.add(JCELL[j],
+          [0, -(Math.max(...ys) - Math.min(...ys)) / 2 - 1.5]));
+        dw.setText(`jt${j}`, `joint ${JN[j]}`);
+        for (let e = 0; e < 3; e++) {
+          dw.setArrow(`pe${j}_${e}`, V.add(pts[Math.min(e, pts.length - 1)], off),
+                      V.add(pts[Math.min(e + 1, pts.length - 1)], off));
+        }
+      });
+      dw.setLabel('lNmax', [12, -7.7]);
+      dw.setText('lNmax', `largest force in the frame ${d.Nmax.toFixed(2)} kN`);
+    }
+
     panel.syncAll();
     player.apply(d, s);
   }
@@ -475,6 +577,7 @@ export function create(dw, panel, makePlayer) {
   panel.slider(cas, s, 'sit', 'situation', 0, 3, 1, refresh,
     (v) => `${SIT[Math.round(v)].tag} ${SIT[Math.round(v)].name}`);
   panel.toggle(cas, s, 'thrust', 'show the thrust line', refresh);
+  panel.toggle(cas, s, 'flow', 'show the redirected force flow', refresh);
   panel.toggle(cas, s, 'ecc', 'show the eccentricity', refresh);
   panel.toggle(cas, s, 'lbl', 'show labels', refresh);
   const giv = panel.section('Given');

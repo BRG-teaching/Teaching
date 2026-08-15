@@ -54,6 +54,12 @@ NO_FORCE_DIAGRAM = {
     '5_3': 'reactions only — the sheet asks for no force diagram',
     '6_1': 'a determinacy count: no loads, no forces, nothing to pair',
     '7_3': 'qualitative colouring of a force flow, no force diagram',
+    '10_1': 'a purely topological test of wall axes: no load, no force diagram',
+    '10_4': 'a buckling chart with a demand point: no force polygon to pair',
+    '9_1': 'tributary AREAS: no forces anywhere on the sheet, nothing to pair',
+    '9_2': 'EX 9 task 2 is qualitative — no magnitudes and no force diagram',
+    'X1_2': 'material properties: strengths, square sections and stress-strain '
+            'curves. There is no form diagram and no force diagram on the page',
 }
 
 

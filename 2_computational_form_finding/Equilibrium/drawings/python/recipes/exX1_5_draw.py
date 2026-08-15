@@ -1,0 +1,183 @@
+"""EX X · Task 5 — the funicular through a given point
+
+Auto-generated from ops/exX1_5.json — the drawing as literal COMPAS
+calls, one operation per line, in construction order. Regenerate with
+web/tools/export_ops.py; edit the web view, not this file.
+"""
+from compas.colors import Color
+from compas.geometry import Circle, Frame, Line, Point, Polygon, Polyline  # noqa: F401
+
+ops = []
+
+
+def add(step, kind, geometry, color=None, **style):
+    """One drawing operation; style: width, dash, opacity, text, head, until."""
+    ops.append({"step": step, "kind": kind, "geometry": geometry,
+                "color": color, **style})
+
+
+# step 0 — The exercise — and what the sheet does not give you
+add(0, 'label', Point(-20.95, -11, 0), text='a) form diagram — no scale is printed')
+add(0, 'label', Point(9, 16.2, 0), text='force diagram')
+add(0, 'label', Point(9, 14.9, 0), color=Color.from_hex("#aaaaaa"), text='the sheet gives no magnitudes: 1 unit ≙ 4.00 kN here')
+
+# step 1 — The geometry, and the given point
+add(1, 'point', Point(-26.5, 1, 0), color=Color.from_hex("#ffffff"), width=0.3996)
+add(1, 'segment', Line((-27.34, 0.55, 0), (-27.9057, 1.11569, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'segment', Line((-26.78, 0.55, 0), (-27.3457, 1.11569, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'segment', Line((-26.22, 0.55, 0), (-26.7857, 1.11569, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'segment', Line((-25.66, 0.55, 0), (-26.2257, 1.11569, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'segment', Line((-25.1, 0.55, 0), (-25.6657, 1.11569, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'label', Point(-24.8, 1.9, 0), text='A')
+add(1, 'point', Point(-15.4, -0.57065, 0), color=Color.from_hex("#ffffff"), width=0.3996)
+add(1, 'segment', Line((-16.24, -1.02065, 0), (-16.8057, -0.454965, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'segment', Line((-15.68, -1.02065, 0), (-16.2457, -0.454965, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'segment', Line((-15.12, -1.02065, 0), (-15.6857, -0.454965, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'segment', Line((-14.56, -1.02065, 0), (-15.1257, -0.454965, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'segment', Line((-14, -1.02065, 0), (-14.5657, -0.454965, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(1, 'label', Point(-17.1, 0.32935, 0), text='B')
+add(1, 'polyline', Polyline([(-26.5, 1, 0), (-15.4, -0.57065, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3186)
+add(1, 'polyline', Polyline([(-26.5, 4, 0), (-26.5, -8.57064, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3186)
+add(1, 'polyline', Polyline([(-22.8, 4, 0), (-22.8, -8.57064, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3186)
+add(1, 'polyline', Polyline([(-19.1, 4, 0), (-19.1, -8.57064, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3186)
+add(1, 'polyline', Polyline([(-15.4, 4, 0), (-15.4, -8.57064, 0)]), color=Color.from_hex("#aaaaaa"), dash=0.3186)
+add(1, 'circle', Circle(0.4, frame=Frame((-19.1, -4.27065, 0), [1, 0, 0], [0, 1, 0])), color=Color.from_hex("#111111"))
+add(1, 'label', Point(-13.7, -5.77065, 0), text='the given point')
+
+# step 2 — The loads
+add(2, 'arrow', Line((-22.8, 4, 0), (-22.8, 2.2, 0)), color=Color.from_hex("#3f9c20"), width=0.147744, head=(0.509328, 0.196733))
+add(2, 'label', Point(-21.95, 3.1, 0), color=Color.from_hex("#3f9c20"), text='F')
+
+# step 3 — Lump each load, and lay the load line out
+add(3, 'arrow', Line((4, 11, 0), (4, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.106531, head=(0.344477, 0.147744))
+add(3, 'label', Point(0.6, 3.5, 0), color=Color.from_hex("#3f9c20"), text='F = 60.0')
+add(3, 'arrow', Line((-22.8, 0.593, 0), (-22.8, -7.41564, 0)), color=Color.from_hex("#3f9c20"), width=0.147744, dash=1.1, head=(0.509328, 0.196733))
+add(3, 'label', Point(-20.2, -3.68882, 0), color=Color.from_hex("#3f9c20"), text='R_tot = 60.0')
+add(3, 'segment', Line((-2.2, 11, 0), (-2.2, -4, 0)), color=Color.from_hex("#3f9c20"), width=0.040824)
+add(3, 'label', Point(-4.6, 3.5, 0), color=Color.from_hex("#3f9c20"), text='R_tot = 60.0')
+
+# step 4 — The given point pins the pole
+add(4, 'point', Point(8.38021, 0.380201, 0), color=Color.from_hex("#ffffff"), width=0.33966)
+add(4, 'label', Point(9.5802, 1.2802, 0), text='o′')
+add(4, 'segment', Line((4, 11.8, 0), (8.38021, 11.8, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(4, 'label', Point(6.1901, 12.9, 0), color=Color.from_hex("#aaaaaa"), text='H = 17.521 kN')
+add(4, 'segment', Line((-19.1, -4.27065, 0), (-15.4, -0.57065, 0)), color=Color.from_hex("#ce4095"), width=0.122861)
+
+# step 5 — The rays, and the funicular polygon
+add(5, 'segment', Line((8.38021, 0.380201, 0), (4, 11, 0)), color=Color.from_hex("#ce4095"), width=0.057542)
+add(5, 'segment', Line((-26.5, 1, 0), (-22.8, -7.97064, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(5, 'segment', Line((8.38021, 0.380201, 0), (8.38021, 0.380201, 0)), color=Color.from_hex("#ce4095"), width=0.057542)
+add(5, 'segment', Line((-26.5, 1, 0), (-26.5, 1, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(5, 'segment', Line((8.38021, 0.380201, 0), (8.38021, 0.380201, 0)), color=Color.from_hex("#ce4095"), width=0.057542)
+add(5, 'segment', Line((-26.5, 1, 0), (-26.5, 1, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(5, 'segment', Line((8.38021, 0.380201, 0), (4, -4, 0)), color=Color.from_hex("#ce4095"), width=0.057542)
+add(5, 'segment', Line((-22.8, -7.97064, 0), (-15.4, -0.57065, 0)), color=Color.from_hex("#aaaaaa"), width=0.040824)
+add(5, 'point', Point(-22.8, -7.97064, 0), color=Color.from_hex("#ffffff"), width=0.27972)
+
+# step 6 — The funicular form
+add(6, 'segment', Line((-26.5, 1, 0), (-26.3844, 0.719667, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-26.3844, 0.719667, 0), (-26.2688, 0.439335, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-26.2688, 0.439335, 0), (-26.1531, 0.159002, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-26.1531, 0.159002, 0), (-26.0375, -0.12133, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-26.0375, -0.12133, 0), (-25.9219, -0.401663, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-25.9219, -0.401663, 0), (-25.8062, -0.681995, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-25.8062, -0.681995, 0), (-25.6906, -0.962328, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-25.6906, -0.962328, 0), (-25.575, -1.24266, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-25.575, -1.24266, 0), (-25.4594, -1.52299, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-25.4594, -1.52299, 0), (-25.3438, -1.80333, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-25.3438, -1.80333, 0), (-25.2281, -2.08366, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-25.2281, -2.08366, 0), (-25.1125, -2.36399, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-25.1125, -2.36399, 0), (-24.9969, -2.64432, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.9969, -2.64432, 0), (-24.8813, -2.92466, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.8813, -2.92466, 0), (-24.7656, -3.20499, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.7656, -3.20499, 0), (-24.65, -3.48532, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.65, -3.48532, 0), (-24.5344, -3.76565, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.5344, -3.76565, 0), (-24.4187, -4.04599, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.4187, -4.04599, 0), (-24.3031, -4.32632, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.3031, -4.32632, 0), (-24.1875, -4.60665, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.1875, -4.60665, 0), (-24.0719, -4.88698, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-24.0719, -4.88698, 0), (-23.9563, -5.16732, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.9563, -5.16732, 0), (-23.8406, -5.44765, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.8406, -5.44765, 0), (-23.725, -5.72798, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.725, -5.72798, 0), (-23.6094, -6.00831, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.6094, -6.00831, 0), (-23.4937, -6.28865, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.4937, -6.28865, 0), (-23.3781, -6.56898, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.3781, -6.56898, 0), (-23.2625, -6.84931, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.2625, -6.84931, 0), (-23.1469, -7.12965, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.1469, -7.12965, 0), (-23.0312, -7.40998, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-23.0312, -7.40998, 0), (-22.9156, -7.69031, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-22.9156, -7.69031, 0), (-22.8, -7.97064, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-22.8, -7.97064, 0), (-22.6844, -7.85502, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-22.6844, -7.85502, 0), (-22.5688, -7.73939, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-22.5688, -7.73939, 0), (-22.4531, -7.62377, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-22.4531, -7.62377, 0), (-22.3375, -7.50814, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-22.3375, -7.50814, 0), (-22.2219, -7.39252, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-22.2219, -7.39252, 0), (-22.1062, -7.27689, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-22.1062, -7.27689, 0), (-21.9906, -7.16127, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.9906, -7.16127, 0), (-21.875, -7.04564, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.875, -7.04564, 0), (-21.7594, -6.93002, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.7594, -6.93002, 0), (-21.6438, -6.81439, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.6438, -6.81439, 0), (-21.5281, -6.69877, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.5281, -6.69877, 0), (-21.4125, -6.58314, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.4125, -6.58314, 0), (-21.2969, -6.46752, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.2969, -6.46752, 0), (-21.1812, -6.35189, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.1812, -6.35189, 0), (-21.0656, -6.23627, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-21.0656, -6.23627, 0), (-20.95, -6.12064, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.95, -6.12064, 0), (-20.8344, -6.00502, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.8344, -6.00502, 0), (-20.7188, -5.8894, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.7188, -5.8894, 0), (-20.6031, -5.77377, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.6031, -5.77377, 0), (-20.4875, -5.65815, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.4875, -5.65815, 0), (-20.3719, -5.54252, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.3719, -5.54252, 0), (-20.2563, -5.4269, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.2563, -5.4269, 0), (-20.1406, -5.31127, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.1406, -5.31127, 0), (-20.025, -5.19564, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-20.025, -5.19564, 0), (-19.9094, -5.08002, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-19.9094, -5.08002, 0), (-19.7937, -4.9644, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-19.7937, -4.9644, 0), (-19.6781, -4.84877, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-19.6781, -4.84877, 0), (-19.5625, -4.73315, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-19.5625, -4.73315, 0), (-19.4469, -4.61752, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-19.4469, -4.61752, 0), (-19.3313, -4.5019, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-19.3313, -4.5019, 0), (-19.2156, -4.38627, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-19.2156, -4.38627, 0), (-19.1, -4.27065, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-19.1, -4.27065, 0), (-18.9844, -4.15502, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.9844, -4.15502, 0), (-18.8687, -4.0394, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.8687, -4.0394, 0), (-18.7531, -3.92377, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.7531, -3.92377, 0), (-18.6375, -3.80815, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.6375, -3.80815, 0), (-18.5219, -3.69252, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.5219, -3.69252, 0), (-18.4062, -3.5769, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.4062, -3.5769, 0), (-18.2906, -3.46127, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.2906, -3.46127, 0), (-18.175, -3.34565, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.175, -3.34565, 0), (-18.0594, -3.23002, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-18.0594, -3.23002, 0), (-17.9438, -3.1144, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.9438, -3.1144, 0), (-17.8281, -2.99877, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.8281, -2.99877, 0), (-17.7125, -2.88315, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.7125, -2.88315, 0), (-17.5969, -2.76752, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.5969, -2.76752, 0), (-17.4812, -2.6519, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.4812, -2.6519, 0), (-17.3656, -2.53627, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.3656, -2.53627, 0), (-17.25, -2.42065, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.25, -2.42065, 0), (-17.1344, -2.30502, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.1344, -2.30502, 0), (-17.0188, -2.1894, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-17.0188, -2.1894, 0), (-16.9031, -2.07377, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-16.9031, -2.07377, 0), (-16.7875, -1.95815, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-16.7875, -1.95815, 0), (-16.6719, -1.84252, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-16.6719, -1.84252, 0), (-16.5562, -1.7269, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-16.5562, -1.7269, 0), (-16.4406, -1.61127, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-16.4406, -1.61127, 0), (-16.325, -1.49565, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-16.325, -1.49565, 0), (-16.2094, -1.38002, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-16.2094, -1.38002, 0), (-16.0938, -1.2644, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-16.0938, -1.2644, 0), (-15.9781, -1.14877, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-15.9781, -1.14877, 0), (-15.8625, -1.03315, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-15.8625, -1.03315, 0), (-15.7469, -0.917525, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-15.7469, -0.917525, 0), (-15.6312, -0.8019, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-15.6312, -0.8019, 0), (-15.5156, -0.686275, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+add(6, 'segment', Line((-15.5156, -0.686275, 0), (-15.4, -0.57065, 0)), color=Color.from_hex("#ce4095"), width=0.090202)
+
+# step 7 — The reactions
+add(7, 'arrow', Line((-26.6906, 1.46223, 0), (-27.9871, 4.60537, 0)), color=Color.from_hex("#3f9c20"), width=0.147744, head=(0.509328, 0.196733))
+add(7, 'label', Point(-29.0677, 2.50462, 0), color=Color.from_hex("#3f9c20"), text='A = 45.95')
+add(7, 'arrow', Line((-15.0464, -0.217097, 0), (-12.6423, 2.18707, 0)), color=Color.from_hex("#3f9c20"), width=0.147744, head=(0.509328, 0.196733))
+add(7, 'label', Point(-12.4514, -0.167601, 0), color=Color.from_hex("#3f9c20"), text='B = 24.78')
+
+
+if __name__ == "__main__":
+    print("EX X · Task 5 — the funicular through a given point —", len(ops), "operations")
