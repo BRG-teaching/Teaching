@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>eQUILIBRIUM — exercises</title>
+<script src="./gate.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -21,7 +22,25 @@
     display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
   }
   header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  /* work-in-progress badge, on the title line */
+  header h1 .wip {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+    padding: 3px 8px;
+    font: 700 10px/1 Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #2196ea;
+    background: #fff;
+  }
   header .sub { font-size: 14px; color: #fff; margin-top: 6px; }
+  header .note {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.88);
+    margin-top: 4px;
+    max-width: 62ch;
+  }
   header .count { font: 12px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
                   color: rgba(255,255,255,0.72); }
   header a { color: #fff; }
@@ -90,8 +109,10 @@
   <header>
     <div class="inner">
       <div>
-        <h1>e<span class="q">QUILIBRIUM</span> — exercises</h1>
+        <h1>e<span class="q">QUILIBRIUM</span> — exercises <span class="wip">experimental</span></h1>
         <p class="sub">the course exercise sheets, worked step by step as interactive drawings</p>
+        <p class="note">Work in progress: these drawings are experimental, may not be fully
+          correct, and are likely to contain mistakes.</p>
       </div>
       <span class="count" id="count"></span>
     </div>
