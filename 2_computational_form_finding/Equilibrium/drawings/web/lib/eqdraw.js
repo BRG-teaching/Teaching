@@ -1404,6 +1404,23 @@ export class Panel {
       about.innerHTML = `<h2>Description</h2><p class="about">${meta.about}</p>`;
       root.appendChild(about);
     }
+    // The original the drawing was made from — the applet screenshot, photo or
+    // scanned plate — right under the description, so the redrawing can always
+    // be held against its source. Click opens the asset at full size.
+    // meta.source = { image, caption, href? }
+    if (meta.source && meta.source.image) {
+      const src = meta.source;
+      const sec = document.createElement('div');
+      sec.className = 'panel-section';
+      sec.innerHTML = `<h2>Original</h2>
+        <a class="srcfig" href="${src.image}" target="_blank" rel="noopener">
+          <img src="${src.image}" alt="${src.caption || 'original source'}" loading="lazy">
+        </a>
+        ${src.caption ? `<p class="srccap">${src.caption}</p>` : ''}
+        ${src.href ? `<p class="srccap"><a href="${src.href}" target="_blank"
+           rel="noopener">${src.hrefLabel || 'source'} ↗</a></p>` : ''}`;
+      root.appendChild(sec);
+    }
   }
 
   section(title) {

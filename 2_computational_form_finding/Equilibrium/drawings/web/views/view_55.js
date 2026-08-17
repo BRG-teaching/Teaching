@@ -29,6 +29,15 @@ export const meta = {
   subtitle: 'Sondericker’s windward rib: line of pressure, counters, Maxwell diagram',
   about: 'A page of history: Plate II of Jerome Sondericker’s "Graphic Statics" (MIT, 1903). Half of a symmetrical three-hinged arch carries dead load on its outer chord and wind on the right side. The reactions of the hinges locate the pole P; the funicular polygon of the joint loads drawn through the hinges is the LINE OF PRESSURE, and wherever it leaves the rib, the tension-only diagonals must work — the method of shears and moments picks the active counter of every panel. The Maxwell diagram (the book’s Fig. 3A) then delivers every member force, checked on members 4-5 and 12-14.',
   frame: [[-37.5, -4.0], [48.0, 45.5]],
+  source: {
+    image: 'assets/view_55_plate.jpg',
+    caption: 'Jerome Sondericker, <i>Graphic Statics, with Applications to '
+      + 'Trusses, Beams, and Arches</i> (Wiley, 1903), Plate II, Figs. 3 and 3A '
+      + '— Art. 53, pp. 69–72. Fig. 3 is the rib with its line of pressure, '
+      + 'Fig. 3A the Maxwell diagram. This drawing is a reconstruction of both.',
+    href: 'https://archive.org/details/graphicstaticswi00sonduoft',
+    hrefLabel: 'the whole book on archive.org',
+  },
 };
 
 const RESOLVE = 19;
