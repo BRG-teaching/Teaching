@@ -25,7 +25,25 @@
     padding: 36px 40px 30px;
   }
   header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  /* work-in-progress badge, on the title line */
+  header h1 .wip {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+    padding: 3px 8px;
+    font: 700 10px/1 Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #2196ea;
+    background: #fff;
+  }
   header .sub { font-size: 14px; margin-top: 6px; }
+  header .note {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.88);
+    margin-top: 4px;
+    max-width: 62ch;
+  }
   main {
     max-width: 1440px;
     margin: 0 auto;
@@ -42,8 +60,10 @@
 <body>
   <header>
     <div class="inner">
-      <h1>e<span>QUILIBRIUM</span></h1>
+      <h1>e<span>QUILIBRIUM</span> <span class="wip">experimental</span></h1>
       <p class="sub">an interactive environment for graphic statics-based structural design</p>
+      <p class="note">Work in progress: these drawings are experimental, may not be fully
+        correct, and are likely to contain mistakes.</p>
     </div>
   </header>
   <main>

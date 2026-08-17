@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>eQUILIBRIUM drawings</title>
+<script src="./gate.js"></script>
 <style>
   :root {
     --pink: #ce4095;
@@ -36,6 +37,14 @@
     background: var(--panel);
     color: var(--panel-text);
   }
+  /* work-in-progress notice, pinned above the drawing title */
+  .wip-banner { padding: 14px 16px 12px; border-bottom: 1px solid var(--panel-border); }
+  .wip-banner .wip {
+    display: inline-block; padding: 3px 8px;
+    font: 700 10px/1 inherit; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--panel); background: #fff;
+  }
+  .wip-banner p { color: var(--panel-muted); font-size: 12px; line-height: 1.45; margin-top: 8px; }
   .panel-head { padding: 18px 16px 6px; }
   .panel-head h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: #fff; }
   .panel-head p { color: var(--panel-muted); font-size: 12px; margin-top: 3px; }
@@ -211,7 +220,13 @@
 </script>
 </head>
 <body>
-  <aside id="sidebar"></aside>
+  <aside id="sidebar">
+    <div class="wip-banner">
+      <span class="wip">experimental</span>
+      <p>Work in progress: these drawings are experimental, may not be fully correct,
+        and are likely to contain mistakes.</p>
+    </div>
+  </aside>
   <main id="viewport"><div id="error"></div></main>
 
   <script type="module">
