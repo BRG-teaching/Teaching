@@ -74,6 +74,7 @@
       background: #2196ea; color: rgba(255, 255, 255, 0.88);
       font-size: 12px; line-height: 1.45; margin: 0; padding: 0 24px 22px;
     }
+    #eq-gate .note a { color: #fff; font-weight: 500; }
     #eq-gate form { background: #fff; padding: 24px; display: flex; gap: 12px; }
     #eq-gate label { display: block; }
     #eq-gate input {
@@ -103,7 +104,9 @@
         <h1>e<span>QUILIBRIUM</span> <span class="wip">experimental</span></h1>
         <p class="sub">an interactive environment for graphic statics-based structural design</p>
         <p class="note">Work in progress: these drawings are experimental, may not be fully
-          correct, and are likely to contain mistakes.</p>
+          correct, and are likely to contain mistakes. Redrawn after the original
+          <a href="https://block.arch.ethz.ch/eq/">eQUILIBRIUM platform</a> by the
+          Block Research Group.</p>
         <form>
           <label style="flex:1">
             <input type="password" name="pw" placeholder="Passphrase"
