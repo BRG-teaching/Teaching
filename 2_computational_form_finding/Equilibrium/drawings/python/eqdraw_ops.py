@@ -92,7 +92,7 @@ class Op(Data):
 
     def __init__(self, kind, geometry=None, step=0, until=None, color=None,
                  width=0.0, dash=None, opacity=1.0, text=None, style=None,
-                 head=None, url=None, name=None):
+                 head=None, url=None, define=None, name=None):
         super().__init__(name=name)
         self.kind = kind
         self.geometry = geometry
@@ -106,6 +106,10 @@ class Op(Data):
         self.style = style
         self.head = head
         self.url = url
+        # optional GeoGebra-style formula for the parametric web viewer: how
+        # this op follows the solved values, e.g. {"line": {"start": "A",
+        # "end": "B"}}.  None = static geometry.  See the website README.
+        self.define = define
 
     @property
     def __data__(self):
@@ -122,6 +126,7 @@ class Op(Data):
             "style": self.style,
             "head": self.head,
             "url": self.url,
+            "define": self.define,
             "name": self.name,
         }
 
@@ -156,12 +161,20 @@ class Drawing(Data):
         it in the force diagram. Hovering any one of a group highlights them
         all, and they must be drawn parallel; see
         ``web/tools/regress/parallel.py``.
+    params : dict, optional
+        Optional parametric section for the JSON-driven web viewer
+        (``Equilibrium/website``): named points, draggable handles with
+        constraints, rules (offset / midpoint / intersection) evaluated in
+        order, and bindings that rewrite op geometry from the solved values,
+        so dragging a handle re-solves the construction.  See the website
+        README for the schema.  ``None`` = a static drawing.
 
     """
 
     def __init__(self, view=0, title="", about="", frame=None, steps=None,
-                 ops=None, links=None, name=None):
+                 ops=None, links=None, params=None, name=None):
         super().__init__(name=name)
+        self.params = params
         self.view = view
         self.title = title
         self.about = about
@@ -180,6 +193,7 @@ class Drawing(Data):
             "steps": self.steps,
             "links": self.links,
             "ops": self.ops,
+            "params": self.params,
         }
 
     def __repr__(self):
