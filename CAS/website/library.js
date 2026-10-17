@@ -218,6 +218,8 @@ const COMMANDS = [
   { cmd: '/new', help: 'start a new conversation with Claude' },
   { cmd: '/stop', help: 'stop Claude’s answer' },
   { cmd: '/key', help: '<key> your Anthropic API key (sk-ant-…) or the class key; /key off removes them', arg: true },
+  { cmd: '/usage', help: 'what Claude cost from this browser, and what is left of /budget' },
+  { cmd: '/budget', help: '<dollars> the credits you loaded, to estimate what is left', arg: true },
   { cmd: '/local', help: '<words> build from plain words here, without Claude', arg: true },
 ];
 // The session viewer's own commands (viewer-commands.js); a line starting with one of them is
@@ -330,6 +332,7 @@ function funicular(s) {
   const top = arch ? f : 0;
   const member = arch ? PAL.compression : PAL.tension;
   const cmds = [
+    'Construction Plane XZ', // Text lies in the construction plane: stand the labels in the drawing's XZ plane
     `Polyline ${[pt(0, 0), ...x.map((xi, i) => pt(xi, z[i])), pt(L, 0)].join(' ')}`, `Color ${member}`, // the cable, or the arch
     `Line ${pt(0, 0)} ${pt(L, 0)}`, `Color ${PAL.guide}`,                                            // its closing string
     `Point ${pt(0, 0)}`, `Point ${pt(L, 0)}`,
@@ -342,7 +345,7 @@ function funicular(s) {
     ...text('O', OX + (arch ? -1.5 : 0.6) * h, 0.6 * h),
     ...text(`H = ${H.toFixed(1)} kN`, Math.min(X0, OX) + 0.2 * h, -1.6 * h),
     ...x.flatMap((xi, i) => text(`P${i + 1}`, xi + 0.4 * h, z[i] + P[i] * k * 0.5 - h)),
-    'Escape', 'View Front', 'Fit',
+    'Escape', 'Construction Plane XY', 'View Front', 'Fit',
   ];
   const T = Math.max(Math.hypot(H, RA), Math.hypot(H, RB));
   phraseNotes.push(
@@ -533,7 +536,7 @@ function truss(s) {
   const r = (v) => Math.round(v), pt = (x, z) => `${r(x)},0,${r(z)}`, F = (f) => { const [x, z] = bow.pos.get(f); return [ox + x * k, oz + z * k]; };
   const h = r(L / 70), text = (t, x, z, size = h) => [`Text ${t}`, `=Height ${size}`, pt(x, z)];
   const maxLoad = Math.max(...forces.map((f) => Math.abs(f.fz)));
-  const cmds = [];
+  const cmds = ['Construction Plane XZ']; // labels stand in the drawing's plane
   const tint = (t) => (Math.abs(t) < 1e-6 ? PAL.zero : t > 0 ? PAL.tension : PAL.compression);
   members.forEach((m, e) => cmds.push(`Line ${pt(nodes[m.i].x, nodes[m.i].z)} ${pt(nodes[m.j].x, nodes[m.j].z)}`, `Color ${tint(T[e])}`));
   supports.forEach((i) => cmds.push(`Point ${pt(nodes[i].x, nodes[i].z)}`));
@@ -550,7 +553,7 @@ function truss(s) {
   for (const [f, label] of name) { cmds.push(...text(label, ...spot(f).map((v, i) => v - (i ? h / 2 : h / 3)))); const [x, z] = F(f); cmds.push(...text(label, x + h * 0.4, z + h * 0.3)); }
   const title = { pratt: 'Pratt truss', howe: 'Howe truss', warren: 'Warren truss', roof: 'roof truss' }[kind];
   cmds.push(...text(`form diagram (${title})`, 0, d + 0.22 * L, r(h * 1.4)), ...text('force diagram (Cremona)', ox + fx0 * k, oz + fz1 * k + 2.2 * h, r(h * 1.4)));
-  cmds.push('Escape', 'View Front', 'Fit');
+  cmds.push('Escape', 'Construction Plane XY', 'View Front', 'Fit');
 
   // the member forces, named by the two spaces they separate
   // letters before numbers, numbers in order: a-1, 2-3, 10-11
@@ -848,6 +851,11 @@ createApp({
       set: (k) => { try { if (k) localStorage.setItem(name, k); else localStorage.removeItem(name); } catch (e) { /* private window */ } } });
     // the class's key for the BRG terminal service; or the visitor's own Anthropic API key, used from this browser
     const keyStore = stored('brg-terminal-key'), ownKey = stored('brg-anthropic-key');
+    // What Claude cost from this browser: [{at, cost}], and the credits loaded, kept locally. The API key cannot
+    // read the account's balance; the Claude Console's Billing and Cost pages have the exact figures.
+    const spentLog = { all: () => { try { return JSON.parse(localStorage.getItem('brg-spent') || '[]'); } catch (e) { return []; } },
+      add(cost) { try { localStorage.setItem('brg-spent', JSON.stringify([...this.all(), { at: Date.now(), cost }].slice(-5000))); } catch (e) { /* private window */ } } };
+    const budget = stored('brg-budget');
     const claudeOn = ref(!!(cfg.chatEndpoint || ownKey.get()));
     const claudeLabel = computed(() => (cfg.chatEndpoint ? 'Claude' : claudeOn.value ? 'Claude, your key' : ''));
     const menuIndex = ref(0);
@@ -1143,6 +1151,22 @@ createApp({
         else if (cmd === '/viewer') VIEWER_CMDS.slice().sort((a, b) => a.cmd.localeCompare(b.cmd)).forEach((c) => say(`${c.cmd.padEnd(24)} ${c.help.replace(/^[^·:]*[·:]\s*/, '')}`, 'out', c.example || c.cmd));
         else if (cmd === '/close') closeSheet();
         else if (cmd === '/clear') log.value = [];
+        else if (cmd === '/usage') {
+          const all = spentLog.all(), sum = (l) => l.reduce((t, x) => t + x.cost, 0), day = Date.now() - 864e5, month = Date.now() - 30 * 864e5;
+          const f = (v) => '$' + v.toFixed(2);
+          say(`Claude from this browser: ${all.length} answers, ${f(sum(all))} in all · ${f(sum(all.filter((x) => x.at > month)))} in 30 days · ${f(sum(all.filter((x) => x.at > day)))} today`, 'out');
+          if (all.length) say(`about ${f(sum(all) / all.length)} per answer`, 'dim');
+          const b = +budget.get();
+          if (b) say(`credits loaded: ${f(b)} · left, about ${f(Math.max(0, b - sum(all)))} (estimated from these answers only)`, 'out');
+          say('Exact figures for the whole key: Claude Console → Settings → Billing (balance) and Cost. Other browsers and apps using the key are not counted here.', 'dim');
+        }
+        else if (cmd === '/budget') {
+          if (arg.trim() === 'reset') { try { localStorage.removeItem('brg-spent'); } catch (e) { /* private window */ } say('Cost count reset to zero in this browser.', 'dim'); return; }
+          const v = parseFloat(arg.replace(/[$,]/g, ''));
+          if (!(v > 0)) { say('Usage: /budget 10   (the dollars of credits you loaded)', 'err'); return; }
+          budget.set(String(v)); spentLog.all().length && say('Counting from the answers already made in this browser; to start the count from now, type /budget reset first.', 'dim');
+          say(`Budget $${v.toFixed(2)} kept in this browser. /usage shows what is left.`, 'dim');
+        }
         else if (cmd === '/new') { ai.history = []; ai.container = undefined; say('New conversation with Claude.', 'dim'); }
         else if (cmd === '/stop') { if (ai.abort) ai.abort.abort(); else say('Claude is not working on anything.', 'dim'); }
         else if (cmd === '/key') {
@@ -1268,7 +1292,7 @@ createApp({
       ai.abort = new AbortController();
       let spent = 0, model = '';
       // what the answer cost, at the API's prices, shown under it
-      const costLine = () => { if (spent) say(`≈ $${spent < 0.01 ? spent.toFixed(3) : spent.toFixed(2)} for this answer · ${model.replace(/^claude-/, '').replace(/-(\d)-(\d)$/, ' $1.$2')}`, 'dim'); };
+      const costLine = () => { if (spent) spentLog.add(spent); if (spent) say(`≈ $${spent < 0.01 ? spent.toFixed(3) : spent.toFixed(2)} for this answer · ${model.replace(/^claude-/, '').replace(/-(\d)-(\d)$/, ' $1.$2')}`, 'dim'); };
       try {
         for (let hop = 0; hop < 24; hop++) {
           const done = await claudeRound(ai.abort.signal);
