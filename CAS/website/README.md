@@ -28,7 +28,8 @@ photos from `../project/uploads/`.
 ## Password
 
 Both pages ask for the course password (`brg`) once per browser (`gate.js`, which stores
-only its SHA-256). This keeps casual visitors out; it is not real protection: GitHub Pages
+only its SHA-256). Unlocking also unlocks the eQUILIBRIUM drawings, which have their own gate
+with the same password, so the viewer can show them without asking again. This keeps casual visitors out; it is not real protection: GitHub Pages
 and the R2 bucket are public, so anyone with the file or bucket URL can still read them.
 For real access control, put the bucket behind Cloudflare Access or a Worker that checks a login.
 
@@ -44,7 +45,7 @@ without editing the site.
 | `library.html#/books`, `#/theses`, `#/papers` | Catalogue tab, with a search over chapter titles and summaries |
 | `library.html#/b/<book-id>` | One book: its chapters, plus README / INDEX / GLOSSARY / FIGURES when present |
 | `library.html#/b/<book-id>/<chapter.md>` | Reader: the chapter as formatted text with KaTeX maths and figures, previous / next |
-| `library.html#/terminal` | BRG terminal: `/books`, `/book`, `/search`, `/read`, `/open`, `/help`, like `uv run brg` |
+| `library.html#/terminal` | BRG terminal, full screen: the session viewer on the left shows what text cannot (chapters with figures and formulas, figure galleries, the eQUILIBRIUM step-by-step drawings); the CLI on the right takes `/books`, `/book`, `/search`, `/open`, `/read`, `/figures`, `/drawings`, `/drawing <n> [step]`, `/help`, like `uv run brg`. On phones the viewer sits above the CLI. |
 
 `library-config.js` holds the bucket URL, which entries are theses or papers (`groupOf`;
 everything else is a book), and `chatEndpoint` for AI answers in the terminal. Until that is

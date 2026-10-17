@@ -4,8 +4,11 @@
 (function () {
   var HASH = '00dca445b4369133e58f4ed81dfc61c6c3ddfa99c7abfb9eb77daf45d58c2f4b'; // SHA-256 of the password
   var KEY = 'cas-unlocked';
+  // The eQUILIBRIUM drawings (shown in the terminal viewer) have their own gate with the same
+  // password; storing its unlock value here means students enter the password only once.
+  var EQ_KEY = 'equilibrium-unlocked', EQ_VALUE = '69baf7106212873a61858b5d9b1276309bbe49aa4a192bddffad043bb0ad9564';
   var ok = false;
-  try { ok = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  try { ok = localStorage.getItem(KEY) === '1'; if (ok) localStorage.setItem(EQ_KEY, EQ_VALUE); } catch (e) {}
   if (ok) return;
 
   document.documentElement.classList.add('gated');
@@ -46,7 +49,7 @@
       e.preventDefault();
       sha256(input.value.trim().toLowerCase()).then(function (h) {
         if (h !== HASH) { err.textContent = 'That password is not right.'; input.select(); return; }
-        try { localStorage.setItem(KEY, '1'); } catch (e2) {}
+        try { localStorage.setItem(KEY, '1'); localStorage.setItem(EQ_KEY, EQ_VALUE); } catch (e2) {}
         gate.remove();
         document.documentElement.classList.remove('gated');
         window.dispatchEvent(new Event('cas-unlocked'));

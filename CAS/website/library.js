@@ -71,13 +71,18 @@ const PIXEL = PIXEL_ROWS.flatMap((row) => [...row].map((ch, x) => (ch === '#' ? 
 
 const COMMANDS = [
   { cmd: '/help', help: 'list the commands' },
-  { cmd: '/books', help: 'list the books, theses and papers' },
-  { cmd: '/book', help: '<id> list the chapters of one book', arg: true },
+  { cmd: '/books', help: 'show the books, theses and papers' },
+  { cmd: '/book', help: '<id> show the chapters of one book', arg: true },
   { cmd: '/search', help: '<words> search chapter titles and summaries', arg: true },
-  { cmd: '/read', help: '<book>/<chapter.md> [start] [lines] print part of a chapter', arg: true },
-  { cmd: '/open', help: '<book>/<chapter.md> open a chapter in the reader', arg: true },
+  { cmd: '/open', help: '<book>/<chapter.md> show a chapter in the viewer', arg: true },
+  { cmd: '/read', help: '<book>/<chapter.md> [start] [lines] print lines here, show the chapter there', arg: true },
+  { cmd: '/figures', help: '<book>/<chapter.md> show every figure of a chapter', arg: true },
+  { cmd: '/drawings', help: 'show the eQUILIBRIUM step-by-step drawings' },
+  { cmd: '/drawing', help: '<n> [step] play drawing n in the viewer', arg: true },
   { cmd: '/clear', help: 'clear the transcript' },
 ];
+// The eQUILIBRIUM step-by-step player, on the same GitHub Pages site.
+const PLAYER = '../../2_computational_form_finding/Equilibrium/drawings/web/';
 
 createApp({
   setup() {
@@ -166,7 +171,7 @@ createApp({
     const start = () => { if (state.value === 'loading' && !books.value.length) loadLibrary(); };
     onMounted(start);
 
-    // ---- BRG terminal ----
+    // ---- BRG terminal: CLI on the right, session viewer on the left ----
     const log = ref([]);
     const input = ref('');
     const busy = ref(false);
@@ -176,9 +181,42 @@ createApp({
     const menuIndex = ref(0);
     const logEl = ref(null);
     const prompt = ref(null);
-    const say = (text, kind = 'out', href) => { log.value.push({ text, kind, href }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
+    const viewerEl = ref(null);
+    const drawingIds = ref([]);
+    const tries = ['/books', '/search funicular', '/drawing 1', '/help'];
+    const say = (text, kind = 'out', act) => { log.value.push({ text, kind, act }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
     say(cfg.chatEndpoint ? 'Ask a question, or use a command.' : 'Search mode: type words to search the library, or a command. AI answers are not connected yet.', 'dim');
+    say('Pictures, chapters and drawings open in the viewer on the left.', 'dim');
+
+    // Viewer: what is on screen, with a back stack of the commands that produced it.
+    const view = reactive({ kind: 'welcome', title: 'Session viewer', open: '', html: '', items: [], src: '', error: '', showBook: false });
+    const viewStack = ref(['']);
+    const setView = (v) => { Object.assign(view, { open: '', html: '', items: [], src: '', error: '', showBook: false }, v); if (viewerEl.value) viewerEl.value.scrollTop = 0; };
+    const remember = (cmd) => { if (viewStack.value[viewStack.value.length - 1] !== cmd) viewStack.value.push(cmd); };
+    function viewBack() {
+      if (viewStack.value.length < 2) return;
+      viewStack.value.pop();
+      const cmd = viewStack.value[viewStack.value.length - 1];
+      if (cmd) run(cmd, { quiet: true, noRemember: true });
+      else setView({ kind: 'welcome', title: 'Session viewer' });
+    }
+    // Links inside a chapter shown in the viewer stay in the viewer.
+    function onViewerClick(e) {
+      const a = e.target.closest && e.target.closest('a[href^="#/b/"]');
+      if (!a || !viewerEl.value.contains(a)) return;
+      e.preventDefault();
+      const [, , id, ...rest] = a.getAttribute('href').split('#')[1].split('/');
+      if (rest.length) run(`/open ${id}/${decodeURIComponent(rest.join('/'))}`);
+      else run(`/book ${id}`);
+    }
+
+    async function showDoc(id, section) {
+      setView({ kind: 'loading', title: section });
+      const html = renderMarkdown(await getText(`${id}/${section}`), `${id}/${section}`, bookIds.value);
+      const s = books.value.find((b) => b.id === id)?.sections.find((x) => x.section === section);
+      setView({ kind: 'doc', title: `${bookTitle(id)} · ${s ? s.title : section}`, html, open: `library.html${readerHref(id, section)}` });
+    }
 
     const menuItems = computed(() => {
       const v = input.value;
@@ -203,43 +241,74 @@ createApp({
     }
 
     const ready = () => { if (state.value !== 'ready') { say(state.value === 'loading' ? 'The library is still loading.' : 'The library is not available: ' + error.value, 'err'); return false; } return true; };
-    const showHits = (list) => {
+    const showHits = (q, list) => {
+      setView({ kind: 'list', title: `Search: ${q} · ${list.length} chapter${list.length === 1 ? '' : 's'}`, items: list, showBook: true });
       if (!list.length) { say('No chapters match.', 'dim'); return; }
-      list.slice(0, 12).forEach((s) => say(`${s.book}/${s.section}  ${s.title}${s.summary ? ' — ' + s.summary : ''}`, 'out', readerHref(s.book, s.section)));
-      if (list.length > 12) say(`… ${list.length - 12} more. Narrow the search.`, 'dim');
+      list.slice(0, 12).forEach((s) => say(`${s.book}/${s.section}  ${s.title}`, 'out', `/open ${s.book}/${s.section}`));
+      say(list.length > 12 ? `… ${list.length - 12} more in the viewer.` : 'Results are also in the viewer.', 'dim');
     };
     const splitRef = (ref_) => { const i = ref_.indexOf('/'); return i < 0 ? [ref_, ''] : [ref_.slice(0, i), ref_.slice(i + 1)]; };
 
-    async function submit() {
-      const line = input.value.trim();
-      input.value = '';
+    async function run(line, opts = {}) {
+      line = line.trim();
       if (!line) return;
-      history.push(line); hpos = history.length;
-      say('> ' + line, 'cmd');
+      if (!opts.quiet) { history.push(line); hpos = history.length; say('> ' + line, 'cmd'); }
       const [cmd, ...args] = line.split(/\s+/);
       const arg = args.join(' ');
+      const keep = () => { if (!opts.noRemember) remember(line); };
       try {
         busy.value = true;
-        if (cmd === '/help' || cmd === '?') COMMANDS.forEach((c) => say(`${c.cmd.padEnd(8)} ${c.help}`));
+        if (cmd === '/help' || cmd === '?') COMMANDS.forEach((c) => say(`${c.cmd.padEnd(10)} ${c.help}`));
         else if (cmd === '/clear') log.value = [];
-        else if (cmd === '/books') { if (ready()) books.value.forEach((b) => say(`${b.id.padEnd(28)} ${b.title} (${b.sections.length})`, 'out', '#/b/' + b.id)); }
-        else if (cmd === '/book') {
+        else if (cmd === '/books') {
+          if (!ready()) return;
+          books.value.forEach((b) => say(`${b.id.padEnd(28)} ${b.title} (${b.sections.length})`, 'out', `/book ${b.id}`));
+          setView({ kind: 'shelf', title: `Library · ${books.value.length} entries`, open: 'library.html#/books' }); keep();
+        } else if (cmd === '/book') {
           if (!ready()) return;
           const b = books.value.find((x) => x.id === arg);
-          if (!b) say('Unknown book ID. Try /books.', 'err');
-          else b.sections.forEach((s) => say(`${s.section.padEnd(28)} ${s.title}`, 'out', readerHref(b.id, s.section)));
-        } else if (cmd === '/search') { if (ready()) showHits(search(arg, allSections.value)); }
-        else if (cmd === '/read' || cmd === '/open') {
+          if (!b) { say('Unknown book ID. Try /books.', 'err'); return; }
+          b.sections.forEach((s) => say(`${s.section.padEnd(28)} ${s.title}`, 'out', `/open ${b.id}/${s.section}`));
+          setView({ kind: 'list', title: b.title, items: b.sections, open: `library.html#/b/${b.id}` }); keep();
+        } else if (cmd === '/search') { if (ready()) { showHits(arg, search(arg, allSections.value)); keep(); } }
+        else if (cmd === '/open' || cmd === '/read' || cmd === '/figures') {
           if (!ready()) return;
           const [id, section] = splitRef(args[0] || '');
           if (!id || !section) { say(`Usage: ${cmd} <book>/<chapter.md>`, 'err'); return; }
-          if (cmd === '/open') { location.hash = readerHref(id, section); return; }
-          const startLine = Math.max(1, parseInt(args[1] || '1', 10) || 1);
-          const count = Math.min(200, Math.max(1, parseInt(args[2] || '40', 10) || 40));
-          const lines = (await getText(`${id}/${section}`)).split(/\r?\n/);
-          lines.slice(startLine - 1, startLine - 1 + count).forEach((l) => say(l || ' ', 'text'));
-          const nextStart = startLine + count;
-          say(nextStart <= lines.length ? `lines ${startLine}–${nextStart - 1} of ${lines.length} · next: /read ${id}/${section} ${nextStart}` : `end of chapter (${lines.length} lines)`, 'dim');
+          if (cmd === '/read') {
+            const startLine = Math.max(1, parseInt(args[1] || '1', 10) || 1);
+            const count = Math.min(200, Math.max(1, parseInt(args[2] || '40', 10) || 40));
+            const lines = (await getText(`${id}/${section}`)).split(/\r?\n/);
+            lines.slice(startLine - 1, startLine - 1 + count).forEach((l) => say(l || ' ', 'text'));
+            const nextStart = startLine + count;
+            if (nextStart <= lines.length) say(`lines ${startLine}–${nextStart - 1} of ${lines.length} · next: /read ${id}/${section} ${nextStart}`, 'dim', `/read ${id}/${section} ${nextStart}`);
+            else say(`end of chapter (${lines.length} lines)`, 'dim');
+          }
+          if (cmd === '/figures') {
+            await showDoc(id, section);
+            const tpl = document.createElement('template'); tpl.innerHTML = view.html;
+            const items = [...tpl.content.querySelectorAll('img')].map((img) => ({ src: img.src, alt: img.alt, name: img.src.split('/').pop() }));
+            setView({ kind: 'figures', title: `Figures · ${view.title}`, items, open: view.open });
+            say(`${items.length} figure${items.length === 1 ? '' : 's'} in the viewer.`, 'dim');
+          } else {
+            await showDoc(id, section);
+            if (cmd === '/open') say('Chapter shown in the viewer.', 'dim');
+          }
+          keep();
+        } else if (cmd === '/drawings') {
+          if (!drawingIds.value.length) {
+            const res = await fetch(PLAYER + 'views.json');
+            drawingIds.value = res.ok ? await res.json() : [];
+          }
+          setView({ kind: 'drawings', title: `eQUILIBRIUM drawings · ${drawingIds.value.length}`, open: PLAYER + 'gallery.html' });
+          say(`${drawingIds.value.length} drawings in the viewer. Pick one, or type /drawing <n>.`, 'dim'); keep();
+        } else if (cmd === '/drawing') {
+          const n = parseInt(args[0], 10);
+          if (!n) { say('Usage: /drawing <n> [step]', 'err'); return; }
+          const step = args[1] ? `&step=${encodeURIComponent(args[1])}` : '';
+          const src = `${PLAYER}index.html?view=${n}${step}`;
+          setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
+          say(`Drawing ${n} playing in the viewer. Use its controls to step through the construction.`, 'dim'); keep();
         } else if (cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
         else if (cfg.chatEndpoint) {
           chat.push({ role: 'user', content: line });
@@ -248,16 +317,23 @@ createApp({
           const { reply } = await res.json();
           chat.push({ role: 'assistant', content: reply });
           reply.split('\n').forEach((l) => say(l || ' ', 'text'));
-        } else if (ready()) showHits(search(line, allSections.value));
-      } catch (e) { say(e.message, 'err'); }
-      finally { busy.value = false; }
+        } else if (ready()) { showHits(line, search(line, allSections.value)); keep(); }
+      } catch (e) {
+        say(e instanceof TypeError ? 'Could not reach the library (network or CORS).' : e.message, 'err');
+        if (view.kind === 'loading') setView({ kind: 'error', title: 'Error', error: e.message });
+      } finally { busy.value = false; }
     }
-    watch(() => route.view, (v) => { if (v === 'terminal') nextTick(() => prompt.value && prompt.value.focus()); });
+    function submit() { const line = input.value; input.value = ''; run(line); }
+    watch(() => route.view, (v) => {
+      document.body.classList.toggle('term-full', v === 'terminal');
+      if (v === 'terminal') nextTick(() => prompt.value && prompt.value.focus());
+    }, { immediate: true });
 
     return {
       cfg, state, error, books, query, route, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
+      view, viewStack, viewBack, viewerEl, onViewerClick, run, tries, drawingIds,
     };
   },
 }).mount('#app');
