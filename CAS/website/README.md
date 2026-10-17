@@ -54,10 +54,8 @@ publication, journal, proceedings, conference, IASS (→ Papers) in its ID or ti
 else is a book. A folder that collects many theses or papers (e.g. `brg-theses/`) shows each of
 its files as its own item. `groupOf` in `library-config.js` overrides the sorting for an ID.
 
-**Covers.** The deploy looks for `cover.jpg` / `.png` / `.webp` in each book folder, else the
-first image in the book's `README.md` (e.g. the scanned title page), and lists them in
-`books/covers.json`. Entries without one get a title cover (title, author, year) in the chapter
-colours.
+**Covers.** Every entry gets a title cover (title, author and year from `LIBRARY.md`) in the
+chapter colours; no scanned pictures.
 
 `library-config.js` holds the bucket URL, the tab overrides (`groupOf`), and `chatEndpoint` for AI answers in the terminal. Until that is
 set, the terminal searches the library. The `brg` CLI uses each person's own Claude or

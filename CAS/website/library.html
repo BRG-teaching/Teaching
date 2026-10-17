@@ -63,7 +63,7 @@
       <ul v-else class="shelf">
         <li v-for="b in shelf[route.group]" :key="b.key">
           <a :href="b.href" class="book-card">
-            <book-cover :id="b.id" :title="b.title" :src="b.cover" :sub="b.sub"></book-cover>
+            <book-cover :id="b.id" :title="b.title" :sub="b.sub"></book-cover>
             <b>{{ b.title }}</b>
             <span class="meta">{{ b.meta }}</span>
           </a>
@@ -75,7 +75,7 @@
     <section v-else-if="route.view === 'book' && book" class="wrap block">
       <p class="crumbs"><a :href="'#/' + groupOf(book.id)">{{ groupLabel(groupOf(book.id)) }}</a> /</p>
       <div class="book-head">
-        <book-cover :id="book.id" :title="book.title" :src="covers[book.id] || ''"></book-cover>
+        <book-cover :id="book.id" :title="book.title"></book-cover>
         <h1>{{ book.title }}</h1>
       </div>
       <p class="extras" v-if="cfg.extras.length">
@@ -130,7 +130,7 @@
 
         <ul v-else-if="view.kind === 'shelf'" class="v-pad shelf v-shelf">
           <li v-for="b in books" :key="b.id"><button type="button" class="book-card" @click.stop="run('/book ' + b.id)">
-            <book-cover :id="b.id" :title="b.title" :src="covers[b.id] || ''"></book-cover><b>{{ b.title }}</b>
+            <book-cover :id="b.id" :title="b.title"></book-cover><b>{{ b.title }}</b>
             <span class="meta">{{ groupLabel(groupOf(b.id)) }} · {{ b.sections.length }} chapter{{ b.sections.length === 1 ? '' : 's' }}</span></button></li>
         </ul>
 

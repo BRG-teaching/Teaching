@@ -84,10 +84,9 @@ function splitTitle(t) {
 const RAMP_COVER = ['#3057b1', '#5552bb', '#7750c1', '#934abd', '#ae4bb2', '#ca49a4', '#dc4b8d'];
 const coverColor = (id) => RAMP_COVER[[...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % RAMP_COVER.length];
 
-// Cover: the book's own image when the deploy found one (books/covers.json), else a title cover.
+// Cover: a title cover (title, author, year) in the chapter colours, for every entry.
 const BookCover = {
-  props: { title: String, id: String, src: String, sub: String },
-  data: () => ({ failed: false }),
+  props: { title: String, id: String, sub: String },
   computed: {
     t() {
       const t = splitTitle(this.title || '');
@@ -116,8 +115,7 @@ const BookCover = {
     },
   },
   template: `<span class="cover" :style="{ '--cc': color }">
-    <img v-if="src && !failed" :src="src" alt="" loading="lazy" @error="failed = true">
-    <span v-else class="cover-gen"><i></i><b>{{ t.title }}</b><span>{{ t.author }}</span><em>{{ t.year }}</em></span>
+    <span class="cover-gen"><i></i><b>{{ t.title }}</b><span>{{ t.author }}</span><em>{{ t.year }}</em></span>
   </span>`,
 };
 
@@ -159,13 +157,12 @@ createApp({
     const libraryUrl = fileUrl(cfg.libraryPath);
     const host = new URL(base).host;
 
-    const covers = ref({});
     const groupOf = (id) => { const b = books.value.find((x) => x.id === id); return b ? classify(b) : (cfg.groupOf[id] || 'books'); };
     // Shelf items per tab: whole books, or one item per file for collections of theses/papers.
     const shelf = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) =>
       isCollection(b) && g.id !== 'books'
-        ? b.sections.map((s) => ({ key: b.id + '/' + s.section, id: b.id, title: s.title, cover: '', href: readerHref(b.id, s.section), meta: s.summary, sub: s.summary }))
-        : [{ key: b.id, id: b.id, title: b.title, cover: covers.value[b.id] || '', href: '#/b/' + b.id, sub: '', meta: `${b.sections.length} chapter${b.sections.length === 1 ? '' : 's'}` }])])));
+        ? b.sections.map((s) => ({ key: b.id + '/' + s.section, id: b.id, title: s.title, href: readerHref(b.id, s.section), meta: s.summary, sub: s.summary }))
+        : [{ key: b.id, id: b.id, title: b.title, href: '#/b/' + b.id, sub: '', meta: `${b.sections.length} chapter${b.sections.length === 1 ? '' : 's'}` }])])));
     const groupLabel = (g) => (cfg.groups.find((x) => x.id === g) || cfg.groups[0]).label;
     const grouped = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id)])));
     const bookIds = computed(() => new Set(books.value.map((b) => b.id)));
@@ -237,7 +234,6 @@ createApp({
     async function loadLibrary() {
       try {
         books.value = parseLibrary(await getText(cfg.libraryPath));
-        if (cfg.mirrorPath) fetch(`${cfg.mirrorPath}/covers.json`, { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : {})).then((c) => { covers.value = c || {}; }).catch(() => {});
         if (!books.value.length) throw new Error('LIBRARY.md has no entries in the expected format.');
         state.value = 'ready';
       } catch (e) {
@@ -413,7 +409,7 @@ createApp({
     }, { immediate: true });
 
     return {
-      cfg, state, error, books, query, route, covers, shelf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
+      cfg, state, error, books, query, route, shelf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
       view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, gridEl,

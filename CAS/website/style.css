@@ -187,3 +187,54 @@ details[open] > summary .pm::after { transform: rotate(0deg); }
 .grading .w { color: var(--c); font-size: 13px; }
 
 .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 28px 40px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); }
+
+/* Slide scale on desktop: each topic is one screen, so text, logos and cards grow with the
+   window height (vh) to fill it, like a slide, instead of staying at reading size. */
+@media (min-width: 1000px) and (min-height: 640px) {
+  .main .block { gap: 3vh; padding-block: 5vh; }
+  h2 { font-size: clamp(36px, 6vh, 72px); }
+  .eyebrow { font-size: clamp(14px, 2vh, 22px); }
+  .note { font-size: clamp(14px, 1.8vh, 19px); }
+  .parts { font-size: clamp(14px, 2vh, 21px); gap: 28px; }
+  .parts li::before, .sq li::before { width: 0.45em; height: 0.45em; vertical-align: 0.15em; }
+
+  .toc { gap: clamp(18px, 3.2vh, 40px); }
+  .toc .spine { height: clamp(10px, 1.5vh, 18px); }
+  .toc-t { font-size: clamp(18px, 3vh, 34px); }
+  .toc-m { font-size: clamp(14px, 1.9vh, 20px); }
+
+  .map .ring { --ring: min(clamp(136px, 21vh, 230px), 100%); }
+  .map li:nth-child(even) { margin-top: 13vh; }
+  .map .eyebrow { font-size: clamp(13px, 1.8vh, 19px); }
+  .map .name { font-size: clamp(15px, 2.3vh, 24px); }
+
+  .ring.sm { --ring: clamp(88px, 12.5vh, 140px); }
+  .tl { gap: 1.4vh; }
+  .tl-label { font-size: clamp(18px, 2.6vh, 28px); }
+  .tl-name { font-size: clamp(13px, 1.75vh, 18px); }
+  .weeks span { font-size: clamp(13px, 1.7vh, 18px); }
+  .bars i { height: clamp(10px, 1.4vh, 16px); }
+
+  .focus { padding-block: 3vh; row-gap: 4vh; }
+  .focus .art { height: clamp(120px, 22vh, 250px); }
+  .focus.n10 .art { height: clamp(64px, 9.5vh, 120px); }
+  .focus.n10 { row-gap: 3vh; }
+  .focus.n4 .art { height: clamp(100px, 16vh, 200px); }
+  .focus.n4 figcaption span { font-size: clamp(13px, 1.65vh, 18px); line-height: 1.35; }
+  .focus figcaption { font-size: clamp(14px, 1.9vh, 20px); }
+  .focus figcaption b { font-size: clamp(16px, 2.4vh, 26px); }
+  .steps { padding-block: 3vh; }
+  .steps .art { height: clamp(96px, 17vh, 200px); }
+  .steps .num { font-size: clamp(13px, 1.7vh, 18px); }
+  .steps b { font-size: clamp(16px, 2.2vh, 24px); }
+  .steps .sub { font-size: clamp(13px, 1.7vh, 18px); }
+
+  .card summary { font-size: clamp(16px, 2.3vh, 24px); padding: 1.3vh 22px; }
+  .card-body { padding: 2vh 22px 2.6vh; }
+  .lead { font-size: clamp(17px, 2.2vh, 23px); }
+  .sq { font-size: clamp(15px, 2vh, 21px); gap: 1.1vh; }
+  .pm { width: 0.8em; height: 0.8em; }
+  .grading summary { font-size: clamp(15px, 2vh, 21px); }
+  .grading li { font-size: clamp(14px, 1.8vh, 19px); }
+  .grading .w { font-size: clamp(13px, 1.7vh, 18px); }
+}
