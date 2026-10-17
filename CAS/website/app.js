@@ -31,6 +31,18 @@ createApp({
 
     const logo = (file) => `../logos/${file}`;
     const logos = (item) => item.logos || [item.logo];
+    // Logos keep their sizes from the original slides (icon-sizes.js), in one unit --u.
+    const SIZES = window.CAS_ICON_SIZES || {};
+    const size = (f) => SIZES[f] || [136, 136];
+    const iconBox = (f) => { const [w, h] = size(f); return { width: `calc(var(--u) * ${w})`, height: `calc(var(--u) * ${h})` }; };
+    // Inside a circle: the logo's original share of its circle. Course map: Ø 250 on slide 3.
+    // Timeline: Ø 170 on slide 4, chapter logos 108 px, project steps 124 × 88 px.
+    const inRing = (f, kind) => {
+      const [w, h] = size(f);
+      if (kind === 'map') return { width: `${(w / 250) * 100}%`, height: `${(h / 250) * 100}%` };
+      const [nw, nh, tw, th] = f.startsWith('slide03') ? [136, 136, 108, 108] : [240, 140, 124, 88];
+      return { width: `${((w / nw) * tw / 170) * 100}%`, height: `${((h / nh) * th / 170) * 100}%` };
+    };
     // Project steps sit under the two-week block they happen in.
     const stepAt = (w) => project.steps.find((s) => s.weeks === `Weeks ${2 * w - 1}–${2 * w}`);
     const cardKeys = (c) => ['contents', 'resources', 'submission'].filter((k) => c[k]);
@@ -81,6 +93,6 @@ createApp({
     });
     onBeforeUnmount(() => { io && io.disconnect(); mapRo && mapRo.disconnect(); removeEventListener('keydown', onKey); document.removeEventListener('click', onLink); });
 
-    return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments, mapEl, mapLines };
+    return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments, mapEl, mapLines, iconBox, inRing };
   },
 }).mount('#app');

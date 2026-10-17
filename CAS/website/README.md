@@ -54,8 +54,11 @@ publication, journal, proceedings, conference, IASS (→ Papers) in its ID or ti
 else is a book. A folder that collects many theses or papers (e.g. `brg-theses/`) shows each of
 its files as its own item. `groupOf` in `library-config.js` overrides the sorting for an ID.
 
-**Covers.** Every entry gets a title cover (title, author and year from `LIBRARY.md`) in the
-chapter colours; no scanned pictures.
+**Covers and subjects.** Every entry gets a title cover with only its short title (no author,
+year or subtitle; a part number from the ID, e.g. *La statique graphique II*). The cover colour
+is the entry's subject, found from words in its title and chapter summaries: structural design
+& history (blue), computation (teal), graphic statics (violet), form finding (amber), thrust
+networks & masonry (raspberry), materialization (green). Subject chips above the shelf filter it.
 
 `library-config.js` holds the bucket URL, the tab overrides (`groupOf`), and `chatEndpoint` for AI answers in the terminal. Until that is
 set, the terminal searches the library. The `brg` CLI uses each person's own Claude or

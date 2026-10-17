@@ -34,12 +34,17 @@
 .cover { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; background: var(--cc, var(--ink));
   box-shadow: 0 4px 12px rgba(20, 27, 61, 0.16); transition: transform .15s, box-shadow .15s; }
 .cover-gen { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 6px; padding: 14% 12% 10% 16%; color: #fff;
-  background: linear-gradient(160deg, var(--cc) 0%, #141b3d 115%); }
+  background: linear-gradient(160deg, var(--cc) 0%, color-mix(in srgb, var(--cc) 72%, #141b3d) 100%); }
 .cover-gen i { position: absolute; left: 0; top: 0; bottom: 0; width: 7%; background: rgba(0, 0, 0, 0.18); }
-.cover-gen b { font-size: clamp(14px, 1.15vw, 18px); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; overflow-wrap: normal; hyphens: manual;
-  display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
-.cover-gen span { font-size: 12px; opacity: .85; line-height: 1.3; }
-.cover-gen em { margin-top: auto; font-style: normal; font-size: 12px; letter-spacing: .08em; opacity: .85; }
+.cover-gen b { font-size: clamp(16px, 1.45vw, 22px); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; overflow-wrap: normal; hyphens: auto; -webkit-hyphens: auto; }
+.subjects { display: flex; flex-wrap: wrap; gap: 8px; margin-top: -4px; }
+.subjects button { font: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; cursor: pointer;
+  border: 1px solid var(--rule); background: #fff; color: var(--ink); }
+.subjects button i { width: 10px; height: 10px; background: var(--cc, var(--ink)); }
+.subjects button span { color: var(--muted); font-size: 12px; }
+.subjects button:hover { border-color: var(--cc, var(--ink)); }
+.subjects button.on { border-color: var(--cc, var(--ink)); box-shadow: inset 0 0 0 1px var(--cc, var(--ink)); font-weight: 600; }
+.book-card .subj { font-weight: 600; }
 .book-head { display: flex; gap: 24px; align-items: flex-end; }
 .book-head .cover { width: 120px; flex: none; }
 @media (max-width: 520px) { .book-head { flex-direction: column; align-items: flex-start; } .book-head .cover { width: 96px; } }

@@ -20,7 +20,7 @@
     <a class="lib-brand" href="#/books">Library</a>
     <nav class="lib-tabs" aria-label="Library">
       <a v-for="g in cfg.groups" :key="g.id" :href="'#/' + g.id" :class="{ on: route.view === 'list' && route.group === g.id }">
-        {{ g.label }} <span class="count" v-if="state === 'ready'">{{ shelf[g.id].length }}</span>
+        {{ g.label }} <span class="count" v-if="state === 'ready'">{{ shelfAll[g.id].length }}</span>
       </a>
       <a href="#/terminal" class="term-tab" :class="{ on: route.view === 'terminal' }">BRG terminal</a>
     </nav>
@@ -47,7 +47,11 @@
           <input id="lib-search" v-model.trim="query" type="search" placeholder="Search titles and chapter summaries">
         </label>
       </div>
-      <p v-if="!shelf[route.group].length" class="note">Nothing here yet. Entries appear when they are added to LIBRARY.md
+      <div class="subjects" v-if="subjectsHere.length > 1 && !query" role="group" aria-label="Subjects">
+        <button type="button" :class="{ on: !subject }" @click="subject = ''">All</button>
+        <button v-for="x in subjectsHere" :key="x.id" type="button" :class="{ on: subject === x.id }" :style="{ '--cc': x.color }" @click="subject = subject === x.id ? '' : x.id"><i></i>{{ x.label }} <span>{{ x.n }}</span></button>
+      </div>
+      <p v-if="!shelfAll[route.group].length" class="note">Nothing here yet. Entries appear when they are added to LIBRARY.md
         and listed under this tab in library-config.js.</p>
 
       <template v-if="query">
@@ -63,9 +67,9 @@
       <ul v-else class="shelf">
         <li v-for="b in shelf[route.group]" :key="b.key">
           <a :href="b.href" class="book-card">
-            <book-cover :id="b.id" :title="b.title" :sub="b.sub"></book-cover>
+            <book-cover :title="b.short" :color="b.subject.color"></book-cover>
             <b>{{ b.title }}</b>
-            <span class="meta">{{ b.meta }}</span>
+            <span class="meta"><span class="subj" :style="{ color: b.subject.color }">{{ b.subject.label }}</span> · {{ b.meta }}</span>
           </a>
         </li>
       </ul>
@@ -75,7 +79,7 @@
     <section v-else-if="route.view === 'book' && book" class="wrap block">
       <p class="crumbs"><a :href="'#/' + groupOf(book.id)">{{ groupLabel(groupOf(book.id)) }}</a> /</p>
       <div class="book-head">
-        <book-cover :id="book.id" :title="book.title"></book-cover>
+        <book-cover :title="coverOf(book).short" :color="coverOf(book).subject.color"></book-cover>
         <h1>{{ book.title }}</h1>
       </div>
       <p class="extras" v-if="cfg.extras.length">
@@ -130,7 +134,7 @@
 
         <ul v-else-if="view.kind === 'shelf'" class="v-pad shelf v-shelf">
           <li v-for="b in books" :key="b.id"><button type="button" class="book-card" @click.stop="run('/book ' + b.id)">
-            <book-cover :id="b.id" :title="b.title"></book-cover><b>{{ b.title }}</b>
+            <book-cover :title="coverOf(b).short" :color="coverOf(b).subject.color"></book-cover><b>{{ b.title }}</b>
             <span class="meta">{{ groupLabel(groupOf(b.id)) }} · {{ b.sections.length }} chapter{{ b.sections.length === 1 ? '' : 's' }}</span></button></li>
         </ul>
 

@@ -81,42 +81,58 @@ function splitTitle(t) {
   const author = parts.length > 1 ? parts.slice(1).join(', ') : '';
   return { title: parts[0], author, year };
 }
-const RAMP_COVER = ['#3057b1', '#5552bb', '#7750c1', '#934abd', '#ae4bb2', '#ca49a4', '#dc4b8d'];
-const coverColor = (id) => RAMP_COVER[[...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % RAMP_COVER.length];
+// Subjects, each with its own clearly different colour. An entry's subject is the one whose words appear
+// most often in its title and chapter titles/summaries (ties: the earlier, more specific one).
+const SUBJECTS = [
+  { id: 'gs', label: 'Graphic statics', color: '#6a46c2', re: /graphi(c|que|cal)|statique|statics|graphostati|kräfteplan|cremona|funicular polygon|force polygon|reciprocal|equilibrium/gi },
+  { id: 'ff', label: 'Form finding', color: '#a65812', re: /form[- ]?finding|force density|dynamic relaxation|cable|membrane|tensile|tension|net\b|nets\b|knit|formfinder/gi },
+  { id: 'tna', label: 'Thrust networks & masonry', color: '#b33a62', re: /thrust|masonry|vault|shell|arch(es)?\b|dome|voussoir|compression|rhinovault|stability|mauerwerk|gewölbe/gi },
+  { id: 'mat', label: 'Materialization', color: '#4d7a2c', re: /fabricat|construct|robot|assembl|discrete element|formwork|materiali|timber|concrete|print|prototype|building/gi },
+  { id: 'comp', label: 'Computation', color: '#18867a', re: /comput|algorithm|geometr|code|program|compas|optimi|mesh|digital|numerical|parametric/gi },
+  { id: 'sd', label: 'Structural design & history', color: '#2f56b0', re: /structur|tragwerk|design|history|histor|statik|engineering|faustformel/gi },
+];
+function subjectOf(text) {
+  let best = SUBJECTS[SUBJECTS.length - 1], top = 0;
+  for (const sub of SUBJECTS) { const n = (text.match(sub.re) || []).length; if (n > top) { top = n; best = sub; } }
+  return best;
+}
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+// Short cover title: the title without author, year or subtitle; a part number from the ID.
+function shortTitle(title, id = '') {
+  let t = splitTitle(title).title.split(/\s*[:(—–]\s*|\s+-\s+/)[0].trim();
+  const part = id.match(/(?:part|vol|band|teil)[-_]?(\d+)/i);
+  if (t.length > 42) { const cut = t.slice(0, 42); t = cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,;]+(and|for|of|the|a|an|in|on|und|der|die|das|de|la|le)$/i, '') + '…'; }
+  if (part && !/\b(part|vol|teil|band|[IVX]+)\b/i.test(t)) t += ' ' + (ROMAN[+part[1]] || part[1]);
+  return t;
+}
 
-// Cover: a title cover (title, author, year) in the chapter colours, for every entry.
+// Cover: only the short title, on the colour of the entry's subject.
 const BookCover = {
-  props: { title: String, id: String, sub: String },
-  computed: {
-    t() {
-      const t = splitTitle(this.title || '');
-      if (this.sub) { const m = splitTitle(this.sub.replace(/\.$/, '')); t.author = m.title; t.year = t.year || m.year; }
-      return t;
-    },
-    color() { return coverColor((this.id || '') + (this.sub ? this.title : '')); },
-  },
+  props: { title: String, color: String },
   // Shrink the title until its longest word fits the cover (long German compounds).
   mounted() { this.fit(); document.fonts && document.fonts.ready.then(() => this.fit()); this.ro = new ResizeObserver(() => this.fit()); this.ro.observe(this.$el); },
   beforeUnmount() { this.ro && this.ro.disconnect(); },
   updated() { this.fit(); },
   methods: {
     fit() {
+      // Titles hyphenate (CSS hyphens: auto); only a word that still overflows shrinks the title.
       const b = this.$el.querySelector('.cover-gen b');
       if (!b) return;
       b.style.fontSize = '';
-      const cs = getComputedStyle(b);
-      const ctx = (BookCover.canvas ||= document.createElement('canvas')).getContext('2d');
-      const words = b.textContent.split(/\s+/).filter(Boolean);
-      const room = b.clientWidth * 0.96;
-      let size = parseFloat(cs.fontSize);
-      const widest = () => { ctx.font = `${cs.fontWeight} ${size}px ${cs.fontFamily}`; return Math.max(0, ...words.map((w) => ctx.measureText(w).width)); };
-      while (room > 0 && widest() > room && size > 10) size -= 0.5;
-      if (size !== parseFloat(cs.fontSize)) b.style.fontSize = size + 'px';
+      let size = parseFloat(getComputedStyle(b).fontSize);
+      while (b.scrollWidth > b.clientWidth + 0.5 && size > 11) { size -= 0.5; b.style.fontSize = size + 'px'; }
     },
   },
-  template: `<span class="cover" :style="{ '--cc': color }">
-    <span class="cover-gen"><i></i><b>{{ t.title }}</b><span>{{ t.author }}</span><em>{{ t.year }}</em></span>
-  </span>`,
+  computed: {
+    // Language of the title, so the browser hyphenates German and French titles correctly.
+    lang() {
+      const t = ` ${(this.title || '').toLowerCase()} `;
+      if (/[äöüß]|\b(und|der|die|das|des|im|zur|für)\b|tragwerk|statik|bau/.test(t)) return 'de';
+      if (/[éèêàç]|\b(la|le|les|du|et|des)\b|statique/.test(t)) return 'fr';
+      return 'en';
+    },
+  },
+  template: `<span class="cover" :style="{ '--cc': color }"><span class="cover-gen"><i></i><b :lang="lang">{{ title }}</b></span></span>`,
 };
 
 const PIXEL_ROWS = [
@@ -159,10 +175,18 @@ createApp({
 
     const groupOf = (id) => { const b = books.value.find((x) => x.id === id); return b ? classify(b) : (cfg.groupOf[id] || 'books'); };
     // Shelf items per tab: whole books, or one item per file for collections of theses/papers.
-    const shelf = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) =>
+    // Subject and cover of a whole entry, or of one item of a collection.
+    const bookText = (b) => [b.title, ...b.sections.map((x) => x.title + ' ' + x.summary)].join(' ');
+    const coverOf = (b) => ({ short: shortTitle(b.title, b.id), subject: subjectOf(bookText(b)) });
+    const subject = ref('');
+    // Shelf items per tab: whole books, or one item per file for collections of theses/papers.
+    const shelfAll = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) =>
       isCollection(b) && g.id !== 'books'
-        ? b.sections.map((s) => ({ key: b.id + '/' + s.section, id: b.id, title: s.title, href: readerHref(b.id, s.section), meta: s.summary, sub: s.summary }))
-        : [{ key: b.id, id: b.id, title: b.title, href: '#/b/' + b.id, sub: '', meta: `${b.sections.length} chapter${b.sections.length === 1 ? '' : 's'}` }])])));
+        ? b.sections.map((x) => ({ key: b.id + '/' + x.section, id: b.id, title: x.title, short: shortTitle(x.title), subject: subjectOf(x.title + ' ' + x.summary), href: readerHref(b.id, x.section), meta: x.summary }))
+        : [{ key: b.id, id: b.id, title: b.title, ...coverOf(b), href: '#/b/' + b.id, meta: `${b.sections.length} chapter${b.sections.length === 1 ? '' : 's'}` }])])));
+    const shelf = computed(() => Object.fromEntries(Object.entries(shelfAll.value).map(([g, items]) => [g, subject.value ? items.filter((i) => i.subject.id === subject.value) : items])));
+    // Subject chips for the open tab, with counts.
+    const subjectsHere = computed(() => SUBJECTS.map((x) => ({ ...x, n: (shelfAll.value[route.group] || []).filter((i) => i.subject.id === x.id).length })).filter((x) => x.n));
     const groupLabel = (g) => (cfg.groups.find((x) => x.id === g) || cfg.groups[0]).label;
     const grouped = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id)])));
     const bookIds = computed(() => new Set(books.value.map((b) => b.id)));
@@ -409,7 +433,7 @@ createApp({
     }, { immediate: true });
 
     return {
-      cfg, state, error, books, query, route, shelf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
+      cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
       view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, gridEl,
