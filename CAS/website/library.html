@@ -128,7 +128,7 @@
         <figure class="source-fig" v-if="figure.src" :class="{ link: figure.act }" @click="figure.act && run(figure.act)">
           <button type="button" class="sf-close" @click.stop="figure.src = ''" aria-label="Close the figure">✕</button>
           <img :src="figure.src" :alt="figure.caption || 'Figure from the library'">
-          <figcaption>{{ figure.cite }}</figcaption>
+          <figcaption>{{ figure.cite }}<a v-if="figure.href" :href="figure.href" target="_blank" rel="noopener" @click.stop> · open the book at p. {{ figure.page }}</a></figcaption>
         </figure>
         <div class="sheet" v-if="view.kind !== 'welcome'" ref="viewerEl" @click="onViewerClick">
           <div class="viewer-bar">
@@ -184,6 +184,7 @@
         <div class="term-log" ref="logEl" aria-live="polite">
           <div v-for="(l, i) in log" :key="i" :class="'line ' + l.kind">
             <button v-if="l.act" type="button" class="tl-act" @click.stop="run(l.act)">{{ l.text }}</button>
+            <a v-else-if="l.href" class="tl-link" :href="l.href" target="_blank" rel="noopener" @click.stop>{{ l.text }}</a>
             <template v-else>{{ l.text }}</template>
           </div>
         </div>

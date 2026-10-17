@@ -36,7 +36,7 @@ function answer(body) {
   }
   if (named('viewer')) {
     const said = JSON.stringify(results.find((r) => r.tool_use_id === 'toolu_view').content);
-    return { stop: 'end_turn', content: [{ type: 'text', text: `Done: 5 loads of 10 kN, H = 30 kN.\nThe viewer said: ${said.slice(0, 80)}\n/open graphic-statics-levy-part-1/01-chapter-1.md` }] };
+    return { stop: 'end_turn', content: [{ type: 'text', text: `Done: 5 loads of 10 kN, H = 30 kN.\nThe viewer said: ${said.slice(0, 80)}\n/open graphic-statics-levy-part-1/01-chapter-1.md 3` }] };
   }
   return { stop: 'end_turn', content: [{ type: 'text', text: 'unexpected state' }] };
 }

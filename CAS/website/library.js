@@ -119,6 +119,29 @@ function citeBook(title) {
   const year = (parts[parts.length - 1].match(/\b(1[5-9]\d\d|20\d\d)\b/) || [])[1];
   return `${author ? author + ', ' : ''}${main}${part ? ', ' + part[0] : ''}${year ? ' (' + year + ')' : ''}`;
 }
+// Printed pages. The chapters keep the books' page markers, <sub>page N</sub>. Text before the first marker means
+// a marker closes its page; otherwise it opens it. pageMap gives every line its printed page (0: unknown).
+const PAGE_MARK = /<sub>\s*(?:page|p\.)\s*(\d+)\s*<\/sub>/i;
+function pageMap(lines) {
+  const marks = [];
+  lines.forEach((l, i) => { const m = l.match(PAGE_MARK); if (m) marks.push([i, +m[1]]); });
+  const pages = new Array(lines.length).fill(0);
+  if (!marks.length) return { pages, closing: false };
+  const closing = lines.slice(0, marks[0][0]).filter((l) => l.trim() && !/^#|^!\[|^<img/.test(l.trim())).length > 3;
+  let k = 0, cur = 0;
+  lines.forEach((_, i) => {
+    if (closing) { while (k < marks.length && marks[k][0] < i) k++; pages[i] = k < marks.length ? marks[k][1] : marks[marks.length - 1][1] + 1; }
+    else { if (k < marks.length && marks[k][0] === i) cur = marks[k++][1]; pages[i] = cur; }
+  });
+  return { pages, closing };
+}
+// 112, 113, 114, 118 → "pp. 112–114, 118"
+function pageList(list) {
+  const ps = [...new Set(list.filter(Boolean))].sort((a, b) => a - b), runs = [];
+  for (const q of ps) { const r = runs[runs.length - 1]; if (r && q === r[1] + 1) r[1] = q; else runs.push([q, q]); }
+  if (!runs.length) return '';
+  return (ps.length > 1 ? 'pp. ' : 'p. ') + runs.map(([a, b]) => (a === b ? a : `${a}–${b}`)).join(', ');
+}
 const plain = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 // What a graphic statics construction is called in the books (English, French, German), to find its chapter
 // and its figure.
@@ -665,7 +688,7 @@ createApp({
     const error = ref('');
     const books = ref([]);
     const query = ref('');
-    const route = reactive({ view: 'list', group: 'books', book: '', section: '' });
+    const route = reactive({ view: 'list', group: 'books', book: '', section: '', page: 0 });
     const doc = reactive({ state: 'idle', html: '', error: '', path: '' });
     const libraryUrl = fileUrl(cfg.libraryPath);
     const host = new URL(base).host;
@@ -704,19 +727,22 @@ createApp({
       const s = book.value && book.value.sections.find((x) => x.section === route.section);
       return s ? s.title : route.section.replace('.md', '');
     });
-    const readerHref = (id, section) => `#/b/${id}/${encodeURIComponent(section)}`;
+    const readerHref = (id, section, page) => `#/b/${id}/${encodeURIComponent(section)}${page ? '?p=' + page : ''}`;
+    // the address of a chapter (at a printed page) on this site, to cite
+    const bookLink = (id, section, page) => new URL('library.html' + readerHref(id, section, page), location.href).href;
     const docUrl = computed(() => fileUrl(`${route.book}/${route.section}`));
 
     // Routing: #/books  #/theses  #/papers  #/terminal  #/b/<id>  #/b/<id>/<chapter.md>
     function parseHash() {
-      const h = location.hash.replace(/^#\/?/, '');
+      const [h, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
       const [head, id, ...rest] = h.split('/');
+      route.page = +new URLSearchParams(query).get('p') || 0;
       if (head === 'terminal') Object.assign(route, { view: 'terminal' });
       else if (head === 'b' && id) {
         const section = rest.length ? decodeURIComponent(rest.join('/')) : '';
         Object.assign(route, { view: section ? 'read' : 'book', book: id, section });
       } else Object.assign(route, { view: 'list', group: cfg.groups.some((g) => g.id === head) ? head : 'books' });
-      if (route.view !== 'terminal') scrollTo(0, 0);
+      if (route.view !== 'terminal' && !route.page) scrollTo(0, 0);
     }
     addEventListener('hashchange', parseHash);
     parseHash();
@@ -746,11 +772,25 @@ createApp({
         const t = await getText(path);
         if (doc.path !== path) return;
         Object.assign(doc, { state: 'ready', html: renderMarkdown(t, path, bookIds.value) });
+        if (route.page) nextTick(() => toPage(document.querySelector('.doc .md'), t, route.page));
       } catch (e) {
         if (doc.path === path) Object.assign(doc, { state: 'error', error: e.message + ' Some books do not have every extra page.' });
       }
     }
     watch(() => [route.view, route.book, route.section, state.value], loadDoc);
+    watch(() => route.page, (pg) => { if (pg && doc.state === 'ready' && textCache.has(doc.path)) nextTick(() => toPage(document.querySelector('.doc .md'), textCache.get(doc.path), pg)); });
+    // Scroll a rendered chapter to where printed page `page` begins, and mark it.
+    function toPage(root, text, page) {
+      if (!root) return;
+      const { closing } = pageMap(text.split(/\r?\n/));
+      const want = closing ? page - 1 : page; // closing markers: page N begins after the marker of N − 1
+      const subs = [...root.querySelectorAll('sub')];
+      const mark = subs.find((el) => +(el.textContent.match(/(\d+)/) || [])[1] === want);
+      root.querySelectorAll('.page-hit').forEach((el) => el.classList.remove('page-hit'));
+      if (!mark) return; // the first page of a chapter with closing markers: its top
+      mark.classList.add('page-hit');
+      mark.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
 
     async function loadLibrary() {
       try {
@@ -884,7 +924,7 @@ createApp({
       viewerQueue.push(...lines);
       flushViewer();
     }
-    const say = (text, kind = 'out', act) => { log.value.push({ text, kind, act }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
+    const say = (text, kind = 'out', act, href) => { log.value.push({ text, kind, act, href }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
     if (cfg.chatEndpoint) {
       say('Claude is connected: ask about the course and the books, or ask for a model. It reads the library, computes, and draws in the 3D view on the left. /new starts over.', 'dim');
@@ -918,11 +958,13 @@ createApp({
       else run(`/book ${id}`);
     }
 
-    async function showDoc(id, section) {
+    async function showDoc(id, section, page = 0) {
       setView({ kind: 'loading', title: section });
-      const html = renderMarkdown(await getText(`${id}/${section}`), `${id}/${section}`, bookIds.value);
+      const text = await getText(`${id}/${section}`);
+      const html = renderMarkdown(text, `${id}/${section}`, bookIds.value);
       const s = books.value.find((b) => b.id === id)?.sections.find((x) => x.section === section);
-      setView({ kind: 'doc', title: `${bookTitle(id)} · ${s ? s.title : section}`, html, open: `library.html${readerHref(id, section)}` });
+      setView({ kind: 'doc', title: `${bookTitle(id)} · ${s ? s.title : section}${page ? ' · p. ' + page : ''}`, html, open: `library.html${readerHref(id, section, page)}` });
+      if (page) nextTick(() => toPage(viewerEl.value, text, page));
     }
 
     const menuItems = computed(() => {
@@ -966,7 +1008,7 @@ createApp({
     };
     // Graphic statics from the books: find the chapters on the construction (Lévy first), find its figure in
     // them, show the figure over the 3D view, recreate the construction beside it, then cite the sources.
-    const figure = reactive({ src: '', caption: '', cite: '', act: '' });
+    const figure = reactive({ src: '', caption: '', cite: '', act: '', href: '', page: '' });
     // Historical books first (before 1950, or by the founders of graphic statics), then the rest.
     const historical = (b) => { const t = plain(b.id + ' ' + b.title), y = +((b.title.match(/\b(1[5-9]\d\d)\b/) || [])[1] || 0);
       return (y && y < 1950) || /levy|culmann|cremona|maxwell|wolfe|ritter|rankine|varignon|mohr|muller-breslau|henneberg|bow\b/.test(t); };
@@ -991,14 +1033,23 @@ createApp({
         if (score && (!best || score > best.score)) best = { score, i, alt, src: md ? md[2] : html[1] };
       });
       if (!best) return null;
-      let page = '', sec = '';
-      for (let i = best.i; i >= 0 && !(page && sec); i--) {
-        if (!page) page = (lines[i].match(/<sub>\s*(?:page|p\.)\s*(\d+)\s*<\/sub>/i) || [])[1] || '';
-        if (!sec && /^#/.test(lines[i])) sec = (lines[i].match(/§\s*(\d+)/) || [])[1] || '';
-      }
+      const page = pageMap(lines).pages[best.i] || '';
+      let sec = '';
+      for (let i = best.i; i >= 0 && !sec; i--) if (/^#/.test(lines[i])) sec = (lines[i].match(/§\s*(\d+)/) || [])[1] || '';
       const caption = best.alt || (lines[best.i + 1] || '').replace(/[*_]/g, '').trim().slice(0, 80);
       const cite = `${citeBook(bookTitle(hit.book))} — ${hit.title}${sec ? ', § ' + sec : ''}${page ? ', p. ' + page : ''}${caption ? ', ' + caption : ''}`;
-      return { src: new URL(best.src, fileUrl(path)).href, caption, cite, act: `/open ${path}` };
+      return { src: new URL(best.src, fileUrl(path)).href, caption, cite, page, act: `/open ${path}${page ? ' ' + page : ''}`, href: bookLink(hit.book, hit.section, page) };
+    }
+    async function whereIn(hit, words) {
+      const lines = (await getText(`${hit.book}/${hit.section}`)).split(/\r?\n/), keys = words.map(plain), { pages } = pageMap(lines);
+      const hits = [], secs = new Set();
+      let sec = '';
+      lines.forEach((line, i) => {
+        if (/^#/.test(line)) sec = (line.match(/§\s*(\d+)/) || [])[1] || sec;
+        if (!PAGE_MARK.test(line) && keys.some((k) => plain(line).includes(k))) { hits.push(pages[i]); if (sec) secs.add(sec); }
+      });
+      const all = pages.filter(Boolean);
+      return { pages: hits.filter(Boolean).length ? hits : all.length ? [all[0], all[all.length - 1]] : [], secs: [...secs] };
     }
     async function fromTheBooks(phrase) {
       const topic = TOPICS[phrase.reading];
@@ -1010,14 +1061,21 @@ createApp({
       if (source) {
         Object.assign(figure, source);
         say(`Found the construction in ${source.cite}. The original figure is over the 3D view; the recreation is drawn beside it.`, 'out', source.act);
+        say(source.href, 'link', null, source.href);
       } else if (found.length) say(`Found ${found.length} chapter${found.length === 1 ? '' : 's'}, without a figure of it; recreating the construction from the text.`, 'dim');
       else if (state.value === 'ready') say('Nothing on it in the library; drawing the standard construction.', 'dim');
       sendToViewer(...phrase.commands);
       say(`→ viewer: ${phrase.commands.filter((c) => c && !c.startsWith('=')).length} commands (the recreation)`, 'dim');
       (phrase.notes || []).forEach((n) => say(n, 'out'));
       if (found.length) {
-        say('Sources:', 'dim');
-        found.slice(0, 4).forEach((h) => say(`${citeBook(bookTitle(h.book))} — ${h.title}`, 'out', `/open ${h.book}/${h.section}`));
+        say('Sources (printed pages where the books treat it):', 'dim');
+        for (const [n, h] of found.slice(0, 4).entries()) {
+          const where = await whereIn(h, topic.words).catch(() => ({ pages: [], secs: [] }));
+          const first = where.pages.filter(Boolean).sort((a, b) => a - b)[0] || 0;
+          const at = [where.secs.length ? '§ ' + where.secs.slice(0, 4).join(', ') : '', pageList(where.pages)].filter(Boolean).join(', ');
+          say(`[${n + 1}] ${citeBook(bookTitle(h.book))} — ${h.title}${at ? ', ' + at : ''}`, 'out', `/open ${h.book}/${h.section}${first ? ' ' + first : ''}`);
+          say(bookLink(h.book, h.section, first), 'link', null, bookLink(h.book, h.section, first));
+        }
       }
     }
     const splitRef = (ref_) => { const i = ref_.indexOf('/'); return i < 0 ? [ref_, ''] : [ref_.slice(0, i), ref_.slice(i + 1)]; };
@@ -1067,6 +1125,7 @@ createApp({
             if (nextStart <= lines.length) say(`lines ${startLine}–${nextStart - 1} of ${lines.length} · next: /read ${id}/${section} ${nextStart}`, 'dim', `/read ${id}/${section} ${nextStart}`);
             else say(`end of chapter (${lines.length} lines)`, 'dim');
           }
+          const page = cmd === '/open' ? +((args[1] || '').match(/\d+/) || [])[0] || 0 : 0;
           if (cmd === '/figures') {
             await showDoc(id, section);
             const tpl = document.createElement('template'); tpl.innerHTML = view.html;
@@ -1074,8 +1133,8 @@ createApp({
             setView({ kind: 'figures', title: `Figures · ${view.title}`, items, open: view.open });
             say(`${items.length} figure${items.length === 1 ? '' : 's'} in the viewer.`, 'dim');
           } else {
-            await showDoc(id, section);
-            if (cmd === '/open') say('Chapter shown in the viewer.', 'dim');
+            await showDoc(id, section, page);
+            if (cmd === '/open') say(page ? `Chapter shown at p. ${page}.` : 'Chapter shown in the viewer.', 'dim');
           }
           keep();
         } else if (cmd === '/drawings') {
@@ -1187,7 +1246,7 @@ createApp({
             endStream(); say(toolLine(e), 'dim');
             if (e.name === 'look_at_figure' && e.input && e.input.url) {
               const src = /^https:\/\//.test(e.input.url) ? e.input.url : fileUrl(e.input.url);
-              Object.assign(figure, { src, caption: '', cite: 'Claude is looking at ' + src.split('/').slice(-3).join('/'), act: '' });
+              Object.assign(figure, { src, caption: '', cite: 'Claude is looking at ' + src.split('/').slice(-3).join('/'), act: '', href: '', page: '' });
             }
           }
           else if (e.t === 'error') throw new Error(e.error);
@@ -1226,9 +1285,12 @@ createApp({
       if (kind !== 'text') return;
       const at = log.value.indexOf(entry);
       const lines = entry.text.replace(/\s+$/, '').split('\n').map((t) => {
-        const open = t.trim().match(/^\/open\s+(\S+\.md)$/);
-        return open ? { text: t.trim(), kind: 'out', act: `/open ${open[1]}` } : { text: t || ' ', kind: 'text' };
-      });
+        const open = t.trim().match(/^\/open\s+(\S+\.md)(?:\s+(?:pp?\.?\s*)?(\d+)\S*)?$/);
+        if (!open) return [{ text: t || ' ', kind: 'text' }];
+        const [id, section] = splitRef(open[1]), page = +open[2] || 0, url = bookLink(id, section, page);
+        const chapter = (books.value.find((b) => b.id === id)?.sections.find((x) => x.section === section) || {}).title || section;
+        return [{ text: `↗ ${citeBook(bookTitle(id))} — ${chapter}${page ? ', p. ' + page : ''}`, kind: 'out', act: `/open ${open[1]}${page ? ' ' + page : ''}` }, { text: url, kind: 'link', href: url }];
+      }).flat();
       log.value.splice(at, 1, ...lines);
     }
     // Claude's command lines in the 3D view; returns each line and what the viewer answered to it.

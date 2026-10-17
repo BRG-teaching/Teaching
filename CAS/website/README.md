@@ -135,6 +135,10 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
     of the force diagram, every member a line parallel to it. The terminal lists every member's force by its two
     spaces (`a-1 −30.0`), tension and compression.
   Historical books (before 1950, or by Lévy, Culmann, Cremona, Maxwell, Wolfe …) always rank first, then the rest.
+  Every citation names the printed pages it refers to (the pages of the chapter where the topic appears, read from the
+  books' `<sub>page N</sub>` markers, and the page of the figure) and shows the book's address on this site at that
+  page: `library.html#/b/<book>/<chapter>?p=112` opens the reader there and marks the page; `/open <book>/<chapter> 112`
+  does the same on the terminal's sheet. Claude's citations work the same way.
   Drawings use the Equilibrium palette (`2_computational_form_finding/Equilibrium/drawings/web/lib/eqdraw.js`):
   compression navy `#1a1eb2`, tension pink `#ce4095`, loads, reactions and load lines green `#3f9c20`, guides grey
   `#aaaaaa`, zero-force members `#b9b9bd`, in the form and the force diagram alike.
