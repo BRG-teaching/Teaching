@@ -7,6 +7,7 @@ Pitch deck for the CAS ETH in Computational Form-finding (Block Research Group, 
 | `CAS Computational Form-Finding.pptx` | Editable 16:9 PowerPoint, 28 slides, with speaker notes |
 | `logos/` | The 56 logos and icons used in the deck, as vector SVG |
 | `website/` | One-page Vue site with the key slides (see `website/README.md`) |
+| `brg-terminal-ai/` | Cloudflare Worker that gives the website's BRG terminal Claude (see its `README.md`) |
 | `project/` | Claude Design source of the deck (`CAS Computational Form-Finding.dc.html`) with its photos |
 | `tools/` | Scripts that rebuild the PowerPoint from the design file |
 | `chats/` | Design conversation transcripts |

@@ -23,8 +23,8 @@ window.CAS_LIBRARY = {
   // Extra pages a book folder may contain, shown on its book page when present.
   extras: ['README.md', 'INDEX.md', 'GLOSSARY.md', 'FIGURES.md', 'GRAPHIC-STATICS-NOTATION.md'],
 
-  // Optional AI answers in the BRG terminal. Leave empty for search-only mode.
-  // Set to an HTTPS endpoint (e.g. a Cloudflare Worker) that accepts
-  // POST { messages: [{ role, content }] } and returns { reply }.
+  // Claude in the BRG terminal: the address of the Cloudflare Worker in CAS/brg-terminal-ai (see its
+  // README), e.g. 'https://brg-terminal.<account>.workers.dev'. Empty: the terminal searches the library
+  // and builds from plain words without Claude.
   chatEndpoint: '',
 };

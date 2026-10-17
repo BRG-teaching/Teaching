@@ -4,6 +4,9 @@
 //     - `01-chapter.md` **Chapter title** summary
 const { createApp, ref, reactive, computed, watch, nextTick, onMounted } = Vue;
 const cfg = window.CAS_LIBRARY;
+// ?chat=http://localhost:8788 tries a local copy of the Claude service (CAS/brg-terminal-ai/test/serve.mjs).
+// Only a local address: a link to another site could otherwise collect the conversation and the key.
+{ const chat = new URLSearchParams(location.search).get('chat'); if (chat && /^http:\/\/(localhost|127\.0\.0\.1):\d+\/?$/.test(chat)) cfg.chatEndpoint = chat; }
 const base = cfg.baseUrl.replace(/\/$/, '');
 
 const fileUrl = (path) => base + '/' + path.split('/').map(encodeURIComponent).join('/');
@@ -159,6 +162,10 @@ const COMMANDS = [
   { cmd: '/viewer', help: 'list the session viewer commands (Box, Sphere, Line, Move, Undo…)' },
   { cmd: '/close', help: 'close the sheet and show the 3D scene' },
   { cmd: '/clear', help: 'clear the transcript' },
+  { cmd: '/new', help: 'start a new conversation with Claude' },
+  { cmd: '/stop', help: 'stop Claude’s answer' },
+  { cmd: '/key', help: '<key> the BRG terminal key, kept in this browser', arg: true },
+  { cmd: '/local', help: '<words> build from plain words here, without Claude', arg: true },
 ];
 // The session viewer's own commands (viewer-commands.js); a line starting with one of them is
 // passed to the viewer's command line, e.g. "Box 0,0,0 100 50 30".
@@ -519,7 +526,11 @@ createApp({
     const busy = ref(false);
     const history = [];
     let hpos = 0;
-    const chat = [];
+    // The conversation with Claude (CAS/brg-terminal-ai): the page keeps it and sends it each time,
+    // exactly as the service returned it (thinking blocks included).
+    const ai = { history: [], container: undefined, abort: null };
+    const keyStore = { get: () => { try { return localStorage.getItem('brg-terminal-key') || ''; } catch (e) { return ''; } },
+      set: (k) => { try { localStorage.setItem('brg-terminal-key', k); } catch (e) { /* private window */ } } };
     const menuIndex = ref(0);
     const logEl = ref(null);
     const prompt = ref(null);
@@ -558,6 +569,7 @@ createApp({
     let listenUntil = 0;
     let viewerAsks = false; // the viewer's last reply asks for a point, a value or an option
     let batchReplies = null; // the replies to a long batch, while it runs
+    let collected = null; // every line and reply while Claude's commands run, for its tool result
     function sumUp(replies) {
       const made = {};
       let deleted = 0;
@@ -580,6 +592,7 @@ createApp({
           original.apply(this, a);
           const text = a.map(String).join(' ').trim();
           if (Date.now() >= listenUntil || !text || NOISE.test(text)) return;
+          if (collected) collected.push((k === 'error' ? 'error: ' : '') + text);
           viewerAsks = /Esc cancels|type Height|click or type|then press Enter/.test(text);
           // a long batch (a funicular, a staircase) is summed up when it ends; its errors still show
           if (batchReplies && k !== 'error' && !/not a value|no command|wrong number|needs|cannot|failed/i.test(text)) { batchReplies.push(text); return; }
@@ -615,6 +628,7 @@ createApp({
     async function runInViewer(w, line) {
       const answer = line.startsWith('=') || isValue(line);
       line = line.replace(/^=/, '');
+      if (collected) collected.push('> ' + line);
       if (!w.wasmBindings.run_command) return typeIntoViewer(w, line); // a viewer built before run_command
       listenUntil = Date.now() + 1200;
       w.wasmBindings.run_command(line, !answer);
@@ -627,8 +641,13 @@ createApp({
     }
     const say = (text, kind = 'out', act) => { log.value.push({ text, kind, act }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
-    say(cfg.chatEndpoint ? 'Ask a question, or use a command.' : 'Search mode: type words to search the library, or a command. AI answers are not connected yet.', 'dim');
-    say('The 3D view on the left shows the live scene. Build in it with plain words (“create a table”, “delete everything”, “top view”) or its own commands (Box 0,0,0 100 50 30; /viewer lists them).', 'dim');
+    if (cfg.chatEndpoint) {
+      say('Claude is connected: ask about the course and the books, or ask for a model. It reads the library, computes, and draws in the 3D view on the left. /new starts over.', 'dim');
+      say('Viewer commands (Box 0,0,0 100 50 30; /viewer lists them) run directly; /local <words> builds from plain words without Claude.', 'dim');
+    } else {
+      say('Search mode: type words to search the library, or a command. Claude is not connected yet.', 'dim');
+      say('The 3D view on the left shows the live scene. Build in it with plain words (“create a table”, “delete everything”, “top view”) or its own commands (Box 0,0,0 100 50 30; /viewer lists them).', 'dim');
+    }
     say('Chapters, figures and drawings open on a sheet over it; /close shows the scene again.', 'dim');
 
     // Viewer: what is on screen, with a back stack of the commands that produced it.
@@ -731,6 +750,9 @@ createApp({
         else if (cmd === '/viewer') VIEWER_CMDS.slice().sort((a, b) => a.cmd.localeCompare(b.cmd)).forEach((c) => say(`${c.cmd.padEnd(24)} ${c.help.replace(/^[^·:]*[·:]\s*/, '')}`, 'out', c.example || c.cmd));
         else if (cmd === '/close') closeSheet();
         else if (cmd === '/clear') log.value = [];
+        else if (cmd === '/new') { ai.history = []; ai.container = undefined; say('New conversation with Claude.', 'dim'); }
+        else if (cmd === '/stop') { if (ai.abort) ai.abort.abort(); else say('Claude is not working on anything.', 'dim'); }
+        else if (cmd === '/key') { keyStore.set(arg.trim()); say(arg.trim() ? 'Key kept in this browser.' : 'Key removed.', 'dim'); }
         else if (cmd === '/books') {
           if (!ready()) return;
           books.value.forEach((b) => say(`${b.id.padEnd(28)} ${b.title} (${b.sections.length})`, 'out', `/book ${b.id}`));
@@ -780,8 +802,9 @@ createApp({
           const src = `${PLAYER}index.html?view=${n}${step}`;
           setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
           say(`Drawing ${n} playing in the viewer. Use its controls to step through the construction.`, 'dim'); keep();
-        } else if (cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
-        else if ((phrase = phraseToCommands(line)) && phrase.commands) {
+        } else if (cmd !== '/local' && cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
+        else if (cfg.chatEndpoint && cmd !== '/local' && !viewerCommandOf(line) && !/^-?\d[-\d.,\s]*$/.test(line)) await askClaude(line);
+        else if ((phrase = phraseToCommands(cmd === '/local' ? arg : line)) && phrase.commands) {
           const shown = phrase.commands.filter((c) => c && !c.startsWith('='));
           sendToViewer(...phrase.commands);
           say('→ viewer: ' + (shown.length > 12 ? `${shown.length} commands: ${shown.slice(0, 3).join(' · ')} · …` : shown.join(' · ')), 'dim');
@@ -791,24 +814,137 @@ createApp({
         else if (viewerCommandOf(line)) { sendToViewer(line); say('→ viewer: ' + line, 'dim'); }
         else if (/^-?\d[-\d.,\s]*$/.test(line) || /^(finish|done|enter)$/i.test(line)) { const v = /\d/.test(line) ? line : ''; sendToViewer(v); say('→ viewer: ' + (v || 'Enter'), 'dim'); }
         else if (viewerAsks && !(phrase && phrase.sure)) { sendToViewer('=' + line); say('→ viewer (answer): ' + line, 'dim'); }
-        else if (phrase && phrase.sure && !cfg.chatEndpoint) {
-          say(`Not understood: “${phrase.failed.join('”, “')}”. Without an AI model the terminal knows:`, 'err');
+        else if (phrase && phrase.sure) {
+          say(`Not understood: “${phrase.failed.join('”, “')}”. Without Claude the terminal knows:`, 'err');
           say('shapes: box, sphere, cylinder, cone, torus, pyramid, line, polyline, circle, arc, point, text (sizes and x,y,z optional)', 'dim');
           say('parts: table, chair, stool, bench, shelf, stair, wall, slab, column grid, frame (e.g. create a 2000 by 900 table)', 'dim');
           say('edits: select / delete / hide / show / move / copy / rotate / scale … all, it, or the box · top view · zoom · undo · /viewer for every command', 'dim');
         }
-        else if (cfg.chatEndpoint) {
-          chat.push({ role: 'user', content: line });
-          const res = await fetch(cfg.chatEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: chat }) });
-          if (!res.ok) throw new Error(`The chat service returned HTTP ${res.status}.`);
-          const { reply } = await res.json();
-          chat.push({ role: 'assistant', content: reply });
-          reply.split('\n').forEach((l) => say(l || ' ', 'text'));
-        } else if (ready() && showHits(line, search(line, allSections.value))) keep();
+        else if (ready() && showHits(line, search(line, allSections.value))) keep();
       } catch (e) {
         say(e instanceof TypeError ? 'Could not reach the library (network or CORS).' : e.message, 'err');
         if (view.kind === 'loading') setView({ kind: 'error', title: 'Error', error: e.message });
       } finally { busy.value = false; }
+    }
+    // One question to Claude: send the conversation, show what streams back, run its viewer calls in the
+    // 3D view and send it what the viewer answered, until it has answered. A failed turn is dropped
+    // whole, so the conversation stays valid.
+    async function askClaude(line) {
+      if (ai.abort) { say('Claude is still answering; wait, or /stop.', 'err'); return; }
+      const mark = ai.history.length;
+      ai.history.push({ role: 'user', content: line });
+      ai.abort = new AbortController();
+      try {
+        for (let hop = 0; hop < 24; hop++) {
+          const done = await claudeRound(ai.abort.signal);
+          ai.history.push(...done.messages);
+          if (done.container) ai.container = done.container;
+          if (done.usage) lastUsage = done.usage;
+          if (!done.viewer.length) {
+            if (done.stop === 'max_tokens') say('The answer was cut off (too long). Ask for less at once.', 'err');
+            else if (done.stop === 'refusal') say('Claude declined this request.', 'err');
+            return;
+          }
+          const results = [...done.results];
+          for (const call of done.viewer) {
+            say(`· 3D view: ${call.note || call.commands.length + ' commands'}`, 'dim');
+            const replies = await runForClaude(call.commands);
+            results.push({ type: 'tool_result', tool_use_id: call.id, content: (replies.join('\n') || 'The viewer said nothing.').slice(0, 8000) });
+          }
+          ai.history.push({ role: 'user', content: results });
+        }
+        say('Claude took many steps without finishing; ask it to continue.', 'dim');
+      } catch (e) {
+        ai.history.length = mark;
+        say(e.name === 'AbortError' ? 'Stopped.' : e instanceof TypeError ? 'Could not reach the BRG terminal service (network).' : e.message, 'err');
+      } finally {
+        endStream();
+        ai.abort = null;
+      }
+    }
+    let lastUsage = null;
+    async function claudeRound(signal) {
+      const key = keyStore.get();
+      const res = await fetch(cfg.chatEndpoint, {
+        method: 'POST', signal,
+        headers: { 'Content-Type': 'application/json', ...(key ? { 'X-BRG-Key': key } : {}) },
+        body: JSON.stringify({ messages: ai.history, container: ai.container }),
+      });
+      if (!res.ok) {
+        let message = `The BRG terminal service answered HTTP ${res.status}.`;
+        try { message = (await res.json()).error || message; } catch (e) { /* not JSON */ }
+        throw new Error(message);
+      }
+      const reader = res.body.getReader(), decoder = new TextDecoder();
+      let buffer = '', done = null;
+      for (;;) {
+        const { value, done: end } = await reader.read();
+        if (end) break;
+        buffer += decoder.decode(value, { stream: true });
+        let i;
+        while ((i = buffer.indexOf('\n')) >= 0) {
+          const text = buffer.slice(0, i); buffer = buffer.slice(i + 1);
+          if (!text.trim()) continue;
+          const e = JSON.parse(text);
+          if (e.t === 'thinking' || e.t === 'text') streamInto(e.t, e.d);
+          else if (e.t === 'tool') { endStream(); say(toolLine(e), 'dim'); }
+          else if (e.t === 'error') throw new Error(e.error);
+          else if (e.t === 'done') done = e;
+        }
+      }
+      endStream();
+      if (!done) throw new Error('The answer stopped before it was complete.');
+      return done;
+    }
+    const toolLine = (e) => {
+      const i = e.input || {};
+      if (e.name === 'search_books') return `· searching the library: “${i.query}”${i.book ? ' in ' + i.book : ''}`;
+      if (e.name === 'read_book_section') return `· reading ${i.book}/${i.section}${i.start_line > 1 ? ' from line ' + i.start_line : ''}`;
+      if (e.name === 'look_at_figure') return `· looking at ${String(i.url).split('/').slice(-2).join('/')}`;
+      if (e.name === 'list_books') return '· listing the library';
+      return '· computing (Python)';
+    };
+    // Thinking and text arrive in pieces: they grow one log line until the kind changes, then the
+    // text is split into lines, and "/open book/file.md" lines become links.
+    let streaming = null;
+    function streamInto(kind, d) {
+      if (!streaming || streaming.kind !== kind) {
+        endStream();
+        streaming = { kind, entry: { text: kind === 'thinking' ? '∴ ' : '', kind: kind === 'thinking' ? 'think' : 'text' } };
+        log.value.push(streaming.entry);
+        streaming.entry = log.value[log.value.length - 1];
+      }
+      streaming.entry.text += d;
+      nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; });
+    }
+    function endStream() {
+      if (!streaming) return;
+      const { entry, kind } = streaming;
+      streaming = null;
+      if (kind !== 'text') return;
+      const at = log.value.indexOf(entry);
+      const lines = entry.text.replace(/\s+$/, '').split('\n').map((t) => {
+        const open = t.trim().match(/^\/open\s+(\S+\.md)$/);
+        return open ? { text: t.trim(), kind: 'out', act: `/open ${open[1]}` } : { text: t || ' ', kind: 'text' };
+      });
+      log.value.splice(at, 1, ...lines);
+    }
+    // Claude's command lines in the 3D view; returns each line and what the viewer answered to it.
+    async function runForClaude(commands) {
+      const started = Date.now();
+      while (!viewerWindow()) {
+        if (Date.now() - started > 20000) return ['The 3D view did not start: this browser has no WebGPU.'];
+        await wait(250);
+      }
+      while (viewerTyping) await wait(50);
+      if (view.kind !== 'welcome') closeSheet();
+      collected = [];
+      viewerQueue.push(...commands);
+      await flushViewer();
+      await wait(500);
+      const out = collected;
+      collected = null;
+      return out;
     }
     function submit() { const line = input.value; input.value = ''; run(line); }
     watch(() => route.view, (v) => {

@@ -37,4 +37,12 @@ out.write_text(
     "window.SESSION_VIEWER_COMMANDS = " + json.dumps(commands, indent=1, ensure_ascii=False) + ";\n",
     encoding="utf-8",
 )
-print(f"{len(commands)} commands -> {out}")
+# the same list for the BRG terminal's Claude Worker, which puts it in Claude's instructions
+worker = HERE.parents[1] / "brg-terminal-ai" / "src" / "viewer-commands.js"
+if worker.parent.is_dir():
+    worker.write_text(
+        "// The session viewer's commands, written by CAS/website/tools/extract_viewer_commands.py.\n"
+        "export default " + json.dumps(commands, indent=1, ensure_ascii=False) + ";\n",
+        encoding="utf-8",
+    )
+print(f"{len(commands)} commands -> {out}" + (f" and {worker}" if worker.parent.is_dir() else ""))

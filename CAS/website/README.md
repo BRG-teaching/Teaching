@@ -60,10 +60,9 @@ is the entry's subject, found from words in its title and chapter summaries: str
 & history (blue), computation (teal), graphic statics (violet), form finding (amber), thrust
 networks & masonry (raspberry), materialization (green). Subject chips above the shelf filter it.
 
-`library-config.js` holds the bucket URL, the tab overrides (`groupOf`), and `chatEndpoint` for AI answers in the terminal. Until that is
-set, the terminal searches the library. The `brg` CLI uses each person's own Claude or
-ChatGPT login, which a public web page cannot do, so AI answers need a small server, for
-example a Cloudflare Worker with an API key that accepts `POST { messages }` and returns `{ reply }`.
+`library-config.js` holds the bucket URL, the tab overrides (`groupOf`), and `chatEndpoint`, the address of the
+Claude service for the terminal (`CAS/brg-terminal-ai`, a Cloudflare Worker holding the Anthropic API key, since a
+public page cannot). Until that is set, the terminal searches the library and builds from plain words itself.
 
 ### How the page reads the bucket
 
@@ -94,6 +93,13 @@ Browsers only let the page read the bucket if R2 allows it. In Cloudflare: R2 â†
 Libraries in `vendor/`: Vue 3.5.13, marked 12.0.2, DOMPurify 3.1.6, KaTeX 0.16.11 (all MIT).
 
 ## BRG terminal and the session viewer
+
+**With Claude** (`chatEndpoint` set, see `CAS/brg-terminal-ai/README.md`), everything typed that is not a slash
+command or a viewer command goes to Claude. It searches and reads the library, looks at figures, computes geometry
+in Python, and draws in the 3D view through the viewer's commands, seeing what the viewer answers. Its thinking,
+the tools it uses and its answer stream into the terminal; the sources it used end the answer as `/open` links.
+`/new` starts a new conversation, `/stop` stops an answer, `/key <key>` stores the class's access key in the browser,
+and `/local <words>` uses the built-in plain-word builder below instead of Claude.
 
 The left half of `library.html#/terminal` is the session viewer from
 [petrasvestartas/session](https://github.com/petrasvestartas/session) (`session_viewer`, Rust â†’ WebAssembly,

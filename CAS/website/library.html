@@ -170,7 +170,7 @@
           <div class="pixel" role="img" aria-label="BRG" :style="{ gridTemplateColumns: `repeat(${pixelCols}, var(--px))` }"><i v-for="(c, i) in pixel" :key="i" :style="c ? { background: c } : null"></i></div>
           <div class="term-info">
             <b>BRG terminal</b>
-            <span>{{ cfg.chatEndpoint ? 'AI answers on · ' : 'search mode · ' }}{{ state === 'ready' ? books.length + ' books, ' + sectionCount + ' chapters' : state }}</span>
+            <span>{{ cfg.chatEndpoint ? 'Claude · ' : 'search mode · ' }}{{ state === 'ready' ? books.length + ' books, ' + sectionCount + ' chapters' : state }}</span>
             <span>library {{ host }}</span>
             <span>{{ busy ? 'working…' : 'idle' }}</span>
           </div>
