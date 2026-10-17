@@ -105,16 +105,28 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
   within seconds.
 - **Commands from the terminal.** A line that starts with one of the viewer's 86 commands
   (`viewer-commands.js`, e.g. `Box 0,0,0 100 50 30`, `Sphere 0,0,0 10`, `Line 0,0,0 100,0,0`, `Move 10,0,0`,
-  `Undo`, `Fit`, `Layers On`) is typed into the viewer's own command line. Plain words for shapes also
-  work: `create a box`, `make a sphere at 10,0,0 radius 5`, `draw a line from 0,0,0 to 100,0,0`.
-  `/viewer` lists every command; Tab completes them.
+  `Undo`, `Fit`, `Layers On`) runs in the viewer. `/viewer` lists every command; Tab completes them.
+  A line of numbers (`0,0,0`, `25`) or `finish` answers a command that waits for a point or a value.
+- **Plain words** (`library.js`, `phraseToCommands`, no AI involved) become viewer commands:
+  shapes (`create a box and a sphere at 2000,0,0`, `draw a line from 0,0,0 to 100,0,50`, `create text saying "BRG"`),
+  parts made of boxes and cylinders in millimetres (`create a table`, `create a 2000 by 900 table`, `make a chair`,
+  `stool`, `bench`, `shelf with 6 shelves`, `staircase with 12 steps`, `wall`, `slab`, `3 by 4 column grid`, `frame`),
+  and edits (`delete everything`, `select all and move up 200`, `rotate the box 45 degrees around x`, `scale by 50%`,
+  `copy the sphere 1000 in x`, `hide everything`, `show all`, `top view`, `zoom to fit`, `undo twice`).
+  A request it cannot read is reported as such, not searched in the library. Anything beyond this needs an AI
+  model behind `chatEndpoint`.
+- The viewer's replies (`Created and selected box…`, `3 selected`, errors) are shown in the terminal.
 - Chapters, figures, the shelf and the eQUILIBRIUM drawings open on a sheet over the viewer;
   ✕ or `/close` shows the 3D scene again.
 - The viewer's URL options given to `library.html` pass through to it: `library.html?live=off#/terminal`
   opens an empty scene instead of the live one, `?scene=…`, `?live=<manifest url>`, `?msaa=1`, `?dpr=1` likewise.
 
-The terminal types each line into the viewer's hidden command input (`#command-agent`): first `:` to open
-its command line (while it is closed, letters are viewer shortcuts), then the line, then Enter.
+The terminal runs each line through `wasmBindings.run_command(line, cancel)`, an entry point added to the viewer
+by `tools/session-viewer-run-command.patch` (also reachable with `postMessage({ type: 'session-viewer:run', line, cancel })`).
+`cancel` ends a command still waiting for picks first, so no viewer state (a pick command, a gumball number box,
+a closed command line) can swallow the next line. The same patch makes `Escape` end every running command; before it,
+Element Beam, Column, Plate, Block and Support took `Escape` as a value and could not be cancelled from the command line.
+A viewer built without the patch is driven by typing into its hidden command input instead, which is less reliable.
 
 The live scene is read from the session R2 bucket, so that bucket's CORS rule must allow
 `https://brg-teaching.github.io` as well as the viewer's own site.
@@ -126,6 +138,7 @@ Rebuild the viewer after it changes (`session` and `wood` cloned side by side, b
 cd session/session_viewer
 rustup target add wasm32-unknown-unknown && cargo install trunk --version 0.21.14 --locked
 cp ../../teaching/CAS/website/tools/Trunk.cas.toml .
+git -C .. apply ../teaching/CAS/website/tools/session-viewer-run-command.patch   # run_command + Escape fix
 mkdir -p target/docs/vue        # the docs hook is skipped; the viewer only links to them
 REGEN_PROTO=0 trunk build --release --config Trunk.cas.toml --public-url ./ --dist ../../teaching/CAS/website/viewer
 python3 ../../teaching/CAS/website/tools/extract_viewer_commands.py   # refresh viewer-commands.js

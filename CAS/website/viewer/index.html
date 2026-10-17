@@ -189,12 +189,12 @@
         padding-top: 40vh;
       }
     </style>
-  <link rel="modulepreload" href="./session_viewer-aaa224a2213757e0.js" crossorigin="anonymous"><link rel="modulepreload" href="./snippets/session_viewer-568dd7ccbb8842dd/inline0.js" crossorigin="anonymous"><link rel="preload" href="./session_viewer-aaa224a2213757e0_bg.wasm" crossorigin="anonymous" as="fetch" type="application/wasm"></head>
+  <link rel="modulepreload" href="./session_viewer-49c1da75269c04b4.js" crossorigin="anonymous"><link rel="modulepreload" href="./snippets/session_viewer-568dd7ccbb8842dd/inline0.js" crossorigin="anonymous"><link rel="preload" href="./session_viewer-49c1da75269c04b4_bg.wasm" crossorigin="anonymous" as="fetch" type="application/wasm"></head>
   <body>
     
 <script type="module">
-import init, * as bindings from './session_viewer-aaa224a2213757e0.js';
-const wasm = await init({ module_or_path: './session_viewer-aaa224a2213757e0_bg.wasm' });
+import init, * as bindings from './session_viewer-49c1da75269c04b4.js';
+const wasm = await init({ module_or_path: './session_viewer-49c1da75269c04b4_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -244,6 +244,13 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
         if (event.source !== window.parent && event.origin !== window.location.origin)
           return;
         var data = event.data;
+
+        if (data && data.type === "session-viewer:run" && typeof data.line === "string") {
+          // a command line, as if typed; cancel ends a running command first
+          if (window.wasmBindings && window.wasmBindings.run_command)
+            window.wasmBindings.run_command(data.line, !!data.cancel);
+          return;
+        }
 
         if (!data || data.type !== "session-viewer:reload-scene")
           return;

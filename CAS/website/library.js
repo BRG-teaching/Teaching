@@ -164,25 +164,178 @@ const COMMANDS = [
 // passed to the viewer's command line, e.g. "Box 0,0,0 100 50 30".
 const VIEWER_CMDS = (window.SESSION_VIEWER_COMMANDS || []).slice().sort((a, b) => b.cmd.length - a.cmd.length);
 const viewerCommandOf = (line) => VIEWER_CMDS.find((c) => line.toLowerCase() === c.cmd.toLowerCase() || line.toLowerCase().startsWith(c.cmd.toLowerCase() + ' '));
-// Plain words for shapes: "create a box", "make a sphere of radius 5 at 10,0,0", "draw a line from 0,0,0 to 100,0,0".
+// Plain words for the scene, turned into viewer commands without an AI: "create a box", "delete everything",
+// "select all and move up 200", "rotate the box 45 degrees around x", "top view", "create a table".
 const SHAPE_WORDS = { box: 'Box', cube: 'Box', block: 'Box', sphere: 'Sphere', ball: 'Sphere', cylinder: 'Cylinder', column: 'Cylinder',
   cone: 'Cone', torus: 'Torus', ring: 'Torus', pyramid: 'Pyramid', capsule: 'Capsule', point: 'Point', line: 'Line', arrow: 'Arrow',
   polyline: 'Polyline', curve: 'Curve', circle: 'Nurbs Curve Circle', arc: 'Nurbs Curve Arc', ellipse: 'Nurbs Curve Ellipse',
   parabola: 'Nurbs Curve Parabola', tetrahedron: 'Tetrahedron', octahedron: 'Octahedron', icosahedron: 'Icosahedron', dodecahedron: 'Dodecahedron', text: 'Text' };
-function phraseToCommand(line) {
-  const m = line.match(/^(?:please\s+)?(?:create|make|add|draw|build|place|put|insert|model|show)\s+(?:me\s+)?(?:an?\s+|the\s+|one\s+)?([a-z]+)\b(.*)$/i);
-  if (!m) return null;
-  const verb = SHAPE_WORDS[m[1].toLowerCase().replace(/e?s$/, '')] || SHAPE_WORDS[m[1].toLowerCase()];
+// Shapes the viewer would otherwise wait for clicks on.
+const SHAPE_DEFAULTS = { Point: 'Point 0,0,0', Polyline: 'Polyline 0,0,0 1000,0,0 1000,1000,0', Text: 'Text Hello' };
+const NUM = '-?\\d+(?:\\.\\d+)?';
+const POINT = new RegExp(`${NUM}\\s*,\\s*${NUM}(?:\\s*,\\s*${NUM})?`, 'g');
+const pointsIn = (s) => (s.match(POINT) || []).map((p) => p.replace(/\s+/g, ''));
+const numbersIn = (s) => (s.replace(POINT, ' ').match(new RegExp(NUM, 'g')) || []).map(Number);
+const shapeIn = (s) => {
+  for (const w of s.match(/[a-z]+/g) || []) for (const k of [w, w.replace(/es$/, ''), w.replace(/s$/, '')]) if (SHAPE_WORDS[k]) return SHAPE_WORDS[k];
+  return '';
+};
+// Furniture and building parts made of boxes and cylinders, in millimetres (the viewer's grid is 1000 apart).
+function sizesIn(s) {
+  const wd = s.match(new RegExp(`(${NUM})\\s*(?:x|by|×)\\s*(${NUM})`));
+  const h = s.match(new RegExp(`(${NUM})\\s*(?:mm\\s*)?(?:high|tall)|height\\s*(?:of\\s*)?(${NUM})`));
+  return { l: wd ? +wd[1] : 0, w: wd ? +wd[2] : 0, h: h ? +(h[1] || h[2]) : 0 };
+}
+const legs = (l, w, inset, side, h) => [[1, 1], [-1, 1], [1, -1], [-1, -1]].map(([a, b]) => `Box ${a * (l / 2 - inset)},${b * (w / 2 - inset)},0 ${side} ${side} ${h}`);
+const RECIPES = {
+  table: (s) => { const z = sizesIn(s), l = z.l || 1200, w = z.w || 800, h = z.h || 750; return [`Box 0,0,${h - 40} ${l} ${w} 40`, ...legs(l, w, 70, 60, h - 40)]; },
+  desk: (s) => RECIPES.table(s),
+  stool: (s) => { const z = sizesIn(s), l = z.l || 350, h = z.h || 650; return [`Box 0,0,${h - 30} ${l} ${l} 30`, ...legs(l, l, 40, 40, h - 30)]; },
+  bench: (s) => { const z = sizesIn(s), l = z.l || 1600, w = z.w || 400, h = z.h || 450; return [`Box 0,0,${h - 40} ${l} ${w} 40`, ...legs(l, w, 80, 60, h - 40)]; },
+  chair: (s) => { const z = sizesIn(s), l = z.l || 450, h = z.h || 450; return [`Box 0,0,${h - 30} ${l} ${l} 30`, ...legs(l, l, 30, 40, h - 30), `Box 0,${-(l / 2 - 20)},${h} ${l} 40 ${h}`]; },
+  shelf: (s) => {
+    const z = sizesIn(s), l = z.l || 800, d = z.w || 300, h = z.h || 1800, n = Math.max(2, Math.min(12, (s.match(/(\d+)\s*(?:shelves|shelfs|levels|boards)/) || [])[1] || 5));
+    return [`Box ${-(l / 2 - 10)},0,0 20 ${d} ${h}`, `Box ${l / 2 - 10},0,0 20 ${d} ${h}`, ...Array.from({ length: n }, (_, i) => `Box 0,0,${Math.round(i * (h - 20) / (n - 1))} ${l - 40} ${d} 20`)];
+  },
+  stair: (s) => {
+    const n = Math.max(2, Math.min(40, +((s.match(/(\d+)\s*(?:steps|treads|risers)/) || [])[1] || 10))), w = sizesIn(s).w || 1000;
+    return Array.from({ length: n }, (_, i) => `Box 0,${i * 280 + 140},0 ${w} 280 ${(i + 1) * 175}`);
+  },
+  wall: (s) => { const n = numbersIn(s), z = sizesIn(s); return [`Box 0,0,0 ${z.l || n[0] || 5000} ${z.w || 200} ${z.h || n[1] || 3000}`]; },
+  slab: (s) => { const z = sizesIn(s); return [`Box 0,0,0 ${z.l || 6000} ${z.w || 4000} ${z.h || 200}`]; },
+  'column grid': (s) => {
+    const m = s.match(/(\d+)\s*(?:x|by|×)\s*(\d+)/), nx = Math.min(20, +(m ? m[1] : 3)), ny = Math.min(20, +(m ? m[2] : 3)), h = sizesIn(s).h || 3000, gap = 4000;
+    const out = [];
+    for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) out.push(`Cylinder ${(i - (nx - 1) / 2) * gap},${(j - (ny - 1) / 2) * gap},0 150 ${h}`);
+    return out;
+  },
+  frame: (s) => { const z = sizesIn(s), l = z.l || 6000, h = z.h || 3000; return [`Box ${-l / 2},0,0 300 300 ${h}`, `Box ${l / 2},0,0 300 300 ${h}`, `Box 0,0,${h} ${l + 300} 300 400`]; },
+};
+const RECIPE_WORDS = { table: 'table', tables: 'table', desk: 'desk', stool: 'stool', bench: 'bench', chair: 'chair', shelf: 'shelf', shelves: 'shelf',
+  bookshelf: 'shelf', bookcase: 'shelf', stair: 'stair', stairs: 'stair', staircase: 'stair', steps: 'stair', wall: 'wall', slab: 'slab',
+  floor: 'slab', grid: 'column grid', columns: 'column grid', frame: 'frame', portal: 'frame' };
+const recipeIn = (s) => { if (/\bcolumns?\s+grid\b|\bgrid of columns\b/.test(s)) return 'column grid'; for (const w of s.match(/[a-z]+/g) || []) if (RECIPE_WORDS[w]) return RECIPE_WORDS[w]; return ''; };
+
+const CREATE = /^(create|make|add|draw|build|place|put|insert|model|generate|design|construct|give me|show me)\b/;
+const SCENE_VERBS = /^(create|make|add|draw|build|place|put|insert|model|generate|design|construct|give|show|remove|delete|erase|clear|empty|reset|wipe|clean|get|discard|trash|kill|select|pick|choose|highlight|deselect|unselect|hide|unhide|reveal|zoom|fit|frame|focus|center|centre|view|look|switch|move|shift|translate|push|pull|slide|copy|duplicate|clone|rotate|turn|spin|twist|scale|resize|grow|shrink|enlarge|double|halve|triple|undo|redo|revert|measure|start|new|cancel|stop|escape)\b/;
+const ALL = /\b(all|everything|every\s*\w*|whole|entire|scene)\b/;
+// What a clause points at: [] keeps the current selection.
+function targetOf(s) {
+  const named = s.match(/\b(?:named|called|by name)\s+["']?([^"'\s]+)/);
+  if (named) return ['Escape', `Select By Name ${named[1]}`];
+  if (ALL.test(s)) return ['Escape', 'Select All'];
+  const shape = shapeIn(s);
+  return shape ? ['Escape', `Select By Name ${shape.split(' ').pop().toLowerCase()}`] : [];
+}
+const DIRS = { x: [0, 1], y: [1, 1], z: [2, 1], up: [2, 1], upward: [2, 1], upwards: [2, 1], down: [2, -1], downward: [2, -1], downwards: [2, -1], right: [0, 1],
+  left: [0, -1], forward: [1, 1], forwards: [1, 1], back: [1, -1], backward: [1, -1], backwards: [1, -1] };
+const DIR = Object.keys(DIRS).sort((a, b) => b.length - a.length).join('|');
+function offsetIn(s) {
+  const p = pointsIn(s)[0];
+  if (p) return p.split(',').length === 2 ? `${p},0` : p;
+  const v = [0, 0, 0];
+  let hit = false;
+  const re = new RegExp(`(${NUM})\\s*(?:mm|units?)?\\s*(?:in|along|to(?:wards)?|on)?\\s*(?:the\\s+)?(${DIR})\\b|\\b(${DIR})(?:\\s*-?\\s*axis)?\\s*(?:by|of)?\\s*(${NUM})`, 'g');
+  for (const m of s.matchAll(re)) { const [i, sign] = DIRS[m[2] || m[3]]; v[i] += sign * Number(m[1] ?? m[4]); hit = true; }
+  return hit ? v.join(',') : '';
+}
+const VIEWS = { top: 'Top', plan: 'Top', front: 'Front', back: 'Back', left: 'Left', right: 'Right', side: 'Right', bottom: 'Bottom', isometric: 'Isometric',
+  iso: 'Isometric', axonometric: 'Isometric', '3d': 'Isometric', perspective: 'Perspective', orthographic: 'Orthographic', ortho: 'Orthographic', parallel: 'Orthographic' };
+
+function createCommands(s) {
+  const recipe = recipeIn(s);
+  if (recipe) return [...RECIPES[recipe](s), 'Escape', 'Fit'];
+  const verb = shapeIn(s);
   if (!verb) return null;
-  const rest = m[2];
+  if (verb === 'Text') {
+    const t = (typedLine.match(/["“']([^"”']+)["”']/) || [])[1] || (typedLine.match(/\b(?:saying|says|reading)\s+(.+)$/i) || [])[1]
+      || (typedLine.match(/\btext\s+(.+)$/i) || [])[1];
+    return [t ? `Text ${t.trim()}` : SHAPE_DEFAULTS.Text, '0,0,0', 'Fit'];
+  }
+  const pts = pointsIn(s), nums = numbersIn(s);
   const spec = VIEWER_CMDS.find((c) => c.cmd === verb);
-  const points = rest.match(/-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?(?:\s*,\s*-?\d+(?:\.\d+)?)?/g) || [];
-  const numbers = rest.replace(/-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?(?:\s*,\s*-?\d+(?:\.\d+)?)?/g, ' ').match(/-?\d+(?:\.\d+)?/g) || [];
-  if (verb === 'Text') { const t = rest.replace(/^\s*(saying|that says|with)?\s*/i, '').replace(/^["']|["']$/g, '').trim(); return t ? `Text ${t}` : null; }
-  if (!points.length && !numbers.length) return spec && spec.example ? spec.example : verb;
-  const pts = points.map((p) => p.replace(/\s+/g, ''));
-  if (['Line', 'Arrow', 'Polyline', 'Curve', 'Point'].includes(verb)) return `${verb} ${pts.join(' ')}`;
-  return `${verb} ${pts[0] || '0,0,0'} ${numbers.join(' ')}`.trim();
+  let line;
+  if (!pts.length && !nums.length) line = (spec && spec.example) || SHAPE_DEFAULTS[verb] || verb;
+  else if (['Line', 'Arrow', 'Polyline', 'Curve', 'Point'].includes(verb)) line = `${verb} ${pts.join(' ')}`;
+  else {
+    const fill = spec && spec.example ? numbersIn(spec.example.slice(verb.length)) : [];
+    line = `${verb} ${pts[0] || '0,0,0'} ${nums.concat(fill.slice(nums.length)).join(' ')}`.trim();
+  }
+  return verb === 'Polyline' ? [line, '', 'Fit'] : [line, 'Fit'];
+}
+
+// One clause ("move the box up 200") to viewer commands, or null when it is not understood.
+function clauseToCommands(s) {
+  let n;
+  if (/^(undo|revert|go back|take (that|it) back)\b/.test(s)) return Array(Math.min(20, /\btwice\b/.test(s) ? 2 : numbersIn(s)[0] || 1)).fill('Undo');
+  if (/^redo\b/.test(s)) return Array(Math.min(20, numbersIn(s)[0] || 1)).fill('Redo');
+  if (/^(start (over|again|fresh)|new scene|(clear|empty|reset|wipe|clean)( up)?( the)?( whole| entire)? (scene|viewer|view|model|canvas|screen|everything|all)\b)/.test(s)) return ['Escape', 'Select All', 'Delete'];
+  if (/^(remove|delete|erase|clear|get rid of|discard|trash|kill)\b/.test(s)) return [...targetOf(s), 'Delete'];
+  if (/^(deselect|unselect|select (nothing|none)|clear (the )?selection|cancel|stop|escape)\b/.test(s)) return ['Escape'];
+  if (/^(select|pick|choose|highlight)\b/.test(s)) { const t = targetOf(s); return t.length ? t : null; }
+  if (/^(unhide|reveal|show (all|everything|hidden|them|it)\b)/.test(s)) return ['Show'];
+  if (/\blayers?\b/.test(s) && /^(show|open|display|list|hide|close)\b/.test(s)) return [/^(hide|close)/.test(s) ? 'Layers Off' : 'Layers On'];
+  if (/^hide\b/.test(s)) return [...targetOf(s), 'Hide'];
+  if (/^(zoom|fit|frame|focus|center|centre)\b|^(see|show me) (it )?(all|everything)\b/.test(s)) return /\b(all|everything|scene|extents)\b/.test(s) ? ['Escape', 'Fit'] : ['Fit'];
+  if (/^(rotate|turn|spin|twist)\b/.test(s)) {
+    n = numbersIn(s)[0] ?? (/\bquarter\b/.test(s) ? 90 : /\bhalf\b/.test(s) ? 180 : undefined);
+    if (n === undefined) return null;
+    const ax = s.match(/^\w+\s+([xyz])\b|\b(?:around|about|on|in|along)\s+(?:the\s+)?([xyz])\b|\b([xyz])\s*-?\s*axis\b/);
+    return [...targetOf(s), `Rotate ${ax ? ax[1] || ax[2] || ax[3] : 'z'} ${n}`];
+  }
+  if (/^(scale|resize|grow|shrink|enlarge|double|halve|triple)\b|^make (it|them|everything|all|the \w+) (bigger|larger|smaller|twice|half|double|\d)/.test(s)) {
+    n = numbersIn(s)[0];
+    if (n !== undefined && /%|percent/.test(s)) n /= 100;
+    if (n === undefined) n = /\b(twice|double|bigger|larger|grow|enlarge)\b/.test(s) ? 2 : /\b(triple|three times)\b/.test(s) ? 3 : /\b(half|halve|smaller|shrink)\b/.test(s) ? 0.5 : undefined;
+    return n ? [...targetOf(s), `Scale ${n}`] : null;
+  }
+  if (/^(move|shift|translate|push|pull|slide|copy|duplicate|clone)\b/.test(s)) {
+    const off = offsetIn(s);
+    return off ? [...targetOf(s), `${/^(copy|duplicate|clone)/.test(s) ? 'Copy' : 'Move'} ${off}`] : null;
+  }
+  if (/^(view|look|switch|go|set|change|show)\b|\bview\b|^(top|plan|front|back|left|right|side|bottom|isometric|iso|perspective|orthographic|ortho)$/.test(s)) {
+    const w = (s.match(/\b(top|plan|front|back|left|right|side|bottom|isometric|iso|axonometric|3d|perspective|orthographic|ortho|parallel)\b/) || [])[1];
+    if (w) return [`View ${VIEWS[w]}`];
+    if (/\bx-?ray\b/.test(s)) return [`View Xray ${/\boff\b/.test(s) ? 'Off' : 'On'}`];
+    if (/\bedges\b/.test(s)) return [`View ${/\b(hide|off|no|without)\b/.test(s) ? 'Hide' : 'Show'} Edges`];
+    if (/\breset\b/.test(s)) return ['View Reset'];
+  }
+  if (/\b(transparent|see-?through|translucent|opaque|opacity)\b/.test(s)) {
+    n = numbersIn(s)[0];
+    return [`Opacity ${n !== undefined ? (n > 1 ? n / 100 : n) : /\bopaque\b/.test(s) ? 1 : 0.4}`];
+  }
+  if (/^(measure|how (long|big|large|much)|what('s| is) the|compute|calculate|get the)\b/.test(s)) {
+    if (/\bdistance\b/.test(s)) { const p = pointsIn(s); return p.length >= 2 ? [`Measure Distance ${p[0]} ${p[1]}`] : null; }
+    const what = /\barea\b/.test(s) ? 'Area' : /\bvolume\b/.test(s) ? 'Volume' : /\b(length|long)\b/.test(s) ? 'Length' : '';
+    return what ? [...targetOf(s), what] : null;
+  }
+  if (CREATE.test(s)) return createCommands(s);
+  return null;
+}
+
+// A whole line: clauses joined by "and", "then" or ";" each become commands; a clause without a verb
+// takes the one before ("create a box and a sphere at 2000,0,0"). Returns { commands }, { failed } when a
+// clause is not understood (sure: the line clearly asks for the scene), or null for a line about something else.
+let typedLine = '';
+const ASKS = /^(what|how|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*)\b|\bview\b/;
+const WEAK = /^(what|how|show|get|give|look|switch|go|set|change|start|new|stop|cancel|turn|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*|view)\b/;
+function phraseToCommands(line) {
+  typedLine = line;
+  const s = line.toLowerCase().trim().replace(/[.!?]+$/, '')
+    .replace(/^((please|can you|could you|would you|will you|kindly|now|just|i want( you)? to|i'd like( you)? to|i would like( you)? to|let'?s)\s+)+/, '').replace(/\s+please$/, '');
+  if (!SCENE_VERBS.test(s) && !ASKS.test(s)) return null;
+  // furniture and parts take the whole line: "create a table with 4 legs and the top"
+  if (CREATE.test(s) && recipeIn(s)) return { commands: createCommands(s) };
+  const commands = [], failed = [];
+  let verb = '';
+  for (let c of s.split(/\s*;\s*|\s*,?\s+(?:and then|and also|after that|then|and)\s+/)) {
+    if (!c) continue;
+    const first = (c.match(/^[a-z]+/) || [''])[0];
+    if (SCENE_VERBS.test(first)) verb = first; else if (verb) c = `${verb} ${c}`;
+    const got = clauseToCommands(c);
+    if (got) commands.push(...got); else failed.push(c);
+  }
+  return failed.length ? { failed, sure: !WEAK.test(s) } : { commands };
 }
 // The eQUILIBRIUM step-by-step player, on the same GitHub Pages site.
 const PLAYER = '../../2_computational_form_finding/Equilibrium/drawings/web/';
@@ -332,9 +485,29 @@ createApp({
       type(line);
       await wait(150);
       input.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true, cancelable: true }));
+      listenUntil = Date.now() + 1200;
       await wait(250);
     }
     let viewerTyping = false;
+    let listenUntil = 0;
+    const NOISE = /pipelines|WebGPU is experimental|adapter|gpu init|scene posted|surface|first frame|^fit(ted)?\b|^fit selected|^Keys go to the viewer/;
+    function hookViewer(w) {
+      if (w.__brgTerminal) return;
+      w.__brgTerminal = true;
+      for (const k of ['log', 'info', 'warn', 'error']) {
+        const original = w.console[k];
+        w.console[k] = function (...a) {
+          original.apply(this, a);
+          const text = a.map(String).join(' ').trim();
+          if (Date.now() >= listenUntil || !text || NOISE.test(text)) return;
+          // the same reply again (five boxes of a table) is counted on its line
+          const last = log.value[log.value.length - 1];
+          if (last && last.reply === text) { last.n += 1; last.text = `‹ ${text} ×${last.n}`; return; }
+          log.value.push({ text: '‹ ' + text, kind: k === 'error' ? 'err' : 'reply', reply: text, n: 1 });
+          nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; });
+        };
+      }
+    }
     async function flushViewer(started = Date.now()) {
       clearTimeout(viewerTimer);
       if (viewerTyping) return;
@@ -344,9 +517,19 @@ createApp({
         viewerTimer = setTimeout(() => flushViewer(started), 250);
         return;
       }
+      hookViewer(w);
       viewerTyping = true;
-      try { while (viewerQueue.length) await typeIntoViewer(w, viewerQueue.shift()); }
+      try { while (viewerQueue.length) await runInViewer(w, viewerQueue.shift()); }
       finally { viewerTyping = false; }
+    }
+    // A value (a point, a number, or an empty line for Enter) goes to the command that asked for it;
+    // any other line ends a running command first, so nothing is left waiting for picks.
+    const isValue = (line) => /^[-\d.,\s]*$/.test(line);
+    async function runInViewer(w, line) {
+      if (!w.wasmBindings.run_command) return typeIntoViewer(w, line); // a viewer built before run_command
+      listenUntil = Date.now() + 1200;
+      w.wasmBindings.run_command(line, !isValue(line));
+      await wait(60);
     }
     function sendToViewer(...lines) {
       if (view.kind !== 'welcome') closeSheet();
@@ -356,7 +539,7 @@ createApp({
     const say = (text, kind = 'out', act) => { log.value.push({ text, kind, act }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
     say(cfg.chatEndpoint ? 'Ask a question, or use a command.' : 'Search mode: type words to search the library, or a command. AI answers are not connected yet.', 'dim');
-    say('The session viewer on the left shows the live scene. Type a viewer command (Box 0,0,0 100 50 30) or “create a box”; /viewer lists them.', 'dim');
+    say('The 3D view on the left shows the live scene. Build in it with plain words (“create a table”, “delete everything”, “top view”) or its own commands (Box 0,0,0 100 50 30; /viewer lists them).', 'dim');
     say('Chapters, figures and drawings open on a sheet over it; /close shows the scene again.', 'dim');
 
     // Viewer: what is on screen, with a back stack of the commands that produced it.
@@ -416,11 +599,17 @@ createApp({
     }
 
     const ready = () => { if (state.value !== 'ready') { say(state.value === 'loading' ? 'The library is still loading.' : 'The library is not available: ' + error.value, 'err'); return false; } return true; };
+    // Search results go on the sheet; none leaves the 3D view as it is.
     const showHits = (q, list) => {
+      if (!list.length) {
+        say(`No chapters match “${q}”.`, 'dim');
+        say('For the 3D view try: create a table · create a box and a sphere at 2000,0,0 · move it up 200 · delete everything · top view · undo · /viewer', 'dim');
+        return false;
+      }
       setView({ kind: 'list', title: `Search: ${q} · ${list.length} chapter${list.length === 1 ? '' : 's'}`, items: list, showBook: true });
-      if (!list.length) { say('No chapters match.', 'dim'); return; }
       list.slice(0, 12).forEach((s) => say(`${s.book}/${s.section}  ${s.title}`, 'out', `/open ${s.book}/${s.section}`));
       say(list.length > 12 ? `… ${list.length - 12} more in the viewer.` : 'Results are also in the viewer.', 'dim');
+      return true;
     };
     const splitRef = (ref_) => { const i = ref_.indexOf('/'); return i < 0 ? [ref_, ''] : [ref_.slice(0, i), ref_.slice(i + 1)]; };
 
@@ -431,12 +620,13 @@ createApp({
       const [cmd, ...args] = line.split(/\s+/);
       const arg = args.join(' ');
       const keep = () => { if (!opts.noRemember) remember(line); };
+      let phrase = null;
       try {
         busy.value = true;
         if (cmd === '/help' || cmd === '?') {
           COMMANDS.forEach((c) => say(`${c.cmd.padEnd(10)} ${c.help}`));
           say('Session viewer: type its commands directly, e.g. Box 0,0,0 100 50 30, Sphere 0,0,0 10, Line 0,0,0 100,0,0, Move 10,0,0, Undo, Fit, Layers On.', 'dim');
-          say('Or plain words: create a box, make a sphere at 10,0,0 radius 5, draw a line from 0,0,0 to 100,0,0.', 'dim');
+          say('Or plain words: create a table, create a box and a sphere at 2000,0,0, select all and move up 200, rotate the box 45 degrees around x, delete everything, top view, undo.', 'dim');
         }
         else if (cmd === '/viewer') VIEWER_CMDS.slice().sort((a, b) => a.cmd.localeCompare(b.cmd)).forEach((c) => say(`${c.cmd.padEnd(24)} ${c.help.replace(/^[^·:]*[·:]\s*/, '')}`, 'out', c.example || c.cmd));
         else if (cmd === '/close') closeSheet();
@@ -451,7 +641,7 @@ createApp({
           if (!b) { say('Unknown book ID. Try /books.', 'err'); return; }
           b.sections.forEach((s) => say(`${s.section.padEnd(28)} ${s.title}`, 'out', `/open ${b.id}/${s.section}`));
           setView({ kind: 'list', title: b.title, items: b.sections, open: `library.html#/b/${b.id}` }); keep();
-        } else if (cmd === '/search') { if (ready()) { showHits(arg, search(arg, allSections.value)); keep(); } }
+        } else if (cmd === '/search') { if (ready() && showHits(arg, search(arg, allSections.value))) keep(); }
         else if (cmd === '/open' || cmd === '/read' || cmd === '/figures') {
           if (!ready()) return;
           const [id, section] = splitRef(args[0] || '');
@@ -491,8 +681,15 @@ createApp({
           setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
           say(`Drawing ${n} playing in the viewer. Use its controls to step through the construction.`, 'dim'); keep();
         } else if (cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
-        else if (viewerCommandOf(line)) { sendToViewer(line); say('→ session viewer: ' + line, 'dim'); }
-        else if (phraseToCommand(line)) { const c = phraseToCommand(line); sendToViewer(c, 'Fit'); say('→ session viewer: ' + c, 'dim'); }
+        else if ((phrase = phraseToCommands(line)) && phrase.commands) { sendToViewer(...phrase.commands); say('→ viewer: ' + phrase.commands.filter(Boolean).join(' · '), 'dim'); }
+        else if (viewerCommandOf(line)) { sendToViewer(line); say('→ viewer: ' + line, 'dim'); }
+        else if (/^-?\d[-\d.,\s]*$/.test(line) || /^(finish|done|enter)$/i.test(line)) { const v = /\d/.test(line) ? line : ''; sendToViewer(v); say('→ viewer: ' + (v || 'Enter'), 'dim'); }
+        else if (phrase && phrase.sure && !cfg.chatEndpoint) {
+          say(`Not understood: “${phrase.failed.join('”, “')}”. Without an AI model the terminal knows:`, 'err');
+          say('shapes: box, sphere, cylinder, cone, torus, pyramid, line, polyline, circle, arc, point, text (sizes and x,y,z optional)', 'dim');
+          say('parts: table, chair, stool, bench, shelf, stair, wall, slab, column grid, frame (e.g. create a 2000 by 900 table)', 'dim');
+          say('edits: select / delete / hide / show / move / copy / rotate / scale … all, it, or the box · top view · zoom · undo · /viewer for every command', 'dim');
+        }
         else if (cfg.chatEndpoint) {
           chat.push({ role: 'user', content: line });
           const res = await fetch(cfg.chatEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: chat }) });
@@ -500,7 +697,7 @@ createApp({
           const { reply } = await res.json();
           chat.push({ role: 'assistant', content: reply });
           reply.split('\n').forEach((l) => say(l || ' ', 'text'));
-        } else if (ready()) { showHits(line, search(line, allSections.value)); keep(); }
+        } else if (ready() && showHits(line, search(line, allSections.value))) keep();
       } catch (e) {
         say(e instanceof TypeError ? 'Could not reach the library (network or CORS).' : e.message, 'err');
         if (view.kind === 'loading') setView({ kind: 'error', title: 'Error', error: e.message });
