@@ -1,25 +1,53 @@
-# CODING AGENTS: READ THIS FIRST
+# CAS Computational Form-finding
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+Pitch deck for the CAS ETH in Computational Form-finding (Block Research Group, ITA, D-ARCH).
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+| Path | Contents |
+|---|---|
+| `CAS Computational Form-Finding.pptx` | Editable 16:9 PowerPoint, 28 slides, with speaker notes |
+| `logos/` | The 56 logos and icons used in the deck, as vector SVG |
+| `project/` | Claude Design source of the deck (`CAS Computational Form-Finding.dc.html`) with its photos |
+| `tools/` | Scripts that rebuild the PowerPoint from the design file |
+| `chats/` | Design conversation transcripts |
 
-## What you should do — IMPORTANT
+## The PowerPoint
 
-**Read the chat transcripts first.** There are 2 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+- Every logo and icon in `logos/` is placed in the deck as a vector SVG, with a PNG fallback
+  for older PowerPoint versions. In PowerPoint you can recolour one or break it into shapes
+  with *Convert to Shape*.
+- All text is native, editable Open Sans. Install Open Sans (Google Fonts) on machines that
+  open the deck in PowerPoint; Google Slides has it built in. Semibold and extra-bold text
+  maps to Open Sans Bold, with the size nudged so line lengths match the design.
+- Bars, cards, plates and circles are native PowerPoint shapes; photos are cropped to their
+  frames.
 
-**Read `project/CAS Computational Form-Finding.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+## Logos
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+Files are named `slideNN-iconMM.svg`: the slide they first appear on, then their order on that
+slide. Colours are plain hex, so the files open in any vector editor.
 
-## About the design files
+| Slide | Logos |
+|---|---|
+| 03 Course map | 01 connector lines, 02–08 the seven chapter logos |
+| 04 Course timeline | 01–06 chapter logos, 07–13 project steps (10–11 are the two toolchain tools) |
+| 05 History | 01–10 structural systems (cables to stress-field models) |
+| 06 Computational Structural Design | 01 COMPAS, 02 AEC formats, 03 solvers, 04 AI connectors |
+| 07 Graphic Statics | 01 cables and arches, 02 trusses, 03 compas_ags |
+| 08 Form Finding | 01 force density, 02 dynamic relaxation, 03 form finding |
+| 09 Thrust Network Analysis | 01 TNA, 02 thrust network optimization, 03 discrete element modelling |
+| 10 Materialization | 01 materialization, 02 model, 03–05 additive, subtractive, pouring |
+| 11 Individual Project | 01–03 research question, prototype, midterm; 04–05 toolchain tools; 06–07 repository, final review |
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+Five logos were cropped by a few pixels in the design; their frames are widened here so
+nothing is cut off.
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+## Rebuilding
 
-## Bundle contents
-
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `CAS COmputational Form-finding` project files (HTML prototypes, assets, components)
+```bash
+cd tools && npm install
+python3 mkstatic.py "../project/CAS Computational Form-Finding.dc.html" /tmp/deck/static.html "$PWD/../project"
+node extract.js /tmp/deck /tmp/deck/out      # boxes, text, photos, standalone SVGs
+node build.js /tmp/deck/out "../CAS Computational Form-Finding.pptx"
+node edge.js /tmp/deck/out/svg /tmp/deck/out/svgpng   # lists any SVG whose ink touches its frame
+cp /tmp/deck/out/svg/*.svg ../logos/
+```
