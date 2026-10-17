@@ -42,6 +42,18 @@ createApp({
     const linkRe = new RegExp(`(?<![\\w-])(${names.map(esc).join('|')})(?![\\w-])`, 'g');
     const segments = (text) => text.split(linkRe).filter(Boolean).map((t) => ({ text: t, url: cas.links[t] }));
 
+    // Course map: thin lines joining the chapter circles in order, measured from the layout.
+    const mapEl = ref(null);
+    const mapLines = ref([]);
+    let mapRo;
+    const drawMap = () => {
+      const wrap = mapEl.value;
+      if (!wrap) return;
+      const o = wrap.getBoundingClientRect();
+      const c = [...wrap.querySelectorAll('.map-ring')].map((r) => { const b = r.getBoundingClientRect(); return [b.left + b.width / 2 - o.left, b.top + b.height / 2 - o.top]; });
+      mapLines.value = c.slice(1).map((p, i) => [c[i][0], c[i][1], p[0], p[1]].map((v) => Math.round(v * 10) / 10));
+    };
+
     // Highlight the section that crosses the middle of the screen.
     let io;
     const onKey = (e) => { if (e.key === 'Escape') menuOpen.value = false; };
@@ -63,10 +75,12 @@ createApp({
       }, { rootMargin: '-50% 0px -50% 0px' });
       document.querySelectorAll('#top, main section[id]').forEach((el) => io.observe(el));
       addEventListener('keydown', onKey);
+      mapRo = new ResizeObserver(drawMap); if (mapEl.value) mapRo.observe(mapEl.value);
+      document.fonts && document.fonts.ready.then(drawMap);
       document.addEventListener('click', onLink);
     });
-    onBeforeUnmount(() => { io && io.disconnect(); removeEventListener('keydown', onKey); document.removeEventListener('click', onLink); });
+    onBeforeUnmount(() => { io && io.disconnect(); mapRo && mapRo.disconnect(); removeEventListener('keydown', onKey); document.removeEventListener('click', onLink); });
 
-    return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments };
+    return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments, mapEl, mapLines };
   },
 }).mount('#app');

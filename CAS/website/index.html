@@ -57,15 +57,17 @@
 
   <section id="map" class="wrap block">
     <h2>Course map</h2>
+    <div class="map-wrap" ref="mapEl">
+    <svg class="map-lines" aria-hidden="true"><line v-for="(l, i) in mapLines" :key="i" :x1="l[0]" :y1="l[1]" :x2="l[2]" :y2="l[3]"></line></svg>
     <ol class="map">
       <li v-for="c in chapters" :key="c.n" :style="{ '--c': c.color }">
         <a :href="'#ch' + c.n">
-          <span class="ring"><img :src="logo(c.logo)" :alt="''"></span>
-          <span class="eyebrow">Chapter {{ c.n }}</span>
-          <span class="name">{{ c.short || c.title }}</span>
+          <span class="ring map-ring"><img :src="logo(c.logo)" :alt="''"></span>
+          <span class="label"><span class="eyebrow">Chapter {{ c.n }}</span><span class="name">{{ c.short || c.title }}</span></span>
         </a>
       </li>
     </ol>
+    </div>
   </section>
 
   <section id="timeline" class="wrap block">
