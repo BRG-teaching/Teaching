@@ -302,19 +302,4 @@ window.CAS = {
     { ch: 7, weight: '60 %', what: 'Repository, booklet, physical prototype, defence' },
   ],
 
-  solvers: {
-    columns: [
-      { ch: 1, name: 'By hand', tools: 'Ruler and compass' },
-      { ch: 1, name: 'Precomputed', tools: 'eQUILIBRIUM' },
-      { ch: 3, name: 'Algebraic', tools: 'compas_ags · IGS' },
-      { ch: 4, name: 'Iterative', tools: 'compas_fd · compas_dr' },
-      { ch: 5, name: 'Constrained, 3D', tools: 'compas_tna · RhinoVAULT' },
-    ],
-    rows: [
-      { label: 'Equilibrium by', cells: ['Closing the force polygon', 'Fixed constraints', 'Linear system', 'Iteration to a residual', 'Horizontal, then vertical'] },
-      { label: 'Designer controls', cells: ['Every line', 'Loads and positions', 'Form or force diagram', 'Supports and force densities', 'Topology and thickness'] },
-      { label: 'Teaching gap', gap: true, cells: ['None', 'Teaching material', 'Graded exercises', 'Solver maths', 'Solver maths'] },
-    ],
-    quote: '“2D Graphic Statics is made for teaching. Everything else is made for developers.”',
-  },
 };

@@ -129,48 +129,25 @@
       </ol>
 
       <div class="cards">
-        <article v-for="k in cardKeys(c)" :key="k" class="card" :class="k">
-          <h3>{{ cardTitle[k] }}</h3>
+        <details v-for="k in cardKeys(c)" :key="k" class="card" :class="k">
+          <summary><span>{{ cardTitle[k] }}</span><i class="pm" aria-hidden="true"></i></summary>
           <div class="card-body">
             <p class="lead">{{ c[k].lead }}</p>
             <ul class="sq"><li v-for="t in c[k].items" :key="t">{{ t }}</li></ul>
           </div>
-        </article>
+        </details>
       </div>
 
-      <div v-if="c.n === 7" class="grading">
-        <h3>What each chapter submits</h3>
+      <details v-if="c.n === 7" class="grading">
+        <summary><span>What each chapter submits</span><i class="pm" aria-hidden="true"></i></summary>
         <ol>
           <li v-for="g in cas.grading" :key="g.ch" :style="{ '--c': chapters[g.ch - 1].color }">
             <span class="w">Ch {{ g.ch }} · {{ g.weight }}</span>
             <span>{{ g.what }}</span>
           </li>
         </ol>
-      </div>
+      </details>
     </div>
-  </section>
-
-  <section id="solvers" class="wrap block">
-    <h2>Graphic statics solvers</h2>
-    <div class="tbl-scroll">
-      <table class="solvers">
-        <thead>
-          <tr>
-            <th></th>
-            <th v-for="col in cas.solvers.columns" :key="col.name" :style="{ '--c': chapters[col.ch - 1].color }">
-              <span class="eyebrow">Ch {{ col.ch }}</span><b>{{ col.name }}</b><span class="tools">{{ col.tools }}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="r in cas.solvers.rows" :key="r.label">
-            <th scope="row">{{ r.label }}</th>
-            <td v-for="(t, i) in r.cells" :key="i" :class="{ gap: r.gap && t !== 'None' }">{{ t }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="quote">From the repo ReadMe: {{ cas.solvers.quote }}</p>
   </section>
 
   </main>

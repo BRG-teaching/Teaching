@@ -25,7 +25,6 @@ createApp({
       { id: 'map', label: 'Course map' },
       { id: 'timeline', label: 'Course timeline' },
       ...chapters.map((c) => ({ id: 'ch' + c.n, n: c.n, color: c.color, label: c.short || c.title })),
-      { id: 'solvers', label: 'Graphic statics solvers' },
     ];
 
     const logo = (file) => `../logos/${file}`;
