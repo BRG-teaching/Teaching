@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAS Computational Form-finding</title>
+<meta name="description" content="CAS ETH in Computational Form-finding: seven chapters from graphic statics to an individual built project.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app" v-cloak>
+
+  <header class="top">
+    <a class="brand" href="#top">CAS <span>Computational Form-finding</span></a>
+    <nav aria-label="Chapters">
+      <a v-for="c in chapters" :key="c.n" :href="'#ch' + c.n" :style="{ '--c': c.color }"
+         :class="{ on: active === c.n }" :title="'Chapter ' + c.n + ': ' + c.title">{{ c.n }}</a>
+    </nav>
+  </header>
+
+  <section id="top" class="hero" :style="{ backgroundImage: 'url(' + cas.hero + ')' }">
+    <div class="veil"></div>
+    <div class="wrap hero-in">
+      <p class="org">{{ cas.org }}</p>
+      <h1>CAS<br>{{ cas.title }}</h1>
+      <spine :fill="7" dark></spine>
+      <ul class="facts">
+        <li v-for="f in cas.facts" :key="f.unit"><b>{{ f.value }}</b> {{ f.unit }}</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="map" class="wrap block">
+    <h2>Course map</h2>
+    <ol class="map">
+      <li v-for="c in chapters" :key="c.n" :style="{ '--c': c.color }">
+        <a :href="'#ch' + c.n">
+          <span class="ring"><img :src="logo(c.logo)" :alt="''"></span>
+          <span class="eyebrow">Chapter {{ c.n }}</span>
+          <span class="name">{{ c.short || c.title }}</span>
+        </a>
+      </li>
+    </ol>
+  </section>
+
+  <section id="timeline" class="wrap block">
+    <h2>Course timeline</h2>
+    <p class="note">10 ECTS ≈ 31–38 full working days = 4 months at half workload · each block = 2 weeks</p>
+    <div class="tl-scroll">
+      <div class="tl">
+        <div class="tl-label">Teaching</div>
+        <div class="tl-row">
+          <a v-for="c in teaching" :key="c.n" class="tl-cell" :href="'#ch' + c.n" :style="{ '--c': c.color }">
+            <span class="ring sm"><img :src="logo(c.logo)" alt=""></span>
+            <span class="tl-name">{{ c.short || c.title }}</span>
+          </a>
+          <span class="tl-cell"></span><span class="tl-cell"></span>
+        </div>
+        <div class="tl-row weeks">
+          <span v-for="w in 8" :key="w">Weeks {{ 2 * w - 1 }}–{{ 2 * w }}</span>
+        </div>
+        <div class="tl-row bars">
+          <i v-for="w in 6" :key="w" :style="{ background: chapters[w - 1].color }"></i>
+        </div>
+        <div class="tl-row bars"><i v-for="w in 8" :key="w" class="project"></i></div>
+        <div class="tl-row">
+          <template v-for="w in 8" :key="w">
+            <span class="tl-cell" :style="{ '--c': project.color }">
+              <template v-if="stepAt(w)">
+                <span class="ring sm"><img v-for="l in logos(stepAt(w))" :key="l" :src="logo(l)" alt="" :class="{ pair: logos(stepAt(w)).length > 1 }"></span>
+                <span class="tl-name">{{ stepAt(w).label }}</span>
+              </template>
+            </span>
+          </template>
+        </div>
+        <div class="tl-label">Personal work</div>
+      </div>
+    </div>
+  </section>
+
+  <section v-for="c in chapters" :key="c.n" :id="'ch' + c.n" class="chapter" :style="{ '--c': c.color, '--c-soft': c.color + '1f', '--c-mid': c.color + '38' }">
+    <div class="wrap block">
+      <spine :fill="c.n"></spine>
+      <p class="eyebrow">Chapter {{ c.n }} · {{ c.ects }} ECTS · {{ c.hours }} h<template v-if="c.n === 7"> · runs across the full course</template></p>
+      <h2>{{ c.title }}</h2>
+      <ul class="parts"><li>Introduction</li><li>Tutorials</li><li>Exercises</li></ul>
+
+      <div v-if="c.focus" class="focus" :class="'n' + c.focus.length">
+        <figure v-for="f in c.focus" :key="f.label">
+          <div class="art"><img v-for="l in logos(f)" :key="l" :src="logo(l)" :alt="logos(f).length === 1 ? f.label : ''"></div>
+          <figcaption>
+            <b>{{ f.label }}</b>
+            <span v-for="s in f.sub || []" :key="s">{{ s }}</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <ol v-if="c.steps" class="steps">
+        <li v-for="(s, i) in c.steps" :key="s.label">
+          <div class="art"><img v-for="l in logos(s)" :key="l" :src="logo(l)" alt="" :class="{ pair: logos(s).length > 1 }"></div>
+          <span class="num">{{ String(i + 1).padStart(2, '0') }}</span>
+          <b>{{ s.label }}</b>
+          <span v-if="s.sub" class="sub">{{ s.sub }}</span>
+        </li>
+      </ol>
+
+      <div class="cards">
+        <article v-for="k in cardKeys(c)" :key="k" class="card" :class="k">
+          <h3>{{ cardTitle[k] }}</h3>
+          <div class="card-body">
+            <p class="lead">{{ c[k].lead }}</p>
+            <ul class="sq"><li v-for="t in c[k].items" :key="t">{{ t }}</li></ul>
+          </div>
+        </article>
+      </div>
+
+      <div v-if="c.n === 7" class="grading">
+        <h3>What each chapter submits</h3>
+        <ol>
+          <li v-for="g in cas.grading" :key="g.ch" :style="{ '--c': chapters[g.ch - 1].color }">
+            <span class="w">Ch {{ g.ch }} · {{ g.weight }}</span>
+            <span>{{ g.what }}</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="solvers" class="wrap block">
+    <h2>Graphic statics solvers</h2>
+    <div class="tbl-scroll">
+      <table class="solvers">
+        <thead>
+          <tr>
+            <th></th>
+            <th v-for="col in cas.solvers.columns" :key="col.name" :style="{ '--c': chapters[col.ch - 1].color }">
+              <span class="eyebrow">Ch {{ col.ch }}</span><b>{{ col.name }}</b><span class="tools">{{ col.tools }}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="r in cas.solvers.rows" :key="r.label">
+            <th scope="row">{{ r.label }}</th>
+            <td v-for="(t, i) in r.cells" :key="i" :class="{ gap: r.gap && t !== 'None' }">{{ t }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="quote">From the repo ReadMe: {{ cas.solvers.quote }}</p>
+  </section>
+
+  <footer class="wrap foot">
+    <span>{{ cas.org }}</span>
+    <span>Working draft · <a href="../CAS%20Computational%20Form-Finding.pptx">Download the slides (PowerPoint)</a></span>
+  </footer>
+</div>
+
+<script src="vendor/vue.global.prod.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
