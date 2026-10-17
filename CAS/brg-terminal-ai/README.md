@@ -5,7 +5,7 @@ Claude. Claude reads the BRG library, thinks, computes, and builds models in the
 
 ```
 page (GitHub Pages)                 this Worker (Cloudflare)               Claude API
- keeps the conversation   ──POST──▶  library tools run here:      ──────▶  claude-opus-5-5
+ keeps the conversation   ──POST──▶  library tools run here:      ──────▶  claude-sonnet-5-5
  runs viewer commands               list_books, search_books,               adaptive thinking
  in the 3D view           ◀─lines──  read_book_section,           ◀──────   code execution (Python)
  sends back the viewer's             look_at_figure (R2 bucket)
@@ -47,12 +47,26 @@ books beyond cables and trusses (resultants, moment diagrams, centroids, masonry
 three-hinged arches, Ritter and Culmann sections, earth pressure, Williot diagrams, moments of inertia, Maxwell's
 reciprocal figures, the kern, a circular truss, Lévy on vaults). It writes `try-report.html`, one section per question:
 the searches, readings and figures, the cited pages, the answer, and the drawing rendered from the viewer commands
-in their colours, with any command the viewer would refuse. `--only 3,7` runs some; the whole set costs a few dollars.
+in their colours, with any command the viewer would refuse. `--only 3,7` runs some; the whole set costs one to three
+dollars on Sonnet 5.5.
 
-## Set it up
+## An Anthropic API key
 
-You need an Anthropic API key (console.anthropic.com → API keys; set a monthly spend limit there) and a
-Cloudflare account. The BRG library's R2 bucket is already on Cloudflare, so the same account works.
+An API key is separate from a claude.ai subscription, and you pay per use with prepaid credits:
+
+1. Sign in at console.anthropic.com (the Claude Console) with your email.
+2. Settings → Billing: buy credits (e.g. $10) and leave auto-reload off. You can never spend more than you loaded.
+3. Optional: Settings → Workspaces → create a workspace "BRG terminal" with a monthly spend limit.
+4. Settings → API Keys → Create Key, name it "BRG terminal", pick that workspace, and copy the key (`sk-ant-…`). It is
+   shown only once.
+5. On the website, type `/key sk-ant-…` in the BRG terminal. Or put the key on the Worker below for a whole class.
+
+Settings → Cost shows what each key spent. Never put the key in a repository or a chat.
+
+## Set it up for a class
+
+You need the Anthropic API key above and a Cloudflare account. The BRG library's R2 bucket is already on Cloudflare,
+so the same account works.
 
 ```bash
 cd CAS/brg-terminal-ai
@@ -66,18 +80,19 @@ npx wrangler deploy                           # prints https://brg-terminal.<you
 Then put that address in `CAS/website/library-config.js` as `chatEndpoint`, push to `main`, and in the terminal
 type `/key <ACCESS_KEY>` once per browser.
 
-Settings in `wrangler.toml`: `MODEL` (default `claude-opus-5-5`), `EFFORT` (`low` … `max`, default `high`: how
-much Claude thinks), `ALLOWED_ORIGINS` (pages that may call it), `LIBRARY_BASE` (the bucket).
+Settings in `wrangler.toml`: `MODEL` (default `claude-sonnet-5-5`), `EFFORT` (`low` … `max`, default `medium`: how
+much Claude thinks), `ALLOWED_ORIGINS` (pages that may call it), `LIBRARY_BASE` (the bucket). The website's own-key
+mode uses the same defaults (`src/agent.js`).
 
 **Keep `ACCESS_KEY` set.** The Worker spends your API key. The origin check only stops other web pages; a script can
 send any origin. The access key is what keeps strangers out. Change it with `wrangler secret put ACCESS_KEY` and tell
 the class.
 
-**Cost.** Opus 5.5 costs $4 per million input tokens and $20 per million output tokens; cached input is $0.20 per
-million. A question that searches, reads a chapter or two and draws typically runs a few rounds of 10–60 thousand
-input tokens, mostly cached after the first, and a few thousand output tokens, so expect cents to a few tens of cents
-per question. Check the real figures in the Anthropic console. To spend less, lower `EFFORT`, or set
-`MODEL = "claude-sonnet-5-5"` ($2 / $10).
+**Cost.** Claude Sonnet 5.5 costs $2 per million input tokens and $10 per million output tokens; cached input is
+$0.20 per million. A question that searches, reads a chapter or two and draws typically runs a few rounds of 10–60
+thousand input tokens, mostly cached after the first, and a few thousand output tokens: roughly $0.05–0.20 per
+question at medium effort, so $10 of credits is about 50–200 questions. The terminal shows each answer's cost under
+it. For the hardest questions, `MODEL = "claude-opus-5-5"` ($4 / $20) reasons better at about twice the price.
 
 **Cloudflare plan.** The free Workers plan allows 10 ms of CPU per request, which streaming a long answer can exceed.
 The Workers Paid plan ($5 a month) avoids that.

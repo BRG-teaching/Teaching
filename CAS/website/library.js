@@ -1252,15 +1252,20 @@ createApp({
       const mark = ai.history.length;
       ai.history.push({ role: 'user', content: line });
       ai.abort = new AbortController();
+      let spent = 0, model = '';
+      // what the answer cost, at the API's prices, shown under it
+      const costLine = () => { if (spent) say(`≈ $${spent < 0.01 ? spent.toFixed(3) : spent.toFixed(2)} for this answer · ${model.replace(/^claude-/, '').replace(/-(\d)-(\d)$/, ' $1.$2')}`, 'dim'); };
       try {
         for (let hop = 0; hop < 24; hop++) {
           const done = await claudeRound(ai.abort.signal);
           ai.history.push(...done.messages);
           if (done.container) ai.container = done.container;
           if (done.usage) lastUsage = done.usage;
+          spent += done.cost || 0; model = done.model || model;
           if (!done.viewer.length) {
             if (done.stop === 'max_tokens') say('The answer was cut off (too long). Ask for less at once.', 'err');
             else if (done.stop === 'refusal') say('Claude declined this request.', 'err');
+            costLine();
             return;
           }
           const results = [...done.results];
@@ -1299,7 +1304,7 @@ createApp({
     async function claudeRound(signal) {
       if (!cfg.chatEndpoint) {
         await loadClaude();
-        const env = { ANTHROPIC_API_KEY: ownKey.get(), ANTHROPIC_BASE_URL: devParam('anthropic') || undefined, BROWSER: true, MODEL: 'claude-opus-5-5', EFFORT: 'high',
+        const env = { ANTHROPIC_API_KEY: ownKey.get(), ANTHROPIC_BASE_URL: devParam('anthropic') || undefined, BROWSER: true, MODEL: window.BRGClaude.DEFAULT_MODEL, EFFORT: 'medium',
           LIBRARY_BASE: new URL(cfg.mirrorPath || '.', location.href).href.replace(/\/$/, ''), FIGURE_BASE: cfg.baseUrl };
         try {
           const done = await window.BRGClaude.converse(env, [...ai.history], ai.container, onClaudeEvent, signal);

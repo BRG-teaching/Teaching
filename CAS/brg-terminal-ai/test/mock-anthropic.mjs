@@ -44,12 +44,12 @@ function answer(body) {
 // The request must be the one the Worker is meant to make.
 function check(body, headers) {
   const problems = [];
-  if (body.model !== 'claude-opus-5-5') problems.push(`model ${body.model}`);
+  if (body.model !== 'claude-sonnet-5-5') problems.push(`model ${body.model}`);
   if (!body.stream) problems.push('not streamed');
   if (body.thinking?.type !== 'adaptive' || body.thinking?.display !== 'summarized') problems.push('thinking');
   if (body.fallbacks !== 'default' || !String(headers['anthropic-beta']).includes('server-side-fallback-2026-07-01')) problems.push('fallbacks');
   if (body.cache_control?.type !== 'ephemeral' || body.system?.[0]?.cache_control?.type !== 'ephemeral') problems.push('caching');
-  if (body.output_config?.effort !== 'high') problems.push('effort');
+  if (body.output_config?.effort !== 'medium') problems.push('effort');
   const names = (body.tools || []).map((t) => t.name).join(',');
   if (names !== 'code_execution,list_books,search_books,read_book_section,look_at_figure,viewer') problems.push(`tools ${names}`);
   if (!/session viewer/.test(body.system?.[0]?.text || '') || !/- Box: /.test(body.system[0].text)) problems.push('system prompt');
@@ -59,7 +59,7 @@ function check(body, headers) {
 function sse(res, reply) {
   const write = (type, data) => res.write(`event: ${type}\ndata: ${JSON.stringify({ type, ...data })}\n\n`);
   res.writeHead(200, { 'Content-Type': 'text/event-stream', 'request-id': 'req_mock' });
-  write('message_start', { message: { id: 'msg_mock', type: 'message', role: 'assistant', model: 'claude-opus-5-5', content: [], stop_reason: null, stop_sequence: null,
+  write('message_start', { message: { id: 'msg_mock', type: 'message', role: 'assistant', model: 'claude-sonnet-5-5', content: [], stop_reason: null, stop_sequence: null,
     usage: { input_tokens: 1200, output_tokens: 1, cache_read_input_tokens: 900, cache_creation_input_tokens: 0 } } });
   reply.content.forEach((block, index) => {
     if (block.type === 'thinking') {

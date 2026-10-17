@@ -2,15 +2,15 @@
 // write a report to judge the answers by: what it searched and read, the pages it cites, its answer, and its
 // drawing (rendered from the viewer commands it sent, in their colours).
 //
-//     ANTHROPIC_API_KEY=sk-ant-... node test/try-prompts.mjs            all prompts (costs real money: about
-//                                                                        $0.2-0.8 each at Opus 5.5 prices)
+//     ANTHROPIC_API_KEY=sk-ant-... node test/try-prompts.mjs            all prompts (costs real money: roughly
+//                                                                        $0.05-0.30 each on Sonnet 5.5)
 //     ANTHROPIC_API_KEY=... node test/try-prompts.mjs --only 3,7         some of them
 //     node test/try-prompts.mjs --mock                                  the plumbing only, against the mock API
 //
 // The report is try-report.html in the current directory. The 3D view is a stand-in that answers like the
 // session viewer (unknown commands are refused the same way), so the drawing is what Claude asked for.
 import fs from 'node:fs';
-import { converse } from '../src/agent.js';
+import { converse, costOf, DEFAULT_MODEL, DEFAULT_EFFORT } from '../src/agent.js';
 import VIEWER_COMMANDS from '../src/viewer-commands.js';
 import { startMock } from './mock-anthropic.mjs';
 
@@ -37,7 +37,7 @@ const env = {
   ANTHROPIC_API_KEY: mock ? 'test-key' : process.env.ANTHROPIC_API_KEY,
   ANTHROPIC_BASE_URL: mock ? 'http://localhost:8790' : process.env.ANTHROPIC_BASE_URL,
   LIBRARY_BASE: mock ? 'http://localhost:8790/library' : process.env.LIBRARY_BASE || 'https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev',
-  MODEL: process.env.MODEL || 'claude-opus-5-5', EFFORT: process.env.EFFORT || 'high',
+  MODEL: process.env.MODEL || DEFAULT_MODEL, EFFORT: process.env.EFFORT || DEFAULT_EFFORT,
 };
 if (!env.ANTHROPIC_API_KEY) { console.error('Set ANTHROPIC_API_KEY, or use --mock.'); process.exit(1); }
 const server = mock ? (await startMock(8790)).server : null;
@@ -126,8 +126,7 @@ for (const [n, prompt] of PROMPTS.entries()) {
       history.push({ role: 'user', content: results });
     }
   } catch (err) { error = err.message; }
-  // Opus 5.5: $4 / $20 per million, cache reads $0.20, cache writes 1.25 × input
-  const cost = (usage.input * 4 + usage.output * 20 + usage.cache_read * 0.2 + usage.cache_write * 5) / 1e6;
+  const cost = costOf(env.MODEL, usage);
   totalCost += cost;
   const answer = text.join('\n\n');
   const cites = answer.split('\n').filter((l) => /^\/open\s/.test(l.trim()));

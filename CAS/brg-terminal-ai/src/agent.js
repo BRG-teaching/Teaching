@@ -4,7 +4,12 @@ import Anthropic from '@anthropic-ai/sdk';
 import { SYSTEM } from './prompt.js';
 import { LIBRARY_TOOLS, runLibraryTool } from './library.js';
 
-const MAX_ROUNDS = 16; // model turns per request; the page continues after viewer calls
+const MAX_ROUNDS = 16;
+// Claude Sonnet 5.5 at medium effort by default: about half the price of Opus 5.5, strong at multi-step tool use.
+export const DEFAULT_MODEL = 'claude-sonnet-5-5', DEFAULT_EFFORT = 'medium';
+// $ per million tokens: input, output, cache read, 5-minute cache write
+export const PRICES = { 'claude-sonnet-5-5': [2, 10, 0.2, 2.5], 'claude-opus-5-5': [4, 20, 0.2, 5], 'claude-haiku-5-5': [0.1, 0.5, 0.01, 0.125] };
+export const costOf = (model, u) => { const [i, o, r, w] = PRICES[model] || PRICES[DEFAULT_MODEL]; return (u.input * i + u.output * o + u.cache_read * r + u.cache_write * w) / 1e6; }; // model turns per request; the page continues after viewer calls
 
 const VIEWER_TOOL = {
   name: 'viewer',
@@ -46,12 +51,12 @@ export async function converse(env, history, container, send, signal) {
 
   for (let round = 0; round < MAX_ROUNDS; round++) {
     const stream = client.beta.messages.stream({
-      model: env.MODEL || 'claude-opus-5-5',
+      model: env.MODEL || DEFAULT_MODEL,
       max_tokens: 64000,
       betas: ['server-side-fallback-2026-07-01'],
       fallbacks: 'default', // a declined request runs again on the model Anthropic recommends for that case
       thinking: { type: 'adaptive', display: 'summarized' },
-      output_config: { effort: env.EFFORT || 'high' },
+      output_config: { effort: env.EFFORT || DEFAULT_EFFORT },
       cache_control: { type: 'ephemeral' }, // the conversation so far
       system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }], // tools and instructions
       tools: TOOLS,
@@ -82,13 +87,13 @@ export async function converse(env, history, container, send, signal) {
 
     if (message.stop_reason === 'pause_turn') continue; // code execution paused: resume as is
     const calls = message.content.filter((b) => b.type === 'tool_use');
-    if (!calls.length) return { messages: added, container, viewer: [], results: [], usage, stop: message.stop_reason };
+    if (!calls.length) return { messages: added, container, viewer: [], results: [], usage, model: env.MODEL || DEFAULT_MODEL, cost: costOf(env.MODEL || DEFAULT_MODEL, usage), stop: message.stop_reason };
 
     // A turn cut off by max_tokens or declined may hold incomplete tool inputs: run none of them,
     // but answer each, so the conversation stays valid.
     if (message.stop_reason !== 'tool_use') {
       push({ role: 'user', content: calls.map((c) => ({ type: 'tool_result', tool_use_id: c.id, is_error: true, content: `Not run: the turn ended with ${message.stop_reason}.` })) });
-      return { messages: added, container, viewer: [], results: [], usage, stop: message.stop_reason };
+      return { messages: added, container, viewer: [], results: [], usage, model: env.MODEL || DEFAULT_MODEL, cost: costOf(env.MODEL || DEFAULT_MODEL, usage), stop: message.stop_reason };
     }
 
     const results = [], viewer = [];
@@ -109,8 +114,8 @@ export async function converse(env, history, container, send, signal) {
         results.push({ type: 'tool_result', tool_use_id: call.id, is_error: true, content: err.message });
       }
     }
-    if (viewer.length) return { messages: added, container, viewer, results, usage, stop: 'tool_use' };
+    if (viewer.length) return { messages: added, container, viewer, results, usage, model: env.MODEL || DEFAULT_MODEL, cost: costOf(env.MODEL || DEFAULT_MODEL, usage), stop: 'tool_use' };
     push({ role: 'user', content: results });
   }
-  return { messages: added, container, viewer: [], results: [], usage, stop: 'rounds' };
+  return { messages: added, container, viewer: [], results: [], usage, model: env.MODEL || DEFAULT_MODEL, cost: costOf(env.MODEL || DEFAULT_MODEL, usage), stop: 'rounds' };
 }
