@@ -1,7 +1,8 @@
 # CAS website
 
-A one-page Vue 3 site with the key slides of the deck. It opens on the full-screen title slide;
-scrolling down leads to the contents, course map, course timeline, the seven chapters (logos,
+A one-page Vue 3 site with the key slides of the deck, and the front page of
+https://brg-teaching.github.io/Teaching/ (the repo's root `index.html` redirects here). It opens on
+the full-screen title slide; every topic below is one screen, and scrolling settles on each in turn: the contents, course map, course timeline, the seven chapters (logos,
 contents, resources, submission). The Contents / Resources / Submission cards and the grading
 list start closed; click a coloured header to open one. A menu on the right side (a button at
 the bottom right on phones) jumps to every section and marks where you are.
@@ -45,7 +46,7 @@ without editing the site.
 | `library.html#/books`, `#/theses`, `#/papers` | Catalogue tab, with a search over chapter titles and summaries |
 | `library.html#/b/<book-id>` | One book: its chapters, plus README / INDEX / GLOSSARY / FIGURES when present |
 | `library.html#/b/<book-id>/<chapter.md>` | Reader: the chapter as formatted text with KaTeX maths and figures, previous / next |
-| `library.html#/terminal` | BRG terminal, full screen: the session viewer on the left shows what text cannot (chapters with figures and formulas, figure galleries, the eQUILIBRIUM step-by-step drawings); the CLI on the right takes `/books`, `/book`, `/search`, `/open`, `/read`, `/figures`, `/drawings`, `/drawing <n> [step]`, `/help`, like `uv run brg`. On phones the viewer sits above the CLI. |
+| `library.html#/terminal` | BRG terminal, full screen: the viewer on the left (an empty 3D grid until something is shown: drag to orbit, scroll to zoom) shows what text cannot (chapters with figures and formulas, figure galleries, the eQUILIBRIUM step-by-step drawings); the CLI on the right takes `/books`, `/book`, `/search`, `/open`, `/read`, `/figures`, `/drawings`, `/drawing <n> [step]`, `/help`, like `uv run brg`. On phones the viewer sits above the CLI. |
 
 `library-config.js` holds the bucket URL, which entries are theses or papers (`groupOf`;
 everything else is a book), and `chatEndpoint` for AI answers in the terminal. Until that is
@@ -53,8 +54,18 @@ set, the terminal searches the library. The `brg` CLI uses each person's own Cla
 ChatGPT login, which a public web page cannot do, so AI answers need a small server, for
 example a Cloudflare Worker with an API key that accepts `POST { messages }` and returns `{ reply }`.
 
-### CORS rule for the bucket
+### How the page reads the bucket
 
+The GitHub Pages deploy (`.github/workflows/pages.yml`) runs `tools/mirror_books.py`, which
+downloads `LIBRARY.md` and every chapter's markdown from R2 into `books/` of the published site.
+The page reads that copy first, so no CORS rule is needed. Figures still load from R2 directly
+(images do not need CORS). The deploy also runs daily at 03:17 UTC, so newly published books
+appear within a day; run the workflow by hand (Actions → Deploy static site → Run workflow) to
+pick them up at once. `books/` is not committed (`.gitignore`).
+
+### Optional CORS rule for the bucket
+
+Only needed if the page should read R2 directly (it falls back to that when the copy is missing).
 Browsers only let the page read the bucket if R2 allows it. In Cloudflare: R2 → `brg-books`
 → Settings → CORS policy:
 

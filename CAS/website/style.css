@@ -11,7 +11,15 @@
 }
 * { box-sizing: border-box; }
 [v-cloak] { display: none; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
+/* One screen per topic: every section fills the window and scrolling settles on it.
+   'proximity' (not 'mandatory') so a section taller than the screen, e.g. with its cards
+   opened, still scrolls normally. */
+.hero, .main > section { min-height: 100vh; min-height: 100svh; scroll-snap-align: start; }
+.main > section.block { justify-content: center; }
+.main > .chapter { display: flex; flex-direction: column; justify-content: center; }
+.main > .chapter > .wrap { width: 100%; }
+.foot { scroll-snap-align: end; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; }
 a { color: inherit; }

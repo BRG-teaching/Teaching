@@ -114,19 +114,13 @@
     <!-- terminal: session viewer (left) + CLI (right), filling the screen -->
     <section v-else-if="route.view === 'terminal'" class="split">
       <div class="viewer" ref="viewerEl" @click="onViewerClick">
-        <div class="viewer-bar">
+        <div class="viewer-bar" v-if="view.kind !== 'welcome'">
           <button type="button" class="vb-back" :disabled="viewStack.length < 2" @click.stop="viewBack" aria-label="Back">←</button>
           <span class="vb-title">{{ view.title }}</span>
           <a v-if="view.open" class="vb-open" :href="view.open" target="_blank" rel="noopener">open page ↗</a>
         </div>
 
-        <div v-if="view.kind === 'welcome'" class="v-pad v-welcome">
-          <h2>Session viewer</h2>
-          <p>What the terminal cannot show appears here: chapters with their figures and formulas, figure galleries and the step-by-step eQUILIBRIUM drawings.</p>
-          <ul class="v-try">
-            <li v-for="t in tries" :key="t"><button type="button" @click.stop="run(t)"><code>{{ t }}</code></button></li>
-          </ul>
-        </div>
+        <canvas v-if="view.kind === 'welcome'" ref="gridEl" class="v-grid" aria-hidden="true"></canvas>
 
         <div v-else-if="view.kind === 'loading'" class="v-pad note">Loading…</div>
         <div v-else-if="view.kind === 'error'" class="v-pad lib-error">{{ view.error }}</div>
@@ -197,6 +191,7 @@
 <script src="vendor/marked.min.js"></script>
 <script src="vendor/purify.min.js"></script>
 <script src="vendor/katex/katex.min.js"></script>
+<script src="grid3d.js"></script>
 <script src="library-config.js"></script>
 <script src="library.js"></script>
 </body>

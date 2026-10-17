@@ -3,10 +3,13 @@
 // appear here without editing this site.
 window.CAS_LIBRARY = {
   // Public R2 bucket "brg-books" (see mcp-server-brg/config/sources.yaml).
-  // The bucket needs a CORS rule allowing GET from https://brg-teaching.github.io
-  // (and http://localhost:8000 for local testing); see website/README.md.
+  // Read directly only when the deploy's copy (mirrorPath) is missing; that needs a CORS rule
+  // on the bucket allowing https://brg-teaching.github.io (see website/README.md).
   baseUrl: 'https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev',
   libraryPath: 'LIBRARY.md',
+  // Copy of the markdown made by the GitHub Pages deploy (tools/mirror_books.py), read first.
+  // It removes the need for CORS on the bucket; figures still load from baseUrl.
+  mirrorPath: 'books',
 
   // Library tabs. Every entry in LIBRARY.md is a book unless its ID is listed here.
   groups: [

@@ -88,12 +88,10 @@ body.term-full .lib-main { flex: 1; min-height: 0; }
 .vb-open { color: var(--muted); text-decoration: none; white-space: nowrap; }
 .vb-open:hover { color: var(--ink); }
 .v-pad { padding: 24px clamp(16px, 3vw, 40px) 48px; }
-.v-welcome h2 { font-size: 26px; font-weight: 600; margin-bottom: 8px; }
-.v-welcome p { color: var(--muted); max-width: 52ch; margin: 0 0 20px; }
-.v-try { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.v-try button, .v-draws button { font: inherit; cursor: pointer; border: 1px solid var(--rule); background: var(--wash); color: var(--ink); padding: 6px 12px; }
-.v-try button:hover, .v-draws button:hover { border-color: var(--pink); }
-.v-try code { font-family: var(--mono); font-size: 14px; }
+.v-grid { flex: 1; width: 100%; min-height: 0; display: block; cursor: grab; touch-action: none; }
+.v-grid:active { cursor: grabbing; }
+.v-draws button { font: inherit; cursor: pointer; border: 1px solid var(--rule); background: var(--wash); color: var(--ink); padding: 6px 12px; }
+.v-draws button:hover { border-color: var(--pink); }
 .v-shelf { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
 .v-shelf .book-card { width: 100%; border: 0; font: inherit; text-align: left; cursor: pointer; color: var(--ink); }
 .viewer .chapters button { display: grid; grid-template-columns: 40px 1fr; gap: 12px; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid var(--rule);

@@ -137,7 +137,13 @@ createApp({
     async function getText(path) {
       if (!safePath(path)) throw new Error('That is not a library file path.');
       if (textCache.has(path)) return textCache.get(path);
-      const res = await fetch(fileUrl(path), { mode: 'cors', credentials: 'omit' });
+      // 1) the copy the Pages deploy makes (same site, no CORS needed); 2) the R2 bucket directly.
+      let res = null;
+      if (cfg.mirrorPath) {
+        try { res = await fetch(`${cfg.mirrorPath}/${path.split('/').map(encodeURIComponent).join('/')}`, { cache: 'no-cache' }); } catch (e) { res = null; }
+        if (res && !res.ok) res = null;
+      }
+      if (!res) res = await fetch(fileUrl(path), { mode: 'cors', credentials: 'omit' });
       if (!res.ok) throw new Error(`The library returned HTTP ${res.status} for ${path}.`);
       const t = await res.text();
       textCache.set(path, t);
@@ -183,14 +189,15 @@ createApp({
     const prompt = ref(null);
     const viewerEl = ref(null);
     const drawingIds = ref([]);
-    const tries = ['/books', '/search funicular', '/drawing 1', '/help'];
+    const gridEl = ref(null);
+    let unmountGrid = null;
     const say = (text, kind = 'out', act) => { log.value.push({ text, kind, act }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
     say(cfg.chatEndpoint ? 'Ask a question, or use a command.' : 'Search mode: type words to search the library, or a command. AI answers are not connected yet.', 'dim');
-    say('Pictures, chapters and drawings open in the viewer on the left.', 'dim');
+    say('Pictures, chapters and drawings open on the left.', 'dim');
 
     // Viewer: what is on screen, with a back stack of the commands that produced it.
-    const view = reactive({ kind: 'welcome', title: 'Session viewer', open: '', html: '', items: [], src: '', error: '', showBook: false });
+    const view = reactive({ kind: 'welcome', title: '', open: '', html: '', items: [], src: '', error: '', showBook: false });
     const viewStack = ref(['']);
     const setView = (v) => { Object.assign(view, { open: '', html: '', items: [], src: '', error: '', showBook: false }, v); if (viewerEl.value) viewerEl.value.scrollTop = 0; };
     const remember = (cmd) => { if (viewStack.value[viewStack.value.length - 1] !== cmd) viewStack.value.push(cmd); };
@@ -199,7 +206,7 @@ createApp({
       viewStack.value.pop();
       const cmd = viewStack.value[viewStack.value.length - 1];
       if (cmd) run(cmd, { quiet: true, noRemember: true });
-      else setView({ kind: 'welcome', title: 'Session viewer' });
+      else setView({ kind: 'welcome', title: '' });
     }
     // Links inside a chapter shown in the viewer stay in the viewer.
     function onViewerClick(e) {
@@ -324,6 +331,11 @@ createApp({
       } finally { busy.value = false; }
     }
     function submit() { const line = input.value; input.value = ''; run(line); }
+    // The empty viewer is a 3D grid; mount it whenever its canvas is on screen.
+    watch(() => [view.kind, route.view], () => nextTick(() => {
+      if (unmountGrid && !(gridEl.value && gridEl.value.isConnected)) { unmountGrid(); unmountGrid = null; }
+      if (gridEl.value && !unmountGrid) unmountGrid = window.mountGrid3d(gridEl.value);
+    }), { immediate: true });
     watch(() => route.view, (v) => {
       document.body.classList.toggle('term-full', v === 'terminal');
       if (v === 'terminal') nextTick(() => prompt.value && prompt.value.focus());
@@ -333,7 +345,7 @@ createApp({
       cfg, state, error, books, query, route, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
-      view, viewStack, viewBack, viewerEl, onViewerClick, run, tries, drawingIds,
+      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, gridEl,
     };
   },
 }).mount('#app');
