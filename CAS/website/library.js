@@ -156,8 +156,34 @@ const COMMANDS = [
   { cmd: '/figures', help: '<book>/<chapter.md> show every figure of a chapter', arg: true },
   { cmd: '/drawings', help: 'show the eQUILIBRIUM step-by-step drawings' },
   { cmd: '/drawing', help: '<n> [step] play drawing n in the viewer', arg: true },
+  { cmd: '/viewer', help: 'list the session viewer commands (Box, Sphere, Line, Move, Undo…)' },
+  { cmd: '/close', help: 'close the sheet and show the 3D scene' },
   { cmd: '/clear', help: 'clear the transcript' },
 ];
+// The session viewer's own commands (viewer-commands.js); a line starting with one of them is
+// passed to the viewer's command line, e.g. "Box 0,0,0 100 50 30".
+const VIEWER_CMDS = (window.SESSION_VIEWER_COMMANDS || []).slice().sort((a, b) => b.cmd.length - a.cmd.length);
+const viewerCommandOf = (line) => VIEWER_CMDS.find((c) => line.toLowerCase() === c.cmd.toLowerCase() || line.toLowerCase().startsWith(c.cmd.toLowerCase() + ' '));
+// Plain words for shapes: "create a box", "make a sphere of radius 5 at 10,0,0", "draw a line from 0,0,0 to 100,0,0".
+const SHAPE_WORDS = { box: 'Box', cube: 'Box', block: 'Box', sphere: 'Sphere', ball: 'Sphere', cylinder: 'Cylinder', column: 'Cylinder',
+  cone: 'Cone', torus: 'Torus', ring: 'Torus', pyramid: 'Pyramid', capsule: 'Capsule', point: 'Point', line: 'Line', arrow: 'Arrow',
+  polyline: 'Polyline', curve: 'Curve', circle: 'Nurbs Curve Circle', arc: 'Nurbs Curve Arc', ellipse: 'Nurbs Curve Ellipse',
+  parabola: 'Nurbs Curve Parabola', tetrahedron: 'Tetrahedron', octahedron: 'Octahedron', icosahedron: 'Icosahedron', dodecahedron: 'Dodecahedron', text: 'Text' };
+function phraseToCommand(line) {
+  const m = line.match(/^(?:please\s+)?(?:create|make|add|draw|build|place|put|insert|model|show)\s+(?:me\s+)?(?:an?\s+|the\s+|one\s+)?([a-z]+)\b(.*)$/i);
+  if (!m) return null;
+  const verb = SHAPE_WORDS[m[1].toLowerCase().replace(/e?s$/, '')] || SHAPE_WORDS[m[1].toLowerCase()];
+  if (!verb) return null;
+  const rest = m[2];
+  const spec = VIEWER_CMDS.find((c) => c.cmd === verb);
+  const points = rest.match(/-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?(?:\s*,\s*-?\d+(?:\.\d+)?)?/g) || [];
+  const numbers = rest.replace(/-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?(?:\s*,\s*-?\d+(?:\.\d+)?)?/g, ' ').match(/-?\d+(?:\.\d+)?/g) || [];
+  if (verb === 'Text') { const t = rest.replace(/^\s*(saying|that says|with)?\s*/i, '').replace(/^["']|["']$/g, '').trim(); return t ? `Text ${t}` : null; }
+  if (!points.length && !numbers.length) return spec && spec.example ? spec.example : verb;
+  const pts = points.map((p) => p.replace(/\s+/g, ''));
+  if (['Line', 'Arrow', 'Polyline', 'Curve', 'Point'].includes(verb)) return `${verb} ${pts.join(' ')}`;
+  return `${verb} ${pts[0] || '0,0,0'} ${numbers.join(' ')}`.trim();
+}
 // The eQUILIBRIUM step-by-step player, on the same GitHub Pages site.
 const PLAYER = '../../2_computational_form_finding/Equilibrium/drawings/web/';
 
@@ -280,12 +306,58 @@ createApp({
     const prompt = ref(null);
     const viewerEl = ref(null);
     const drawingIds = ref([]);
-    const gridEl = ref(null);
-    let unmountGrid = null;
+    // The session viewer frame (viewer/index.html, same site) and the line typed into its command line.
+    const sessionEl = ref(null);
+    // The viewer's own URL options given to this page pass through, e.g. ?live=off or ?scene=view_mixed_teapot.
+    const viewerSrc = 'viewer/index.html' + (() => {
+      const q = new URLSearchParams(location.search), keep = new URLSearchParams();
+      for (const k of ['live', 'scene', 'data', 'notify', 'poll', 'msaa', 'dpr']) if (q.has(k)) keep.set(k, q.get(k));
+      return keep.toString() ? '?' + keep : '';
+    })();
+    let viewerQueue = [];
+    let viewerTimer = 0;
+    function viewerWindow() {
+      try { const w = sessionEl.value && sessionEl.value.contentWindow; return w && w.document && w.document.getElementById('command-agent') && w.wasmBindings ? w : null; }
+      catch (e) { return null; }
+    }
+    // Type a line into the viewer's command line and press Enter (its hidden #command-agent input).
+    // While the line is closed, typed letters are viewer shortcuts, so ':' opens it first; the next
+    // text then replaces the line. Each step waits a frame or two for the viewer to take it.
+    const wait = (ms) => new Promise((done) => setTimeout(done, ms));
+    async function typeIntoViewer(w, line) {
+      const input = w.document.getElementById('command-agent');
+      const type = (text) => { input.value = text; input.dispatchEvent(new w.Event('input', { bubbles: true })); };
+      type(':');
+      await wait(150);
+      type(line);
+      await wait(150);
+      input.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true, cancelable: true }));
+      await wait(250);
+    }
+    let viewerTyping = false;
+    async function flushViewer(started = Date.now()) {
+      clearTimeout(viewerTimer);
+      if (viewerTyping) return;
+      const w = viewerWindow();
+      if (!w) {
+        if (Date.now() - started > 20000) { say('The session viewer did not start. It needs a browser with WebGPU (Chrome, Edge, Safari 26).', 'err'); viewerQueue = []; return; }
+        viewerTimer = setTimeout(() => flushViewer(started), 250);
+        return;
+      }
+      viewerTyping = true;
+      try { while (viewerQueue.length) await typeIntoViewer(w, viewerQueue.shift()); }
+      finally { viewerTyping = false; }
+    }
+    function sendToViewer(...lines) {
+      if (view.kind !== 'welcome') closeSheet();
+      viewerQueue.push(...lines);
+      flushViewer();
+    }
     const say = (text, kind = 'out', act) => { log.value.push({ text, kind, act }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
     say(cfg.chatEndpoint ? 'Ask a question, or use a command.' : 'Search mode: type words to search the library, or a command. AI answers are not connected yet.', 'dim');
-    say('Pictures, chapters and drawings open on the left.', 'dim');
+    say('The session viewer on the left shows the live scene. Type a viewer command (Box 0,0,0 100 50 30) or “create a box”; /viewer lists them.', 'dim');
+    say('Chapters, figures and drawings open on a sheet over it; /close shows the scene again.', 'dim');
 
     // Viewer: what is on screen, with a back stack of the commands that produced it.
     const view = reactive({ kind: 'welcome', title: '', open: '', html: '', items: [], src: '', error: '', showBook: false });
@@ -299,6 +371,7 @@ createApp({
       if (cmd) run(cmd, { quiet: true, noRemember: true });
       else setView({ kind: 'welcome', title: '' });
     }
+    function closeSheet() { setView({ kind: 'welcome', title: '' }); remember(''); }
     // Links inside a chapter shown in the viewer stay in the viewer.
     function onViewerClick(e) {
       const a = e.target.closest && e.target.closest('a[href^="#/b/"]');
@@ -318,8 +391,12 @@ createApp({
 
     const menuItems = computed(() => {
       const v = input.value;
-      if (!v.startsWith('/') || v.includes(' ')) return [];
-      return COMMANDS.filter((c) => c.cmd.startsWith(v.toLowerCase()));
+      if (v.startsWith('/')) return v.includes(' ') ? [] : COMMANDS.filter((c) => c.cmd.startsWith(v.toLowerCase()));
+      // viewer commands by their first letters ("Bo" → Box), until arguments are typed
+      if (v.length < 2 || /\d|,/.test(v) || v.split(' ').length > 3) return [];
+      const low = v.toLowerCase();
+      return VIEWER_CMDS.filter((c) => c.cmd.toLowerCase().startsWith(low)).sort((a, b) => a.cmd.length - b.cmd.length).slice(0, 8)
+        .map((c) => ({ cmd: c.cmd, help: c.help.replace(/^[^·:]*[·:]\s*/, ''), arg: !!c.example, viewer: true }));
     });
     watch(menuItems, () => { menuIndex.value = 0; });
     const takeMenu = (m) => { input.value = m.cmd + (m.arg ? ' ' : ''); if (!m.arg) submit(); prompt.value && prompt.value.focus(); };
@@ -331,7 +408,7 @@ createApp({
         e.preventDefault(); menuIndex.value = (menuIndex.value + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length; return;
       }
       if (items.length && e.key === 'Tab') { e.preventDefault(); takeMenu(items[menuIndex.value]); return; }
-      if (items.length && e.key === 'Enter' && input.value !== items[menuIndex.value].cmd) { e.preventDefault(); takeMenu(items[menuIndex.value]); return; }
+      if (items.length && e.key === 'Enter' && !items[menuIndex.value].viewer && input.value !== items[menuIndex.value].cmd) { e.preventDefault(); takeMenu(items[menuIndex.value]); return; }
       if (e.key === 'Escape') { input.value = ''; return; }
       if (!items.length && (e.key === 'ArrowUp' || e.key === 'ArrowDown') && history.length) {
         e.preventDefault(); hpos = Math.max(0, Math.min(history.length, hpos + (e.key === 'ArrowUp' ? -1 : 1))); input.value = history[hpos] || '';
@@ -356,7 +433,13 @@ createApp({
       const keep = () => { if (!opts.noRemember) remember(line); };
       try {
         busy.value = true;
-        if (cmd === '/help' || cmd === '?') COMMANDS.forEach((c) => say(`${c.cmd.padEnd(10)} ${c.help}`));
+        if (cmd === '/help' || cmd === '?') {
+          COMMANDS.forEach((c) => say(`${c.cmd.padEnd(10)} ${c.help}`));
+          say('Session viewer: type its commands directly, e.g. Box 0,0,0 100 50 30, Sphere 0,0,0 10, Line 0,0,0 100,0,0, Move 10,0,0, Undo, Fit, Layers On.', 'dim');
+          say('Or plain words: create a box, make a sphere at 10,0,0 radius 5, draw a line from 0,0,0 to 100,0,0.', 'dim');
+        }
+        else if (cmd === '/viewer') VIEWER_CMDS.slice().sort((a, b) => a.cmd.localeCompare(b.cmd)).forEach((c) => say(`${c.cmd.padEnd(24)} ${c.help.replace(/^[^·:]*[·:]\s*/, '')}`, 'out', c.example || c.cmd));
+        else if (cmd === '/close') closeSheet();
         else if (cmd === '/clear') log.value = [];
         else if (cmd === '/books') {
           if (!ready()) return;
@@ -408,6 +491,8 @@ createApp({
           setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
           say(`Drawing ${n} playing in the viewer. Use its controls to step through the construction.`, 'dim'); keep();
         } else if (cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
+        else if (viewerCommandOf(line)) { sendToViewer(line); say('→ session viewer: ' + line, 'dim'); }
+        else if (phraseToCommand(line)) { const c = phraseToCommand(line); sendToViewer(c, 'Fit'); say('→ session viewer: ' + c, 'dim'); }
         else if (cfg.chatEndpoint) {
           chat.push({ role: 'user', content: line });
           const res = await fetch(cfg.chatEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: chat }) });
@@ -422,11 +507,6 @@ createApp({
       } finally { busy.value = false; }
     }
     function submit() { const line = input.value; input.value = ''; run(line); }
-    // The empty viewer is a 3D grid; mount it whenever its canvas is on screen.
-    watch(() => [view.kind, route.view], () => nextTick(() => {
-      if (unmountGrid && !(gridEl.value && gridEl.value.isConnected)) { unmountGrid(); unmountGrid = null; }
-      if (gridEl.value && !unmountGrid) unmountGrid = window.mountGrid3d(gridEl.value);
-    }), { immediate: true });
     watch(() => route.view, (v) => {
       document.body.classList.toggle('term-full', v === 'terminal');
       if (v === 'terminal') nextTick(() => prompt.value && prompt.value.focus());
@@ -436,7 +516,7 @@ createApp({
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
-      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, gridEl,
+      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet,
     };
   },
 }).mount('#app');

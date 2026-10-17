@@ -120,45 +120,49 @@
 
     <!-- terminal: session viewer (left) + CLI (right), filling the screen -->
     <section v-else-if="route.view === 'terminal'" class="split">
-      <div class="viewer" ref="viewerEl" @click="onViewerClick">
-        <div class="viewer-bar" v-if="view.kind !== 'welcome'">
-          <button type="button" class="vb-back" :disabled="viewStack.length < 2" @click.stop="viewBack" aria-label="Back">←</button>
-          <span class="vb-title">{{ view.title }}</span>
-          <a v-if="view.open" class="vb-open" :href="view.open" target="_blank" rel="noopener">open page ↗</a>
+      <div class="viewer">
+        <!-- The session viewer (petrasvestartas/session, WebGPU): the backend's live scene, and what the terminal builds.
+             :src, not src, so the page's raw HTML does not load it once more before Vue mounts. -->
+        <iframe ref="sessionEl" class="session-frame" :src="viewerSrc" title="Session viewer"></iframe>
+        <div class="sheet" v-if="view.kind !== 'welcome'" ref="viewerEl" @click="onViewerClick">
+          <div class="viewer-bar">
+            <button type="button" class="vb-back" :disabled="viewStack.length < 2" @click.stop="viewBack" aria-label="Back">←</button>
+            <span class="vb-title">{{ view.title }}</span>
+            <a v-if="view.open" class="vb-open" :href="view.open" target="_blank" rel="noopener">open page ↗</a>
+            <button type="button" class="vb-close" @click.stop="closeSheet" aria-label="Close and show the 3D scene">✕</button>
+          </div>
+
+          <div v-if="view.kind === 'loading'" class="v-pad note">Loading…</div>
+          <div v-else-if="view.kind === 'error'" class="v-pad lib-error">{{ view.error }}</div>
+
+          <ul v-else-if="view.kind === 'shelf'" class="v-pad shelf v-shelf">
+            <li v-for="b in books" :key="b.id"><button type="button" class="book-card" @click.stop="run('/book ' + b.id)">
+              <book-cover :title="coverOf(b).short" :color="coverOf(b).subject.color"></book-cover><b>{{ b.title }}</b>
+              <span class="meta">{{ groupLabel(groupOf(b.id)) }} · {{ b.sections.length }} chapter{{ b.sections.length === 1 ? '' : 's' }}</span></button></li>
+          </ul>
+
+          <ol v-else-if="view.kind === 'list'" class="v-pad chapters">
+            <li v-for="(s, i) in view.items" :key="s.book + s.section">
+              <button type="button" @click.stop="run('/open ' + s.book + '/' + s.section)">
+                <span class="num">{{ String(i + 1).padStart(2, '0') }}</span>
+                <span><b>{{ s.title }}</b><span class="sum">{{ view.showBook ? bookTitle(s.book) + ' · ' : '' }}{{ s.summary }}</span></span>
+              </button>
+            </li>
+          </ol>
+
+          <div v-else-if="view.kind === 'doc'" class="v-pad md" v-html="view.html"></div>
+
+          <div v-else-if="view.kind === 'figures'" class="v-pad v-figs">
+            <p v-if="!view.items.length" class="note">This chapter has no figures.</p>
+            <figure v-for="f in view.items" :key="f.src"><img :src="f.src" :alt="f.alt" loading="lazy"><figcaption>{{ f.alt || f.name }}</figcaption></figure>
+          </div>
+
+          <div v-else-if="view.kind === 'drawings'" class="v-pad v-draws">
+            <button v-for="n in drawingIds" :key="n" type="button" @click.stop="run('/drawing ' + n)">{{ n }}</button>
+          </div>
+
+          <iframe v-else-if="view.kind === 'drawing'" class="v-frame" :src="view.src" :title="view.title"></iframe>
         </div>
-
-        <canvas v-if="view.kind === 'welcome'" ref="gridEl" class="v-grid" aria-hidden="true"></canvas>
-
-        <div v-else-if="view.kind === 'loading'" class="v-pad note">Loading…</div>
-        <div v-else-if="view.kind === 'error'" class="v-pad lib-error">{{ view.error }}</div>
-
-        <ul v-else-if="view.kind === 'shelf'" class="v-pad shelf v-shelf">
-          <li v-for="b in books" :key="b.id"><button type="button" class="book-card" @click.stop="run('/book ' + b.id)">
-            <book-cover :title="coverOf(b).short" :color="coverOf(b).subject.color"></book-cover><b>{{ b.title }}</b>
-            <span class="meta">{{ groupLabel(groupOf(b.id)) }} · {{ b.sections.length }} chapter{{ b.sections.length === 1 ? '' : 's' }}</span></button></li>
-        </ul>
-
-        <ol v-else-if="view.kind === 'list'" class="v-pad chapters">
-          <li v-for="(s, i) in view.items" :key="s.book + s.section">
-            <button type="button" @click.stop="run('/open ' + s.book + '/' + s.section)">
-              <span class="num">{{ String(i + 1).padStart(2, '0') }}</span>
-              <span><b>{{ s.title }}</b><span class="sum">{{ view.showBook ? bookTitle(s.book) + ' · ' : '' }}{{ s.summary }}</span></span>
-            </button>
-          </li>
-        </ol>
-
-        <div v-else-if="view.kind === 'doc'" class="v-pad md" v-html="view.html"></div>
-
-        <div v-else-if="view.kind === 'figures'" class="v-pad v-figs">
-          <p v-if="!view.items.length" class="note">This chapter has no figures.</p>
-          <figure v-for="f in view.items" :key="f.src"><img :src="f.src" :alt="f.alt" loading="lazy"><figcaption>{{ f.alt || f.name }}</figcaption></figure>
-        </div>
-
-        <div v-else-if="view.kind === 'drawings'" class="v-pad v-draws">
-          <button v-for="n in drawingIds" :key="n" type="button" @click.stop="run('/drawing ' + n)">{{ n }}</button>
-        </div>
-
-        <iframe v-else-if="view.kind === 'drawing'" class="v-frame" :src="view.src" :title="view.title"></iframe>
       </div>
 
       <div class="term" @click="focusPrompt">
@@ -198,7 +202,7 @@
 <script src="vendor/marked.min.js"></script>
 <script src="vendor/purify.min.js"></script>
 <script src="vendor/katex/katex.min.js"></script>
-<script src="grid3d.js"></script>
+<script src="viewer-commands.js"></script>
 <script src="library-config.js"></script>
 <script src="library.js"></script>
 </body>

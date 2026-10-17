@@ -95,7 +95,12 @@ body.term-full { overflow: hidden; }
 body.term-full #app { height: 100vh; height: 100svh; display: flex; flex-direction: column; }
 body.term-full .lib-main { flex: 1; min-height: 0; }
 .split { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.viewer { min-width: 0; overflow-y: auto; background: #fff; border-right: 1px solid #1e2944; display: flex; flex-direction: column; }
+.viewer { position: relative; min-width: 0; overflow: hidden; background: #fff; border-right: 1px solid #1e2944; }
+/* the session viewer fills the panel; chapters, figures and drawings open on a sheet over it */
+.session-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.sheet { position: absolute; inset: 0; z-index: 2; overflow-y: auto; background: #fff; display: flex; flex-direction: column; }
+.vb-close { font: inherit; width: 30px; height: 30px; border: 1px solid var(--rule); background: #fff; color: var(--ink); cursor: pointer; flex: none; }
+.vb-close:hover { border-color: var(--pink); }
 .viewer-bar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: rgba(255, 255, 255, 0.96);
   border-bottom: 1px solid var(--rule); font-size: 14px; }
 .vb-back { font: inherit; width: 30px; height: 30px; border: 1px solid var(--rule); background: #fff; color: var(--ink); cursor: pointer; flex: none; }
@@ -104,8 +109,6 @@ body.term-full .lib-main { flex: 1; min-height: 0; }
 .vb-open { color: var(--muted); text-decoration: none; white-space: nowrap; }
 .vb-open:hover { color: var(--ink); }
 .v-pad { padding: 24px clamp(16px, 3vw, 40px) 48px; }
-.v-grid { flex: 1; width: 100%; min-height: 0; display: block; cursor: grab; touch-action: none; }
-.v-grid:active { cursor: grabbing; }
 .v-draws button { font: inherit; cursor: pointer; border: 1px solid var(--rule); background: var(--wash); color: var(--ink); padding: 6px 12px; }
 .v-draws button:hover { border-color: var(--pink); }
 .v-shelf { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }

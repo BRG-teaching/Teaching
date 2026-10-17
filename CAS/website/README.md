@@ -46,7 +46,7 @@ without editing the site.
 | `library.html#/books`, `#/theses`, `#/papers` | Catalogue tab, with a search over chapter titles and summaries |
 | `library.html#/b/<book-id>` | One book: its chapters, plus README / INDEX / GLOSSARY / FIGURES when present |
 | `library.html#/b/<book-id>/<chapter.md>` | Reader: the chapter as formatted text with KaTeX maths and figures, previous / next |
-| `library.html#/terminal` | BRG terminal, full screen: the viewer on the left (an empty 3D grid until something is shown: drag to orbit, scroll to zoom) shows what text cannot (chapters with figures and formulas, figure galleries, the eQUILIBRIUM step-by-step drawings); the CLI on the right takes `/books`, `/book`, `/search`, `/open`, `/read`, `/figures`, `/drawings`, `/drawing <n> [step]`, `/help`, like `uv run brg`. On phones the viewer sits above the CLI. |
+| `library.html#/terminal` | BRG terminal, full screen: the **session viewer** on the left, the CLI on the right (see below) |
 
 **Tabs.** Each entry is sorted automatically: under a `# Theses` / `# Papers` heading in
 `LIBRARY.md`, or with words such as thesis, PhD, dissertation (→ BRG PhD theses) or paper,
@@ -92,3 +92,41 @@ Browsers only let the page read the bucket if R2 allows it. In Cloudflare: R2 �
 ```
 
 Libraries in `vendor/`: Vue 3.5.13, marked 12.0.2, DOMPurify 3.1.6, KaTeX 0.16.11 (all MIT).
+
+## BRG terminal and the session viewer
+
+The left half of `library.html#/terminal` is the session viewer from
+[petrasvestartas/session](https://github.com/petrasvestartas/session) (`session_viewer`, Rust → WebAssembly,
+WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; Safari 26).
+
+- **Backend session.** Opened without parameters, the viewer watches the live scene
+  (`scenes/view_live.yaml` in the session R2 bucket) and its ntfy channel. Whatever the desktop `brg`
+  terminal, an MCP tool or a `session_py` script publishes with `bash/view_live.sh` appears here
+  within seconds.
+- **Commands from the terminal.** A line that starts with one of the viewer's 86 commands
+  (`viewer-commands.js`, e.g. `Box 0,0,0 100 50 30`, `Sphere 0,0,0 10`, `Line 0,0,0 100,0,0`, `Move 10,0,0`,
+  `Undo`, `Fit`, `Layers On`) is typed into the viewer's own command line. Plain words for shapes also
+  work: `create a box`, `make a sphere at 10,0,0 radius 5`, `draw a line from 0,0,0 to 100,0,0`.
+  `/viewer` lists every command; Tab completes them.
+- Chapters, figures, the shelf and the eQUILIBRIUM drawings open on a sheet over the viewer;
+  ✕ or `/close` shows the 3D scene again.
+- The viewer's URL options given to `library.html` pass through to it: `library.html?live=off#/terminal`
+  opens an empty scene instead of the live one, `?scene=…`, `?live=<manifest url>`, `?msaa=1`, `?dpr=1` likewise.
+
+The terminal types each line into the viewer's hidden command input (`#command-agent`): first `:` to open
+its command line (while it is closed, letters are viewer shortcuts), then the line, then Enter.
+
+The live scene is read from the session R2 bucket, so that bucket's CORS rule must allow
+`https://brg-teaching.github.io` as well as the viewer's own site.
+
+Rebuild the viewer after it changes (`session` and `wood` cloned side by side, built at session `b173de5`).
+`tools/Trunk.cas.toml` is the viewer's `Trunk.toml` without the pre-build hook that renders its docs:
+
+```bash
+cd session/session_viewer
+rustup target add wasm32-unknown-unknown && cargo install trunk --version 0.21.14 --locked
+cp ../../teaching/CAS/website/tools/Trunk.cas.toml .
+mkdir -p target/docs/vue        # the docs hook is skipped; the viewer only links to them
+REGEN_PROTO=0 trunk build --release --config Trunk.cas.toml --public-url ./ --dist ../../teaching/CAS/website/viewer
+python3 ../../teaching/CAS/website/tools/extract_viewer_commands.py   # refresh viewer-commands.js
+```
