@@ -11,10 +11,10 @@
 }
 * { box-sizing: border-box; }
 [v-cloak] { display: none; }
-html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
-/* One screen per topic: every section fills the window and scrolling settles on it.
-   'proximity' (not 'mandatory') so a section taller than the screen, e.g. with its cards
-   opened, still scrolls normally. */
+html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+/* One screen per topic: every section fills the window and scrolling always settles on one,
+   so the next topic is only seen when you scroll to it. A section taller than the screen
+   (phones, or cards opened) still scrolls through before snapping to the next. */
 .hero, .main > section { min-height: 100vh; min-height: 100svh; scroll-snap-align: start; }
 .main > section.block { justify-content: center; }
 .main > .chapter { display: flex; flex-direction: column; justify-content: center; }

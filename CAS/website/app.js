@@ -45,14 +45,27 @@ createApp({
     // Highlight the section that crosses the middle of the screen.
     let io;
     const onKey = (e) => { if (e.key === 'Escape') menuOpen.value = false; };
+    // In-page links (menu, contents, course map, timeline): bring the section's top to the top
+    // of the window so it fills the screen, then keep the address in sync.
+    const onLink = (e) => {
+      const a = e.target.closest && e.target.closest('a[href^="#"]');
+      if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      const el = document.getElementById(a.getAttribute('href').slice(1));
+      if (!el) return;
+      e.preventDefault();
+      menuOpen.value = false;
+      el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+      history.replaceState(null, '', '#' + el.id);
+    };
     onMounted(() => {
       io = new IntersectionObserver((entries) => {
         entries.forEach((e) => { if (e.isIntersecting) active.value = e.target.id; });
       }, { rootMargin: '-50% 0px -50% 0px' });
       document.querySelectorAll('#top, main section[id]').forEach((el) => io.observe(el));
       addEventListener('keydown', onKey);
+      document.addEventListener('click', onLink);
     });
-    onBeforeUnmount(() => { io && io.disconnect(); removeEventListener('keydown', onKey); });
+    onBeforeUnmount(() => { io && io.disconnect(); removeEventListener('keydown', onKey); document.removeEventListener('click', onLink); });
 
     return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments };
   },
