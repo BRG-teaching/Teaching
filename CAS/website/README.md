@@ -115,6 +115,11 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
   `copy the sphere 1000 in x`, `hide everything`, `show all`, `top view`, `zoom to fit`, `undo twice`).
   A request it cannot read is reported as such, not searched in the library. Anything beyond this needs an AI
   model behind `chatEndpoint`.
+- **Graphic statics** after Lévy (*La Statique graphique* I, ch. I): `funicular cable`, `funicular arch`,
+  `create a funicular cable with form and force diagram`, `funicular cable with 7 loads of 12 kN span 20 m sag 4 m`,
+  `funicular arch loads 10 20 30 20 10`. It draws the form diagram (cable or arch, closing string, loads, supports)
+  and the force diagram (load line, pole, rays, H) in the XZ plane, prints the reactions, the thrust H and the largest
+  force, and lists the library's chapters on the funicular polygon, Lévy first.
 - The viewer's replies (`Created and selected box…`, `3 selected`, errors) are shown in the terminal.
 - Chapters, figures, the shelf and the eQUILIBRIUM drawings open on a sheet over the viewer;
   ✕ or `/close` shows the 3D scene again.

@@ -172,6 +172,7 @@ const SHAPE_WORDS = { box: 'Box', cube: 'Box', block: 'Box', sphere: 'Sphere', b
   parabola: 'Nurbs Curve Parabola', tetrahedron: 'Tetrahedron', octahedron: 'Octahedron', icosahedron: 'Icosahedron', dodecahedron: 'Dodecahedron', text: 'Text' };
 // Shapes the viewer would otherwise wait for clicks on.
 const SHAPE_DEFAULTS = { Point: 'Point 0,0,0', Polyline: 'Polyline 0,0,0 1000,0,0 1000,1000,0', Text: 'Text Hello' };
+// A line starting with "=" answers the running command (an option such as "Height 200") instead of ending it.
 const NUM = '-?\\d+(?:\\.\\d+)?';
 const POINT = new RegExp(`${NUM}\\s*,\\s*${NUM}(?:\\s*,\\s*${NUM})?`, 'g');
 const pointsIn = (s) => (s.match(POINT) || []).map((p) => p.replace(/\s+/g, ''));
@@ -216,6 +217,65 @@ const RECIPE_WORDS = { table: 'table', tables: 'table', desk: 'desk', stool: 'st
   floor: 'slab', grid: 'column grid', columns: 'column grid', frame: 'frame', portal: 'frame' };
 const recipeIn = (s) => { if (/\bcolumns?\s+grid\b|\bgrid of columns\b/.test(s)) return 'column grid'; for (const w of s.match(/[a-z]+/g) || []) if (RECIPE_WORDS[w]) return RECIPE_WORDS[w]; return ''; };
 
+// Graphic statics after Lévy (La Statique graphique I, ch. I): the funicular polygon of vertical loads, a hanging
+// cable or, inverted, an arch, as its form diagram, with the force diagram beside it: the load line, the pole and the
+// rays, each parallel to a segment of the cable. In the XZ plane (View Front), lengths in millimetres, forces in kN.
+const FUNICULAR = /\b(funicular|funiculaire|cable|catenary|hanging chain|arch|thrust line|force (diagram|polygon)|form (and|&|\+) force|graphic static)/;
+let phraseNotes = [];
+function lengthIn(s, words, fallback) {
+  const m = s.match(new RegExp(`\\b(?:${words})\\s*(?:of\\s*|=\\s*)?(${NUM})\\s*(mm|cm|m)?\\b`)) || s.match(new RegExp(`(${NUM})\\s*(mm|cm|m)?\\s*(?:${words})\\b`));
+  if (!m) return fallback;
+  const v = Math.abs(+m[1]), unit = m[2] || (v < 200 ? 'm' : 'mm');
+  return v * (unit === 'm' ? 1000 : unit === 'cm' ? 10 : 1);
+}
+function funicular(s) {
+  const arch = /\b(arch|vault|thrust line|compression)\b/.test(s);
+  const listed = s.match(/\bloads?\s*(?:of\s*|=\s*)?(\d+(?:\.\d+)?(?:(?:\s*,\s*|\s+and\s+|\s+)\d+(?:\.\d+)?)+)/);
+  const count = +((s.match(/(\d+)\s*(?:point\s+|equal\s+|vertical\s+)?(?:loads|forces|weights|nodes)/) || [])[1] || 0);
+  const each = +((s.match(new RegExp(`(${NUM})\\s*kn\\b`)) || [])[1] || 10);
+  let P = listed ? listed[1].match(/\d+(?:\.\d+)?/g).map(Number).filter((v) => v > 0) : [];
+  if (!P.length) P = Array(Math.max(1, Math.min(24, count || 5))).fill(each);
+  const n = P.length, total = P.reduce((a, v) => a + v, 0);
+  const L = lengthIn(s, 'span|wide|long', 10000), f = lengthIn(s, 'sag|rise|dip|depth|height', L / 4);
+  // the loads stand at equal spacing; the support reactions and bending moments of the simple beam give the shape
+  const x = P.map((_, i) => L * (i + 1) / (n + 1));
+  const RA = P.reduce((a, v, i) => a + v * (L - x[i]) / L, 0), RB = total - RA;
+  const M = x.map((xi, i) => RA * xi - P.slice(0, i).reduce((a, v, j) => a + v * (xi - x[j]), 0));
+  const H = Math.max(...M) / f;                                       // the thrust that gives the asked sag
+  const z = M.map((m) => (arch ? 1 : -1) * m / H);
+  const r = (v) => Math.round(v), pt = (X, Z) => `${r(X)},0,${r(Z)}`;
+  // force diagram: 0.6 of the span holds all loads; the pole sits H from the load line, on the side that keeps the rays parallel
+  const k = 0.6 * L / total, gap = 0.3 * L;
+  const X0 = arch ? L + gap + H * k : L + gap, OX = arch ? X0 - H * k : X0 + H * k;
+  const q = [RA * k];
+  P.forEach((v) => q.push(q[q.length - 1] - v * k));
+  const h = r(L / 40), text = (t, X, Z) => [`Text ${t}`, `=Height ${h}`, pt(X, Z)];
+  const top = arch ? f : 0;
+  const cmds = [
+    `Polyline ${[pt(0, 0), ...x.map((xi, i) => pt(xi, z[i])), pt(L, 0)].join(' ')}`,  // the cable, or the arch
+    `Line ${pt(0, 0)} ${pt(L, 0)}`,                                                      // its closing string
+    `Point ${pt(0, 0)}`, `Point ${pt(L, 0)}`,
+    ...x.map((xi, i) => `Arrow ${pt(xi, z[i] + P[i] * k * 0.5)} ${pt(xi, z[i])}`),       // the loads
+    `Line ${pt(X0, q[0])} ${pt(X0, q[n])}`,                                              // the load line
+    ...q.map((qz) => `Line ${pt(OX, 0)} ${pt(X0, qz)}`),                                 // the rays
+    `Line ${pt(OX, 0)} ${pt(X0, 0)}`, `Point ${pt(OX, 0)}`,                              // H, and the pole
+    ...text(arch ? 'form diagram (arch)' : 'form diagram (cable)', 0, top + 2.5 * h + Math.max(...P) * k * 0.5),
+    ...text('force diagram', Math.min(X0, OX), q[0] + 2.5 * h),
+    ...text('O', OX + (arch ? -1.5 : 0.6) * h, 0.6 * h),
+    ...text(`H = ${H.toFixed(1)} kN`, Math.min(X0, OX) + 0.2 * h, -1.6 * h),
+    ...x.flatMap((xi, i) => text(`P${i + 1}`, xi + 0.4 * h, z[i] + P[i] * k * 0.5 - h)),
+    'Escape', 'View Front', 'Fit',
+  ];
+  const T = Math.max(Math.hypot(H, RA), Math.hypot(H, RB));
+  phraseNotes.push(
+    `${arch ? 'Funicular arch' : 'Funicular cable'} · ${n} load${n === 1 ? '' : 's'} (${P.join(', ')} kN) · span ${(L / 1000).toFixed(2)} m · ${arch ? 'rise' : 'sag'} ${(f / 1000).toFixed(2)} m`,
+    `Reactions R_A = ${RA.toFixed(1)} kN, R_B = ${RB.toFixed(1)} kN · horizontal thrust H = ${H.toFixed(1)} kN, the pole distance`,
+    `Largest ${arch ? 'compression' : 'tension'} ${T.toFixed(1)} kN, in the end segments · force scale 1 kN = ${r(k)} mm · Front view, XZ plane`,
+    'Change it: “funicular cable with 7 loads of 12 kN span 20 m sag 4 m”, “funicular arch loads 10 20 30 20 10”',
+  );
+  return cmds;
+}
+
 const CREATE = /^(create|make|add|draw|build|place|put|insert|model|generate|design|construct|give me|show me)\b/;
 const SCENE_VERBS = /^(create|make|add|draw|build|place|put|insert|model|generate|design|construct|give|show|remove|delete|erase|clear|empty|reset|wipe|clean|get|discard|trash|kill|select|pick|choose|highlight|deselect|unselect|hide|unhide|reveal|zoom|fit|frame|focus|center|centre|view|look|switch|move|shift|translate|push|pull|slide|copy|duplicate|clone|rotate|turn|spin|twist|scale|resize|grow|shrink|enlarge|double|halve|triple|undo|redo|revert|measure|start|new|cancel|stop|escape)\b/;
 const ALL = /\b(all|everything|every\s*\w*|whole|entire|scene)\b/;
@@ -243,6 +303,7 @@ const VIEWS = { top: 'Top', plan: 'Top', front: 'Front', back: 'Back', left: 'Le
   iso: 'Isometric', axonometric: 'Isometric', '3d': 'Isometric', perspective: 'Perspective', orthographic: 'Orthographic', ortho: 'Orthographic', parallel: 'Orthographic' };
 
 function createCommands(s) {
+  if (FUNICULAR.test(s)) return funicular(s);
   const recipe = recipeIn(s);
   if (recipe) return [...RECIPES[recipe](s), 'Escape', 'Fit'];
   const verb = shapeIn(s);
@@ -261,7 +322,7 @@ function createCommands(s) {
     const fill = spec && spec.example ? numbersIn(spec.example.slice(verb.length)) : [];
     line = `${verb} ${pts[0] || '0,0,0'} ${nums.concat(fill.slice(nums.length)).join(' ')}`.trim();
   }
-  return verb === 'Polyline' ? [line, '', 'Fit'] : [line, 'Fit'];
+  return [line, 'Fit'];
 }
 
 // One clause ("move the box up 200") to viewer commands, or null when it is not understood.
@@ -309,7 +370,7 @@ function clauseToCommands(s) {
     const what = /\barea\b/.test(s) ? 'Area' : /\bvolume\b/.test(s) ? 'Volume' : /\b(length|long)\b/.test(s) ? 'Length' : '';
     return what ? [...targetOf(s), what] : null;
   }
-  if (CREATE.test(s)) return createCommands(s);
+  if (CREATE.test(s) || /^(a |an |the )?(funicular|cable|catenary|arch|thrust line|force diagram)\b/.test(s)) return createCommands(s);
   return null;
 }
 
@@ -317,25 +378,30 @@ function clauseToCommands(s) {
 // takes the one before ("create a box and a sphere at 2000,0,0"). Returns { commands }, { failed } when a
 // clause is not understood (sure: the line clearly asks for the scene), or null for a line about something else.
 let typedLine = '';
-const ASKS = /^(what|how|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*)\b|\bview\b/;
+const ASKS = /^(a |an |the )?(funicular|cable|catenary|arch|thrust line|force diagram)\b|^(what|how|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*)\b|\bview\b/;
 const WEAK = /^(what|how|show|get|give|look|switch|go|set|change|start|new|stop|cancel|turn|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*|view)\b/;
 function phraseToCommands(line) {
   typedLine = line;
   const s = line.toLowerCase().trim().replace(/[.!?]+$/, '')
     .replace(/^((please|can you|could you|would you|will you|kindly|now|just|i want( you)? to|i'd like( you)? to|i would like( you)? to|let'?s)\s+)+/, '').replace(/\s+please$/, '');
   if (!SCENE_VERBS.test(s) && !ASKS.test(s)) return null;
-  // furniture and parts take the whole line: "create a table with 4 legs and the top"
-  if (CREATE.test(s) && recipeIn(s)) return { commands: createCommands(s) };
-  const commands = [], failed = [];
-  let verb = '';
-  for (let c of s.split(/\s*;\s*|\s*,?\s+(?:and then|and also|after that|then|and)\s+/)) {
+  phraseNotes = [];
+  // a clause without a verb takes the one before, or belongs to a part that reads the whole clause:
+  // "create a table with 4 legs and the top", "a funicular cable with form and force diagram"
+  const clauses = [];
+  for (const c of s.split(/\s*;\s*|\s*,?\s+(?:and then|and also|after that|then|and)\s+/)) {
     if (!c) continue;
-    const first = (c.match(/^[a-z]+/) || [''])[0];
-    if (SCENE_VERBS.test(first)) verb = first; else if (verb) c = `${verb} ${c}`;
-    const got = clauseToCommands(c);
-    if (got) commands.push(...got); else failed.push(c);
+    const first = (c.match(/^[a-z]+/) || [''])[0], prev = clauses[clauses.length - 1];
+    if (SCENE_VERBS.test(first) || !prev) clauses.push({ text: c, verb: SCENE_VERBS.test(first) ? first : '' });
+    else if (recipeIn(prev.text) || FUNICULAR.test(prev.text)) prev.text += ' and ' + c;
+    else clauses.push({ text: `${prev.verb} ${c}`.trim(), verb: prev.verb });
   }
-  return failed.length ? { failed, sure: !WEAK.test(s) } : { commands };
+  const commands = [], failed = [];
+  for (const c of clauses) {
+    const got = clauseToCommands(c.text);
+    if (got) commands.push(...got); else failed.push(c.text);
+  }
+  return failed.length ? { failed, sure: !WEAK.test(s) } : { commands, notes: phraseNotes, funicular: FUNICULAR.test(s) };
 }
 // The eQUILIBRIUM step-by-step player, on the same GitHub Pages site.
 const PLAYER = '../../2_computational_form_finding/Equilibrium/drawings/web/';
@@ -490,6 +556,20 @@ createApp({
     }
     let viewerTyping = false;
     let listenUntil = 0;
+    let viewerAsks = false; // the viewer's last reply asks for a point, a value or an option
+    let batchReplies = null; // the replies to a long batch, while it runs
+    function sumUp(replies) {
+      const made = {};
+      let deleted = 0;
+      for (const t of replies) {
+        const m = t.match(/^Created and selected (.+?)(?: \(\w+\))? on /) || t.match(/^Created (text)\b/);
+        if (m) made[m[1]] = (made[m[1]] || 0) + 1;
+        const d = t.match(/^deleted (\d+) object/);
+        if (d) deleted += +d[1];
+      }
+      const parts = Object.entries(made).map(([kind, n]) => `${n} ${kind}${n > 1 ? (/[sxh]$/.test(kind) ? 'es' : 's') : ''}`);
+      if (parts.length || deleted) say(`‹ ${deleted ? `deleted ${deleted} objects; ` : ''}${parts.length ? 'created ' + parts.join(', ') : ''}`.replace(/; $/, ''), 'reply');
+    }
     const NOISE = /pipelines|WebGPU is experimental|adapter|gpu init|scene posted|surface|first frame|^fit(ted)?\b|^fit selected|^Keys go to the viewer/;
     function hookViewer(w) {
       if (w.__brgTerminal) return;
@@ -500,6 +580,9 @@ createApp({
           original.apply(this, a);
           const text = a.map(String).join(' ').trim();
           if (Date.now() >= listenUntil || !text || NOISE.test(text)) return;
+          viewerAsks = /Esc cancels|type Height|click or type|then press Enter/.test(text);
+          // a long batch (a funicular, a staircase) is summed up when it ends; its errors still show
+          if (batchReplies && k !== 'error' && !/not a value|no command|wrong number|needs|cannot|failed/i.test(text)) { batchReplies.push(text); return; }
           // the same reply again (five boxes of a table) is counted on its line
           const last = log.value[log.value.length - 1];
           if (last && last.reply === text) { last.n += 1; last.text = `‹ ${text} ×${last.n}`; return; }
@@ -519,16 +602,22 @@ createApp({
       }
       hookViewer(w);
       viewerTyping = true;
+      if (viewerQueue.length > 12) batchReplies = [];
       try { while (viewerQueue.length) await runInViewer(w, viewerQueue.shift()); }
-      finally { viewerTyping = false; }
+      finally {
+        viewerTyping = false;
+        if (batchReplies) { await wait(500); const done = batchReplies; batchReplies = null; sumUp(done); }
+      }
     }
     // A value (a point, a number, or an empty line for Enter) goes to the command that asked for it;
     // any other line ends a running command first, so nothing is left waiting for picks.
     const isValue = (line) => /^[-\d.,\s]*$/.test(line);
     async function runInViewer(w, line) {
+      const answer = line.startsWith('=') || isValue(line);
+      line = line.replace(/^=/, '');
       if (!w.wasmBindings.run_command) return typeIntoViewer(w, line); // a viewer built before run_command
       listenUntil = Date.now() + 1200;
-      w.wasmBindings.run_command(line, !isValue(line));
+      w.wasmBindings.run_command(line, !answer);
       await wait(60);
     }
     function sendToViewer(...lines) {
@@ -611,6 +700,17 @@ createApp({
       say(list.length > 12 ? `… ${list.length - 12} more in the viewer.` : 'Results are also in the viewer.', 'dim');
       return true;
     };
+    // Where the construction comes from: the library's chapters on the funicular polygon, Lévy first.
+    function showReading() {
+      if (state.value !== 'ready') { say('Read: Lévy, La Statique graphique I, ch. I (the library has not loaded).', 'dim'); return; }
+      const seen = new Set();
+      const hits = ['funiculaire', 'funicular', 'polygone des forces', 'force polygon'].flatMap((q) => search(q, allSections.value))
+        .filter((h) => !seen.has(h.book + h.section) && seen.add(h.book + h.section))
+        .sort((a, b) => /levy/i.test(b.book) - /levy/i.test(a.book));
+      if (!hits.length) { say('No chapter on the funicular polygon in the library yet.', 'dim'); return; }
+      say('Read (Lévy first):', 'dim');
+      hits.slice(0, 5).forEach((h) => say(`${bookTitle(h.book)} · ${h.title}`, 'out', `/open ${h.book}/${h.section}`));
+    }
     const splitRef = (ref_) => { const i = ref_.indexOf('/'); return i < 0 ? [ref_, ''] : [ref_.slice(0, i), ref_.slice(i + 1)]; };
 
     async function run(line, opts = {}) {
@@ -681,9 +781,16 @@ createApp({
           setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
           say(`Drawing ${n} playing in the viewer. Use its controls to step through the construction.`, 'dim'); keep();
         } else if (cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
-        else if ((phrase = phraseToCommands(line)) && phrase.commands) { sendToViewer(...phrase.commands); say('→ viewer: ' + phrase.commands.filter(Boolean).join(' · '), 'dim'); }
+        else if ((phrase = phraseToCommands(line)) && phrase.commands) {
+          const shown = phrase.commands.filter((c) => c && !c.startsWith('='));
+          sendToViewer(...phrase.commands);
+          say('→ viewer: ' + (shown.length > 12 ? `${shown.length} commands: ${shown.slice(0, 3).join(' · ')} · …` : shown.join(' · ')), 'dim');
+          (phrase.notes || []).forEach((n) => say(n, 'out'));
+          if (phrase.funicular) showReading();
+        }
         else if (viewerCommandOf(line)) { sendToViewer(line); say('→ viewer: ' + line, 'dim'); }
         else if (/^-?\d[-\d.,\s]*$/.test(line) || /^(finish|done|enter)$/i.test(line)) { const v = /\d/.test(line) ? line : ''; sendToViewer(v); say('→ viewer: ' + (v || 'Enter'), 'dim'); }
+        else if (viewerAsks && !(phrase && phrase.sure)) { sendToViewer('=' + line); say('→ viewer (answer): ' + line, 'dim'); }
         else if (phrase && phrase.sure && !cfg.chatEndpoint) {
           say(`Not understood: “${phrase.failed.join('”, “')}”. Without an AI model the terminal knows:`, 'err');
           say('shapes: box, sphere, cylinder, cone, torus, pyramid, line, polyline, circle, arc, point, text (sizes and x,y,z optional)', 'dim');
