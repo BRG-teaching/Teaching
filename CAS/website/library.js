@@ -1157,7 +1157,8 @@ createApp({
           } else if (k === 'off') {
             ownKey.set(''); keyStore.set(''); claudeOn.value = !!cfg.chatEndpoint;
             say('Keys removed from this browser.', 'dim');
-          } else { keyStore.set(k); say('Class key kept in this browser.', 'dim'); }
+          } else if (cfg.chatEndpoint) { keyStore.set(k); say('Class key kept in this browser.', 'dim'); }
+          else say('That is not an Anthropic API key, so nothing was stored: they start with sk-ant-api03-. Copy the whole key when you create it in the Claude Console.', 'err');
         }
         else if (cmd === '/books') {
           if (!ready()) return;
@@ -1326,7 +1327,12 @@ createApp({
         } catch (err) {
           endStream();
           if (err && err.name === 'AbortError') throw err;
-          throw new Error(window.BRGClaude.explain(err));
+          const why = window.BRGClaude.explain(err);
+          // the visitor's own key: say what to do about it
+          if (/not scoped to a workspace/i.test(why)) throw new Error('This API key was created without a workspace, so Anthropic refuses it from here. In the Claude Console create a new key and pick a workspace for it (Settings → API Keys → Create Key → Workspace: Default), then type /key off and /key <the new key>.');
+          if (err && err.status === 401) throw new Error('Anthropic refused this API key (wrong, incomplete or deleted). Type /key off, then /key followed by the whole key, sk-ant-api03-….');
+          if (/credit balance/i.test(why)) throw new Error('Your Anthropic account has no credits left. Add credits under Settings → Billing in the Claude Console.');
+          throw new Error(why);
         }
       }
       const key = keyStore.get();
