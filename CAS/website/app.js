@@ -16,7 +16,17 @@ createApp({
     const cas = window.CAS;
     const chapters = cas.chapters;
     const project = chapters[6];
-    const active = ref(0);
+    const active = ref('top');
+    const menuOpen = ref(false);
+
+    // Side menu: every section of the page, chapters in their ramp colour.
+    const menu = [
+      { id: 'contents', label: 'Contents' },
+      { id: 'map', label: 'Course map' },
+      { id: 'timeline', label: 'Course timeline' },
+      ...chapters.map((c) => ({ id: 'ch' + c.n, n: c.n, color: c.color, label: c.short || c.title })),
+      { id: 'solvers', label: 'Graphic statics solvers' },
+    ];
 
     const logo = (file) => `../logos/${file}`;
     const logos = (item) => item.logos || [item.logo];
@@ -25,16 +35,18 @@ createApp({
     const cardKeys = (c) => ['contents', 'resources', 'submission'].filter((k) => c[k]);
     const cardTitle = { contents: 'Contents', resources: 'Resources', submission: 'Submission' };
 
-    // Highlight the chapter in view in the header.
+    // Highlight the section that crosses the middle of the screen.
     let io;
+    const onKey = (e) => { if (e.key === 'Escape') menuOpen.value = false; };
     onMounted(() => {
       io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => { if (e.isIntersecting) active.value = Number(e.target.id.slice(2)); });
-      }, { rootMargin: '-45% 0px -50% 0px' });
-      document.querySelectorAll('.chapter').forEach((el) => io.observe(el));
+        entries.forEach((e) => { if (e.isIntersecting) active.value = e.target.id; });
+      }, { rootMargin: '-50% 0px -50% 0px' });
+      document.querySelectorAll('#top, main section[id]').forEach((el) => io.observe(el));
+      addEventListener('keydown', onKey);
     });
-    onBeforeUnmount(() => io && io.disconnect());
+    onBeforeUnmount(() => { io && io.disconnect(); removeEventListener('keydown', onKey); });
 
-    return { cas, chapters, teaching: chapters.slice(0, 6), project, active, logo, logos, stepAt, cardKeys, cardTitle };
+    return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle };
   },
 }).mount('#app');

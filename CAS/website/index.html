@@ -13,13 +13,19 @@
 <body>
 <div id="app" v-cloak>
 
-  <header class="top">
-    <a class="brand" href="#top">CAS <span>Computational Form-finding</span></a>
-    <nav aria-label="Chapters">
-      <a v-for="c in chapters" :key="c.n" :href="'#ch' + c.n" :style="{ '--c': c.color }"
-         :class="{ on: active === c.n }" :title="'Chapter ' + c.n + ': ' + c.title">{{ c.n }}</a>
+  <aside class="menu" :class="{ open: menuOpen, onhero: active === 'top' }" aria-label="Course sections">
+    <button class="menu-toggle" type="button" :aria-expanded="String(menuOpen)" aria-controls="menu-list" @click="menuOpen = !menuOpen">
+      <span aria-hidden="true">{{ menuOpen ? '✕' : '☰' }}</span><span class="sr">{{ menuOpen ? 'Close menu' : 'Open menu' }}</span>
+    </button>
+    <nav id="menu-list" class="menu-panel">
+      <a href="#top" class="menu-brand" :class="{ on: active === 'top' }" @click="menuOpen = false">CAS <span>Computational Form-finding</span></a>
+      <a v-for="m in menu" :key="m.id" :href="'#' + m.id" :class="{ on: active === m.id, ch: m.n }"
+         :style="m.color ? { '--c': m.color } : null" @click="menuOpen = false">
+        <i v-if="m.n" class="dot">{{ m.n }}</i><span>{{ m.label }}</span>
+      </a>
     </nav>
-  </header>
+  </aside>
+
 
   <section id="top" class="hero" :style="{ backgroundImage: 'url(' + cas.hero + ')' }">
     <div class="veil"></div>
@@ -31,6 +37,21 @@
         <li v-for="f in cas.facts" :key="f.unit"><b>{{ f.value }}</b> {{ f.unit }}</li>
       </ul>
     </div>
+    <a class="cue" href="#contents">Contents <span aria-hidden="true">↓</span></a>
+  </section>
+
+  <main class="main">
+  <section id="contents" class="wrap block">
+    <h2>Contents</h2>
+    <ol class="toc">
+      <li v-for="c in chapters" :key="c.n" :style="{ '--c': c.color }">
+        <a :href="'#ch' + c.n">
+          <spine :fill="c.n"></spine>
+          <span class="toc-t"><span class="toc-n">Ch {{ c.n }}</span>{{ c.title }}</span>
+          <span class="toc-m">{{ c.ects }} ECTS · {{ c.hours }} h</span>
+        </a>
+      </li>
+    </ol>
   </section>
 
   <section id="map" class="wrap block">
@@ -151,6 +172,8 @@
     </div>
     <p class="quote">From the repo ReadMe: {{ cas.solvers.quote }}</p>
   </section>
+
+  </main>
 
   <footer class="wrap foot">
     <span>{{ cas.org }}</span>
