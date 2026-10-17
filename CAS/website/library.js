@@ -57,13 +57,17 @@ function renderMarkdown(text, docPath, bookIds) {
   return tpl.innerHTML;
 }
 
-const PIXEL = [
-  '███  ███   ███ ',
-  '█  █ █  █ █    ',
-  '███  ███  █ ██ ',
-  '█  █ █ █  █  █ ',
-  '███  █  █  ███ ',
-].join('\n');
+// BRG in square pixels (5 rows, letters 4 wide with a 1-pixel gap), coloured along the blue→pink ramp.
+const PIXEL_ROWS = [
+  '###  ###   ###',
+  '#  # #  # #   ',
+  '###  ###  # ##',
+  '#  # # #  #  #',
+  '###  #  #  ###',
+].map((r) => r.replace(/ /g, '.'));
+const RAMP = ['#3057b1', '#5552bb', '#7750c1', '#934abd', '#ae4bb2', '#ca49a4', '#dc4b8d'];
+const PIXEL_COLS = PIXEL_ROWS[0].length;
+const PIXEL = PIXEL_ROWS.flatMap((row) => [...row].map((ch, x) => (ch === '#' ? RAMP[Math.round((x / (PIXEL_COLS - 1)) * (RAMP.length - 1))] : null)));
 
 const COMMANDS = [
   { cmd: '/help', help: 'list the commands' },
@@ -253,7 +257,7 @@ createApp({
     return {
       cfg, state, error, books, query, route, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
-      pixel: PIXEL, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
+      pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
     };
   },
 }).mount('#app');
