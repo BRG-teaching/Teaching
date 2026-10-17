@@ -34,6 +34,12 @@ createApp({
     const cardKeys = (c) => ['contents', 'resources', 'submission'].filter((k) => c[k]);
     const cardTitle = { contents: 'Contents', resources: 'Resources', submission: 'Submission' };
 
+    // Split a card line into text and link pieces using cas.links (longest names first).
+    const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const names = Object.keys(cas.links).sort((a, b) => b.length - a.length);
+    const linkRe = new RegExp(`(?<![\\w-])(${names.map(esc).join('|')})(?![\\w-])`, 'g');
+    const segments = (text) => text.split(linkRe).filter(Boolean).map((t) => ({ text: t, url: cas.links[t] }));
+
     // Highlight the section that crosses the middle of the screen.
     let io;
     const onKey = (e) => { if (e.key === 'Escape') menuOpen.value = false; };
@@ -46,6 +52,6 @@ createApp({
     });
     onBeforeUnmount(() => { io && io.disconnect(); removeEventListener('keydown', onKey); });
 
-    return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle };
+    return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments };
   },
 }).mount('#app');

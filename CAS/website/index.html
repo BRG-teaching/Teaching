@@ -133,7 +133,9 @@
           <summary><span>{{ cardTitle[k] }}</span><i class="pm" aria-hidden="true"></i></summary>
           <div class="card-body">
             <p class="lead">{{ c[k].lead }}</p>
-            <ul class="sq"><li v-for="t in c[k].items" :key="t">{{ t }}</li></ul>
+            <ul class="sq">
+              <li v-for="t in c[k].items" :key="t"><template v-for="(seg, i) in segments(t)" :key="i"><a v-if="seg.url" :href="seg.url" target="_blank" rel="noopener">{{ seg.text }}</a><template v-else>{{ seg.text }}</template></template></li>
+            </ul>
           </div>
         </details>
       </div>

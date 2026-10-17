@@ -18,7 +18,7 @@ photos from `../project/uploads/`.
 
 | File | What to edit |
 |---|---|
-| `data.js` | All text: chapters, bullet lists, timeline steps, grading |
+| `data.js` | All text: chapters, bullet lists, timeline steps, grading, and `links` (names in the cards that become links) |
 | `index.html` | Page structure (Vue template) |
 | `style.css` | Colours and layout, same palette and Open Sans type as the deck |
 | `app.js` | The small amount of logic (chapter highlight, timeline placement) |
