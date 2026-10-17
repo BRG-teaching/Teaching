@@ -62,6 +62,11 @@ window.SESSION_VIEWER_COMMANDS = [
   "example": ""
  },
  {
+  "cmd": "Color",
+  "help": "Color #rrggbb, r,g,b or Original: the color of the selected objects · Example: Color #3f9c20",
+  "example": "Color #3f9c20"
+ },
+ {
   "cmd": "Cone",
   "help": "Cone (Brep Mesh): base center, radius, height to the apex · Example: Cone 0,0,0 5 20",
   "example": "Cone 0,0,0 5 20"

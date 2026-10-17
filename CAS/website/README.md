@@ -121,7 +121,7 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
   `copy the sphere 1000 in x`, `hide everything`, `show all`, `top view`, `zoom to fit`, `undo twice`).
   A request it cannot read is reported as such, not searched in the library. Anything beyond this needs an AI
   model behind `chatEndpoint`.
-- **Graphic statics from the books.** A graphic statics request first searches the library (Lévy first) for the
+- **Graphic statics from the books.** A graphic statics request first searches the library for the
   construction, finds its figure in the best chapter (by the words around the image) and shows that original figure,
   with author, chapter, §, printed page and caption, on a card over the 3D view; then it recreates the construction
   beside it and ends with the sources as `/open` links. It builds:
@@ -134,6 +134,10 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
     notation: every space of the form diagram (letters outside, numbers inside, labelled in both diagrams) is a point
     of the force diagram, every member a line parallel to it. The terminal lists every member's force by its two
     spaces (`a-1 −30.0`), tension and compression.
+  Historical books (before 1950, or by Lévy, Culmann, Cremona, Maxwell, Wolfe …) always rank first, then the rest.
+  Drawings use the Equilibrium palette (`2_computational_form_finding/Equilibrium/drawings/web/lib/eqdraw.js`):
+  compression navy `#1a1eb2`, tension pink `#ce4095`, loads, reactions and load lines green `#3f9c20`, guides grey
+  `#aaaaaa`, zero-force members `#b9b9bd`, in the form and the force diagram alike.
   Graphic statics of an unnamed structure ("create a force diagram") asks which one; anything else is Claude's.
 - The viewer's replies (`Created and selected box…`, `3 selected`, errors) are shown in the terminal.
 - Chapters, figures, the shelf and the eQUILIBRIUM drawings open on a sheet over the viewer;
@@ -144,7 +148,8 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
 The terminal runs each line through `wasmBindings.run_command(line, cancel)`, an entry point added to the viewer
 by `tools/session-viewer-run-command.patch` (also reachable with `postMessage({ type: 'session-viewer:run', line, cancel })`).
 `cancel` ends a command still waiting for picks first, so no viewer state (a pick command, a gumball number box,
-a closed command line) can swallow the next line. The same patch makes `Escape` end every running command; before it,
+a closed command line) can swallow the next line. The same patch adds a `Color` command (`Color #3f9c20`, `Color 63,156,32`, `Color Original`) that colours the selected
+objects as the layer panel's colour menu does, and makes `Escape` end every running command; before it,
 Element Beam, Column, Plate, Block and Support took `Escape` as a value and could not be cancelled from the command line.
 A viewer built without the patch is driven by typing into its hidden command input instead, which is less reliable.
 

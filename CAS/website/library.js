@@ -245,6 +245,9 @@ const recipeIn = (s) => { if (/\bcolumns?\s+grid\b|\bgrid of columns\b/.test(s))
 // Graphic statics after Lévy (La Statique graphique I, ch. I): the funicular polygon of vertical loads, a hanging
 // cable or, inverted, an arch, as its form diagram, with the force diagram beside it: the load line, the pole and the
 // rays, each parallel to a segment of the cable. In the XZ plane (View Front), lengths in millimetres, forces in kN.
+// The Equilibrium drawings' palette (2_computational_form_finding/Equilibrium/drawings/web/lib/eqdraw.js), also the
+// BRG books' convention: compression navy, tension pink, external forces green, guides grey, zero force pale.
+const PAL = { compression: '#1a1eb2', tension: '#ce4095', force: '#3f9c20', guide: '#aaaaaa', zero: '#b9b9bd' };
 const FUNICULAR = /\b(funicular|funiculaire|cable|catenary|hanging chain|arch|thrust line)\b/;
 const TRUSS = /\b(truss|trusses|cremona|maxwell|reciprocal|pratt|howe|warren|fink|king ?post|bow'?s notation|lattice girder|treillis)\b/;
 // graphic statics asked for without naming a structure: the terminal asks which one
@@ -280,14 +283,15 @@ function funicular(s) {
   P.forEach((v) => q.push(q[q.length - 1] - v * k));
   const h = r(L / 40), text = (t, X, Z) => [`Text ${t}`, `=Height ${h}`, pt(X, Z)];
   const top = arch ? f : 0;
+  const member = arch ? PAL.compression : PAL.tension;
   const cmds = [
-    `Polyline ${[pt(0, 0), ...x.map((xi, i) => pt(xi, z[i])), pt(L, 0)].join(' ')}`,  // the cable, or the arch
-    `Line ${pt(0, 0)} ${pt(L, 0)}`,                                                      // its closing string
+    `Polyline ${[pt(0, 0), ...x.map((xi, i) => pt(xi, z[i])), pt(L, 0)].join(' ')}`, `Color ${member}`, // the cable, or the arch
+    `Line ${pt(0, 0)} ${pt(L, 0)}`, `Color ${PAL.guide}`,                                            // its closing string
     `Point ${pt(0, 0)}`, `Point ${pt(L, 0)}`,
-    ...x.map((xi, i) => `Arrow ${pt(xi, z[i] + P[i] * k * 0.5)} ${pt(xi, z[i])}`),       // the loads
-    `Line ${pt(X0, q[0])} ${pt(X0, q[n])}`,                                              // the load line
-    ...q.map((qz) => `Line ${pt(OX, 0)} ${pt(X0, qz)}`),                                 // the rays
-    `Line ${pt(OX, 0)} ${pt(X0, 0)}`, `Point ${pt(OX, 0)}`,                              // H, and the pole
+    ...x.flatMap((xi, i) => [`Arrow ${pt(xi, z[i] + P[i] * k * 0.5)} ${pt(xi, z[i])}`, `Color ${PAL.force}`]), // the loads
+    `Line ${pt(X0, q[0])} ${pt(X0, q[n])}`, `Color ${PAL.force}`,                                    // the load line
+    ...q.flatMap((qz) => [`Line ${pt(OX, 0)} ${pt(X0, qz)}`, `Color ${member}`]),                    // the rays: the segments' forces
+    `Line ${pt(OX, 0)} ${pt(X0, 0)}`, `Color ${PAL.guide}`, `Point ${pt(OX, 0)}`,                    // H, and the pole
     ...text(arch ? 'form diagram (arch)' : 'form diagram (cable)', 0, top + 2.5 * h + Math.max(...P) * k * 0.5),
     ...text('force diagram', Math.min(X0, OX), q[0] + 2.5 * h),
     ...text('O', OX + (arch ? -1.5 : 0.6) * h, 0.6 * h),
@@ -300,6 +304,7 @@ function funicular(s) {
     `${arch ? 'Funicular arch' : 'Funicular cable'} · ${n} load${n === 1 ? '' : 's'} (${P.join(', ')} kN) · span ${(L / 1000).toFixed(2)} m · ${arch ? 'rise' : 'sag'} ${(f / 1000).toFixed(2)} m`,
     `Reactions R_A = ${RA.toFixed(1)} kN, R_B = ${RB.toFixed(1)} kN · horizontal thrust H = ${H.toFixed(1)} kN, the pole distance`,
     `Largest ${arch ? 'compression' : 'tension'} ${T.toFixed(1)} kN, in the end segments · force scale 1 kN = ${r(k)} mm · Front view, XZ plane`,
+    `Colours as in the Equilibrium drawings: ${arch ? 'compression navy' : 'tension pink'}, loads and load line green, closing string and H grey`,
     'Change it: “funicular cable with 7 loads of 12 kN span 20 m sag 4 m”, “funicular arch loads 10 20 30 20 10”',
   );
   return cmds;
@@ -484,15 +489,19 @@ function truss(s) {
   const h = r(L / 70), text = (t, x, z, size = h) => [`Text ${t}`, `=Height ${size}`, pt(x, z)];
   const maxLoad = Math.max(...forces.map((f) => Math.abs(f.fz)));
   const cmds = [];
-  members.forEach((m) => cmds.push(`Line ${pt(nodes[m.i].x, nodes[m.i].z)} ${pt(nodes[m.j].x, nodes[m.j].z)}`));
+  const tint = (t) => (Math.abs(t) < 1e-6 ? PAL.zero : t > 0 ? PAL.tension : PAL.compression);
+  members.forEach((m, e) => cmds.push(`Line ${pt(nodes[m.i].x, nodes[m.i].z)} ${pt(nodes[m.j].x, nodes[m.j].z)}`, `Color ${tint(T[e])}`));
   supports.forEach((i) => cmds.push(`Point ${pt(nodes[i].x, nodes[i].z)}`));
   forces.forEach((f) => {
     const o = nodes[f.node], len = Math.min(0.2, Math.max(0.04, 0.08 * Math.abs(f.fz) / maxLoad)) * L, push = f.ray[1] * f.fz < 0;
     const far = [o.x + f.ray[0] * len, o.z + f.ray[1] * len];
-    cmds.push(push ? `Arrow ${pt(...far)} ${pt(o.x, o.z)}` : `Arrow ${pt(o.x, o.z)} ${pt(...far)}`);
+    cmds.push(push ? `Arrow ${pt(...far)} ${pt(o.x, o.z)}` : `Arrow ${pt(o.x, o.z)} ${pt(...far)}`, `Color ${PAL.force}`);
   });
   // a zero-force member is a point in the force diagram: nothing to draw
-  bow.elements.forEach((el) => { const [a, b] = [F(el.left), F(el.right)]; if (Math.hypot(a[0] - b[0], a[1] - b[1]) > 1) cmds.push(`Line ${pt(...a)} ${pt(...b)}`); });
+  bow.elements.forEach((el) => {
+    const [a, b] = [F(el.left), F(el.right)];
+    if (Math.hypot(a[0] - b[0], a[1] - b[1]) > 1) cmds.push(`Line ${pt(...a)} ${pt(...b)}`, `Color ${el.member === undefined ? PAL.force : tint(T[el.member])}`);
+  });
   for (const [f, label] of name) { cmds.push(...text(label, ...spot(f).map((v, i) => v - (i ? h / 2 : h / 3)))); const [x, z] = F(f); cmds.push(...text(label, x + h * 0.4, z + h * 0.3)); }
   const title = { pratt: 'Pratt truss', howe: 'Howe truss', warren: 'Warren truss', roof: 'roof truss' }[kind];
   cmds.push(...text(`form diagram (${title})`, 0, d + 0.22 * L, r(h * 1.4)), ...text('force diagram (Cremona)', ox + fx0 * k, oz + fz1 * k + 2.2 * h, r(h * 1.4)));
@@ -508,7 +517,7 @@ function truss(s) {
   phraseNotes.push(
     `${title[0].toUpperCase() + title.slice(1)} · ${n} panels · span ${(L / 1000).toFixed(2)} m · ${kind === 'roof' ? 'rise' : 'depth'} ${(d / 1000).toFixed(2)} m · ${loads.length} load${loads.length === 1 ? '' : 's'} of ${P} kN on the ${bottom ? 'bottom' : 'top'} chord${!bottom && kind !== 'warren' && kind !== 'roof' ? ' (half at the ends)' : ''}`,
     `Reactions R_A = ${RA.toFixed(1)} kN, R_B = ${RB.toFixed(1)} kN · force scale 1 kN = ${r(k)} mm · Front view, XZ plane`,
-    `Member forces in kN, + tension, − compression, named by the spaces on either side (Bow's notation):`,
+    `Member forces in kN, + tension (pink), − compression (navy), 0 (pale grey), named by the spaces on either side (Bow's notation); loads and reactions green:`,
     ...Object.entries(groups).map(([g, list]) => `  ${g}: ${list.join(' · ')}`),
     `Largest compression ${Math.abs(T[ec]).toFixed(1)} kN in ${mname(ec)} (${members[ec].group}) · largest tension ${T[et].toFixed(1)} kN in ${mname(et)} (${members[et].group})`,
     'Change it: “Howe truss with 8 panels span 16 m depth 2 m”, “Warren truss with loads on the bottom chord”, “roof truss with 4 panels”',
@@ -958,13 +967,16 @@ createApp({
     // Graphic statics from the books: find the chapters on the construction (Lévy first), find its figure in
     // them, show the figure over the 3D view, recreate the construction beside it, then cite the sources.
     const figure = reactive({ src: '', caption: '', cite: '', act: '' });
+    // Historical books first (before 1950, or by the founders of graphic statics), then the rest.
+    const historical = (b) => { const t = plain(b.id + ' ' + b.title), y = +((b.title.match(/\b(1[5-9]\d\d)\b/) || [])[1] || 0);
+      return (y && y < 1950) || /levy|culmann|cremona|maxwell|wolfe|ritter|rankine|varignon|mohr|muller-breslau|henneberg|bow\b/.test(t); };
     function rankSections(words) {
       const keys = words.map(plain);
       return books.value.flatMap((b) => b.sections.map((s2) => {
         const t = plain(s2.title), m = plain(s2.summary);
         const score = keys.reduce((n, k) => n + (t.includes(k) ? 3 : 0) + (m.includes(k) ? 1 : 0), 0);
-        return { book: b.id, section: s2.section, title: s2.title, score: score ? score + (/levy/i.test(plain(b.id + b.title)) ? 2 : 0) : 0 };
-      })).filter((h) => h.score >= 2).sort((a, b) => b.score - a.score);
+        return { book: b.id, section: s2.section, title: s2.title, score, old: historical(b) };
+      })).filter((h) => h.score >= 2).sort((a, b) => b.old - a.old || b.score - a.score);
     }
     // The figure of a chapter that the text around it names best, with its §, printed page and caption.
     async function figureIn(hit, words) {
@@ -990,7 +1002,7 @@ createApp({
     }
     async function fromTheBooks(phrase) {
       const topic = TOPICS[phrase.reading];
-      say(`Searching the library for ${topic.label}…`, 'dim');
+      say(`Searching the library for ${topic.label}, historical books first…`, 'dim');
       const found = state.value === 'ready' ? rankSections(topic.words) : [];
       if (state.value !== 'ready') say('The library has not loaded, so this is drawn without its sources.', 'err');
       let source = null;

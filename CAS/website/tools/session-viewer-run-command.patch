@@ -16,6 +16,81 @@ index 5aa26ab..55f8a56 100644
          if (!data || data.type !== "session-viewer:reload-scene")
            return;
  
+diff --git a/session_viewer/src/app/command/verbs/color.rs b/session_viewer/src/app/command/verbs/color.rs
+new file mode 100644
+index 0000000..66acda9
+--- /dev/null
++++ b/session_viewer/src/app/command/verbs/color.rs
+@@ -0,0 +1,57 @@
++use crate::State;
++use crate::app::command::{Action, Spec};
++
++pub const SPEC: Spec = Spec {
++    options: &["Color Original"],
++    ..Spec::new(
++        &["Color", "Colour"],
++        "Color #rrggbb, r,g,b or Original: the color of the selected objects · Example: Color #3f9c20",
++        parse,
++    )
++};
++
++const USAGE: &str = "Color takes #rrggbb, r,g,b or Original, e.g. Color #3f9c20";
++
++/// The color from "#3f9c20", "3f9c20", "63,156,32" or "Original".
++fn parse(_verb: &str, rest: &[&str]) -> Result<Box<dyn Action>, String> {
++    let text = rest.join("").to_ascii_lowercase();
++
++    if text == "original" {
++        return Ok(Box::new(Color(None)));
++    }
++
++    let hex = text.trim_start_matches('#');
++    let rgb = if hex.len() == 6 && hex.chars().all(|c| c.is_ascii_hexdigit()) {
++        let value = u32::from_str_radix(hex, 16).map_err(|_| USAGE.to_string())?;
++        [(value >> 16) as u8, (value >> 8) as u8, value as u8]
++    } else {
++        let parts = text
++            .split(',')
++            .map(|part| part.trim().parse::<u8>())
++            .collect::<Result<Vec<_>, _>>()
++            .map_err(|_| USAGE.to_string())?;
++        let [r, g, b] = parts[..] else {
++            return Err(USAGE.into());
++        };
++        [r, g, b]
++    };
++    Ok(Box::new(Color(Some(rgb))))
++}
++
++#[derive(Debug)]
++struct Color(Option<[u8; 3]>);
++
++impl Action for Color {
++    /// Color what is selected; pick first, as for Move.
++    fn needs_selection(&self) -> bool {
++        true
++    }
++
++    fn run(&self, state: &mut State) -> Result<String, String> {
++        let count = state.color_selected(self.0);
++        Ok(match self.0 {
++            Some([r, g, b]) => format!("{count} colored #{r:02x}{g:02x}{b:02x}"),
++            None => format!("{count} back to their own color"),
++        })
++    }
++}
+diff --git a/session_viewer/src/app/command/verbs/mod.rs b/session_viewer/src/app/command/verbs/mod.rs
+index b8834b0..eef4cc7 100644
+--- a/session_viewer/src/app/command/verbs/mod.rs
++++ b/session_viewer/src/app/command/verbs/mod.rs
+@@ -45,6 +45,7 @@ verbs! {
+     escape,                  // register:escape
+     layers,                  // register:layers
+     opacity,                 // register:opacity
++    color,                   // register:color
+     arrowhead,               // register:arrowhead
+     attributes,              // register:attributes
+     interactions,            // register:interactions
 diff --git a/session_viewer/src/app/loader.rs b/session_viewer/src/app/loader.rs
 index 499490d..6dfad83 100644
 --- a/session_viewer/src/app/loader.rs
@@ -75,3 +150,39 @@ index 2854f1c..d3b21e6 100644
          // while drawing, points and Enter go to the draft
          if let Some(result) = self.drawing_command(line) {
              return result;
+diff --git a/session_viewer/src/state/panel.rs b/session_viewer/src/state/panel.rs
+index 9ba56ce..bb6410b 100644
+--- a/session_viewer/src/state/panel.rs
++++ b/session_viewer/src/state/panel.rs
+@@ -239,6 +239,31 @@ impl State {
+     }
+ 
+     /// Unfold the panel down to layer `name` of `doc` and open it, while the panel is shown.
++    /// Color the selected objects, their faces and lines, as the layer panel's color menu does; None restores
++    /// their own. Returns how many were colored.
++    pub(crate) fn color_selected(&mut self, color: Option<[u8; 3]>) -> usize {
++        let mut count = 0;
++
++        for row in self.selected_rows() {
++            let Some(id) = self.scene.identity_of(row) else {
++                continue;
++            };
++
++            if let Some(color) = color {
++                self.scene.colors.insert(id, color);
++            } else {
++                self.scene.colors.remove(&id);
++            }
++
++            self.gpu.set_object_color(row, false, color);
++            count += 1;
++        }
++
++        self.refresh_layers();
++        self.touch();
++        count
++    }
++
+     pub(crate) fn reveal_layer(&mut self, doc: usize, name: &str) {
+         if !crate::app::feedback::layers_open() {
+             return;

@@ -29,6 +29,12 @@ async function catalogue(env) {
   return cached.books;
 }
 
+// Historical: before 1950, or by the founders of graphic statics.
+const historical = (b) => {
+  const year = +((b.title.match(/\b(1[5-9]\d\d)\b/) || [])[1] || 0);
+  return (year > 0 && year < 1950) || /levy|culmann|cremona|maxwell|wolfe|ritter|rankine|varignon|mohr|muller-breslau|henneberg|bow\b/.test(words(b.id + ' ' + b.title).join(' '));
+};
+
 // Words, lower case, without accents, so "funiculaire" and "Lévy" match as typed.
 const words = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').match(/[a-z0-9]+/g) || [];
 
@@ -40,7 +46,7 @@ export const LIBRARY_TOOLS = [
   },
   {
     name: 'search_books',
-    description: 'Search the chapter titles and summaries of the BRG library (Lévy, La Statique graphique; ETH graphic statics; BRG theses and papers). Call it before answering any question about the course material, and before building a model the books describe. Search in the language of the source too (French for Lévy: "polygone funiculaire", "pôle", "rayons").',
+    description: 'Search the chapter titles and summaries of the BRG library (Lévy, La Statique graphique; ETH graphic statics; BRG theses and papers). Call it before answering any question about the course material, and before building a model the books describe. Search in the language of the source too (French for Lévy: "polygone funiculaire", "pôle", "rayons"). Historical books come first, marked [historical].',
     input_schema: {
       type: 'object',
       properties: {
@@ -100,10 +106,11 @@ export async function runLibraryTool(name, input, env) {
         const inTitle = words(s.title), inSummary = words(s.summary);
         // a word in the chapter title counts most, then the summary, then the book's title
         const score = terms.reduce((n, t) => n + (inTitle.some((w) => w.startsWith(t)) ? 3 : 0) + (inSummary.some((w) => w.startsWith(t)) ? 1 : 0) + (inBook.some((w) => w.startsWith(t)) ? 1 : 0), 0);
-        if (score) hits.push({ score, line: `${b.id}/${s.section} — ${b.title} — ${s.title}: ${s.summary}` });
+        if (score) hits.push({ score, old: historical(b), line: `${b.id}/${s.section} — ${b.title} — ${s.title}: ${s.summary}${historical(b) ? ' [historical]' : ''}` });
       }
     }
-    hits.sort((a, b) => b.score - a.score);
+    // historical books first (before 1950, or by the founders of graphic statics), as the course reads them
+    hits.sort((a, b) => b.old - a.old || b.score - a.score);
     return text(hits.length ? hits.slice(0, limit).map((h) => h.line).join('\n') : `Nothing matches “${input.query}”. Try other words, the source language, or list_books.`);
   }
   if (name === 'read_book_section') {

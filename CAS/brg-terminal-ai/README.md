@@ -20,9 +20,11 @@ page (GitHub Pages)                 this Worker (Cloudflare)               Claud
 - **The `viewer` tool** sends session viewer command lines to the page, which runs them in the 3D view and sends
   back each line with the viewer's answer, so Claude sees what was created and corrects errors. Claude knows
   the viewer's 86 commands (`src/viewer-commands.js`, written by `CAS/website/tools/extract_viewer_commands.py`).
-- **Instructions** (`src/prompt.js`) follow BRG's own guidance for reading these books (mcp-server-brg's
-  `book_guidance.md`): search first, read the chapters, cite §/page, check notation (Lévy, ETH), and end with
-  `/open book/chapter.md` lines, which the terminal turns into links.
+- **Instructions** (`src/prompt.js`) set the order of work: search the library first, historical books first
+  (`search_books` ranks them first), read the chapter, look at the book's figure (the page shows it over the 3D view),
+  recreate the construction in the 3D view in the Equilibrium palette (compression navy, tension pink, forces green,
+  guides grey), then answer and cite author, §, page and figure with `/open book/chapter.md` lines, which the terminal
+  turns into links. They follow BRG's own guidance for these books (mcp-server-brg's `book_guidance.md`).
 - **Streaming:** thinking summaries, text and tool use stream to the terminal while Claude works.
 - **Fallback:** requests use `fallbacks: "default"`. If a safety check declines a request, the API runs it again
   on the model Anthropic recommends for that case, instead of failing.
