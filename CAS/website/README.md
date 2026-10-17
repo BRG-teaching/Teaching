@@ -128,8 +128,8 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
   model behind `chatEndpoint`.
 - **Graphic statics from the books.** A graphic statics request first searches the library for the
   construction, finds its figure in the best chapter (by the words around the image) and shows that original figure,
-  with author, chapter, §, printed page and caption, on a card over the 3D view; then it recreates the construction
-  beside it and ends with the sources as `/open` links. It builds:
+  with author, chapter, §, printed page and caption, in the terminal (the 3D view only draws); then it recreates the construction in the
+  3D view and ends with the sources. It builds:
   - funicular cables and arches: `funicular cable with 7 loads of 12 kN span 20 m sag 4 m`,
     `funicular arch loads 10 20 30 20 10`: form diagram (cable, closing string, loads, supports) and force diagram
     (load line, pole, rays, H), with the reactions, the thrust and the largest force;
@@ -140,7 +140,7 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
     of the force diagram, every member a line parallel to it. The terminal lists every member's force by its two
     spaces (`a-1 −30.0`), tension and compression.
   Historical books (before 1950, or by Lévy, Culmann, Cremona, Maxwell, Wolfe …) always rank first, then the rest.
-  Citations stay in the terminal: each names the book, chapter, § and the printed pages it refers to (where the topic
+  Sources stay in the terminal, and so do citations: each names the book, chapter, § and the printed pages it refers to (where the topic
   appears, read from the books' `<sub>page N</sub>` markers), quotes a sentence from it, and gives the link to the book
   in the Cloudflare library. Clicking a citation prints that page in the terminal (`/page <book>/<chapter.md> 112`).
   Claude's citations work the same way. The reader also opens at a page: `library.html#/b/<book>/<chapter>?p=112`.

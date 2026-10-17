@@ -156,7 +156,7 @@ const TOPICS = {
 };
 // What the templates cannot draw: such a request needs Claude's reasoning, not the nearest template.
 const BEYOND = {
-  truss: /\b(circular|circle|round|ring|curved|arched|bowstring|lenticular|parabolic|polygonal|space|spatial|3d|three[- ]dimensional|dome|tower|cantilever|bridge|crane|k[- ]truss|vierendeel|scissors?|hammer ?beam|three[- ]hinged|continuous|irregular|asymmetric|inclined loads?|wind)\b/,
+  truss: /\b(lower|higher|uneven|unequal|different heights?|sloped|sloping|inclined|settle\w*|circular|circle|round|ring|curved|arched|bowstring|lenticular|parabolic|polygonal|space|spatial|3d|three[- ]dimensional|dome|tower|cantilever|bridge|crane|k[- ]truss|vierendeel|scissors?|hammer ?beam|three[- ]hinged|continuous|irregular|asymmetric|inclined loads?|wind)\b/,
   funicular: /\b(three[- ]hinged|two[- ]hinged|hinged|dome|vault(ed)? shell|shell|space|spatial|3d|net|network|membrane|inclined loads?|wind|moving loads?|influence line)\b/,
 };
 let phraseWhy = '';
@@ -223,6 +223,16 @@ const COMMANDS = [
 // The session viewer's own commands (viewer-commands.js); a line starting with one of them is
 // passed to the viewer's command line, e.g. "Box 0,0,0 100 50 30".
 const VIEWER_CMDS = (window.SESSION_VIEWER_COMMANDS || []).slice().sort((a, b) => b.cmd.length - a.cmd.length);
+// Exactly a viewer command: its name, then only numbers, points, colours or words from its own help and options
+// ("Box 0,0,0 100 50 30", "View Top", "Color #3f9c20"); "delete everything and …" is a request, not the Delete command.
+function exactViewerCommand(line) {
+  const c = viewerCommandOf(line);
+  if (!c) return false;
+  const known = new Set((c.help + ' ' + (c.example || '')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').match(/[a-z]+/g) || []);
+  const rest = line.slice(c.cmd.length).trim().split(/\s+/).filter(Boolean);
+  if (rest.length <= 2 && rest.every((w) => /^[A-Z][a-z]*$/.test(w))) return true; // an option, as typed in the viewer
+  return rest.every((w) => (/^[-+\d.,#a-f]+$/i.test(w) && /[\d#]/.test(w)) || known.has(w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')));
+}
 const viewerCommandOf = (line) => VIEWER_CMDS.find((c) => line.toLowerCase() === c.cmd.toLowerCase() || line.toLowerCase().startsWith(c.cmd.toLowerCase() + ' '));
 // Plain words for the scene, turned into viewer commands without an AI: "create a box", "delete everything",
 // "select all and move up 200", "rotate the box 45 degrees around x", "top view", "create a table".
@@ -948,7 +958,7 @@ createApp({
       viewerQueue.push(...lines);
       flushViewer();
     }
-    const say = (text, kind = 'out', act, href) => { log.value.push({ text, kind, act, href }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
+    const say = (text, kind = 'out', act, href, img) => { log.value.push({ text, kind, act, href, img }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
     if (claudeOn.value) {
       say('Claude is connected: ask about the course and the books, or ask for a model. It searches the books first (historical ones first), reasons, computes, draws in the 3D view, and cites pages. /new starts over.', 'dim');
@@ -958,7 +968,7 @@ createApp({
       say('To connect Claude in this browser: /key <your Anthropic API key> (from console.anthropic.com; set a spend limit there). The key stays in this browser and goes only to Anthropic.', 'dim');
       say('The 3D view on the left shows the live scene. Build in it with plain words (“create a table”, “delete everything”, “top view”) or its own commands (Box 0,0,0 100 50 30; /viewer lists them).', 'dim');
     }
-    say('Chapters, figures and drawings open on a sheet over it; /close shows the scene again.', 'dim');
+    say('Sources, pages and figures appear here in the terminal; the 3D view only draws. /open shows a whole chapter over the view, /close hides it.', 'dim');
 
     // Viewer: what is on screen, with a back stack of the commands that produced it.
     const view = reactive({ kind: 'welcome', title: '', open: '', html: '', items: [], src: '', error: '', showBook: false });
@@ -1031,9 +1041,8 @@ createApp({
       say(list.length > 12 ? `… ${list.length - 12} more in the viewer.` : 'Results are also in the viewer.', 'dim');
       return true;
     };
-    // Graphic statics from the books: find the chapters on the construction (Lévy first), find its figure in
-    // them, show the figure over the 3D view, recreate the construction beside it, then cite the sources.
-    const figure = reactive({ src: '', caption: '', cite: '', act: '', href: '', page: '' });
+    // Graphic statics from the books: find the chapters on the construction (historical books first), find its
+    // figure, show it in the terminal with its citation, recreate the construction in the 3D view, cite the sources.
     // Historical books first (before 1950, or by the founders of graphic statics), then the rest.
     const historical = (b) => { const t = plain(b.id + ' ' + b.title), y = +((b.title.match(/\b(1[5-9]\d\d)\b/) || [])[1] || 0);
       return (y && y < 1950) || /levy|culmann|cremona|maxwell|wolfe|ritter|rankine|varignon|mohr|muller-breslau|henneberg|bow\b/.test(t); };
@@ -1090,8 +1099,8 @@ createApp({
       let source = null;
       for (const h of found.slice(0, 5)) { source = await figureIn(h, topic.words).catch(() => null); if (source) break; }
       if (source) {
-        Object.assign(figure, source);
-        say(`Found the construction in ${source.cite}. The original figure is over the 3D view; the recreation is drawn beside it.`, 'out', source.act);
+        say(`Found the construction in ${source.cite}. The recreation is drawn in the 3D view.`, 'out', source.act);
+        say(source.cite, 'fig', null, source.href, source.src); // the book's own figure, here in the terminal
       } else if (found.length) say(`Found ${found.length} chapter${found.length === 1 ? '' : 's'}, without a figure of it; recreating the construction from the text.`, 'dim');
       else if (state.value === 'ready') say('Nothing on it in the library; drawing the standard construction.', 'dim');
       sendToViewer(...phrase.commands);
@@ -1141,7 +1150,11 @@ createApp({
           if (/^sk-ant-/.test(k)) {
             ownKey.set(k); claudeOn.value = true;
             say('Claude is on in this browser, with your API key. It is kept in this browser only and sent only to Anthropic; /key off removes it.', 'dim');
-          } else if (!k || k === 'off') {
+          } else if (!k) {
+            say('Paste your key after /key on the same line: /key sk-ant-…   (/key off removes it)', 'dim');
+            input.value = '/key ';
+            nextTick(() => prompt.value && prompt.value.focus());
+          } else if (k === 'off') {
             ownKey.set(''); keyStore.set(''); claudeOn.value = !!cfg.chatEndpoint;
             say('Keys removed from this browser.', 'dim');
           } else { keyStore.set(k); say('Class key kept in this browser.', 'dim'); }
@@ -1211,7 +1224,7 @@ createApp({
           setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
           say(`Drawing ${n} playing in the viewer. Use its controls to step through the construction.`, 'dim'); keep();
         } else if (cmd !== '/local' && cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
-        else if (claudeOn.value && cmd !== '/local' && !viewerCommandOf(line) && !/^-?\d[-\d.,\s]*$/.test(line)) await askClaude(line);
+        else if (claudeOn.value && cmd !== '/local' && !exactViewerCommand(line) && !/^-?\d[-\d.,\s]*$/.test(line)) await askClaude(line);
         else if ((phrase = phraseToCommands(cmd === '/local' ? arg : line)) && phrase.commands && phrase.reading) await fromTheBooks(phrase);
         else if (phrase && phrase.commands) {
           const shown = phrase.commands.filter((c) => c && !c.startsWith('='));
@@ -1297,7 +1310,7 @@ createApp({
         endStream(); say(toolLine(e), 'dim');
         if (e.name === 'look_at_figure' && e.input && e.input.url) {
           const src = /^https:\/\//.test(e.input.url) ? e.input.url : fileUrl(e.input.url);
-          Object.assign(figure, { src, caption: '', cite: 'Claude is looking at ' + src.split('/').slice(-3).join('/'), act: '', href: src, page: '' });
+          say('Claude is looking at ' + src.split('/').slice(-3).join('/'), 'fig', null, src, src);
         }
       }
     }
@@ -1409,7 +1422,7 @@ createApp({
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
-      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, figure, claudeLabel,
+      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, claudeLabel,
     };
   },
 }).mount('#app');

@@ -85,6 +85,9 @@
 .md sub { color: var(--muted); font-size: 12px; }
 .md sub.page-hit { color: #fff; background: var(--pink, #dc4b8d); padding: 1px 6px; border-radius: 4px; }
 .term-log .link { margin: -2px 0 4px 2ch; }
+.tl-fig { margin: 6px 0 8px; max-width: min(100%, 420px); }
+.tl-fig img { display: block; width: 100%; max-height: 300px; object-fit: contain; background: #fff; border-radius: 6px; }
+.tl-fig figcaption { color: var(--term-dim); font-size: 12px; margin-top: 4px; }
 .tl-link { color: #8fb4ff; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .md .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
 .md hr { border: 0; border-top: 1px solid var(--rule); margin: 2em 0; }
@@ -148,12 +151,6 @@ body.term-full .lib-main { flex: 1; min-height: 0; }
 .term-log .err { color: #ff8fb8; }
 .term-log .reply { color: #8fd3c7; }
 .term-log .think { color: var(--term-dim); font-style: italic; }
-.source-fig { position: absolute; bottom: 44px; left: 12px; z-index: 1; width: min(40%, 340px); margin: 0; padding: 8px 8px 10px;
-  background: var(--bg, #fff); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 24px rgb(0 0 0 / 0.14); }
-.source-fig.link { cursor: pointer; }
-.source-fig img { display: block; width: 100%; max-height: 32vh; object-fit: contain; background: #fff; }
-.source-fig figcaption { font-size: 12px; line-height: 1.4; color: var(--muted); margin: 6px 26px 0 2px; }
-.sf-close { position: absolute; right: 6px; bottom: 6px; border: 0; background: none; cursor: pointer; font-size: 14px; color: var(--muted); padding: 2px 6px; }
 .term-log .text { color: #c9cfe6; }
 .term-log a { color: #9fb6ff; text-decoration: none; }
 .term-log a:hover { text-decoration: underline; }

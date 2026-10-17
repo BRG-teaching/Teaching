@@ -21,7 +21,7 @@ page (GitHub Pages)                 this Worker (Cloudflare)               Claud
   back each line with the viewer's answer, so Claude sees what was created and corrects errors. Claude knows
   the viewer's 86 commands (`src/viewer-commands.js`, written by `CAS/website/tools/extract_viewer_commands.py`).
 - **Instructions** (`src/prompt.js`) set the order of work: search the library first, historical books first
-  (`search_books` ranks them first), read the chapter, look at the book's figure (the page shows it over the 3D view),
+  (`search_books` ranks them first), read the chapter, look at the book's figure (the terminal shows it),
   recreate the construction in the 3D view in the Equilibrium palette (compression navy, tension pink, forces green,
   guides grey), then answer and cite author, §, page and figure with `/open book/chapter.md` lines, which the terminal
   turns into links. They follow BRG's own guidance for these books (mcp-server-brg's `book_guidance.md`).
