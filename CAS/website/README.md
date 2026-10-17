@@ -48,8 +48,18 @@ without editing the site.
 | `library.html#/b/<book-id>/<chapter.md>` | Reader: the chapter as formatted text with KaTeX maths and figures, previous / next |
 | `library.html#/terminal` | BRG terminal, full screen: the viewer on the left (an empty 3D grid until something is shown: drag to orbit, scroll to zoom) shows what text cannot (chapters with figures and formulas, figure galleries, the eQUILIBRIUM step-by-step drawings); the CLI on the right takes `/books`, `/book`, `/search`, `/open`, `/read`, `/figures`, `/drawings`, `/drawing <n> [step]`, `/help`, like `uv run brg`. On phones the viewer sits above the CLI. |
 
-`library-config.js` holds the bucket URL, which entries are theses or papers (`groupOf`;
-everything else is a book), and `chatEndpoint` for AI answers in the terminal. Until that is
+**Tabs.** Each entry is sorted automatically: under a `# Theses` / `# Papers` heading in
+`LIBRARY.md`, or with words such as thesis, PhD, dissertation (→ BRG PhD theses) or paper,
+publication, journal, proceedings, conference, IASS (→ Papers) in its ID or title; everything
+else is a book. A folder that collects many theses or papers (e.g. `brg-theses/`) shows each of
+its files as its own item. `groupOf` in `library-config.js` overrides the sorting for an ID.
+
+**Covers.** The deploy looks for `cover.jpg` / `.png` / `.webp` in each book folder, else the
+first image in the book's `README.md` (e.g. the scanned title page), and lists them in
+`books/covers.json`. Entries without one get a title cover (title, author, year) in the chapter
+colours.
+
+`library-config.js` holds the bucket URL, the tab overrides (`groupOf`), and `chatEndpoint` for AI answers in the terminal. Until that is
 set, the terminal searches the library. The `brg` CLI uses each person's own Claude or
 ChatGPT login, which a public web page cannot do, so AI answers need a small server, for
 example a Cloudflare Worker with an API key that accepts `POST { messages }` and returns `{ reply }`.

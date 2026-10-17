@@ -11,10 +11,12 @@ const safePath = (p) => !!p && !p.startsWith('/') && !p.split('/').some((s) => s
 
 function parseLibrary(text) {
   const books = [];
-  let cur = null;
+  let cur = null, heading = '';
   for (const line of text.split(/\r?\n/)) {
+    const g = line.match(/^#{1}\s+(.+)$/);           // "# Papers" etc. groups the entries below it
+    if (g) { heading = g[1].trim(); continue; }
     const h = line.match(/^## `([a-zA-Z0-9_-]+)\/` — (.+)$/);
-    if (h) { cur = { id: h[1], title: h[2].trim(), sections: [] }; books.push(cur); continue; }
+    if (h) { cur = { id: h[1], title: h[2].trim(), heading, sections: [] }; books.push(cur); continue; }
     const e = line.match(/^\s+- `([^`]+\.md)` \*\*(.*?)\*\*(.*)$/);
     if (cur && e && safePath(e[1])) {
       cur.sections.push({ book: cur.id, section: e[1], title: e[2], summary: e[3].replace(/^\s*[—-]\s*/, '').trim() });
@@ -58,6 +60,67 @@ function renderMarkdown(text, docPath, bookIds) {
 }
 
 // BRG in square pixels (5 rows, letters 4 wide with a 1-pixel gap), coloured along the blue→pink ramp.
+// Which tab an entry belongs to: config override, then a "# Theses"/"# Papers" heading in
+// LIBRARY.md, then words in its ID or title. Everything else is a book.
+const THESIS_RE = /\b(theses|thesis|ph\.?\s?d|dissertation|doctoral|diss\.)\b|theses|thesis/i;
+const PAPER_RE = /\b(papers?|publications?|articles?|journal|proceedings|conference|symposium|iass|doi)\b|papers|publications/i;
+function classify(b) {
+  if (cfg.groupOf[b.id]) return cfg.groupOf[b.id];
+  if (THESIS_RE.test(b.heading) || /thes/i.test(b.heading)) return 'theses';
+  if (PAPER_RE.test(b.heading)) return 'papers';
+  if (THESIS_RE.test(b.id) || THESIS_RE.test(b.title)) return 'theses';
+  if (PAPER_RE.test(b.id) || PAPER_RE.test(b.title)) return 'papers';
+  return 'books';
+}
+// A folder that holds many theses or papers (e.g. brg-theses/) shows each chapter file as its own item.
+const isCollection = (b) => b.sections.length > 1 && /(^|[-_])(theses|papers|publications|articles|brg-pub)/i.test(b.id);
+// "La statique graphique, Maurice Lévy, 1886" -> title / author / year, for the covers.
+function splitTitle(t) {
+  const parts = t.split(/,\s+/);
+  const year = parts.length > 1 && /^\d{4}/.test(parts[parts.length - 1]) ? parts.pop() : '';
+  const author = parts.length > 1 ? parts.slice(1).join(', ') : '';
+  return { title: parts[0], author, year };
+}
+const RAMP_COVER = ['#3057b1', '#5552bb', '#7750c1', '#934abd', '#ae4bb2', '#ca49a4', '#dc4b8d'];
+const coverColor = (id) => RAMP_COVER[[...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % RAMP_COVER.length];
+
+// Cover: the book's own image when the deploy found one (books/covers.json), else a title cover.
+const BookCover = {
+  props: { title: String, id: String, src: String, sub: String },
+  data: () => ({ failed: false }),
+  computed: {
+    t() {
+      const t = splitTitle(this.title || '');
+      if (this.sub) { const m = splitTitle(this.sub.replace(/\.$/, '')); t.author = m.title; t.year = t.year || m.year; }
+      return t;
+    },
+    color() { return coverColor((this.id || '') + (this.sub ? this.title : '')); },
+  },
+  // Shrink the title until its longest word fits the cover (long German compounds).
+  mounted() { this.fit(); document.fonts && document.fonts.ready.then(() => this.fit()); this.ro = new ResizeObserver(() => this.fit()); this.ro.observe(this.$el); },
+  beforeUnmount() { this.ro && this.ro.disconnect(); },
+  updated() { this.fit(); },
+  methods: {
+    fit() {
+      const b = this.$el.querySelector('.cover-gen b');
+      if (!b) return;
+      b.style.fontSize = '';
+      const cs = getComputedStyle(b);
+      const ctx = (BookCover.canvas ||= document.createElement('canvas')).getContext('2d');
+      const words = b.textContent.split(/\s+/).filter(Boolean);
+      const room = b.clientWidth * 0.96;
+      let size = parseFloat(cs.fontSize);
+      const widest = () => { ctx.font = `${cs.fontWeight} ${size}px ${cs.fontFamily}`; return Math.max(0, ...words.map((w) => ctx.measureText(w).width)); };
+      while (room > 0 && widest() > room && size > 10) size -= 0.5;
+      if (size !== parseFloat(cs.fontSize)) b.style.fontSize = size + 'px';
+    },
+  },
+  template: `<span class="cover" :style="{ '--cc': color }">
+    <img v-if="src && !failed" :src="src" alt="" loading="lazy" @error="failed = true">
+    <span v-else class="cover-gen"><i></i><b>{{ t.title }}</b><span>{{ t.author }}</span><em>{{ t.year }}</em></span>
+  </span>`,
+};
+
 const PIXEL_ROWS = [
   '###  ###   ###',
   '#  # #  # #   ',
@@ -85,6 +148,7 @@ const COMMANDS = [
 const PLAYER = '../../2_computational_form_finding/Equilibrium/drawings/web/';
 
 createApp({
+  components: { BookCover },
   setup() {
     const state = ref('loading');
     const error = ref('');
@@ -95,9 +159,15 @@ createApp({
     const libraryUrl = fileUrl(cfg.libraryPath);
     const host = new URL(base).host;
 
-    const groupOf = (id) => cfg.groupOf[id] || 'books';
+    const covers = ref({});
+    const groupOf = (id) => { const b = books.value.find((x) => x.id === id); return b ? classify(b) : (cfg.groupOf[id] || 'books'); };
+    // Shelf items per tab: whole books, or one item per file for collections of theses/papers.
+    const shelf = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) =>
+      isCollection(b) && g.id !== 'books'
+        ? b.sections.map((s) => ({ key: b.id + '/' + s.section, id: b.id, title: s.title, cover: '', href: readerHref(b.id, s.section), meta: s.summary, sub: s.summary }))
+        : [{ key: b.id, id: b.id, title: b.title, cover: covers.value[b.id] || '', href: '#/b/' + b.id, sub: '', meta: `${b.sections.length} chapter${b.sections.length === 1 ? '' : 's'}` }])])));
     const groupLabel = (g) => (cfg.groups.find((x) => x.id === g) || cfg.groups[0]).label;
-    const grouped = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => groupOf(b.id) === g.id)])));
+    const grouped = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id)])));
     const bookIds = computed(() => new Set(books.value.map((b) => b.id)));
     const book = computed(() => books.value.find((b) => b.id === route.book));
     const bookTitle = (id) => (books.value.find((b) => b.id === id) || {}).title || id;
@@ -167,6 +237,7 @@ createApp({
     async function loadLibrary() {
       try {
         books.value = parseLibrary(await getText(cfg.libraryPath));
+        if (cfg.mirrorPath) fetch(`${cfg.mirrorPath}/covers.json`, { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : {})).then((c) => { covers.value = c || {}; }).catch(() => {});
         if (!books.value.length) throw new Error('LIBRARY.md has no entries in the expected format.');
         state.value = 'ready';
       } catch (e) {
@@ -342,7 +413,7 @@ createApp({
     }, { immediate: true });
 
     return {
-      cfg, state, error, books, query, route, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
+      cfg, state, error, books, query, route, covers, shelf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
       view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, gridEl,
