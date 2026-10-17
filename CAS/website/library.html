@@ -124,6 +124,12 @@
         <!-- The session viewer (petrasvestartas/session, WebGPU): the backend's live scene, and what the terminal builds.
              :src, not src, so the page's raw HTML does not load it once more before Vue mounts. -->
         <iframe ref="sessionEl" class="session-frame" :src="viewerSrc" title="Session viewer"></iframe>
+        <!-- the book's own figure of the construction being recreated in the 3D view; a click opens its chapter -->
+        <figure class="source-fig" v-if="figure.src" :class="{ link: figure.act }" @click="figure.act && run(figure.act)">
+          <button type="button" class="sf-close" @click.stop="figure.src = ''" aria-label="Close the figure">✕</button>
+          <img :src="figure.src" :alt="figure.caption || 'Figure from the library'">
+          <figcaption>{{ figure.cite }}</figcaption>
+        </figure>
         <div class="sheet" v-if="view.kind !== 'welcome'" ref="viewerEl" @click="onViewerClick">
           <div class="viewer-bar">
             <button type="button" class="vb-back" :disabled="viewStack.length < 2" @click.stop="viewBack" aria-label="Back">←</button>

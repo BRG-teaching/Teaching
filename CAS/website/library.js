@@ -109,6 +109,24 @@ function shortTitle(title, id = '') {
   return t;
 }
 
+// A short citation from a catalogue title such as "Graphic Statics · and its Applications … · Maurice Lévy ·
+// Second edition · Part I: … · Paris, Gauthier-Villars, 1886" → "Maurice Lévy, Graphic Statics, Part I (1886)".
+function citeBook(title) {
+  if (!title.includes(' · ')) { const t = splitTitle(title); return `${t.author ? t.author + ', ' : ''}${t.title}${t.year ? ' (' + t.year + ')' : ''}`; }
+  const parts = title.split(' · '), main = parts[0];
+  const author = parts.slice(1).find((x) => /^(?:[A-ZÀ-Ý][a-zà-ÿ'’-]+\.?\s?){2,3}$/.test(x.trim()));
+  const part = (parts.find((x) => /^(Part|Vol\.?|Volume|Band|Teil)\s+[IVX\d]+/i.test(x)) || '').match(/^\S+\s+[IVX\d]+/);
+  const year = (parts[parts.length - 1].match(/\b(1[5-9]\d\d|20\d\d)\b/) || [])[1];
+  return `${author ? author + ', ' : ''}${main}${part ? ', ' + part[0] : ''}${year ? ' (' + year + ')' : ''}`;
+}
+const plain = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+// What a graphic statics construction is called in the books (English, French, German), to find its chapter
+// and its figure.
+const TOPICS = {
+  truss: { label: 'trusses and the Cremona diagram', words: ['cremona', 'reciprocal', 'reciproque', 'truss', 'treillis', 'lattice', 'articulated', 'articule', 'fachwerk', 'kraefteplan', 'bow'] },
+  funicular: { label: 'the funicular polygon', words: ['funicular', 'funiculaire', 'catenary', 'chainette', 'force polygon', 'polygone des forces', 'seilpolygon', 'thrust line', 'arch', 'voute'] },
+};
+
 // Cover: only the short title, on the colour of the entry's subject.
 const BookCover = {
   props: { title: String, color: String },
@@ -227,7 +245,11 @@ const recipeIn = (s) => { if (/\bcolumns?\s+grid\b|\bgrid of columns\b/.test(s))
 // Graphic statics after Lévy (La Statique graphique I, ch. I): the funicular polygon of vertical loads, a hanging
 // cable or, inverted, an arch, as its form diagram, with the force diagram beside it: the load line, the pole and the
 // rays, each parallel to a segment of the cable. In the XZ plane (View Front), lengths in millimetres, forces in kN.
-const FUNICULAR = /\b(funicular|funiculaire|cable|catenary|hanging chain|arch|thrust line|force (diagram|polygon)|form (and|&|\+) force|graphic static)/;
+const FUNICULAR = /\b(funicular|funiculaire|cable|catenary|hanging chain|arch|thrust line)\b/;
+const TRUSS = /\b(truss|trusses|cremona|maxwell|reciprocal|pratt|howe|warren|fink|king ?post|bow'?s notation|lattice girder|treillis)\b/;
+// graphic statics asked for without naming a structure: the terminal asks which one
+const STATICS = /\b(graphic static|statique graphique|force (diagram|polygon)|form (and|&|\+) force)/;
+const wholeIn = (t) => recipeIn(t) || FUNICULAR.test(t) || TRUSS.test(t) || STATICS.test(t);
 let phraseNotes = [];
 function lengthIn(s, words, fallback) {
   const m = s.match(new RegExp(`\\b(?:${words})\\s*(?:of\\s*|=\\s*)?(${NUM})\\s*(mm|cm|m)?\\b`)) || s.match(new RegExp(`(${NUM})\\s*(mm|cm|m)?\\s*(?:${words})\\b`));
@@ -283,6 +305,217 @@ function funicular(s) {
   return cmds;
 }
 
+// Graphic statics of a plane truss (Cremona, Maxwell): member forces from the equilibrium of the joints, and
+// the force diagram from Bow's notation. Every space of the form diagram, between members and the lines of the
+// external forces, is a point of the force diagram; every member is a line between two such points, parallel
+// to it and as long as its force. Pratt, Howe, Warren and roof trusses, loads on the top or bottom chord.
+function trussGeometry(kind, n, L, d, bottom, P) {
+  const a = L / n, nodes = [], members = [], loads = [];
+  const node = (x, z) => nodes.push({ x, z }) - 1;
+  const bar = (i, j, group) => members.push({ i, j, group });
+  const B = Array.from({ length: n + 1 }, (_, i) => node(i * a, 0));
+  for (let i = 0; i < n; i++) bar(B[i], B[i + 1], 'bottom chord');
+  if (kind === 'warren') {
+    const T = Array.from({ length: n }, (_, i) => node((i + 0.5) * a, d));
+    for (let i = 0; i < n - 1; i++) bar(T[i], T[i + 1], 'top chord');
+    for (let i = 0; i < n; i++) { bar(B[i], T[i], 'diagonal'); bar(T[i], B[i + 1], 'diagonal'); }
+    (bottom ? B.slice(1, -1) : T).forEach((k) => loads.push({ node: k, fz: -P }));
+  } else if (kind === 'roof') {
+    const T = B.map((b, i) => (i === 0 || i === n ? b : node(i * a, d * (1 - Math.abs(2 * i / n - 1)))));
+    for (let i = 0; i < n; i++) bar(T[i], T[i + 1], 'top chord');
+    for (let i = 1; i < n; i++) bar(B[i], T[i], 'vertical');
+    for (let i = 1; i < n - 1; i++) (i < n / 2 ? bar(T[i], B[i + 1], 'diagonal') : bar(B[i], T[i + 1], 'diagonal'));
+    (bottom ? B : T).slice(1, -1).forEach((k) => loads.push({ node: k, fz: -P }));
+  } else {
+    const T = Array.from({ length: n + 1 }, (_, i) => node(i * a, d));
+    for (let i = 0; i < n; i++) bar(T[i], T[i + 1], 'top chord');
+    for (let i = 0; i <= n; i++) bar(B[i], T[i], 'vertical');
+    // Pratt: diagonals fall towards the middle (in tension under gravity); Howe: they rise towards it
+    for (let i = 0; i < n; i++) ((i < n / 2) === (kind === 'pratt') ? bar(T[i], B[i + 1], 'diagonal') : bar(B[i], T[i + 1], 'diagonal'));
+    if (bottom) B.slice(1, -1).forEach((k) => loads.push({ node: k, fz: -P }));
+    else T.forEach((k, i) => loads.push({ node: k, fz: i === 0 || i === n ? -P / 2 : -P }));
+  }
+  return { nodes, members, loads, supports: [B[0], B[n]] };
+}
+
+// Member forces (tension positive) from the 2N joint equations, solved by least squares, which is exact for a
+// statically determinate truss in equilibrium.
+function solveTruss(nodes, members, forces) {
+  const N = nodes.length, M = members.length;
+  if (M + 3 !== 2 * N) throw new Error('This truss is not statically determinate.');
+  const A = Array.from({ length: 2 * N }, () => new Float64Array(M)), b = new Float64Array(2 * N);
+  members.forEach(({ i, j }, e) => {
+    const dx = nodes[j].x - nodes[i].x, dz = nodes[j].z - nodes[i].z, l = Math.hypot(dx, dz);
+    A[2 * i][e] += dx / l; A[2 * i + 1][e] += dz / l; A[2 * j][e] -= dx / l; A[2 * j + 1][e] -= dz / l;
+  });
+  forces.forEach((f) => { b[2 * f.node] -= f.fx; b[2 * f.node + 1] -= f.fz; });
+  const K = Array.from({ length: M }, () => new Float64Array(M + 1));
+  for (let r = 0; r < 2 * N; r++) for (let p = 0; p < M; p++) {
+    if (!A[r][p]) continue;
+    K[p][M] += A[r][p] * b[r];
+    for (let q = 0; q < M; q++) K[p][q] += A[r][p] * A[r][q];
+  }
+  for (let c = 0; c < M; c++) {
+    let best = c;
+    for (let r = c + 1; r < M; r++) if (Math.abs(K[r][c]) > Math.abs(K[best][c])) best = r;
+    if (Math.abs(K[best][c]) < 1e-9) throw new Error('This truss is a mechanism.');
+    [K[c], K[best]] = [K[best], K[c]];
+    for (let r = 0; r < M; r++) if (r !== c) { const f = K[r][c] / K[c][c]; if (f) for (let q = c; q <= M; q++) K[r][q] -= f * K[c][q]; }
+  }
+  return members.map((_, e) => K[e][M] / K[e][e]);
+}
+
+// Bow's notation: the spaces of the form diagram, found as the faces of the plane graph of the members and of
+// the external forces' lines (drawn outwards, closed far away by a circle); then each space's point in the
+// force diagram, walking from space to space across members and forces.
+function bowSpaces(nodes, members, T, forces, L) {
+  const V = nodes.map((n) => ({ x: n.x, z: n.z }));
+  const cx = V.reduce((t, v) => t + v.x, 0) / V.length, cz = V.reduce((t, v) => t + v.z, 0) / V.length, R = 8 * L;
+  const hull = convexHull(V);
+  const outside = (x, z) => hull.some((h, i) => { const g = hull[(i + 1) % hull.length]; return (g.x - h.x) * (z - h.z) - (g.z - h.z) * (x - h.x) < -1e-6 * L; });
+  const edges = [], elements = [];
+  members.forEach((m, e) => { elements.push({ at: m.i, other: m.j, vec: (() => { const dx = nodes[m.j].x - nodes[m.i].x, dz = nodes[m.j].z - nodes[m.i].z, l = Math.hypot(dx, dz); return [T[e] * dx / l, T[e] * dz / l]; })(), member: e }); edges.push([m.i, m.j]); });
+  const far = [];
+  forces.forEach((f, k) => {
+    const len = Math.hypot(f.fx, f.fz), u = [f.fx / len, f.fz / len], o = nodes[f.node];
+    // the line is drawn on the side the arrow comes from (a push), else on the side it goes to (a pull)
+    const d = outside(o.x - u[0] * 0.01 * L, o.z - u[1] * 0.01 * L) ? [-u[0], -u[1]] : [u[0], u[1]];
+    const px = o.x - cx, pz = o.z - cz, bq = px * d[0] + pz * d[1], t = -bq + Math.sqrt(bq * bq - (px * px + pz * pz - R * R));
+    const id = V.push({ x: o.x + t * d[0], z: o.z + t * d[1] }) - 1;
+    far.push(id); f.ray = d;
+    elements.push({ at: f.node, other: id, vec: [f.fx, f.fz], force: k });
+    edges.push([f.node, id]);
+  });
+  // close the far ends with arcs of the circle, so the outside splits into one space between each two lines
+  const ang = (id) => Math.atan2(V[id].z - cz, V[id].x - cx);
+  far.sort((p, q) => ang(p) - ang(q));
+  far.forEach((id, k) => {
+    const next = far[(k + 1) % far.length];
+    let a0 = ang(id), a1 = ang(next);
+    if (a1 <= a0) a1 += 2 * Math.PI;
+    const steps = Math.max(1, Math.ceil((a1 - a0) / 0.2));
+    let prev = id;
+    for (let s = 1; s < steps; s++) { const t = a0 + (a1 - a0) * s / steps; const v = V.push({ x: cx + R * Math.cos(t), z: cz + R * Math.sin(t) }) - 1; edges.push([prev, v]); prev = v; }
+    edges.push([prev, next]);
+  });
+  // faces: walk each half-edge keeping the face on the left
+  const out = V.map(() => []);
+  edges.forEach(([u, v]) => { out[u].push(v); out[v].push(u); });
+  out.forEach((list, u) => list.sort((p, q) => Math.atan2(V[p].z - V[u].z, V[p].x - V[u].x) - Math.atan2(V[q].z - V[u].z, V[q].x - V[u].x)));
+  const face = new Map(), faces = [];
+  for (const [u0, v0] of edges.flatMap(([u, v]) => [[u, v], [v, u]])) {
+    if (face.has(u0 + ',' + v0)) continue;
+    const id = faces.length, loop = [];
+    let u = u0, v = v0;
+    while (!face.has(u + ',' + v)) {
+      face.set(u + ',' + v, id); loop.push(u);
+      const list = out[v], t = list.indexOf(u), w = list[(t - 1 + list.length) % list.length];
+      u = v; v = w;
+    }
+    const area = loop.reduce((s2, k, i) => { const p2 = V[k], q2 = V[loop[(i + 1) % loop.length]]; return s2 + p2.x * q2.z - q2.x * p2.z; }, 0) / 2;
+    faces.push({ loop, area });
+  }
+  // the force diagram: crossing an element from the space on its left to the one on its right adds its force
+  const pos = new Map(), links = faces.map(() => []);
+  elements.forEach((el) => {
+    el.left = face.get(el.at + ',' + el.other); el.right = face.get(el.other + ',' + el.at);
+    links[el.left].push([el.right, el.vec]); links[el.right].push([el.left, [-el.vec[0], -el.vec[1]]]);
+  });
+  const start = elements[elements.length - 1].left, queue = [start];
+  pos.set(start, [0, 0]);
+  while (queue.length) {
+    const f = queue.shift(), [x, z] = pos.get(f);
+    for (const [g, [vx, vz]] of links[f]) {
+      const want = [x + vx, z + vz];
+      if (!pos.has(g)) { pos.set(g, want); queue.push(g); } else if (Math.hypot(pos.get(g)[0] - want[0], pos.get(g)[1] - want[1]) > 1e-6 * (1 + Math.hypot(x, z))) throw new Error('The force diagram does not close.');
+    }
+  }
+  return { V, faces, elements, pos, cx, cz, nNodes: nodes.length };
+}
+function convexHull(points) {
+  const p = points.slice().sort((a, b) => a.x - b.x || a.z - b.z), cross = (o, a, b) => (a.x - o.x) * (b.z - o.z) - (a.z - o.z) * (b.x - o.x);
+  const lower = [], upper = [];
+  for (const q of p) { while (lower.length > 1 && cross(lower[lower.length - 2], lower[lower.length - 1], q) <= 0) lower.pop(); lower.push(q); }
+  for (const q of p.reverse()) { while (upper.length > 1 && cross(upper[upper.length - 2], upper[upper.length - 1], q) <= 0) upper.pop(); upper.push(q); }
+  return lower.slice(0, -1).concat(upper.slice(0, -1)); // counterclockwise
+}
+
+function truss(s) {
+  const kind = /\bhowe\b/.test(s) ? 'howe' : /\bwarren\b/.test(s) ? 'warren' : /\b(roof|pitched|triangular|fink|king ?post|gable)\b/.test(s) ? 'roof' : 'pratt';
+  let n = +((s.match(/(\d+)\s*(?:panels?|bays?|segments?|divisions?|fields?)/) || [])[1] || (/king ?post/.test(s) ? 2 : 6));
+  n = Math.max(2, Math.min(16, n));
+  if (kind === 'roof' && n % 2) n += 1;
+  const L = lengthIn(s, 'span|long|wide', 12000);
+  const d = lengthIn(s, 'depth|deep|height|high|tall|rise', kind === 'roof' ? L / 4 : L / 6);
+  const P = +((s.match(new RegExp(`(${NUM})\\s*kn\\b`)) || [])[1] || 10);
+  const bottom = /\b(bottom|lower) chord\b|\bhanging\b|\bsuspended\b/.test(s);
+  const { nodes, members, loads, supports } = trussGeometry(kind, n, L, d, bottom, P);
+  // reactions: a pin at A and a roller at B, both vertical under vertical loads
+  const xa = nodes[supports[0]].x, xb = nodes[supports[1]].x, W = loads.reduce((t, f) => t - f.fz, 0);
+  const RB = loads.reduce((t, f) => t - f.fz * (nodes[f.node].x - xa), 0) / (xb - xa), RA = W - RB;
+  const forces = [...loads.map((f) => ({ node: f.node, fx: 0, fz: f.fz })), { node: supports[1], fx: 0, fz: RB, reaction: 'B' }, { node: supports[0], fx: 0, fz: RA, reaction: 'A' }];
+  const T = solveTruss(nodes, members, forces);
+  const bow = bowSpaces(nodes, members, T, forces, L);
+
+  // names: outside spaces a, b, c … clockwise from the left; inside spaces 1, 2, 3 … from the left
+  const used = new Set(bow.elements.flatMap((el) => [el.left, el.right]));
+  const outer = [], inner = [];
+  for (const f of used) (bow.faces[f].loop.some((k) => k >= bow.nNodes) ? outer : inner).push(f);
+  const spot = (f) => {
+    const own = bow.faces[f].loop.filter((k) => k < bow.nNodes).map((k) => bow.V[k]);
+    const mx = own.reduce((t, v) => t + v.x, 0) / own.length, mz = own.reduce((t, v) => t + v.z, 0) / own.length;
+    if (inner.includes(f)) return [mx, mz];
+    const ox = mx - bow.cx, oz = mz - bow.cz, l = Math.hypot(ox, oz) || 1;
+    return [mx + ox / l * 0.09 * L, mz + oz / l * 0.09 * L];
+  };
+  const name = new Map();
+  // clockwise from the left, starting a little below the horizontal so the space beside the left support is a
+  const turn = ([x, z]) => (3 * Math.PI + 0.3 - Math.atan2(z - bow.cz, x - bow.cx)) % (2 * Math.PI);
+  outer.map((f) => [f, spot(f)]).sort((p, q) => turn(p[1]) - turn(q[1]))
+    .forEach(([f], i) => name.set(f, String.fromCharCode(97 + i)));
+  inner.map((f) => [f, spot(f)]).sort((p, q) => p[1][0] - q[1][0] || q[1][1] - p[1][1]).forEach(([f], i) => name.set(f, String(i + 1)));
+
+  // place the force diagram right of the truss, about as big as the span
+  const pts = [...bow.pos.values()], fx0 = Math.min(...pts.map((q) => q[0])), fx1 = Math.max(...pts.map((q) => q[0]));
+  const fz0 = Math.min(...pts.map((q) => q[1])), fz1 = Math.max(...pts.map((q) => q[1]));
+  const k = 0.8 * L / Math.max(fx1 - fx0, fz1 - fz0, 1e-9);
+  const ox = L * 1.35 - fx0 * k, oz = d / 2 - (fz0 + fz1) / 2 * k;
+  const r = (v) => Math.round(v), pt = (x, z) => `${r(x)},0,${r(z)}`, F = (f) => { const [x, z] = bow.pos.get(f); return [ox + x * k, oz + z * k]; };
+  const h = r(L / 70), text = (t, x, z, size = h) => [`Text ${t}`, `=Height ${size}`, pt(x, z)];
+  const maxLoad = Math.max(...forces.map((f) => Math.abs(f.fz)));
+  const cmds = [];
+  members.forEach((m) => cmds.push(`Line ${pt(nodes[m.i].x, nodes[m.i].z)} ${pt(nodes[m.j].x, nodes[m.j].z)}`));
+  supports.forEach((i) => cmds.push(`Point ${pt(nodes[i].x, nodes[i].z)}`));
+  forces.forEach((f) => {
+    const o = nodes[f.node], len = Math.min(0.2, Math.max(0.04, 0.08 * Math.abs(f.fz) / maxLoad)) * L, push = f.ray[1] * f.fz < 0;
+    const far = [o.x + f.ray[0] * len, o.z + f.ray[1] * len];
+    cmds.push(push ? `Arrow ${pt(...far)} ${pt(o.x, o.z)}` : `Arrow ${pt(o.x, o.z)} ${pt(...far)}`);
+  });
+  // a zero-force member is a point in the force diagram: nothing to draw
+  bow.elements.forEach((el) => { const [a, b] = [F(el.left), F(el.right)]; if (Math.hypot(a[0] - b[0], a[1] - b[1]) > 1) cmds.push(`Line ${pt(...a)} ${pt(...b)}`); });
+  for (const [f, label] of name) { cmds.push(...text(label, ...spot(f).map((v, i) => v - (i ? h / 2 : h / 3)))); const [x, z] = F(f); cmds.push(...text(label, x + h * 0.4, z + h * 0.3)); }
+  const title = { pratt: 'Pratt truss', howe: 'Howe truss', warren: 'Warren truss', roof: 'roof truss' }[kind];
+  cmds.push(...text(`form diagram (${title})`, 0, d + 0.22 * L, r(h * 1.4)), ...text('force diagram (Cremona)', ox + fx0 * k, oz + fz1 * k + 2.2 * h, r(h * 1.4)));
+  cmds.push('Escape', 'View Front', 'Fit');
+
+  // the member forces, named by the two spaces they separate
+  // letters before numbers, numbers in order: a-1, 2-3, 10-11
+  const mname = (e) => { const el = bow.elements.find((x) => x.member === e); return [name.get(el.left), name.get(el.right)].sort((x, y) => (/\d/.test(x) - /\d/.test(y)) || (+x - +y) || x.localeCompare(y)).join('-'); };
+  const fmt = (t) => (Math.abs(t) < 1e-6 ? '0' : `${t > 0 ? '+' : '−'}${Math.abs(t).toFixed(1)}`);
+  const groups = {};
+  members.forEach((m, e) => (groups[m.group] = groups[m.group] || []).push(`${mname(e)} ${fmt(T[e])}`));
+  const ec = T.reduce((b2, t, e) => (t < T[b2] ? e : b2), 0), et = T.reduce((b2, t, e) => (t > T[b2] ? e : b2), 0);
+  phraseNotes.push(
+    `${title[0].toUpperCase() + title.slice(1)} · ${n} panels · span ${(L / 1000).toFixed(2)} m · ${kind === 'roof' ? 'rise' : 'depth'} ${(d / 1000).toFixed(2)} m · ${loads.length} load${loads.length === 1 ? '' : 's'} of ${P} kN on the ${bottom ? 'bottom' : 'top'} chord${!bottom && kind !== 'warren' && kind !== 'roof' ? ' (half at the ends)' : ''}`,
+    `Reactions R_A = ${RA.toFixed(1)} kN, R_B = ${RB.toFixed(1)} kN · force scale 1 kN = ${r(k)} mm · Front view, XZ plane`,
+    `Member forces in kN, + tension, − compression, named by the spaces on either side (Bow's notation):`,
+    ...Object.entries(groups).map(([g, list]) => `  ${g}: ${list.join(' · ')}`),
+    `Largest compression ${Math.abs(T[ec]).toFixed(1)} kN in ${mname(ec)} (${members[ec].group}) · largest tension ${T[et].toFixed(1)} kN in ${mname(et)} (${members[et].group})`,
+    'Change it: “Howe truss with 8 panels span 16 m depth 2 m”, “Warren truss with loads on the bottom chord”, “roof truss with 4 panels”',
+  );
+  return cmds;
+}
+
 const CREATE = /^(create|make|add|draw|build|place|put|insert|model|generate|design|construct|give me|show me)\b/;
 const SCENE_VERBS = /^(create|make|add|draw|build|place|put|insert|model|generate|design|construct|give|show|remove|delete|erase|clear|empty|reset|wipe|clean|get|discard|trash|kill|select|pick|choose|highlight|deselect|unselect|hide|unhide|reveal|zoom|fit|frame|focus|center|centre|view|look|switch|move|shift|translate|push|pull|slide|copy|duplicate|clone|rotate|turn|spin|twist|scale|resize|grow|shrink|enlarge|double|halve|triple|undo|redo|revert|measure|start|new|cancel|stop|escape)\b/;
 const ALL = /\b(all|everything|every\s*\w*|whole|entire|scene)\b/;
@@ -310,7 +543,9 @@ const VIEWS = { top: 'Top', plan: 'Top', front: 'Front', back: 'Back', left: 'Le
   iso: 'Isometric', axonometric: 'Isometric', '3d': 'Isometric', perspective: 'Perspective', orthographic: 'Orthographic', ortho: 'Orthographic', parallel: 'Orthographic' };
 
 function createCommands(s) {
+  if (TRUSS.test(s)) return truss(s);
   if (FUNICULAR.test(s)) return funicular(s);
+  if (STATICS.test(s)) return null; // graphic statics of what? the reply lists the structures
   const recipe = recipeIn(s);
   if (recipe) return [...RECIPES[recipe](s), 'Escape', 'Fit'];
   const verb = shapeIn(s);
@@ -377,7 +612,7 @@ function clauseToCommands(s) {
     const what = /\barea\b/.test(s) ? 'Area' : /\bvolume\b/.test(s) ? 'Volume' : /\b(length|long)\b/.test(s) ? 'Length' : '';
     return what ? [...targetOf(s), what] : null;
   }
-  if (CREATE.test(s) || /^(a |an |the )?(funicular|cable|catenary|arch|thrust line|force diagram)\b/.test(s)) return createCommands(s);
+  if (CREATE.test(s) || /^(a |an |the )?(funicular|cable|catenary|arch|thrust line|force diagram|(pratt |howe |warren |roof |fink |king ?post |queen ?post )?truss)\b/.test(s)) return createCommands(s);
   return null;
 }
 
@@ -385,7 +620,7 @@ function clauseToCommands(s) {
 // takes the one before ("create a box and a sphere at 2000,0,0"). Returns { commands }, { failed } when a
 // clause is not understood (sure: the line clearly asks for the scene), or null for a line about something else.
 let typedLine = '';
-const ASKS = /^(a |an |the )?(funicular|cable|catenary|arch|thrust line|force diagram)\b|^(what|how|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*)\b|\bview\b/;
+const ASKS = /^(a |an |the )?(funicular|cable|catenary|arch|thrust line|force diagram|(pratt |howe |warren |roof |fink |king ?post |queen ?post )?truss)\b|^(what|how|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*)\b|\bview\b/;
 const WEAK = /^(what|how|show|get|give|look|switch|go|set|change|start|new|stop|cancel|turn|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*|view)\b/;
 function phraseToCommands(line) {
   typedLine = line;
@@ -400,7 +635,7 @@ function phraseToCommands(line) {
     if (!c) continue;
     const first = (c.match(/^[a-z]+/) || [''])[0], prev = clauses[clauses.length - 1];
     if (SCENE_VERBS.test(first) || !prev) clauses.push({ text: c, verb: SCENE_VERBS.test(first) ? first : '' });
-    else if (recipeIn(prev.text) || FUNICULAR.test(prev.text)) prev.text += ' and ' + c;
+    else if (wholeIn(prev.text)) prev.text += ' and ' + c;
     else clauses.push({ text: `${prev.verb} ${c}`.trim(), verb: prev.verb });
   }
   const commands = [], failed = [];
@@ -408,7 +643,8 @@ function phraseToCommands(line) {
     const got = clauseToCommands(c.text);
     if (got) commands.push(...got); else failed.push(c.text);
   }
-  return failed.length ? { failed, sure: !WEAK.test(s) } : { commands, notes: phraseNotes, funicular: FUNICULAR.test(s) };
+  return failed.length ? { failed, sure: !WEAK.test(s), statics: STATICS.test(s) || TRUSS.test(s) }
+    : { commands, notes: phraseNotes, reading: TRUSS.test(s) ? 'truss' : FUNICULAR.test(s) ? 'funicular' : '' };
 }
 // The eQUILIBRIUM step-by-step player, on the same GitHub Pages site.
 const PLAYER = '../../2_computational_form_finding/Equilibrium/drawings/web/';
@@ -582,7 +818,7 @@ createApp({
       const parts = Object.entries(made).map(([kind, n]) => `${n} ${kind}${n > 1 ? (/[sxh]$/.test(kind) ? 'es' : 's') : ''}`);
       if (parts.length || deleted) say(`‹ ${deleted ? `deleted ${deleted} objects; ` : ''}${parts.length ? 'created ' + parts.join(', ') : ''}`.replace(/; $/, ''), 'reply');
     }
-    const NOISE = /pipelines|WebGPU is experimental|adapter|gpu init|scene posted|surface|first frame|^fit(ted)?\b|^fit selected|^Keys go to the viewer/;
+    const NOISE = /pipelines|WebGPU is experimental|adapter|gpu init|scene posted|surface|first frame|^fit(ted)?\b|^fit selected|^Keys go to the viewer|epaint|pixels_per_point/;
     function hookViewer(w) {
       if (w.__brgTerminal) return;
       w.__brgTerminal = true;
@@ -632,7 +868,7 @@ createApp({
       if (!w.wasmBindings.run_command) return typeIntoViewer(w, line); // a viewer built before run_command
       listenUntil = Date.now() + 1200;
       w.wasmBindings.run_command(line, !answer);
-      await wait(60);
+      await wait(10); // the viewer queues them in order; this only lets each answer arrive with its line
     }
     function sendToViewer(...lines) {
       if (view.kind !== 'welcome') closeSheet();
@@ -719,16 +955,58 @@ createApp({
       say(list.length > 12 ? `… ${list.length - 12} more in the viewer.` : 'Results are also in the viewer.', 'dim');
       return true;
     };
-    // Where the construction comes from: the library's chapters on the funicular polygon, Lévy first.
-    function showReading() {
-      if (state.value !== 'ready') { say('Read: Lévy, La Statique graphique I, ch. I (the library has not loaded).', 'dim'); return; }
-      const seen = new Set();
-      const hits = ['funiculaire', 'funicular', 'polygone des forces', 'force polygon'].flatMap((q) => search(q, allSections.value))
-        .filter((h) => !seen.has(h.book + h.section) && seen.add(h.book + h.section))
-        .sort((a, b) => /levy/i.test(b.book) - /levy/i.test(a.book));
-      if (!hits.length) { say('No chapter on the funicular polygon in the library yet.', 'dim'); return; }
-      say('Read (Lévy first):', 'dim');
-      hits.slice(0, 5).forEach((h) => say(`${bookTitle(h.book)} · ${h.title}`, 'out', `/open ${h.book}/${h.section}`));
+    // Graphic statics from the books: find the chapters on the construction (Lévy first), find its figure in
+    // them, show the figure over the 3D view, recreate the construction beside it, then cite the sources.
+    const figure = reactive({ src: '', caption: '', cite: '', act: '' });
+    function rankSections(words) {
+      const keys = words.map(plain);
+      return books.value.flatMap((b) => b.sections.map((s2) => {
+        const t = plain(s2.title), m = plain(s2.summary);
+        const score = keys.reduce((n, k) => n + (t.includes(k) ? 3 : 0) + (m.includes(k) ? 1 : 0), 0);
+        return { book: b.id, section: s2.section, title: s2.title, score: score ? score + (/levy/i.test(plain(b.id + b.title)) ? 2 : 0) : 0 };
+      })).filter((h) => h.score >= 2).sort((a, b) => b.score - a.score);
+    }
+    // The figure of a chapter that the text around it names best, with its §, printed page and caption.
+    async function figureIn(hit, words) {
+      const path = `${hit.book}/${hit.section}`, lines = (await getText(path)).split(/\r?\n/), keys = words.map(plain);
+      let best = null;
+      lines.forEach((line, i) => {
+        const md = line.match(/!\[([^\]]*)\]\(\s*<?([^)\s>]+)/), html = line.match(/<img\b[^>]*\bsrc="([^"]+)"[^>]*>/);
+        if (!md && !html) return;
+        const alt = md ? md[1] : ((line.match(/\balt="([^"]*)"/) || [])[1] || '');
+        const near = plain(lines.slice(Math.max(0, i - 8), i + 4).join(' ') + ' ' + alt);
+        const score = keys.reduce((n, k) => n + near.split(k).length - 1, 0);
+        if (score && (!best || score > best.score)) best = { score, i, alt, src: md ? md[2] : html[1] };
+      });
+      if (!best) return null;
+      let page = '', sec = '';
+      for (let i = best.i; i >= 0 && !(page && sec); i--) {
+        if (!page) page = (lines[i].match(/<sub>\s*(?:page|p\.)\s*(\d+)\s*<\/sub>/i) || [])[1] || '';
+        if (!sec && /^#/.test(lines[i])) sec = (lines[i].match(/§\s*(\d+)/) || [])[1] || '';
+      }
+      const caption = best.alt || (lines[best.i + 1] || '').replace(/[*_]/g, '').trim().slice(0, 80);
+      const cite = `${citeBook(bookTitle(hit.book))} — ${hit.title}${sec ? ', § ' + sec : ''}${page ? ', p. ' + page : ''}${caption ? ', ' + caption : ''}`;
+      return { src: new URL(best.src, fileUrl(path)).href, caption, cite, act: `/open ${path}` };
+    }
+    async function fromTheBooks(phrase) {
+      const topic = TOPICS[phrase.reading];
+      say(`Searching the library for ${topic.label}…`, 'dim');
+      const found = state.value === 'ready' ? rankSections(topic.words) : [];
+      if (state.value !== 'ready') say('The library has not loaded, so this is drawn without its sources.', 'err');
+      let source = null;
+      for (const h of found.slice(0, 5)) { source = await figureIn(h, topic.words).catch(() => null); if (source) break; }
+      if (source) {
+        Object.assign(figure, source);
+        say(`Found the construction in ${source.cite}. The original figure is over the 3D view; the recreation is drawn beside it.`, 'out', source.act);
+      } else if (found.length) say(`Found ${found.length} chapter${found.length === 1 ? '' : 's'}, without a figure of it; recreating the construction from the text.`, 'dim');
+      else if (state.value === 'ready') say('Nothing on it in the library; drawing the standard construction.', 'dim');
+      sendToViewer(...phrase.commands);
+      say(`→ viewer: ${phrase.commands.filter((c) => c && !c.startsWith('=')).length} commands (the recreation)`, 'dim');
+      (phrase.notes || []).forEach((n) => say(n, 'out'));
+      if (found.length) {
+        say('Sources:', 'dim');
+        found.slice(0, 4).forEach((h) => say(`${citeBook(bookTitle(h.book))} — ${h.title}`, 'out', `/open ${h.book}/${h.section}`));
+      }
     }
     const splitRef = (ref_) => { const i = ref_.indexOf('/'); return i < 0 ? [ref_, ''] : [ref_.slice(0, i), ref_.slice(i + 1)]; };
 
@@ -804,20 +1082,26 @@ createApp({
           say(`Drawing ${n} playing in the viewer. Use its controls to step through the construction.`, 'dim'); keep();
         } else if (cmd !== '/local' && cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
         else if (cfg.chatEndpoint && cmd !== '/local' && !viewerCommandOf(line) && !/^-?\d[-\d.,\s]*$/.test(line)) await askClaude(line);
-        else if ((phrase = phraseToCommands(cmd === '/local' ? arg : line)) && phrase.commands) {
+        else if ((phrase = phraseToCommands(cmd === '/local' ? arg : line)) && phrase.commands && phrase.reading) await fromTheBooks(phrase);
+        else if (phrase && phrase.commands) {
           const shown = phrase.commands.filter((c) => c && !c.startsWith('='));
           sendToViewer(...phrase.commands);
           say('→ viewer: ' + (shown.length > 12 ? `${shown.length} commands: ${shown.slice(0, 3).join(' · ')} · …` : shown.join(' · ')), 'dim');
           (phrase.notes || []).forEach((n) => say(n, 'out'));
-          if (phrase.funicular) showReading();
         }
         else if (viewerCommandOf(line)) { sendToViewer(line); say('→ viewer: ' + line, 'dim'); }
         else if (/^-?\d[-\d.,\s]*$/.test(line) || /^(finish|done|enter)$/i.test(line)) { const v = /\d/.test(line) ? line : ''; sendToViewer(v); say('→ viewer: ' + (v || 'Enter'), 'dim'); }
         else if (viewerAsks && !(phrase && phrase.sure)) { sendToViewer('=' + line); say('→ viewer (answer): ' + line, 'dim'); }
+        else if (phrase && phrase.statics) {
+          say(`Graphic statics of which structure? Without Claude the terminal builds, from the books:`, 'err');
+          say('funicular cable · funicular arch · Pratt truss · Howe truss · Warren truss · roof truss (king post, or n panels)', 'dim');
+          say('e.g. “create a Pratt truss with 8 panels span 16 m”, “Warren truss with loads on the bottom chord”, “funicular arch loads 10 20 30 20 10”', 'dim');
+        }
         else if (phrase && phrase.sure) {
           say(`Not understood: “${phrase.failed.join('”, “')}”. Without Claude the terminal knows:`, 'err');
           say('shapes: box, sphere, cylinder, cone, torus, pyramid, line, polyline, circle, arc, point, text (sizes and x,y,z optional)', 'dim');
           say('parts: table, chair, stool, bench, shelf, stair, wall, slab, column grid, frame (e.g. create a 2000 by 900 table)', 'dim');
+          say('graphic statics: funicular cable or arch, Pratt / Howe / Warren / roof truss with its Cremona diagram', 'dim');
           say('edits: select / delete / hide / show / move / copy / rotate / scale … all, it, or the box · top view · zoom · undo · /viewer for every command', 'dim');
         }
         else if (ready() && showHits(line, search(line, allSections.value))) keep();
@@ -887,7 +1171,13 @@ createApp({
           if (!text.trim()) continue;
           const e = JSON.parse(text);
           if (e.t === 'thinking' || e.t === 'text') streamInto(e.t, e.d);
-          else if (e.t === 'tool') { endStream(); say(toolLine(e), 'dim'); }
+          else if (e.t === 'tool') {
+            endStream(); say(toolLine(e), 'dim');
+            if (e.name === 'look_at_figure' && e.input && e.input.url) {
+              const src = /^https:\/\//.test(e.input.url) ? e.input.url : fileUrl(e.input.url);
+              Object.assign(figure, { src, caption: '', cite: 'Claude is looking at ' + src.split('/').slice(-3).join('/'), act: '' });
+            }
+          }
           else if (e.t === 'error') throw new Error(e.error);
           else if (e.t === 'done') done = e;
         }
@@ -956,7 +1246,7 @@ createApp({
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
-      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet,
+      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, figure,
     };
   },
 }).mount('#app');

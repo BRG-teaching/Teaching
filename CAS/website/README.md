@@ -121,11 +121,20 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
   `copy the sphere 1000 in x`, `hide everything`, `show all`, `top view`, `zoom to fit`, `undo twice`).
   A request it cannot read is reported as such, not searched in the library. Anything beyond this needs an AI
   model behind `chatEndpoint`.
-- **Graphic statics** after Lévy (*La Statique graphique* I, ch. I): `funicular cable`, `funicular arch`,
-  `create a funicular cable with form and force diagram`, `funicular cable with 7 loads of 12 kN span 20 m sag 4 m`,
-  `funicular arch loads 10 20 30 20 10`. It draws the form diagram (cable or arch, closing string, loads, supports)
-  and the force diagram (load line, pole, rays, H) in the XZ plane, prints the reactions, the thrust H and the largest
-  force, and lists the library's chapters on the funicular polygon, Lévy first.
+- **Graphic statics from the books.** A graphic statics request first searches the library (Lévy first) for the
+  construction, finds its figure in the best chapter (by the words around the image) and shows that original figure,
+  with author, chapter, §, printed page and caption, on a card over the 3D view; then it recreates the construction
+  beside it and ends with the sources as `/open` links. It builds:
+  - funicular cables and arches: `funicular cable with 7 loads of 12 kN span 20 m sag 4 m`,
+    `funicular arch loads 10 20 30 20 10`: form diagram (cable, closing string, loads, supports) and force diagram
+    (load line, pole, rays, H), with the reactions, the thrust and the largest force;
+  - trusses: `create a truss using graphic statics` (Pratt), `Howe truss with 8 panels span 16 m depth 2 m`,
+    `Warren truss with loads on the bottom chord`, `roof truss with 4 panels`, `king post truss`. The member forces
+    come from the equilibrium of the joints; the force diagram is the Cremona (reciprocal) diagram, built from Bow's
+    notation: every space of the form diagram (letters outside, numbers inside, labelled in both diagrams) is a point
+    of the force diagram, every member a line parallel to it. The terminal lists every member's force by its two
+    spaces (`a-1 −30.0`), tension and compression.
+  Graphic statics of an unnamed structure ("create a force diagram") asks which one; anything else is Claude's.
 - The viewer's replies (`Created and selected box…`, `3 selected`, errors) are shown in the terminal.
 - Chapters, figures, the shelf and the eQUILIBRIUM drawings open on a sheet over the viewer;
   ✕ or `/close` shows the 3D scene again.
