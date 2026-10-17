@@ -83,6 +83,10 @@ function sse(res, reply) {
 export function startMock(port) {
   const requests = [];
   const server = http.createServer(async (req, res) => {
+    // a web page may call it too (the website's own-key mode, pointed here with ?anthropic=)
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
     if (req.method === 'GET' && req.url.startsWith('/library/')) {
       const path = decodeURIComponent(req.url.slice('/library/'.length));
       const file = path === 'LIBRARY.md' ? LIBRARY : path === 'graphic-statics-levy-part-1/01-chapter-1.md' ? CHAPTER : null;

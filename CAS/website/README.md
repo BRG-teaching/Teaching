@@ -94,7 +94,12 @@ Libraries in `vendor/`: Vue 3.5.13, marked 12.0.2, DOMPurify 3.1.6, KaTeX 0.16.1
 
 ## BRG terminal and the session viewer
 
-**With Claude** (`chatEndpoint` set, see `CAS/brg-terminal-ai/README.md`), everything typed that is not a slash
+**Claude or templates.** Without Claude, the terminal only fills in fixed templates; it says so, and a request
+beyond them ("circular truss", "three-hinged arch") is answered with "this needs Claude", not with the nearest template.
+Claude is on when `chatEndpoint` is set (the class's Worker) or when a visitor types `/key sk-ant-…` with their own
+Anthropic API key, which then works from that browser alone (`vendor/brg-claude.js`; see `CAS/brg-terminal-ai/README.md`).
+
+**With Claude**, everything typed that is not a slash
 command or a viewer command goes to Claude. It searches and reads the library, looks at figures, computes geometry
 in Python, and draws in the 3D view through the viewer's commands, seeing what the viewer answers. Its thinking,
 the tools it uses and its answer stream into the terminal; the sources it used end the answer as `/open` links.
@@ -135,10 +140,10 @@ WebGPU), built into `viewer/`. It needs a browser with WebGPU (Chrome or Edge; S
     of the force diagram, every member a line parallel to it. The terminal lists every member's force by its two
     spaces (`a-1 −30.0`), tension and compression.
   Historical books (before 1950, or by Lévy, Culmann, Cremona, Maxwell, Wolfe …) always rank first, then the rest.
-  Every citation names the printed pages it refers to (the pages of the chapter where the topic appears, read from the
-  books' `<sub>page N</sub>` markers, and the page of the figure) and shows the book's address on this site at that
-  page: `library.html#/b/<book>/<chapter>?p=112` opens the reader there and marks the page; `/open <book>/<chapter> 112`
-  does the same on the terminal's sheet. Claude's citations work the same way.
+  Citations stay in the terminal: each names the book, chapter, § and the printed pages it refers to (where the topic
+  appears, read from the books' `<sub>page N</sub>` markers), quotes a sentence from it, and gives the link to the book
+  in the Cloudflare library. Clicking a citation prints that page in the terminal (`/page <book>/<chapter.md> 112`).
+  Claude's citations work the same way. The reader also opens at a page: `library.html#/b/<book>/<chapter>?p=112`.
   Drawings use the Equilibrium palette (`2_computational_form_finding/Equilibrium/drawings/web/lib/eqdraw.js`):
   compression navy `#1a1eb2`, tension pink `#ce4095`, loads, reactions and load lines green `#3f9c20`, guides grey
   `#aaaaaa`, zero-force members `#b9b9bd`, in the form and the force diagram alike.

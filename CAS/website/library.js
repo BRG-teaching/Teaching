@@ -6,7 +6,9 @@ const { createApp, ref, reactive, computed, watch, nextTick, onMounted } = Vue;
 const cfg = window.CAS_LIBRARY;
 // ?chat=http://localhost:8788 tries a local copy of the Claude service (CAS/brg-terminal-ai/test/serve.mjs).
 // Only a local address: a link to another site could otherwise collect the conversation and the key.
-{ const chat = new URLSearchParams(location.search).get('chat'); if (chat && /^http:\/\/(localhost|127\.0\.0\.1):\d+\/?$/.test(chat)) cfg.chatEndpoint = chat; }
+// ?anthropic=http://localhost:8790 points the own-key mode at the mock Claude API of those tests.
+const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1):\d+\/?$/, devParam = (k) => { const v = new URLSearchParams(location.search).get(k); return v && LOCAL.test(v) ? v : ''; };
+if (devParam('chat')) cfg.chatEndpoint = devParam('chat');
 const base = cfg.baseUrl.replace(/\/$/, '');
 
 const fileUrl = (path) => base + '/' + path.split('/').map(encodeURIComponent).join('/');
@@ -145,10 +147,19 @@ function pageList(list) {
 const plain = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 // What a graphic statics construction is called in the books (English, French, German), to find its chapter
 // and its figure.
+// Each word with its weight; `avoid` marks chapters on something else that shares the words (3D reciprocals).
 const TOPICS = {
-  truss: { label: 'trusses and the Cremona diagram', words: ['cremona', 'reciprocal', 'reciproque', 'truss', 'treillis', 'lattice', 'articulated', 'articule', 'fachwerk', 'kraefteplan', 'bow'] },
-  funicular: { label: 'the funicular polygon', words: ['funicular', 'funiculaire', 'catenary', 'chainette', 'force polygon', 'polygone des forces', 'seilpolygon', 'thrust line', 'arch', 'voute'] },
+  truss: { label: 'trusses and the Cremona diagram', avoid: ['polyhedr', 'polyedr'],
+    words: [['truss', 4], ['roof truss', 2], ['cremona', 4], ['reciprocal figure', 3], ['treillis', 3], ['fachwerk', 3], ['lattice', 2], ['articulated', 2], ['articule', 2], ['kraefteplan', 2], ['reciproque', 1], ['reciprocal', 1], ['bow', 1]] },
+  funicular: { label: 'the funicular polygon', avoid: [],
+    words: [['funicular', 4], ['funiculaire', 4], ['seilpolygon', 4], ['catenary', 3], ['chainette', 3], ['force polygon', 2], ['polygone des forces', 2], ['thrust line', 2], ['arch', 1], ['voute', 1]] },
 };
+// What the templates cannot draw: such a request needs Claude's reasoning, not the nearest template.
+const BEYOND = {
+  truss: /\b(circular|circle|round|ring|curved|arched|bowstring|lenticular|parabolic|polygonal|space|spatial|3d|three[- ]dimensional|dome|tower|cantilever|bridge|crane|k[- ]truss|vierendeel|scissors?|hammer ?beam|three[- ]hinged|continuous|irregular|asymmetric|inclined loads?|wind)\b/,
+  funicular: /\b(three[- ]hinged|two[- ]hinged|hinged|dome|vault(ed)? shell|shell|space|spatial|3d|net|network|membrane|inclined loads?|wind|moving loads?|influence line)\b/,
+};
+let phraseWhy = '';
 
 // Cover: only the short title, on the colour of the entry's subject.
 const BookCover = {
@@ -198,6 +209,7 @@ const COMMANDS = [
   { cmd: '/open', help: '<book>/<chapter.md> show a chapter in the viewer', arg: true },
   { cmd: '/read', help: '<book>/<chapter.md> [start] [lines] print lines here, show the chapter there', arg: true },
   { cmd: '/figures', help: '<book>/<chapter.md> show every figure of a chapter', arg: true },
+  { cmd: '/page', help: '<book>/<chapter.md> <page> print a printed page of a book here', arg: true },
   { cmd: '/drawings', help: 'show the eQUILIBRIUM step-by-step drawings' },
   { cmd: '/drawing', help: '<n> [step] play drawing n in the viewer', arg: true },
   { cmd: '/viewer', help: 'list the session viewer commands (Box, Sphere, Line, Move, Undo…)' },
@@ -205,7 +217,7 @@ const COMMANDS = [
   { cmd: '/clear', help: 'clear the transcript' },
   { cmd: '/new', help: 'start a new conversation with Claude' },
   { cmd: '/stop', help: 'stop Claude’s answer' },
-  { cmd: '/key', help: '<key> the BRG terminal key, kept in this browser', arg: true },
+  { cmd: '/key', help: '<key> your Anthropic API key (sk-ant-…) or the class key; /key off removes them', arg: true },
   { cmd: '/local', help: '<words> build from plain words here, without Claude', arg: true },
 ];
 // The session viewer's own commands (viewer-commands.js); a line starting with one of them is
@@ -575,8 +587,12 @@ const VIEWS = { top: 'Top', plan: 'Top', front: 'Front', back: 'Back', left: 'Le
   iso: 'Isometric', axonometric: 'Isometric', '3d': 'Isometric', perspective: 'Perspective', orthographic: 'Orthographic', ortho: 'Orthographic', parallel: 'Orthographic' };
 
 function createCommands(s) {
-  if (TRUSS.test(s)) return truss(s);
-  if (FUNICULAR.test(s)) return funicular(s);
+  for (const [kind, build] of [['truss', truss], ['funicular', funicular]]) {
+    if (!(kind === 'truss' ? TRUSS : FUNICULAR).test(s)) continue;
+    const beyond = s.match(BEYOND[kind]);
+    if (beyond) { phraseWhy = `The templates only draw ${kind === 'truss' ? 'flat Pratt, Howe, Warren and roof trusses under vertical loads' : 'funicular cables and arches under vertical loads'}; “${beyond[0]}” needs reasoning about what you mean.`; return null; }
+    return build(s);
+  }
   if (STATICS.test(s)) return null; // graphic statics of what? the reply lists the structures
   const recipe = recipeIn(s);
   if (recipe) return [...RECIPES[recipe](s), 'Escape', 'Fit'];
@@ -604,6 +620,7 @@ function clauseToCommands(s) {
   let n;
   if (/^(undo|revert|go back|take (that|it) back)\b/.test(s)) return Array(Math.min(20, /\btwice\b/.test(s) ? 2 : numbersIn(s)[0] || 1)).fill('Undo');
   if (/^redo\b/.test(s)) return Array(Math.min(20, numbersIn(s)[0] || 1)).fill('Redo');
+  if (/^(clear|reset|wipe|clean)( (it|up|all|everything))?$/.test(s)) return ['Escape', 'Select All', 'Delete'];
   if (/^(start (over|again|fresh)|new scene|(clear|empty|reset|wipe|clean)( up)?( the)?( whole| entire)? (scene|viewer|view|model|canvas|screen|everything|all)\b)/.test(s)) return ['Escape', 'Select All', 'Delete'];
   if (/^(remove|delete|erase|clear|get rid of|discard|trash|kill)\b/.test(s)) return [...targetOf(s), 'Delete'];
   if (/^(deselect|unselect|select (nothing|none)|clear (the )?selection|cancel|stop|escape)\b/.test(s)) return ['Escape'];
@@ -645,6 +662,8 @@ function clauseToCommands(s) {
     return what ? [...targetOf(s), what] : null;
   }
   if (CREATE.test(s) || /^(a |an |the )?(funicular|cable|catenary|arch|thrust line|force diagram|(pratt |howe |warren |roof |fink |king ?post |queen ?post )?truss)\b/.test(s)) return createCommands(s);
+  // a structure named anywhere, in a request rather than a question
+  if ((TRUSS.test(s) || FUNICULAR.test(s)) && !QUESTION.test(s)) return createCommands(s);
   return null;
 }
 
@@ -652,14 +671,15 @@ function clauseToCommands(s) {
 // takes the one before ("create a box and a sphere at 2000,0,0"). Returns { commands }, { failed } when a
 // clause is not understood (sure: the line clearly asks for the scene), or null for a line about something else.
 let typedLine = '';
+const QUESTION = /^(what|how|why|which|when|where|who|explain|describe|is|are|does|do|can|could|should)\b/;
 const ASKS = /^(a |an |the )?(funicular|cable|catenary|arch|thrust line|force diagram|(pratt |howe |warren |roof |fink |king ?post |queen ?post )?truss)\b|^(what|how|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*)\b|\bview\b/;
 const WEAK = /^(what|how|show|get|give|look|switch|go|set|change|start|new|stop|cancel|turn|top|front|back|left|right|side|bottom|plan|iso\w*|perspective|ortho\w*|view)\b/;
 function phraseToCommands(line) {
   typedLine = line;
   const s = line.toLowerCase().trim().replace(/[.!?]+$/, '')
     .replace(/^((please|can you|could you|would you|will you|kindly|now|just|i want( you)? to|i'd like( you)? to|i would like( you)? to|let'?s)\s+)+/, '').replace(/\s+please$/, '');
-  if (!SCENE_VERBS.test(s) && !ASKS.test(s)) return null;
-  phraseNotes = [];
+  if (!SCENE_VERBS.test(s) && !ASKS.test(s) && !((TRUSS.test(s) || FUNICULAR.test(s)) && !QUESTION.test(s))) return null;
+  phraseNotes = []; phraseWhy = '';
   // a clause without a verb takes the one before, or belongs to a part that reads the whole clause:
   // "create a table with 4 legs and the top", "a funicular cable with form and force diagram"
   const clauses = [];
@@ -675,7 +695,7 @@ function phraseToCommands(line) {
     const got = clauseToCommands(c.text);
     if (got) commands.push(...got); else failed.push(c.text);
   }
-  return failed.length ? { failed, sure: !WEAK.test(s), statics: STATICS.test(s) || TRUSS.test(s) }
+  return failed.length ? { failed, sure: !WEAK.test(s), statics: STATICS.test(s) || TRUSS.test(s), why: phraseWhy }
     : { commands, notes: phraseNotes, reading: TRUSS.test(s) ? 'truss' : FUNICULAR.test(s) ? 'funicular' : '' };
 }
 // The eQUILIBRIUM step-by-step player, on the same GitHub Pages site.
@@ -814,8 +834,12 @@ createApp({
     // The conversation with Claude (CAS/brg-terminal-ai): the page keeps it and sends it each time,
     // exactly as the service returned it (thinking blocks included).
     const ai = { history: [], container: undefined, abort: null };
-    const keyStore = { get: () => { try { return localStorage.getItem('brg-terminal-key') || ''; } catch (e) { return ''; } },
-      set: (k) => { try { localStorage.setItem('brg-terminal-key', k); } catch (e) { /* private window */ } } };
+    const stored = (name) => ({ get: () => { try { return localStorage.getItem(name) || ''; } catch (e) { return ''; } },
+      set: (k) => { try { if (k) localStorage.setItem(name, k); else localStorage.removeItem(name); } catch (e) { /* private window */ } } });
+    // the class's key for the BRG terminal service; or the visitor's own Anthropic API key, used from this browser
+    const keyStore = stored('brg-terminal-key'), ownKey = stored('brg-anthropic-key');
+    const claudeOn = ref(!!(cfg.chatEndpoint || ownKey.get()));
+    const claudeLabel = computed(() => (cfg.chatEndpoint ? 'Claude' : claudeOn.value ? 'Claude, your key' : ''));
     const menuIndex = ref(0);
     const logEl = ref(null);
     const prompt = ref(null);
@@ -926,11 +950,12 @@ createApp({
     }
     const say = (text, kind = 'out', act, href) => { log.value.push({ text, kind, act, href }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
-    if (cfg.chatEndpoint) {
-      say('Claude is connected: ask about the course and the books, or ask for a model. It reads the library, computes, and draws in the 3D view on the left. /new starts over.', 'dim');
+    if (claudeOn.value) {
+      say('Claude is connected: ask about the course and the books, or ask for a model. It searches the books first (historical ones first), reasons, computes, draws in the 3D view, and cites pages. /new starts over.', 'dim');
       say('Viewer commands (Box 0,0,0 100 50 30; /viewer lists them) run directly; /local <words> builds from plain words without Claude.', 'dim');
     } else {
-      say('Search mode: type words to search the library, or a command. Claude is not connected yet.', 'dim');
+      say('Claude is not connected: the terminal searches the library and fills in fixed templates; it does not reason about what you ask.', 'err');
+      say('To connect Claude in this browser: /key <your Anthropic API key> (from console.anthropic.com; set a spend limit there). The key stays in this browser and goes only to Anthropic.', 'dim');
       say('The 3D view on the left shows the live scene. Build in it with plain words (“create a table”, “delete everything”, “top view”) or its own commands (Box 0,0,0 100 50 30; /viewer lists them).', 'dim');
     }
     say('Chapters, figures and drawings open on a sheet over it; /close shows the scene again.', 'dim');
@@ -1012,22 +1037,24 @@ createApp({
     // Historical books first (before 1950, or by the founders of graphic statics), then the rest.
     const historical = (b) => { const t = plain(b.id + ' ' + b.title), y = +((b.title.match(/\b(1[5-9]\d\d)\b/) || [])[1] || 0);
       return (y && y < 1950) || /levy|culmann|cremona|maxwell|wolfe|ritter|rankine|varignon|mohr|muller-breslau|henneberg|bow\b/.test(t); };
-    function rankSections(words) {
-      const keys = words.map(plain);
+    function rankSections(words, avoid = []) {
       return books.value.flatMap((b) => b.sections.map((s2) => {
         const t = plain(s2.title), m = plain(s2.summary);
-        const score = keys.reduce((n, k) => n + (t.includes(k) ? 3 : 0) + (m.includes(k) ? 1 : 0), 0);
+        let score = words.reduce((n, [k, w]) => n + w * ((t.includes(k) ? 3 : 0) + (m.includes(k) ? 1 : 0)), 0);
+        if (avoid.some((a) => t.includes(a))) score = Math.min(score, 1);
         return { book: b.id, section: s2.section, title: s2.title, score, old: historical(b) };
       })).filter((h) => h.score >= 2).sort((a, b) => b.old - a.old || b.score - a.score);
     }
     // The figure of a chapter that the text around it names best, with its §, printed page and caption.
     async function figureIn(hit, words) {
-      const path = `${hit.book}/${hit.section}`, lines = (await getText(path)).split(/\r?\n/), keys = words.map(plain);
+      const path = `${hit.book}/${hit.section}`, lines = (await getText(path)).split(/\r?\n/), keys = words.map(([k]) => k);
       let best = null;
       lines.forEach((line, i) => {
         const md = line.match(/!\[([^\]]*)\]\(\s*<?([^)\s>]+)/), html = line.match(/<img\b[^>]*\bsrc="([^"]+)"[^>]*>/);
         if (!md && !html) return;
         const alt = md ? md[1] : ((line.match(/\balt="([^"]*)"/) || [])[1] || '');
+        // an equation set as an image is not the construction's figure
+        if (/\b(equation|eq\.?|formula|formule)\b/i.test(alt) || /(^|\/)(eq|equation|math|formula)[-_]?\d/i.test(md ? md[2] : html[1])) return;
         const near = plain(lines.slice(Math.max(0, i - 8), i + 4).join(' ') + ' ' + alt);
         const score = keys.reduce((n, k) => n + near.split(k).length - 1, 0);
         if (score && (!best || score > best.score)) best = { score, i, alt, src: md ? md[2] : html[1] };
@@ -1038,43 +1065,48 @@ createApp({
       for (let i = best.i; i >= 0 && !sec; i--) if (/^#/.test(lines[i])) sec = (lines[i].match(/§\s*(\d+)/) || [])[1] || '';
       const caption = best.alt || (lines[best.i + 1] || '').replace(/[*_]/g, '').trim().slice(0, 80);
       const cite = `${citeBook(bookTitle(hit.book))} — ${hit.title}${sec ? ', § ' + sec : ''}${page ? ', p. ' + page : ''}${caption ? ', ' + caption : ''}`;
-      return { src: new URL(best.src, fileUrl(path)).href, caption, cite, page, act: `/open ${path}${page ? ' ' + page : ''}`, href: bookLink(hit.book, hit.section, page) };
+      return { src: new URL(best.src, fileUrl(path)).href, caption, cite, page, act: page ? `/page ${path} ${page}` : `/open ${path}`, href: fileUrl(path) };
     }
     async function whereIn(hit, words) {
-      const lines = (await getText(`${hit.book}/${hit.section}`)).split(/\r?\n/), keys = words.map(plain), { pages } = pageMap(lines);
+      const lines = (await getText(`${hit.book}/${hit.section}`)).split(/\r?\n/), keys = words.map(([k]) => k), { pages } = pageMap(lines);
       const hits = [], secs = new Set();
-      let sec = '';
+      let sec = '', quote = '';
       lines.forEach((line, i) => {
         if (/^#/.test(line)) sec = (line.match(/§\s*(\d+)/) || [])[1] || sec;
-        if (!PAGE_MARK.test(line) && keys.some((k) => plain(line).includes(k))) { hits.push(pages[i]); if (sec) secs.add(sec); }
+        if (!PAGE_MARK.test(line) && keys.some((k) => plain(line).includes(k))) {
+          hits.push(pages[i]);
+          if (sec) secs.add(sec);
+          if (!quote && !/^\s*(#|!\[|<)/.test(line)) quote = line.replace(/[*_`$]/g, '').trim();
+        }
       });
       const all = pages.filter(Boolean);
-      return { pages: hits.filter(Boolean).length ? hits : all.length ? [all[0], all[all.length - 1]] : [], secs: [...secs] };
+      return { pages: hits.filter(Boolean).length ? hits : all.length ? [all[0], all[all.length - 1]] : [], secs: [...secs], quote };
     }
     async function fromTheBooks(phrase) {
       const topic = TOPICS[phrase.reading];
       say(`Searching the library for ${topic.label}, historical books first…`, 'dim');
-      const found = state.value === 'ready' ? rankSections(topic.words) : [];
+      const found = state.value === 'ready' ? rankSections(topic.words, topic.avoid) : [];
       if (state.value !== 'ready') say('The library has not loaded, so this is drawn without its sources.', 'err');
       let source = null;
       for (const h of found.slice(0, 5)) { source = await figureIn(h, topic.words).catch(() => null); if (source) break; }
       if (source) {
         Object.assign(figure, source);
         say(`Found the construction in ${source.cite}. The original figure is over the 3D view; the recreation is drawn beside it.`, 'out', source.act);
-        say(source.href, 'link', null, source.href);
       } else if (found.length) say(`Found ${found.length} chapter${found.length === 1 ? '' : 's'}, without a figure of it; recreating the construction from the text.`, 'dim');
       else if (state.value === 'ready') say('Nothing on it in the library; drawing the standard construction.', 'dim');
       sendToViewer(...phrase.commands);
       say(`→ viewer: ${phrase.commands.filter((c) => c && !c.startsWith('=')).length} commands (the recreation)`, 'dim');
       (phrase.notes || []).forEach((n) => say(n, 'out'));
       if (found.length) {
-        say('Sources (printed pages where the books treat it):', 'dim');
+        say('Sources, with the printed pages where the books treat it (click one to print the page here):', 'dim');
         for (const [n, h] of found.slice(0, 4).entries()) {
-          const where = await whereIn(h, topic.words).catch(() => ({ pages: [], secs: [] }));
+          const where = await whereIn(h, topic.words).catch(() => ({ pages: [], secs: [], quote: '' }));
           const first = where.pages.filter(Boolean).sort((a, b) => a - b)[0] || 0;
           const at = [where.secs.length ? '§ ' + where.secs.slice(0, 4).join(', ') : '', pageList(where.pages)].filter(Boolean).join(', ');
-          say(`[${n + 1}] ${citeBook(bookTitle(h.book))} — ${h.title}${at ? ', ' + at : ''}`, 'out', `/open ${h.book}/${h.section}${first ? ' ' + first : ''}`);
-          say(bookLink(h.book, h.section, first), 'link', null, bookLink(h.book, h.section, first));
+          say(`[${n + 1}] ${citeBook(bookTitle(h.book))} — ${h.title}${at ? ', ' + at : ''}`, 'out', first ? `/page ${h.book}/${h.section} ${first}` : `/open ${h.book}/${h.section}`);
+          if (where.quote) say(`    “${where.quote.length > 170 ? where.quote.slice(0, 168) + '…' : where.quote}”`, 'dim');
+          const url = fileUrl(`${h.book}/${h.section}`);
+          say(url, 'link', null, url);
         }
       }
     }
@@ -1083,7 +1115,11 @@ createApp({
     async function run(line, opts = {}) {
       line = line.trim();
       if (!line) return;
-      if (!opts.quiet) { history.push(line); hpos = history.length; say('> ' + line, 'cmd'); }
+      if (!opts.quiet) {
+        const shown = line.replace(/^(\/key\s+)(\S{6})\S+/, '$1$2••••'); // a key is never shown or kept in the history
+        if (shown === line) { history.push(line); hpos = history.length; }
+        say('> ' + shown, 'cmd');
+      }
       const [cmd, ...args] = line.split(/\s+/);
       const arg = args.join(' ');
       const keep = () => { if (!opts.noRemember) remember(line); };
@@ -1100,7 +1136,16 @@ createApp({
         else if (cmd === '/clear') log.value = [];
         else if (cmd === '/new') { ai.history = []; ai.container = undefined; say('New conversation with Claude.', 'dim'); }
         else if (cmd === '/stop') { if (ai.abort) ai.abort.abort(); else say('Claude is not working on anything.', 'dim'); }
-        else if (cmd === '/key') { keyStore.set(arg.trim()); say(arg.trim() ? 'Key kept in this browser.' : 'Key removed.', 'dim'); }
+        else if (cmd === '/key') {
+          const k = arg.trim();
+          if (/^sk-ant-/.test(k)) {
+            ownKey.set(k); claudeOn.value = true;
+            say('Claude is on in this browser, with your API key. It is kept in this browser only and sent only to Anthropic; /key off removes it.', 'dim');
+          } else if (!k || k === 'off') {
+            ownKey.set(''); keyStore.set(''); claudeOn.value = !!cfg.chatEndpoint;
+            say('Keys removed from this browser.', 'dim');
+          } else { keyStore.set(k); say('Class key kept in this browser.', 'dim'); }
+        }
         else if (cmd === '/books') {
           if (!ready()) return;
           books.value.forEach((b) => say(`${b.id.padEnd(28)} ${b.title} (${b.sections.length})`, 'out', `/book ${b.id}`));
@@ -1137,6 +1182,20 @@ createApp({
             if (cmd === '/open') say(page ? `Chapter shown at p. ${page}.` : 'Chapter shown in the viewer.', 'dim');
           }
           keep();
+        } else if (cmd === '/page') {
+          if (!ready()) return;
+          const [id, section] = splitRef(args[0] || ''), page = +((args[1] || '').match(/\d+/) || [])[0] || 0;
+          if (!id || !section || !page) { say('Usage: /page <book>/<chapter.md> <printed page>', 'err'); return; }
+          const lines = (await getText(`${id}/${section}`)).split(/\r?\n/), { pages } = pageMap(lines);
+          const text = lines.filter((l, i) => pages[i] === page && l.trim() && !PAGE_MARK.test(l))
+            .map((l) => l.replace(/!\[([^\]]*)\]\([^)]*\)/g, '[figure: $1]').replace(/<[^>]+>/g, '').replace(/^#+\s*/, ''));
+          const chapter = (books.value.find((b) => b.id === id)?.sections.find((x) => x.section === section) || {}).title || section;
+          if (!text.length) { say(`p. ${page} is not in ${chapter}.`, 'err'); return; }
+          say(`${citeBook(bookTitle(id))} — ${chapter}, p. ${page}:`, 'dim');
+          text.slice(0, 40).forEach((l) => say('  ' + l, 'text'));
+          if (text.length > 40) say(`  … ${text.length - 40} more lines`, 'dim');
+          say(fileUrl(`${id}/${section}`), 'link', null, fileUrl(`${id}/${section}`));
+          if (pages.includes(page + 1)) say(`next page: /page ${id}/${section} ${page + 1}`, 'dim', `/page ${id}/${section} ${page + 1}`);
         } else if (cmd === '/drawings') {
           if (!drawingIds.value.length) {
             const res = await fetch(PLAYER + 'views.json');
@@ -1152,7 +1211,7 @@ createApp({
           setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
           say(`Drawing ${n} playing in the viewer. Use its controls to step through the construction.`, 'dim'); keep();
         } else if (cmd !== '/local' && cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
-        else if (cfg.chatEndpoint && cmd !== '/local' && !viewerCommandOf(line) && !/^-?\d[-\d.,\s]*$/.test(line)) await askClaude(line);
+        else if (claudeOn.value && cmd !== '/local' && !viewerCommandOf(line) && !/^-?\d[-\d.,\s]*$/.test(line)) await askClaude(line);
         else if ((phrase = phraseToCommands(cmd === '/local' ? arg : line)) && phrase.commands && phrase.reading) await fromTheBooks(phrase);
         else if (phrase && phrase.commands) {
           const shown = phrase.commands.filter((c) => c && !c.startsWith('='));
@@ -1163,6 +1222,10 @@ createApp({
         else if (viewerCommandOf(line)) { sendToViewer(line); say('→ viewer: ' + line, 'dim'); }
         else if (/^-?\d[-\d.,\s]*$/.test(line) || /^(finish|done|enter)$/i.test(line)) { const v = /\d/.test(line) ? line : ''; sendToViewer(v); say('→ viewer: ' + (v || 'Enter'), 'dim'); }
         else if (viewerAsks && !(phrase && phrase.sure)) { sendToViewer('=' + line); say('→ viewer (answer): ' + line, 'dim'); }
+        else if (phrase && phrase.why) {
+          say(phrase.why, 'err');
+          say('Claude reads the books, reasons about the request, computes, then draws. Connect it with /key <your Anthropic API key>.', 'dim');
+        }
         else if (phrase && phrase.statics) {
           say(`Graphic statics of which structure? Without Claude the terminal builds, from the books:`, 'err');
           say('funicular cable · funicular arch · Pratt truss · Howe truss · Warren truss · roof truss (king post, or n panels)', 'dim');
@@ -1218,7 +1281,36 @@ createApp({
       }
     }
     let lastUsage = null;
+    let claudeScript = null;
+    const loadClaude = () => claudeScript || (claudeScript = new Promise((done, fail) => {
+      const tag = Object.assign(document.createElement('script'), { src: 'vendor/brg-claude.js', onload: done, onerror: () => { claudeScript = null; fail(new Error('Could not load the Claude client.')); } });
+      document.head.append(tag);
+    }));
+    function onClaudeEvent(e) {
+      if (e.t === 'thinking' || e.t === 'text') streamInto(e.t, e.d);
+      else if (e.t === 'tool') {
+        endStream(); say(toolLine(e), 'dim');
+        if (e.name === 'look_at_figure' && e.input && e.input.url) {
+          const src = /^https:\/\//.test(e.input.url) ? e.input.url : fileUrl(e.input.url);
+          Object.assign(figure, { src, caption: '', cite: 'Claude is looking at ' + src.split('/').slice(-3).join('/'), act: '', href: src, page: '' });
+        }
+      }
+    }
     async function claudeRound(signal) {
+      if (!cfg.chatEndpoint) {
+        await loadClaude();
+        const env = { ANTHROPIC_API_KEY: ownKey.get(), ANTHROPIC_BASE_URL: devParam('anthropic') || undefined, BROWSER: true, MODEL: 'claude-opus-5-5', EFFORT: 'high',
+          LIBRARY_BASE: new URL(cfg.mirrorPath || '.', location.href).href.replace(/\/$/, ''), FIGURE_BASE: cfg.baseUrl };
+        try {
+          const done = await window.BRGClaude.converse(env, [...ai.history], ai.container, onClaudeEvent, signal);
+          endStream();
+          return done;
+        } catch (err) {
+          endStream();
+          if (err && err.name === 'AbortError') throw err;
+          throw new Error(window.BRGClaude.explain(err));
+        }
+      }
       const key = keyStore.get();
       const res = await fetch(cfg.chatEndpoint, {
         method: 'POST', signal,
@@ -1241,16 +1333,8 @@ createApp({
           const text = buffer.slice(0, i); buffer = buffer.slice(i + 1);
           if (!text.trim()) continue;
           const e = JSON.parse(text);
-          if (e.t === 'thinking' || e.t === 'text') streamInto(e.t, e.d);
-          else if (e.t === 'tool') {
-            endStream(); say(toolLine(e), 'dim');
-            if (e.name === 'look_at_figure' && e.input && e.input.url) {
-              const src = /^https:\/\//.test(e.input.url) ? e.input.url : fileUrl(e.input.url);
-              Object.assign(figure, { src, caption: '', cite: 'Claude is looking at ' + src.split('/').slice(-3).join('/'), act: '', href: '', page: '' });
-            }
-          }
-          else if (e.t === 'error') throw new Error(e.error);
-          else if (e.t === 'done') done = e;
+          if (e.t === 'error') throw new Error(e.error);
+          if (e.t === 'done') done = e; else onClaudeEvent(e);
         }
       }
       endStream();
@@ -1287,9 +1371,9 @@ createApp({
       const lines = entry.text.replace(/\s+$/, '').split('\n').map((t) => {
         const open = t.trim().match(/^\/open\s+(\S+\.md)(?:\s+(?:pp?\.?\s*)?(\d+)\S*)?$/);
         if (!open) return [{ text: t || ' ', kind: 'text' }];
-        const [id, section] = splitRef(open[1]), page = +open[2] || 0, url = bookLink(id, section, page);
+        const [id, section] = splitRef(open[1]), page = +open[2] || 0, url = fileUrl(open[1]);
         const chapter = (books.value.find((b) => b.id === id)?.sections.find((x) => x.section === section) || {}).title || section;
-        return [{ text: `↗ ${citeBook(bookTitle(id))} — ${chapter}${page ? ', p. ' + page : ''}`, kind: 'out', act: `/open ${open[1]}${page ? ' ' + page : ''}` }, { text: url, kind: 'link', href: url }];
+        return [{ text: `↗ ${citeBook(bookTitle(id))} — ${chapter}${page ? ', p. ' + page : ''}`, kind: 'out', act: page ? `/page ${open[1]} ${page}` : `/open ${open[1]}` }, { text: url, kind: 'link', href: url }];
       }).flat();
       log.value.splice(at, 1, ...lines);
     }
@@ -1320,7 +1404,7 @@ createApp({
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
-      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, figure,
+      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, figure, claudeLabel,
     };
   },
 }).mount('#app');

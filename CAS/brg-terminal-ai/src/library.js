@@ -122,13 +122,14 @@ export async function runLibraryTool(name, input, env) {
     const start = Math.max(1, Number.isInteger(input.start_line) ? input.start_line : 1);
     const count = Math.max(1, Math.min(400, Number.isInteger(input.line_count) ? input.line_count : 200));
     const part = lines.slice(start - 1, start - 1 + count);
-    const base = fileUrl(env.LIBRARY_BASE, path).replace(/[^/]+$/, '');
+    // figures live in the bucket even when the text comes from a copy (the website's mirror)
+    const base = fileUrl(env.FIGURE_BASE || env.LIBRARY_BASE, path).replace(/[^/]+$/, '');
     const next = start + count <= lines.length ? `next: start_line ${start + count}` : 'end of file';
     return text(`${path} lines ${start}–${start + part.length - 1} of ${lines.length} (${next}). Relative links resolve against ${base}\n\n${part.join('\n')}`);
   }
   if (name === 'look_at_figure') {
     if (typeof input.url !== 'string') throw new Error('look_at_figure needs a url.');
-    const base = env.LIBRARY_BASE.replace(/\/$/, '');
+    const base = (env.FIGURE_BASE || env.LIBRARY_BASE).replace(/\/$/, '');
     const url = /^https:\/\//.test(input.url) ? input.url : safePath(input.url) ? fileUrl(base, input.url) : '';
     if (!url || !url.startsWith(base + '/') || !/\.(png|jpe?g|gif|webp)$/i.test(url)) throw new Error('Only images in the library bucket can be shown.');
     return [{ type: 'image', source: { type: 'url', url } }, { type: 'text', text: url }];

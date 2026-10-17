@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "test": "node test/mock-test.mjs"
+    "test": "node test/mock-test.mjs",
+    "try": "node test/try-prompts.mjs",
+    "build:browser": "esbuild src/browser.js --bundle --format=iife --platform=browser --target=es2022 --minify --legal-comments=eof --outfile=../website/vendor/brg-claude.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0"

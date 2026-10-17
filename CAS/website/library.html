@@ -128,7 +128,7 @@
         <figure class="source-fig" v-if="figure.src" :class="{ link: figure.act }" @click="figure.act && run(figure.act)">
           <button type="button" class="sf-close" @click.stop="figure.src = ''" aria-label="Close the figure">✕</button>
           <img :src="figure.src" :alt="figure.caption || 'Figure from the library'">
-          <figcaption>{{ figure.cite }}<a v-if="figure.href" :href="figure.href" target="_blank" rel="noopener" @click.stop> · open the book at p. {{ figure.page }}</a></figcaption>
+          <figcaption>{{ figure.cite }}<a v-if="figure.href" :href="figure.href" target="_blank" rel="noopener" @click.stop> · the book's file</a></figcaption>
         </figure>
         <div class="sheet" v-if="view.kind !== 'welcome'" ref="viewerEl" @click="onViewerClick">
           <div class="viewer-bar">
@@ -176,7 +176,7 @@
           <div class="pixel" role="img" aria-label="BRG" :style="{ gridTemplateColumns: `repeat(${pixelCols}, var(--px))` }"><i v-for="(c, i) in pixel" :key="i" :style="c ? { background: c } : null"></i></div>
           <div class="term-info">
             <b>BRG terminal</b>
-            <span>{{ cfg.chatEndpoint ? 'Claude · ' : 'search mode · ' }}{{ state === 'ready' ? books.length + ' books, ' + sectionCount + ' chapters' : state }}</span>
+            <span>{{ claudeLabel ? claudeLabel + ' · ' : 'templates only · ' }}{{ state === 'ready' ? books.length + ' books, ' + sectionCount + ' chapters' : state }}</span>
             <span>library {{ host }}</span>
             <span>{{ busy ? 'working…' : 'idle' }}</span>
           </div>

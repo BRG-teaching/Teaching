@@ -32,6 +32,23 @@ page (GitHub Pages)                 this Worker (Cloudflare)               Claud
 
 The conversation lives in the browser tab (`/new` starts over). Nothing is stored by the Worker.
 
+## Without a server: your own key in the browser
+
+On the website, `/key sk-ant-…` (an Anthropic API key) switches Claude on in that browser only: the same agent
+(`src/agent.js`, bundled by `npm run build:browser` into `CAS/website/vendor/brg-claude.js`) runs in the page and
+calls the Anthropic API directly. The key is kept in the browser's local storage, sent only to Anthropic, masked in
+the terminal, and removed with `/key off`. Each person pays for their own use. Use a key with a spend limit, in a
+browser profile you trust, since a script running on the page could read it. The Worker below is for a class: one key, kept on the server.
+
+## Try it on many questions
+
+`ANTHROPIC_API_KEY=sk-ant-… npm run try` runs `test/try-prompts.mjs`: fourteen questions from the historical
+books beyond cables and trusses (resultants, moment diagrams, centroids, masonry arches and the middle third,
+three-hinged arches, Ritter and Culmann sections, earth pressure, Williot diagrams, moments of inertia, Maxwell's
+reciprocal figures, the kern, a circular truss, Lévy on vaults). It writes `try-report.html`, one section per question:
+the searches, readings and figures, the cited pages, the answer, and the drawing rendered from the viewer commands
+in their colours, with any command the viewer would refuse. `--only 3,7` runs some; the whole set costs a few dollars.
+
 ## Set it up
 
 You need an Anthropic API key (console.anthropic.com → API keys; set a monthly spend limit there) and a
