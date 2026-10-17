@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Library · CAS Computational Form-finding</title>
+<script src="gate.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="library.css">
+</head>
+<body class="lib">
+<div id="app" v-cloak>
+
+  <header class="lib-top">
+    <a class="back" href="index.html">← Course</a>
+    <a class="lib-brand" href="#/books">Library</a>
+    <nav class="lib-tabs" aria-label="Library">
+      <a v-for="g in cfg.groups" :key="g.id" :href="'#/' + g.id" :class="{ on: route.view === 'list' && route.group === g.id }">
+        {{ g.label }} <span class="count" v-if="state === 'ready'">{{ grouped[g.id].length }}</span>
+      </a>
+      <a href="#/terminal" class="term-tab" :class="{ on: route.view === 'terminal' }">BRG terminal</a>
+    </nav>
+  </header>
+
+  <main class="lib-main">
+    <!-- loading / error -->
+    <section v-if="state !== 'ready' && route.view !== 'terminal'" class="wrap block">
+      <p v-if="state === 'loading'" class="note">Loading the library…</p>
+      <div v-else class="lib-error">
+        <h2>The library could not be loaded</h2>
+        <p>{{ error }}</p>
+        <p>The catalogue is read from <a :href="libraryUrl" target="_blank" rel="noopener">{{ libraryUrl }}</a>.
+          If that link opens in a new tab but this page still fails, the R2 bucket needs a CORS rule for this site (see the website README).</p>
+      </div>
+    </section>
+
+    <!-- catalogue -->
+    <section v-else-if="route.view === 'list'" class="wrap block">
+      <div class="lib-head">
+        <h1>{{ groupLabel(route.group) }}</h1>
+        <label class="search">
+          <span class="sr">Search chapters</span>
+          <input id="lib-search" v-model.trim="query" type="search" placeholder="Search titles and chapter summaries">
+        </label>
+      </div>
+      <p v-if="!grouped[route.group].length" class="note">Nothing here yet. Entries appear when they are added to LIBRARY.md
+        and listed under this tab in library-config.js.</p>
+
+      <template v-if="query">
+        <p class="note">{{ hits.length }} chapter{{ hits.length === 1 ? '' : 's' }} match “{{ query }}”.</p>
+        <ol class="hits">
+          <li v-for="h in hits" :key="h.book + h.section">
+            <a :href="readerHref(h.book, h.section)"><b>{{ h.title }}</b></a>
+            <span class="in">{{ bookTitle(h.book) }}</span>
+            <span class="sum">{{ h.summary }}</span>
+          </li>
+        </ol>
+      </template>
+      <ul v-else class="shelf">
+        <li v-for="b in grouped[route.group]" :key="b.id">
+          <a :href="'#/b/' + b.id" class="book-card">
+            <span class="spine-edge" aria-hidden="true"></span>
+            <b>{{ b.title }}</b>
+            <span class="meta">{{ b.sections.length }} chapter{{ b.sections.length === 1 ? '' : 's' }}</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- one book -->
+    <section v-else-if="route.view === 'book' && book" class="wrap block">
+      <p class="crumbs"><a :href="'#/' + groupOf(book.id)">{{ groupLabel(groupOf(book.id)) }}</a> /</p>
+      <h1>{{ book.title }}</h1>
+      <p class="extras" v-if="cfg.extras.length">
+        <a v-for="x in cfg.extras" :key="x" :href="readerHref(book.id, x)">{{ x.replace('.md', '').replace(/-/g, ' ').toLowerCase() }}</a>
+      </p>
+      <ol class="chapters">
+        <li v-for="(s, i) in book.sections" :key="s.section">
+          <a :href="readerHref(book.id, s.section)">
+            <span class="num">{{ String(i + 1).padStart(2, '0') }}</span>
+            <span><b>{{ s.title }}</b><span class="sum">{{ s.summary }}</span></span>
+          </a>
+        </li>
+      </ol>
+    </section>
+
+    <!-- reader -->
+    <section v-else-if="route.view === 'read' && book" class="reader">
+      <aside class="toc-side" aria-label="Chapters">
+        <a class="toc-book" :href="'#/b/' + book.id">{{ book.title }}</a>
+        <ol>
+          <li v-for="s in book.sections" :key="s.section">
+            <a :href="readerHref(book.id, s.section)" :class="{ on: s.section === route.section }">{{ s.title }}</a>
+          </li>
+        </ol>
+      </aside>
+      <article class="doc">
+        <p class="crumbs"><a :href="'#/b/' + book.id">{{ book.title }}</a> / <span>{{ sectionTitle }}</span>
+          · <a :href="docUrl" target="_blank" rel="noopener">markdown</a></p>
+        <p v-if="doc.state === 'loading'" class="note">Loading…</p>
+        <p v-else-if="doc.state === 'error'" class="lib-error">{{ doc.error }}</p>
+        <div v-else class="md" v-html="doc.html"></div>
+        <nav class="pager" v-if="doc.state === 'ready'">
+          <a v-if="prev" :href="readerHref(book.id, prev.section)">← {{ prev.title }}</a><span v-else></span>
+          <a v-if="next" :href="readerHref(book.id, next.section)">{{ next.title }} →</a>
+        </nav>
+      </article>
+    </section>
+
+    <!-- terminal -->
+    <section v-else-if="route.view === 'terminal'" class="wrap block term-wrap">
+      <div class="term" @click="focusPrompt">
+        <div class="term-banner">
+          <pre class="pixel" aria-label="BRG">{{ pixel }}</pre>
+          <div class="term-info">
+            <b>BRG terminal</b>
+            <span>{{ cfg.chatEndpoint ? 'AI answers on · ' : 'search mode · ' }}{{ state === 'ready' ? books.length + ' books, ' + sectionCount + ' chapters' : state }}</span>
+            <span>library {{ host }}</span>
+            <span>{{ busy ? 'working…' : 'idle' }}</span>
+          </div>
+        </div>
+        <div class="term-log" ref="logEl" aria-live="polite">
+          <div v-for="(l, i) in log" :key="i" :class="'line ' + l.kind">
+            <template v-if="l.href"><a :href="l.href">{{ l.text }}</a></template>
+            <template v-else>{{ l.text }}</template>
+          </div>
+        </div>
+        <ul class="term-menu" v-if="menuItems.length">
+          <li v-for="(m, i) in menuItems" :key="m.cmd" :class="{ on: i === menuIndex }" @mousedown.prevent="takeMenu(m)">
+            <b>{{ m.cmd }}</b> <span>{{ m.help }}</span>
+          </li>
+        </ul>
+        <form class="term-input" @submit.prevent="submit">
+          <span aria-hidden="true">&gt;</span>
+          <label for="term-prompt" class="sr">Command or question</label>
+          <input id="term-prompt" ref="prompt" v-model="input" autocomplete="off" spellcheck="false"
+                 placeholder="Ask, or type / for commands" @keydown="onKey">
+        </form>
+        <div class="term-hints">/ commands · ↑↓ history · Tab complete · Enter run</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="vendor/vue.global.prod.js"></script>
+<script src="vendor/marked.min.js"></script>
+<script src="vendor/purify.min.js"></script>
+<script src="vendor/katex/katex.min.js"></script>
+<script src="library-config.js"></script>
+<script src="library.js"></script>
+</body>
+</html>

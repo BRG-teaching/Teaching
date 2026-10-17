@@ -36,6 +36,9 @@ h2 { font-size: clamp(28px, 3.4vw, 44px); font-weight: 600; letter-spacing: -0.0
 .menu-panel .menu-brand { font-weight: 800; color: var(--ink); font-size: 15px; padding-bottom: 10px; margin-bottom: 6px; border-bottom: 1px solid var(--rule); border-left: 0; background: none; }
 .menu-brand span { font-weight: 600; }
 .menu-panel a.ch { color: var(--ink); }
+.menu-panel a.out { margin-top: 2px; }
+.menu-panel a.out:first-of-type, .menu-panel a.ch + a.out { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rule); }
+.menu.onhero .menu-panel a.ch + a.out { border-top-color: rgba(255, 255, 255, 0.2); }
 .dot { width: 22px; height: 22px; flex: none; display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 600;
   border-radius: 50%; border: 2px solid var(--c); color: var(--c); background: #fff; }
 .menu-panel a.on .dot { background: var(--c); color: #fff; }

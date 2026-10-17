@@ -48,6 +48,7 @@ window.CAS = {
           'Gitbook: Computational Graphic Statics',
           'compas-IGS: graphic statics in Rhino',
           'Course PDF archive: slides, exercises + solutions',
+          'Library: scanned books on the history of structures, readable chapter by chapter',
         ],
       },
       submission: {
@@ -297,6 +298,7 @@ window.CAS = {
     'eQUILIBRIUM platform': 'https://block.arch.ethz.ch/eq/',
     'eQUILIBRIUM views': 'https://brg-teaching.github.io/Teaching/2_computational_form_finding/Equilibrium/drawings/web/gallery.html',
     'Gitbook: Computational Graphic Statics': 'https://sites.gitbook.com/preview/site_gbuez',
+    'Library': 'library.html',
     'Course PDF archive': 'https://github.com/BRG-teaching/Teaching/tree/pdf-archive/2_computational_form_finding/Equilibrium/files',
     'compas_ags': 'https://github.com/BlockResearchGroup/compas_ags',
     'compas-IGS': 'https://github.com/BlockResearchGroup/compas-IGS',

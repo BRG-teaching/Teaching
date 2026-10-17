@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CAS Computational Form-finding</title>
+<script src="gate.js"></script>
 <meta name="description" content="CAS ETH in Computational Form-finding: seven chapters from graphic statics to an individual built project.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +20,7 @@
     </button>
     <nav id="menu-list" class="menu-panel">
       <a href="#top" class="menu-brand" :class="{ on: active === 'top' }" @click="menuOpen = false">CAS <span>Computational Form-finding</span></a>
-      <a v-for="m in menu" :key="m.id" :href="'#' + m.id" :class="{ on: active === m.id, ch: m.n }"
+      <a v-for="m in menu" :key="m.id" :href="m.href || '#' + m.id" :class="{ on: active === m.id, ch: m.n, out: m.href }"
          :style="m.color ? { '--c': m.color } : null" @click="menuOpen = false">
         <i v-if="m.n" class="dot">{{ m.n }}</i><span>{{ m.label }}</span>
       </a>
@@ -134,7 +135,7 @@
           <div class="card-body">
             <p class="lead">{{ c[k].lead }}</p>
             <ul class="sq">
-              <li v-for="t in c[k].items" :key="t"><template v-for="(seg, i) in segments(t)" :key="i"><a v-if="seg.url" :href="seg.url" target="_blank" rel="noopener">{{ seg.text }}</a><template v-else>{{ seg.text }}</template></template></li>
+              <li v-for="t in c[k].items" :key="t"><template v-for="(seg, i) in segments(t)" :key="i"><a v-if="seg.url" :href="seg.url" :target="seg.url.startsWith('http') ? '_blank' : null" rel="noopener">{{ seg.text }}</a><template v-else>{{ seg.text }}</template></template></li>
             </ul>
           </div>
         </details>
@@ -156,7 +157,7 @@
 
   <footer class="wrap foot">
     <span>{{ cas.org }}</span>
-    <span>Working draft · <a href="../CAS%20Computational%20Form-Finding.pptx">Download the slides (PowerPoint)</a></span>
+    <span>Working draft · <a href="library.html">Library</a> · <a href="../CAS%20Computational%20Form-Finding.pptx">Download the slides (PowerPoint)</a></span>
   </footer>
 </div>
 

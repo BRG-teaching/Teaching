@@ -25,6 +25,8 @@ createApp({
       { id: 'map', label: 'Course map' },
       { id: 'timeline', label: 'Course timeline' },
       ...chapters.map((c) => ({ id: 'ch' + c.n, n: c.n, color: c.color, label: c.short || c.title })),
+      { id: 'library', href: 'library.html', label: 'Library: books, theses, papers' },
+      { id: 'terminal', href: 'library.html#/terminal', label: 'BRG terminal' },
     ];
 
     const logo = (file) => `../logos/${file}`;
