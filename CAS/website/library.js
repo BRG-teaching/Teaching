@@ -187,7 +187,9 @@ let phraseWhy = '';
 
 // Cover: only the short title, on the colour of the entry's subject.
 const BookCover = {
-  props: { title: String, color: String },
+  props: { title: String, color: String, img: String },
+  data: () => ({ failed: false }),
+  watch: { img() { this.failed = false; } },
   // Shrink the title until its longest word fits the cover (long German compounds).
   mounted() { this.fit(); document.fonts && document.fonts.ready.then(() => this.fit()); this.ro = new ResizeObserver(() => this.fit()); this.ro.observe(this.$el); },
   beforeUnmount() { this.ro && this.ro.disconnect(); },
@@ -195,7 +197,7 @@ const BookCover = {
   methods: {
     fit() {
       // Titles hyphenate (CSS hyphens: auto); only a word that still overflows shrinks the title.
-      const b = this.$el.querySelector('.cover-gen b');
+      const b = this.$el.querySelector && this.$el.querySelector('.cover-gen b');
       if (!b) return;
       b.style.fontSize = '';
       let size = parseFloat(getComputedStyle(b).fontSize);
@@ -211,7 +213,8 @@ const BookCover = {
       return 'en';
     },
   },
-  template: `<span class="cover" :style="{ '--cc': color }"><span class="cover-gen"><i></i><b :lang="lang">{{ title }}</b></span></span>`,
+  template: `<span v-if="img && !failed" class="cover cover-img" :style="{ '--cc': color }"><img :src="img" :alt="title" loading="lazy" @error="failed = true"></span>
+    <span v-else class="cover" :style="{ '--cc': color }"><span class="cover-gen"><i></i><b :lang="lang">{{ title }}</b></span></span>`,
 };
 
 const PIXEL_ROWS = [
@@ -765,18 +768,20 @@ createApp({
       return m;
     });
     const partsOf = (id) => seriesAll.value[seriesKey(id)] || null;
+    // A scanned book's own cover or title page, <book>/cover.jpg in the bucket (generated cover when missing).
+    const coverImg = (id) => fileUrl(`${id}/cover.jpg`);
     const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
     const years = (list) => { const y = list.map((b) => bookInfo(b.title).year).filter(Boolean); return y.length ? (y[0] === y[y.length - 1] ? y[0] : `${y[0]}–${y[y.length - 1]}`) : ''; };
     const seriesItem = (k) => {
       const ps = seriesAll.value[k], i = bookInfo(ps[0].title);
       return { key: 's:' + k, id: k, series: true, title: i.name, name: i.name, byline: [i.author, years(ps)].filter(Boolean).join(' · '),
-        short: shortTitle(i.name), subject: coverOf(ps[0]).subject, href: '#/s/' + k,
+        short: shortTitle(i.name), subject: coverOf(ps[0]).subject, href: '#/s/' + k, img: coverImg(ps[0].id),
         meta: `${plural(ps.length, 'part')} · ${plural(ps.reduce((n, b) => n + b.sections.length, 0), 'chapter')}` };
     };
     const bookItem = (b) => {
       const i = bookInfo(b.title);
       return { key: b.id, id: b.id, title: b.title, name: i.name, byline: [i.author, i.year].filter(Boolean).join(' · '), ...coverOf(b),
-        href: '#/b/' + b.id, meta: plural(b.sections.length, 'chapter') };
+        href: '#/b/' + b.id, img: classify(b) === 'books' ? coverImg(b.id) : '', meta: plural(b.sections.length, 'chapter') };
     };
     const shelfAll = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) => {
       if (isCollection(b) && g.id !== 'books')
@@ -1538,7 +1543,7 @@ createApp({
 
     return {
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
-      prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years,
+      prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years, coverImg,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
       view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, claudeLabel,
     };

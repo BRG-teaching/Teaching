@@ -64,10 +64,10 @@
           </li>
         </ol>
       </template>
-      <ul v-else class="shelf">
+      <ul v-else class="shelf" :class="{ 'shelf-row': route.group === 'books' }">
         <li v-for="b in shelf[route.group]" :key="b.key">
           <a :href="b.href" class="book-card">
-            <book-cover :title="b.short" :color="b.subject.color" :class="{ stack: b.series }"></book-cover>
+            <book-cover :title="b.short" :color="b.subject.color" :img="b.img" :class="{ stack: b.series }"></book-cover>
             <b>{{ b.name }}</b>
             <span class="by" v-if="b.byline">{{ b.byline }}</span>
             <span class="meta"><span class="subj" :style="{ color: b.subject.color }">{{ b.subject.label }}</span> · {{ b.meta }}</span>
@@ -80,7 +80,7 @@
     <section v-else-if="route.view === 'series' && series" class="wrap block">
       <p class="crumbs"><a href="#/books">Books</a> /</p>
       <div class="book-head">
-        <book-cover :title="bookInfo(series[0].title).name" :color="coverOf(series[0]).subject.color" class="stack"></book-cover>
+        <book-cover :title="bookInfo(series[0].title).name" :color="coverOf(series[0]).subject.color" :img="coverImg(series[0].id)" class="stack"></book-cover>
         <div>
           <h1>{{ bookInfo(series[0].title).name }}</h1>
           <p class="by">{{ bookInfo(series[0].title).author }} · {{ years(series) }} · {{ plural(series.length, 'part') }}, read in order</p>
@@ -89,7 +89,7 @@
       <ol class="series-parts">
         <li v-for="p in series" :key="p.id">
           <a :href="'#/b/' + p.id" class="book-card">
-            <book-cover :title="partInfo(p).label" :color="coverOf(series[0]).subject.color"></book-cover>
+            <book-cover :title="partInfo(p).label" :color="coverOf(series[0]).subject.color" :img="coverImg(p.id)"></book-cover>
             <b>{{ partInfo(p).partTitle || partInfo(p).label }}</b>
             <span class="meta">{{ partInfo(p).label }} · {{ partInfo(p).year }} · {{ plural(p.sections.length, 'chapter') }}</span>
           </a>
@@ -106,7 +106,7 @@
           <b>{{ partInfo(p).label }}</b> <span>{{ partInfo(p).partTitle }}</span></a></li>
       </ol>
       <div class="book-head">
-        <book-cover :title="partsOf(book.id) ? partInfo(book).label : coverOf(book).short" :color="coverOf(partsOf(book.id) ? partsOf(book.id)[0] : book).subject.color"></book-cover>
+        <book-cover :title="partsOf(book.id) ? partInfo(book).label : coverOf(book).short" :color="coverOf(partsOf(book.id) ? partsOf(book.id)[0] : book).subject.color" :img="groupOf(book.id) === 'books' ? coverImg(book.id) : ''"></book-cover>
         <div>
           <h1>{{ partsOf(book.id) ? partInfo(book).label + (partInfo(book).partTitle ? ' — ' + partInfo(book).partTitle : '') : bookInfo(book.title).name }}</h1>
           <p class="by">{{ [partsOf(book.id) ? bookInfo(book.title).name : '', bookInfo(book.title).author, bookInfo(book.title).year].filter(Boolean).join(' · ') }}</p>
