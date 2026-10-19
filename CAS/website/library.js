@@ -138,7 +138,8 @@ function bookInfo(title) {
   const pm = p.match(/^(\S+\s+[IVX\d]+)(?:\s*\([^)]*\))?\s*:?\s*(.*)$/);
   // the English part title only: drop a French/German original given in brackets
   const partTitle = pm ? pm[2].replace(/\s*\([^)]*\)\s*$/, '').replace(/\.$/, '') : '';
-  const year = (parts[parts.length - 1].match(/\b(1[5-9]\d\d|20\d\d)\b/) || [])[1] || '';
+  // the year of the imprint: the last segment that names one
+  const year = ([...parts].reverse().map((x) => (x.match(/\b(1[5-9]\d\d|20\d\d)\b/) || [])[1]).find(Boolean)) || '';
   return { name, author, year, part: pm ? pm[1] : '', partTitle };
 }
 // Books published in several parts (folders "<id>", "<id>-part-2", …) form one series, read part after part.
@@ -786,7 +787,7 @@ createApp({
     })])));
     const series = computed(() => (route.view === 'series' && seriesAll.value[route.book]) || null);
     // The open book as a part of its series: "Part II — Plane bending …", with the series around it.
-    const partInfo = (b) => { const i = bookInfo(b.title); return { ...i, label: i.part || 'Part ' + (ROMAN[partNo(b.id)] || partNo(b.id)) }; };
+    const partInfo = (b) => { const i = bookInfo(b.title); return { ...i, label: i.part || 'Part ' + (ROMAN[partNo(b.id)] || partNo(b.id)), partTitle: i.partTitle || (i.part ? '' : i.name) }; };
     const shelf = computed(() => Object.fromEntries(Object.entries(shelfAll.value).map(([g, items]) => [g, subject.value ? items.filter((i) => i.subject.id === subject.value) : items])));
     // Subject chips for the open tab, with counts.
     const subjectsHere = computed(() => SUBJECTS.map((x) => ({ ...x, n: (shelfAll.value[route.group] || []).filter((i) => i.subject.id === x.id).length })).filter((x) => x.n));
@@ -880,7 +881,7 @@ createApp({
     async function scanMap(id) {
       if (!scanMaps.has(id)) scanMaps.set(id, getText(`${id}/SCANS.md`).then((t) => {
         const m = new Map();
-        for (const r of t.matchAll(/^\|\s*([0-9ivxlc]+[a-z ]*?)\s*\|\s*\[[^\]]*\]\((scans\/[^)\s]+)\)/gim)) if (!m.has(r[1].toLowerCase())) m.set(r[1].toLowerCase(), fileUrl(`${id}/${r[2]}`));
+        for (const r of t.matchAll(/^\|\s*(\[?[0-9ivxlc]+\]?[a-z ]*?)\s*\|\s*\[[^\]]*\]\((scans\/[^)\s]+)\)/gim)) if (!m.has(r[1].toLowerCase())) m.set(r[1].toLowerCase(), fileUrl(`${id}/${r[2]}`));
         return m;
       }).catch(() => new Map()));
       return scanMaps.get(id);
@@ -890,7 +891,7 @@ createApp({
       if (!m.size || doc.path !== path) return;
       await nextTick();
       document.querySelectorAll('.doc .md sub').forEach((el) => {
-        const n = (el.textContent.match(/^\s*(?:page|p\.)\s*([0-9ivxlc]+)\s*$/i) || [])[1];
+        const n = (el.textContent.match(/^\s*(?:page|p\.)\s*(\[?[0-9ivxlc]+\]?)\s*$/i) || [])[1];
         const url = n && m.get(n.toLowerCase());
         if (!url || el.querySelector('a')) return;
         const a = document.createElement('a');
