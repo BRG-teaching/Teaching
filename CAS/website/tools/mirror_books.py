@@ -18,7 +18,7 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import quote
 
 BASE = "https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev"
-EXTRAS = ["README.md", "INDEX.md", "GLOSSARY.md", "FIGURES.md", "GRAPHIC-STATICS-NOTATION.md"]
+EXTRAS = ["README.md", "INDEX.md", "GLOSSARY.md", "FIGURES.md", "SCANS.md", "GRAPHIC-STATICS-NOTATION.md"]
 LIMIT = 2_000_000  # same per-file cap as the MCP server
 
 

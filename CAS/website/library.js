@@ -867,12 +867,38 @@ createApp({
         if (doc.path !== path) return;
         Object.assign(doc, { state: 'ready', html: renderMarkdown(t, path, bookIds.value) });
         if (route.page) nextTick(() => toPage(document.querySelector('.doc .md'), t, route.page));
+        linkScans(route.book, path);
       } catch (e) {
         if (doc.path === path) Object.assign(doc, { state: 'error', error: e.message + ' Some books do not have every extra page.' });
       }
     }
     watch(() => [route.view, route.book, route.section, state.value], loadDoc);
     watch(() => route.page, (pg) => { if (pg && doc.state === 'ready' && textCache.has(doc.path)) nextTick(() => toPage(document.querySelector('.doc .md'), textCache.get(doc.path), pg)); });
+    // Printed page → scanned page image, from the book's SCANS.md ("| 117 | [s065R](scans/s065R.jpg) |"). The page
+    // markers in a chapter then open the scan of their page, to check the text against the original.
+    const scanMaps = new Map();
+    async function scanMap(id) {
+      if (!scanMaps.has(id)) scanMaps.set(id, getText(`${id}/SCANS.md`).then((t) => {
+        const m = new Map();
+        for (const r of t.matchAll(/^\|\s*([0-9ivxlc]+[a-z ]*?)\s*\|\s*\[[^\]]*\]\((scans\/[^)\s]+)\)/gim)) if (!m.has(r[1].toLowerCase())) m.set(r[1].toLowerCase(), fileUrl(`${id}/${r[2]}`));
+        return m;
+      }).catch(() => new Map()));
+      return scanMaps.get(id);
+    }
+    async function linkScans(id, path) {
+      const m = await scanMap(id);
+      if (!m.size || doc.path !== path) return;
+      await nextTick();
+      document.querySelectorAll('.doc .md sub').forEach((el) => {
+        const n = (el.textContent.match(/^\s*(?:page|p\.)\s*([0-9ivxlc]+)\s*$/i) || [])[1];
+        const url = n && m.get(n.toLowerCase());
+        if (!url || el.querySelector('a')) return;
+        const a = document.createElement('a');
+        a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'scan-link'; a.title = 'Open the scanned page';
+        a.textContent = el.textContent.trim();
+        el.textContent = ''; el.appendChild(a);
+      });
+    }
     // Scroll a rendered chapter to where printed page `page` begins, and mark it.
     function toPage(root, text, page) {
       if (!root) return;

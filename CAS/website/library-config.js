@@ -21,7 +21,7 @@ window.CAS_LIBRARY = {
   groupOf: {},
 
   // Extra pages a book folder may contain, shown on its book page when present.
-  extras: ['README.md', 'INDEX.md', 'GLOSSARY.md', 'FIGURES.md', 'GRAPHIC-STATICS-NOTATION.md'],
+  extras: ['README.md', 'INDEX.md', 'GLOSSARY.md', 'FIGURES.md', 'SCANS.md', 'GRAPHIC-STATICS-NOTATION.md'],
 
   // Claude in the BRG terminal: the address of the Cloudflare Worker in CAS/brg-terminal-ai (see its
   // README), e.g. 'https://brg-terminal.<account>.workers.dev'. Empty: the terminal searches the library
