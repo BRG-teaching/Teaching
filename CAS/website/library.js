@@ -121,6 +121,29 @@ function citeBook(title) {
   const year = (parts[parts.length - 1].match(/\b(1[5-9]\d\d|20\d\d)\b/) || [])[1];
   return `${author ? author + ', ' : ''}${main}${part ? ', ' + part[0] : ''}${year ? ' (' + year + ')' : ''}`;
 }
+// A catalogue title "Graphic Statics · and its Applications to Construction · La Statique … · Maurice Lévy ·
+// Second edition · Part II (IIᵉ partie): Flexion plane. … · Paris, Gauthier-Villars, 1886" → the parts a reader needs:
+// name "Graphic Statics and its Applications to Construction", author, part "Part II", part title, year.
+function bookInfo(title) {
+  if (!title.includes(' · ')) { const t = splitTitle(title); return { name: t.title, author: t.author, year: t.year, part: '', partTitle: '' }; }
+  const parts = title.split(' · ').map((x) => x.trim());
+  let name = parts[0];
+  if (parts[1] && /^(and|or|und|et)\b/i.test(parts[1])) name += ' ' + parts[1];        // "… and its Applications …"
+  else if (parts[1] && /^(A|An|The)\s/.test(parts[1])) name += ': ' + parts[1];       // subtitle "A Text Book on …"
+  // author segments: two to four capitalised words ("Maurice Lévy", "William S. Wolfe, M.S.", "Joseph Schwartz (…)")
+  const NAME = /^[A-ZÀ-Ý][\wÀ-ÿ'’.-]*(?:\s+[A-ZÀ-Ý][\wÀ-ÿ'’.-]*){1,3}(?:,\s*M\.S\.)?$/u, NOT = /edition|impression|ETH|Zürich|Paris|Press|University|Company|Verlag|Group|Tragwerk|Faustformel|Statique|Graphique|Structural|Design|Analysis/i;
+  const author = parts.slice(1).map((x) => x.replace(/\s*\([^)]*\)$/, '').replace(/,\s*M\.S\.$/, ''))
+    .filter((x) => NAME.test(x) && !NOT.test(x)).join(', ');
+  const p = parts.find((x) => /^(Part|Vol\.?|Volume|Band|Teil)\s+[IVX\d]+/i.test(x)) || '';
+  const pm = p.match(/^(\S+\s+[IVX\d]+)(?:\s*\([^)]*\))?\s*:?\s*(.*)$/);
+  // the English part title only: drop a French/German original given in brackets
+  const partTitle = pm ? pm[2].replace(/\s*\([^)]*\)\s*$/, '').replace(/\.$/, '') : '';
+  const year = (parts[parts.length - 1].match(/\b(1[5-9]\d\d|20\d\d)\b/) || [])[1] || '';
+  return { name, author, year, part: pm ? pm[1] : '', partTitle };
+}
+// Books published in several parts (folders "<id>", "<id>-part-2", …) form one series, read part after part.
+const seriesKey = (id) => id.replace(/-(?:part|vol|band|teil)-?\d+$/i, '');
+const partNo = (id) => +((id.match(/-(?:part|vol|band|teil)-?(\d+)$/i) || [])[1] || 1);
 // Printed pages. The chapters keep the books' page markers, <sub>page N</sub>. Text before the first marker means
 // a marker closes its page; otherwise it opens it. pageMap gives every line its printed page (0: unknown).
 const PAGE_MARK = /<sub>\s*(?:page|p\.)\s*(\d+)\s*<\/sub>/i;
@@ -730,13 +753,40 @@ createApp({
     // Shelf items per tab: whole books, or one item per file for collections of theses/papers.
     // Subject and cover of a whole entry, or of one item of a collection.
     const bookText = (b) => [b.title, ...b.sections.map((x) => x.title + ' ' + x.summary)].join(' ');
-    const coverOf = (b) => ({ short: shortTitle(b.title, b.id), subject: subjectOf(bookText(b)) });
+    const coverOf = (b) => ({ short: shortTitle(bookInfo(b.title).name, b.id), subject: subjectOf(bookText(b)) });
     const subject = ref('');
     // Shelf items per tab: whole books, or one item per file for collections of theses/papers.
-    const shelfAll = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) =>
-      isCollection(b) && g.id !== 'books'
-        ? b.sections.map((x) => ({ key: b.id + '/' + x.section, id: b.id, title: x.title, short: shortTitle(x.title), subject: subjectOf(x.title + ' ' + x.summary), href: readerHref(b.id, x.section), meta: x.summary }))
-        : [{ key: b.id, id: b.id, title: b.title, ...coverOf(b), href: '#/b/' + b.id, meta: `${b.sections.length} chapter${b.sections.length === 1 ? '' : 's'}` }])])));
+    // Series: books in several parts, keyed by the first part's ID, parts in reading order.
+    const seriesAll = computed(() => {
+      const m = {};
+      for (const b of books.value) if (classify(b) === 'books') (m[seriesKey(b.id)] = m[seriesKey(b.id)] || []).push(b);
+      for (const k of Object.keys(m)) { if (m[k].length < 2) delete m[k]; else m[k].sort((a, b) => partNo(a.id) - partNo(b.id)); }
+      return m;
+    });
+    const partsOf = (id) => seriesAll.value[seriesKey(id)] || null;
+    const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+    const years = (list) => { const y = list.map((b) => bookInfo(b.title).year).filter(Boolean); return y.length ? (y[0] === y[y.length - 1] ? y[0] : `${y[0]}–${y[y.length - 1]}`) : ''; };
+    const seriesItem = (k) => {
+      const ps = seriesAll.value[k], i = bookInfo(ps[0].title);
+      return { key: 's:' + k, id: k, series: true, title: i.name, name: i.name, byline: [i.author, years(ps)].filter(Boolean).join(' · '),
+        short: shortTitle(i.name), subject: coverOf(ps[0]).subject, href: '#/s/' + k,
+        meta: `${plural(ps.length, 'part')} · ${plural(ps.reduce((n, b) => n + b.sections.length, 0), 'chapter')}` };
+    };
+    const bookItem = (b) => {
+      const i = bookInfo(b.title);
+      return { key: b.id, id: b.id, title: b.title, name: i.name, byline: [i.author, i.year].filter(Boolean).join(' · '), ...coverOf(b),
+        href: '#/b/' + b.id, meta: plural(b.sections.length, 'chapter') };
+    };
+    const shelfAll = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) => {
+      if (isCollection(b) && g.id !== 'books')
+        return b.sections.map((x) => ({ key: b.id + '/' + x.section, id: b.id, title: x.title, name: x.title, byline: '', short: shortTitle(x.title), subject: subjectOf(x.title + ' ' + x.summary), href: readerHref(b.id, x.section), meta: x.summary }));
+      const ps = g.id === 'books' && partsOf(b.id);
+      if (ps) return ps[0].id === b.id ? [seriesItem(seriesKey(b.id))] : []; // one card per series, at its first part
+      return [bookItem(b)];
+    })])));
+    const series = computed(() => (route.view === 'series' && seriesAll.value[route.book]) || null);
+    // The open book as a part of its series: "Part II — Plane bending …", with the series around it.
+    const partInfo = (b) => { const i = bookInfo(b.title); return { ...i, label: i.part || 'Part ' + (ROMAN[partNo(b.id)] || partNo(b.id)) }; };
     const shelf = computed(() => Object.fromEntries(Object.entries(shelfAll.value).map(([g, items]) => [g, subject.value ? items.filter((i) => i.subject.id === subject.value) : items])));
     // Subject chips for the open tab, with counts.
     const subjectsHere = computed(() => SUBJECTS.map((x) => ({ ...x, n: (shelfAll.value[route.group] || []).filter((i) => i.subject.id === x.id).length })).filter((x) => x.n));
@@ -754,8 +804,18 @@ createApp({
     };
     const hits = computed(() => search(query.value, grouped.value[route.group].flatMap((b) => b.sections)));
     const idx = computed(() => (book.value ? book.value.sections.findIndex((s) => s.section === route.section) : -1));
-    const prev = computed(() => (idx.value > 0 ? book.value.sections[idx.value - 1] : null));
-    const next = computed(() => (book.value && idx.value >= 0 && idx.value < book.value.sections.length - 1 ? book.value.sections[idx.value + 1] : null));
+    // Previous/next chapter; a series reads on across its parts (last chapter of Part I → first of Part II).
+    const neighbourPart = (d) => { const ps = book.value && partsOf(book.value.id); if (!ps) return null; const k = ps.findIndex((b) => b.id === book.value.id) + d; return ps[k] || null; };
+    const prev = computed(() => {
+      if (idx.value > 0) return book.value.sections[idx.value - 1];
+      const p = idx.value === 0 && neighbourPart(-1);
+      return p ? { ...p.sections[p.sections.length - 1], book: p.id, title: `${partInfo(p).label} · ${p.sections[p.sections.length - 1].title}` } : null;
+    });
+    const next = computed(() => {
+      if (book.value && idx.value >= 0 && idx.value < book.value.sections.length - 1) return book.value.sections[idx.value + 1];
+      const p = book.value && idx.value === book.value.sections.length - 1 && neighbourPart(1);
+      return p ? { ...p.sections[0], book: p.id, title: `${partInfo(p).label} · ${p.sections[0].title}` } : null;
+    });
     const sectionTitle = computed(() => {
       const s = book.value && book.value.sections.find((x) => x.section === route.section);
       return s ? s.title : route.section.replace('.md', '');
@@ -771,6 +831,7 @@ createApp({
       const [head, id, ...rest] = h.split('/');
       route.page = +new URLSearchParams(query).get('p') || 0;
       if (head === 'terminal') Object.assign(route, { view: 'terminal' });
+      else if (head === 's' && id) Object.assign(route, { view: 'series', book: id, section: '' });
       else if (head === 'b' && id) {
         const section = rest.length ? decodeURIComponent(rest.join('/')) : '';
         Object.assign(route, { view: section ? 'read' : 'book', book: id, section });
@@ -1450,7 +1511,7 @@ createApp({
 
     return {
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
-      prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel,
+      prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
       view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, claudeLabel,
     };
