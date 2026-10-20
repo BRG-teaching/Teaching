@@ -194,14 +194,26 @@ python3 ../../teaching/CAS/website/tools/extract_viewer_commands.py   # refresh 
 ## Python exercises (`notebook.html`)
 
 `notebook.html` opens `library.html#/notebook`: JupyterLab on the left and the existing
-BRG terminal on the right. The default exercise is `01-compas-box.ipynb`. Choose
+BRG terminal on the right. The default exercise is `01-compas-box-scene.ipynb`. Choose
 **02 · Cable nodes** (or open `library.html#/notebook/cable`) for the first cable exercise:
-five COMPAS points, four segments, two supports and three downward nodal loads. Its
-three-equation force-density solve gives a midspan sag of 1 m for P = 1 kN and q = 2 kN/m.
+a COMPAS `Graph` with five nodes, four edges, two supports and three downward nodal
+loads. `compas_fd.solvers.fd_numpy` gives a midspan sag of 1 m for P = 1 kN and q = 2 kN/m.
+Both exercises use `compas_notebook.Viewer` and `viewer.scene.add(...)`, following the
+[official COMPAS JupyterLite examples](https://compas.dev/compas-jupyterlite/lab/index.html).
+The box becomes a COMPAS `Mesh`; the cable keeps its topology and computed coordinates
+in a COMPAS `Graph`. Visualization uses the interactive pythreejs notebook viewer.
+
+Both the 3D and notebook workspaces start with two-thirds of the width for the workspace
+and one-third for chat. Drag the divider to resize; the arrows collapse or restore either
+pane without restarting its session. Double-click the divider or press Enter while it is
+focused to reset the proportions. Arrow keys resize it as well (Shift for larger steps).
+The chosen ratio is remembered in this browser. On small screens the panes stack and the
+divider resizes their heights.
 
 The notebook runs Python locally in the browser through JupyterLite/Pyodide, with no
-Python server or student installation. The first setup cell installs COMPAS 2.15.1 and
-Matplotlib. Choose **Run → Run All Cells**, or **Shift+Enter** for individual cells.
+Python server or student installation. The first setup cell installs COMPAS 2.15.1,
+pythreejs and `compas_notebook` (plus `compas_fd` for the cable). Choose
+**Run → Run All Cells**, or **Shift+Enter** for individual cells.
 The starter notebooks remain ordinary `.ipynb` files in `notebooks/`, usable in desktop
 Jupyter and Google Colab. **Open in Colab** opens the selected exercise in a new tab;
 the setup cell installs missing packages there as well. JupyterLite supports a subset of Python packages; advanced
@@ -217,6 +229,8 @@ cell or error into the terminal when asking for help. Viewer commands switch to 
 Work is saved in the current browser's IndexedDB. Students should also use
 **File → Save and Export Notebook As → Notebook** to keep a copy on their computer.
 The download link above the iframe downloads the original exercise.
+The scene-based exercises use new filenames, so previously saved copies of the earlier
+exercises stay available in the browser's file browser.
 
 GitHub Pages builds JupyterLite before deployment using the pinned tools in
 `../jupyter/requirements.txt`. To build and preview locally from the repository root:

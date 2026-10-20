@@ -150,8 +150,10 @@
     </section>
 
     <!-- terminal: session viewer (left) + CLI (right), filling the screen -->
-    <section v-else-if="route.view === 'terminal'" class="split">
-      <div class="viewer">
+    <section v-else-if="route.view === 'terminal'" ref="splitEl" class="split"
+             :class="{ 'collapsed-workspace': collapsedPane === 'workspace', 'collapsed-chat': collapsedPane === 'chat', 'split-dragging': splitDragging }"
+             :style="{ '--workspace-track': splitRatio + 'fr', '--chat-track': (1 - splitRatio) + 'fr' }">
+      <div id="workspace-pane" class="viewer" v-show="collapsedPane !== 'workspace'">
         <div class="workspace-bar">
           <nav aria-label="Workspace">
             <a href="#/notebook" :aria-current="route.workspace === 'notebook' ? 'page' : null">Jupyter notebook</a>
@@ -212,7 +214,30 @@
         </div>
       </div>
 
-      <div class="term" @click="focusPrompt">
+      <div class="split-divider">
+        <button type="button" class="split-toggle" @click="togglePane('workspace')" aria-controls="workspace-pane"
+                :aria-expanded="collapsedPane !== 'workspace'" :aria-label="collapsedPane === 'workspace' ? 'Restore workspace' : 'Collapse workspace'"
+                :title="collapsedPane === 'workspace' ? 'Restore workspace' : 'Collapse workspace'">
+          <span class="split-horizontal" aria-hidden="true">{{ collapsedPane === 'workspace' ? '▶' : '◀' }}</span>
+          <span class="split-vertical" aria-hidden="true">{{ collapsedPane === 'workspace' ? '▼' : '▲' }}</span>
+        </button>
+        <div class="split-grip" role="separator" tabindex="0" aria-label="Resize workspace and chat"
+             aria-controls="workspace-pane chat-pane" :aria-orientation="splitStacked ? 'horizontal' : 'vertical'"
+             :aria-valuenow="Math.round((collapsedPane === 'workspace' ? 0 : collapsedPane === 'chat' ? 1 : splitRatio) * 100)"
+             aria-valuemin="0" aria-valuemax="100" title="Drag to resize · double-click to reset · arrow keys to adjust"
+             @pointerdown="beginSplitDrag" @pointermove="dragSplit" @pointerup="endSplitDrag"
+             @pointercancel="endSplitDrag" @lostpointercapture="endSplitDrag" @keydown="splitKey" @dblclick="resetSplit">
+          <span aria-hidden="true"></span>
+        </div>
+        <button type="button" class="split-toggle" @click="togglePane('chat')" aria-controls="chat-pane"
+                :aria-expanded="collapsedPane !== 'chat'" :aria-label="collapsedPane === 'chat' ? 'Restore chat' : 'Collapse chat'"
+                :title="collapsedPane === 'chat' ? 'Restore chat' : 'Collapse chat'">
+          <span class="split-horizontal" aria-hidden="true">{{ collapsedPane === 'chat' ? '◀' : '▶' }}</span>
+          <span class="split-vertical" aria-hidden="true">{{ collapsedPane === 'chat' ? '▲' : '▼' }}</span>
+        </button>
+      </div>
+
+      <div id="chat-pane" class="term" v-show="collapsedPane !== 'chat'" @click="focusPrompt">
         <div class="term-banner">
           <div class="pixel" role="img" aria-label="BRG" :style="{ gridTemplateColumns: `repeat(${pixelCols}, var(--px))` }"><i v-for="(c, i) in pixel" :key="i" :style="c ? { background: c } : null"></i></div>
           <div class="term-info">

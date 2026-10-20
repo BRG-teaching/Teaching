@@ -2,7 +2,7 @@
 // The catalogue format is the one mcp-server-brg parses (src/brg_mcp/adapters/public_books.py):
 //   ## `book-id/` — Title, Author, Year
 //     - `01-chapter.md` **Chapter title** summary
-const { createApp, ref, reactive, computed, watch, nextTick, onMounted } = Vue;
+const { createApp, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount } = Vue;
 const cfg = window.CAS_LIBRARY;
 // ?chat=http://localhost:8788 tries a local copy of the Claude service (CAS/brg-terminal-ai/test/serve.mjs).
 // Only a local address: a link to another site could otherwise collect the conversation and the key.
@@ -950,6 +950,66 @@ createApp({
     const spentLog = { all: () => { try { return JSON.parse(localStorage.getItem('brg-spent') || '[]'); } catch (e) { return []; } },
       add(cost) { try { localStorage.setItem('brg-spent', JSON.stringify([...this.all(), { at: Date.now(), cost }].slice(-5000))); } catch (e) { /* private window */ } } };
     const budget = stored('brg-budget');
+    // One shared split for the viewer and notebook; hiding a pane keeps its session mounted.
+    const splitEl = ref(null), collapsedPane = ref(''), splitDragging = ref(false);
+    const splitStacked = ref(matchMedia('(max-width: 900px)').matches);
+    const ratioStore = stored('brg-workspace-ratio');
+    const savedRatio = Number(ratioStore.get());
+    const splitRatio = ref(savedRatio >= 0.15 && savedRatio <= 0.85 ? savedRatio : 2 / 3);
+    let splitPointer = null;
+    function splitLimits() {
+      const rect = splitEl.value?.getBoundingClientRect();
+      const space = rect ? (splitStacked.value ? rect.height - 28 : rect.width - 24) : 1000;
+      return [Math.max(0.15, Math.min(0.4, (splitStacked.value ? 140 : 200) / Math.max(1, space))),
+        Math.min(0.85, 1 - Math.min(0.4, (splitStacked.value ? 140 : 240) / Math.max(1, space)))];
+    }
+    function setSplitRatio(value) {
+      const [min, max] = splitLimits();
+      splitRatio.value = Math.max(min, Math.min(max, value));
+    }
+    function togglePane(pane) { collapsedPane.value = collapsedPane.value === pane ? '' : pane; }
+    function resetSplit() { collapsedPane.value = ''; splitRatio.value = 2 / 3; ratioStore.set(String(splitRatio.value)); }
+    function beginSplitDrag(event) {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      collapsedPane.value = '';
+      splitPointer = event.pointerId;
+      splitDragging.value = true;
+      event.currentTarget.focus();
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+    function dragSplit(event) {
+      if (event.pointerId !== splitPointer) return;
+      const rect = splitEl.value.getBoundingClientRect();
+      const size = splitStacked.value ? 28 : 24;
+      const position = splitStacked.value ? event.clientY - rect.top : event.clientX - rect.left;
+      const available = (splitStacked.value ? rect.height : rect.width) - size;
+      setSplitRatio((position - size / 2) / Math.max(1, available));
+    }
+    function endSplitDrag(event) {
+      if (event.pointerId !== splitPointer) return;
+      splitPointer = null;
+      splitDragging.value = false;
+      ratioStore.set(String(splitRatio.value));
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    function splitKey(event) {
+      const back = splitStacked.value ? 'ArrowUp' : 'ArrowLeft';
+      const forward = splitStacked.value ? 'ArrowDown' : 'ArrowRight';
+      if (![back, forward, 'Home', 'End', 'Enter'].includes(event.key)) return;
+      event.preventDefault();
+      collapsedPane.value = '';
+      if (event.key === 'Enter') resetSplit();
+      else {
+        const [min, max] = splitLimits();
+        setSplitRatio(event.key === 'Home' ? min : event.key === 'End' ? max : splitRatio.value + (event.key === back ? -1 : 1) * (event.shiftKey ? 0.1 : 0.02));
+        ratioStore.set(String(splitRatio.value));
+      }
+    }
+    const updateSplitOrientation = () => { splitStacked.value = matchMedia('(max-width: 900px)').matches; };
+    onMounted(() => addEventListener('resize', updateSplitOrientation));
+    onBeforeUnmount(() => removeEventListener('resize', updateSplitOrientation));
+    watch(() => route.workspace, () => { if (collapsedPane.value === 'workspace') collapsedPane.value = ''; });
     const claudeOn = ref(!!(cfg.chatEndpoint || ownKey.get()));
     const claudeLabel = computed(() => (cfg.chatEndpoint ? 'Claude' : claudeOn.value ? 'Claude, your key' : ''));
     const menuIndex = ref(0);
@@ -960,7 +1020,7 @@ createApp({
     // The session viewer frame (viewer/index.html, same site) and the line typed into its command line.
     const sessionEl = ref(null);
     const notebookEl = ref(null);
-    const notebookFile = computed(() => route.exercise === 'cable' ? '02-cable-nodes.ipynb' : '01-compas-box.ipynb');
+    const notebookFile = computed(() => route.exercise === 'cable' ? '02-cable-graph.ipynb' : '01-compas-box-scene.ipynb');
     const notebookSrc = 'jupyter/lab/index.html?path=' + notebookFile.value;
     async function openNotebook() {
       // Same-origin JupyterLab API: open another file without reloading the iframe or its kernels.
@@ -1281,7 +1341,7 @@ createApp({
         else if (cmd === '/notebook') {
           const cable = arg.toLowerCase() === 'cable';
           location.hash = cable ? '/notebook/cable' : '/notebook'; closeSheet();
-          say(cable ? 'First cable exercise · 02-cable-nodes.ipynb\nTwo fixed supports (nodes 0 and 4), three free nodes (1, 2, 3), four cable segments, and a downward load of 1 kN at each free node.\nRun all cells to draw the numbered nodes, then solve their equilibrium with force density q = 2 kN/m. The middle node settles 1 m below the supports.\nTry changing the nodal load or force density, predict the sag, and run again.' : 'A COMPAS box · 01-compas-box.ipynb\n1. In Jupyter choose Run → Run All Cells (or Shift+Enter, cell by cell). The first cell installs COMPAS in browser Python.\n2. Box(xsize=2.0, ysize=1.0, zsize=1.5) creates the box; the next cell draws it.\n3. Change the dimensions and rerun. Predict the volume before you run: xsize × ysize × zsize.', 'out');
+          say(cable ? 'First cable exercise · 02-cable-graph.ipynb\nTwo fixed supports (nodes 0 and 4), three free nodes (1, 2, 3), four cable segments, and a downward load of 1 kN at each free node.\nRun all cells to view the COMPAS graph and solve it with compas_fd at q = 2 kN/m. The middle node settles 1 m below the supports.\nTry changing the nodal load or force density, predict the sag, and run again.' : 'A COMPAS box · 01-compas-box-scene.ipynb\n1. In Jupyter choose Run → Run All Cells (or Shift+Enter, cell by cell). The first cell installs COMPAS in browser Python.\n2. Box(xsize=2.0, ysize=1.0, zsize=1.5) creates the box; the next cell draws it.\n3. Change the dimensions and rerun. Predict the volume before you run: xsize × ysize × zsize.', 'out');
           say('Save with Ctrl+S; use File → Save and Export Notebook As → Notebook to keep a copy on your computer. The notebook and terminal are separate: paste code or errors here when asking for help.', 'dim');
         }
         else if (cmd === '/viewer') VIEWER_CMDS.slice().sort((a, b) => a.cmd.localeCompare(b.cmd)).forEach((c) => say(`${c.cmd.padEnd(24)} ${c.help.replace(/^[^·:]*[·:]\s*/, '')}`, 'out', c.example || c.cmd));
@@ -1589,6 +1649,7 @@ createApp({
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years, coverImg,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
+      splitEl, splitRatio, collapsedPane, splitDragging, splitStacked, togglePane, resetSplit, beginSplitDrag, dragSplit, endSplitDrag, splitKey,
       view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, claudeLabel, notebookSrc, notebookOpened, viewerOpened, notebookEl, notebookFile, openNotebook,
     };
   },
