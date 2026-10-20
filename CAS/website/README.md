@@ -25,6 +25,19 @@ photos from `../project/uploads/`.
 | `app.js` | The small amount of logic (chapter highlight, timeline placement) |
 | `library.html`, `library.js`, `library.css`, `library-config.js` | The library and BRG terminal (below) |
 | `gate.js` | The password screen |
+| `history-submissions.js`, `history-submissions.css` | History Submission: expandable structural systems, exercise instructions and course links |
+| `history/` | Figure previews, half-A3 PDFs, original worksheet pages and source records |
+
+The History chapter's **Submission** card opens a list of structural systems. Expand a
+system to see its photo / graphic-statics / exercise figure, a short task, and links to
+the original worksheet, full-size figure, lecture and exercise notes. Shells and vaults
+have their own entry. Opening Submission uses the full card row; on a phone the figure
+can scroll horizontally, or open as a full-size PDF. The figure PDF collection contains
+one 420 × 148.5 mm horizontal strip per system. Other chapters keep their existing cards.
+
+Figure content comes from the `graphic-statics-student-course` collection in R2
+(`r2-books` profile, `brg-books` bucket) and the original course PDFs. The individual
+file/page references and representative-model notes are in `history/sources.json`.
 
 ## Password
 
