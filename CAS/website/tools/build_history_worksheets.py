@@ -22,6 +22,8 @@ def build(course_dir):
     data = json.loads(js_path.read_text().split('submission, ', 1)[1].rsplit(');', 1)[0])
     out = SITE / 'history/official'
     out.mkdir(parents=True, exist_ok=True)
+    image_out = SITE / 'assets/history/official'
+    image_out.mkdir(parents=True, exist_ok=True)
     references = {}
     for reference in config['references']:
         with fitz.open(course_dir / reference['source']) as doc:
@@ -34,10 +36,10 @@ def build(course_dir):
             im = im.crop((0, int(im.height * .062), im.width, int(im.height * .945)))
         im.thumbnail((1200, 900))
         name = 'reference-' + reference['id'] + '.webp'
-        im.save(out / name, quality=93, method=6)
+        im.save(image_out / name, quality=93, method=6)
         references[reference['id']] = dict(
             title=reference['title'], description=reference['description'],
-            image='history/official/' + name, width=im.width, height=im.height,
+            image='assets/history/official/' + name, width=im.width, height=im.height,
             lecture=LIBRARY + reference['lecture'])
 
     worksheets, provenance = {}, []
@@ -58,12 +60,12 @@ def build(course_dir):
                 pix = page.get_pixmap(dpi=180, colorspace=fitz.csRGB, alpha=False)
                 im = Image.frombytes('RGB', (pix.width, pix.height), pix.samples)
                 name = f"{sheet['id']}-page-{number:02d}.webp"
-                im.save(out / name, quality=95, method=6)
+                im.save(image_out / name, quality=95, method=6)
                 titles = [(('Creative task' if t['number'] == 'Creative' else 'Task ' + t['number'])
                            + ' — ' + t['title']) for t in sheet['tasks'] if number in t['pages']]
                 title = sheet.get('pageTitles', {}).get(str(number)) or '; '.join(titles) or 'Introduction and design brief'
                 blank = not page.get_text().strip() and not page.get_image_info() and not page.get_drawings()
-                pages.append(dict(number=number, title=title, image='history/official/' + name,
+                pages.append(dict(number=number, title=title, image='assets/history/official/' + name,
                                   width=im.width, height=im.height, blank=blank))
             page_count = len(doc)
         worksheets[sheet['id']] = dict(

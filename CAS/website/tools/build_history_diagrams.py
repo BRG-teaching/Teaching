@@ -14,8 +14,8 @@ SITE = Path(__file__).resolve().parents[1]
 def build():
     js = SITE / 'history-submissions.js'
     data = json.loads(js.read_text().split('submission, ', 1)[1].rsplit(');', 1)[0])
-    out = SITE / 'history/diagrams'
-    out.mkdir(exist_ok=True)
+    out = SITE / 'assets/history/diagrams'
+    out.mkdir(parents=True, exist_ok=True)
     sources = []
     for system in data['systems']:
         ident = system['id']
@@ -42,13 +42,13 @@ def build():
         filename = ident + '.webp'
         image.save(out / filename, quality=95, method=6)
         title = 'Graphic statics — ' + system['title'].lower()
-        system['diagram'] = dict(image='history/diagrams/' + filename,
+        system['diagram'] = dict(image='assets/history/diagrams/' + filename,
                                  title=title, width=image.width, height=image.height)
         sources.append(dict(id=ident, image=system['diagram']['image'], source=source))
     js.write_text('// Complete official worksheets and built references for History Submission.\n'
                   'Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission, '
                   + json.dumps(data, indent=2, ensure_ascii=False) + ');\n')
-    (out / 'sources.json').write_text(json.dumps(sources, indent=2) + '\n')
+    (SITE / 'history/diagrams/sources.json').write_text(json.dumps(sources, indent=2) + '\n')
 
 
 if __name__ == '__main__':

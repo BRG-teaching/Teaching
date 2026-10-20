@@ -26,7 +26,8 @@ photos from `../project/uploads/`.
 | `library.html`, `library.js`, `library.css`, `library-config.js` | The library and BRG terminal (below) |
 | `gate.js` | The password screen |
 | `history-submissions.js`, `history-submissions.css` | History Submission: expandable structural systems, two reference images and direct PDF links |
-| `history/` | Figure previews, half-A3 PDFs, original worksheet pages and source records |
+| `assets/history/` | History photographs, diagrams, source images and generated previews |
+| `history/` | Official worksheet PDFs, reference PDFs and source records |
 
 The History chapter's **Submission** card opens a list of structural systems. Each
 system shows a built-project photograph and a graphic-statics diagram, with plain titles
@@ -52,7 +53,9 @@ The worksheet/task catalogue and project-reference mappings are in
 (requires PyMuPDF and Pillow). `history/official/sources.json` records the source file,
 page count and SHA-256 hash of every official PDF.
 `python3 tools/build_history_diagrams.py` regenerates the separate diagram previews
-from the reference strips and the cable lecture image in `history/diagrams/`.
+from the reference strips and the cable lecture image in `assets/history/diagrams/`.
+All History image files belong in `assets/history/`; the MCP server knowledge folder
+does not hold a duplicate course-image pack.
 
 ## Password
 
