@@ -229,6 +229,7 @@ const PIXEL_COLS = PIXEL_ROWS[0].length;
 const PIXEL = PIXEL_ROWS.flatMap((row) => [...row].map((ch, x) => (ch === '#' ? RAMP[Math.round((x / (PIXEL_COLS - 1)) * (RAMP.length - 1))] : null)));
 
 const COMMANDS = [
+  { cmd: '/notebook', help: '[box | cable] open an exercise and its instructions', arg: true },
   { cmd: '/help', help: 'list the commands' },
   { cmd: '/books', help: 'show the books, theses and papers' },
   { cmd: '/book', help: '<id> show the chapters of one book', arg: true },
@@ -748,7 +749,7 @@ createApp({
     const error = ref('');
     const books = ref([]);
     const query = ref('');
-    const route = reactive({ view: 'list', group: 'books', book: '', section: '', page: 0 });
+    const route = reactive({ view: 'list', workspace: 'viewer', exercise: 'box', group: 'books', book: '', section: '', page: 0 });
     const doc = reactive({ state: 'idle', html: '', error: '', path: '' });
     const libraryUrl = fileUrl(cfg.libraryPath);
     const host = new URL(base).host;
@@ -836,7 +837,7 @@ createApp({
       const [h, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
       const [head, id, ...rest] = h.split('/');
       route.page = +new URLSearchParams(query).get('p') || 0;
-      if (head === 'terminal') Object.assign(route, { view: 'terminal' });
+      if (head === 'terminal' || head === 'notebook') Object.assign(route, { view: 'terminal', workspace: head === 'notebook' ? 'notebook' : 'viewer', exercise: id === 'cable' ? 'cable' : 'box' });
       else if (head === 's' && id) Object.assign(route, { view: 'series', book: id, section: '' });
       else if (head === 'b' && id) {
         const section = rest.length ? decodeURIComponent(rest.join('/')) : '';
@@ -958,6 +959,39 @@ createApp({
     const drawingIds = ref([]);
     // The session viewer frame (viewer/index.html, same site) and the line typed into its command line.
     const sessionEl = ref(null);
+    const notebookEl = ref(null);
+    const notebookFile = computed(() => route.exercise === 'cable' ? '02-cable-nodes.ipynb' : '01-compas-box.ipynb');
+    const notebookSrc = 'jupyter/lab/index.html?path=' + notebookFile.value;
+    async function openNotebook() {
+      // Same-origin JupyterLab API: open another file without reloading the iframe or its kernels.
+      const frame = notebookEl.value;
+      if (!frame) return;
+      const started = Date.now();
+      while (frame === notebookEl.value && !frame.contentWindow?.jupyterapp && Date.now() - started < 30000) await new Promise((done) => setTimeout(done, 100));
+      const app = frame.contentWindow?.jupyterapp;
+      if (!app || frame !== notebookEl.value) return;
+      try {
+        await app.restored;
+        await app.serviceManager.ready;
+        app.shell.collapseLeft();
+        await app.commands.execute('docmanager:open', {
+          path: notebookFile.value, factory: 'Notebook',
+          kernel: { name: app.serviceManager.kernelspecs.specs.default },
+          kernelPreference: { language: 'python', autoStartDefault: true },
+        });
+      } catch (e) { console.warn('Could not open the exercise in Jupyter.', e); }
+    }
+    // Keep each frame mounted after its first visit: switching workspaces preserves the kernel and scene.
+    const notebookOpened = ref(false), viewerOpened = ref(false);
+    watch(() => [route.view, route.workspace], ([screen, workspace]) => {
+      if (screen !== 'terminal') return;
+      if (workspace === 'notebook') notebookOpened.value = true;
+      else viewerOpened.value = true;
+      document.title = workspace === 'notebook' ? 'Jupyter + BRG · CAS Computational Form-finding' : 'BRG terminal · CAS Computational Form-finding';
+    }, { immediate: true });
+    watch(() => [route.workspace, route.exercise], () => {
+      if (route.workspace === 'notebook') nextTick(openNotebook);
+    });
     // The viewer's own URL options given to this page pass through, e.g. ?live=off or ?scene=view_mixed_teapot.
     const viewerSrc = 'viewer/index.html' + (() => {
       const q = new URLSearchParams(location.search), keep = new URLSearchParams();
@@ -1055,12 +1089,14 @@ createApp({
       await wait(10); // the viewer queues them in order; this only lets each answer arrive with its line
     }
     function sendToViewer(...lines) {
+      if (route.workspace !== 'viewer') location.hash = '/terminal';
       if (view.kind !== 'welcome') closeSheet();
       viewerQueue.push(...lines);
       flushViewer();
     }
     const say = (text, kind = 'out', act, href, img) => { log.value.push({ text, kind, act, href, img }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
+    if (route.workspace === 'notebook') say('COMPAS exercises: run the cells on the left from top to bottom (Shift+Enter). Choose Box or Cable nodes above the notebook. /notebook or /notebook cable shows the instructions; viewer commands switch to the 3D view.', 'dim');
     if (claudeOn.value) {
       say('Claude is connected: ask about the course and the books, or ask for a model. It searches the books first (historical ones first), reasons, computes, draws in the 3D view, and cites pages. /new starts over.', 'dim');
       say('Viewer commands (Box 0,0,0 100 50 30; /viewer lists them) run directly; /local <words> builds from plain words without Claude.', 'dim');
@@ -1240,6 +1276,12 @@ createApp({
           COMMANDS.forEach((c) => say(`${c.cmd.padEnd(10)} ${c.help}`));
           say('Session viewer: type its commands directly, e.g. Box 0,0,0 100 50 30, Sphere 0,0,0 10, Line 0,0,0 100,0,0, Move 10,0,0, Undo, Fit, Layers On.', 'dim');
           say('Or plain words: create a table, create a box and a sphere at 2000,0,0, select all and move up 200, rotate the box 45 degrees around x, delete everything, top view, undo.', 'dim');
+        }
+        else if (cmd === '/notebook') {
+          const cable = arg.toLowerCase() === 'cable';
+          location.hash = cable ? '/notebook/cable' : '/notebook'; closeSheet();
+          say(cable ? 'First cable exercise · 02-cable-nodes.ipynb\nTwo fixed supports (nodes 0 and 4), three free nodes (1, 2, 3), four cable segments, and a downward load of 1 kN at each free node.\nRun all cells to draw the numbered nodes, then solve their equilibrium with force density q = 2 kN/m. The middle node settles 1 m below the supports.\nTry changing the nodal load or force density, predict the sag, and run again.' : 'A COMPAS box · 01-compas-box.ipynb\n1. In Jupyter choose Run → Run All Cells (or Shift+Enter, cell by cell). The first cell installs COMPAS in browser Python.\n2. Box(xsize=2.0, ysize=1.0, zsize=1.5) creates the box; the next cell draws it.\n3. Change the dimensions and rerun. Predict the volume before you run: xsize × ysize × zsize.', 'out');
+          say('Save with Ctrl+S; use File → Save and Export Notebook As → Notebook to keep a copy on your computer. The notebook and terminal are separate: paste code or errors here when asking for help.', 'dim');
         }
         else if (cmd === '/viewer') VIEWER_CMDS.slice().sort((a, b) => a.cmd.localeCompare(b.cmd)).forEach((c) => say(`${c.cmd.padEnd(24)} ${c.help.replace(/^[^·:]*[·:]\s*/, '')}`, 'out', c.example || c.cmd));
         else if (cmd === '/close') closeSheet();
@@ -1520,6 +1562,7 @@ createApp({
     }
     // Claude's command lines in the 3D view; returns each line and what the viewer answered to it.
     async function runForClaude(commands) {
+      if (route.workspace !== 'viewer') { location.hash = '/terminal'; await nextTick(); }
       const started = Date.now();
       while (!viewerWindow()) {
         if (Date.now() - started > 20000) return ['The 3D view did not start: this browser has no WebGPU.'];
@@ -1545,7 +1588,7 @@ createApp({
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years, coverImg,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
-      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, claudeLabel,
+      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, claudeLabel, notebookSrc, notebookOpened, viewerOpened, notebookEl, notebookFile, openNotebook,
     };
   },
 }).mount('#app');

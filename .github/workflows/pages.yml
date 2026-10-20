@@ -26,6 +26,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Python for JupyterLite
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: CAS/jupyter/requirements.txt
+      - name: Build the browser notebook workspace
+        run: |
+          python -m pip install -r CAS/jupyter/requirements.txt
+          jupyter lite build --lite-dir CAS/jupyter --contents ../website/notebooks --output-dir CAS/website/jupyter --apps lab
       - name: Build gallery manifest
         run: python3 2_computational_form_finding/Equilibrium/drawings/web/tools/make_manifest.py
       - name: Copy the CAS library markdown from R2

@@ -22,7 +22,8 @@
       <a v-for="g in cfg.groups" :key="g.id" :href="'#/' + g.id" :class="{ on: route.view === 'list' && route.group === g.id }">
         {{ g.label }} <span class="count" v-if="state === 'ready'">{{ shelfAll[g.id].length }}</span>
       </a>
-      <a href="#/terminal" class="term-tab" :class="{ on: route.view === 'terminal' }">BRG terminal</a>
+      <a href="#/terminal" class="term-tab" :class="{ on: route.view === 'terminal' && route.workspace === 'viewer' }">BRG terminal</a>
+      <a href="#/notebook" :class="{ on: route.view === 'terminal' && route.workspace === 'notebook' }">Jupyter + BRG</a>
     </nav>
   </header>
 
@@ -151,15 +152,30 @@
     <!-- terminal: session viewer (left) + CLI (right), filling the screen -->
     <section v-else-if="route.view === 'terminal'" class="split">
       <div class="viewer">
+        <div class="workspace-bar">
+          <nav aria-label="Workspace">
+            <a href="#/notebook" :aria-current="route.workspace === 'notebook' ? 'page' : null">Jupyter notebook</a>
+            <a href="#/terminal" :aria-current="route.workspace === 'viewer' ? 'page' : null">3D view</a>
+          </nav>
+          <a v-if="route.workspace === 'notebook'" :href="'jupyter/lab/index.html?path=' + notebookFile" target="_blank" rel="noopener">Open Jupyter ↗</a>
+        </div>
+        <div class="workspace-content">
+        <div v-if="route.workspace === 'notebook'" class="notebook-guide">
+          <nav aria-label="Exercises"><a href="#/notebook" :aria-current="route.exercise === 'box' ? 'page' : null">01 · Box</a><a href="#/notebook/cable" :aria-current="route.exercise === 'cable' ? 'page' : null">02 · Cable nodes</a></nav>
+          <span>Run → Run All Cells · first start downloads Python</span>
+          <a :href="'notebooks/' + notebookFile" download>Download .ipynb</a>
+          <a :href="'https://colab.research.google.com/github/BRG-teaching/Teaching/blob/main/CAS/website/notebooks/' + notebookFile" target="_blank" rel="noopener">Open in Colab ↗</a>
+        </div>
+        <iframe v-if="notebookOpened" v-show="route.workspace === 'notebook'" ref="notebookEl" class="notebook-frame" :src="notebookSrc" @load="openNotebook" title="Jupyter notebook · COMPAS exercises" allow="clipboard-read; clipboard-write"></iframe>
         <!-- The session viewer (petrasvestartas/session, WebGPU): the backend's live scene, and what the terminal builds.
              :src, not src, so the page's raw HTML does not load it once more before Vue mounts. -->
-        <iframe ref="sessionEl" class="session-frame" :src="viewerSrc" title="Session viewer"></iframe>
+        <iframe v-if="viewerOpened" v-show="route.workspace === 'viewer'" ref="sessionEl" class="session-frame" :src="viewerSrc" title="Session viewer"></iframe>
         <div class="sheet" v-if="view.kind !== 'welcome'" ref="viewerEl" @click="onViewerClick">
           <div class="viewer-bar">
             <button type="button" class="vb-back" :disabled="viewStack.length < 2" @click.stop="viewBack" aria-label="Back">←</button>
             <span class="vb-title">{{ view.title }}</span>
             <a v-if="view.open" class="vb-open" :href="view.open" target="_blank" rel="noopener">open page ↗</a>
-            <button type="button" class="vb-close" @click.stop="closeSheet" aria-label="Close and show the 3D scene">✕</button>
+            <button type="button" class="vb-close" @click.stop="closeSheet" aria-label="Close and return to workspace">✕</button>
           </div>
 
           <div v-if="view.kind === 'loading'" class="v-pad note">Loading…</div>
@@ -192,6 +208,7 @@
           </div>
 
           <iframe v-else-if="view.kind === 'drawing'" class="v-frame" :src="view.src" :title="view.title"></iframe>
+        </div>
         </div>
       </div>
 

@@ -101,7 +101,18 @@ body.term-full { overflow: hidden; }
 body.term-full #app { height: 100vh; height: 100svh; display: flex; flex-direction: column; }
 body.term-full .lib-main { flex: 1; min-height: 0; }
 .split { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.viewer { position: relative; min-width: 0; overflow: hidden; background: #fff; border-right: 1px solid #1e2944; }
+.viewer { position: relative; min-width: 0; overflow: hidden; background: #fff; border-right: 1px solid #1e2944; display: flex; flex-direction: column; }
+.workspace-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 0 16px; border-bottom: 1px solid var(--rule); font-size: 13px; flex: none; }
+.workspace-bar nav { display: flex; align-self: stretch; gap: 18px; }
+.workspace-bar a { display: flex; align-items: center; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.workspace-bar a[aria-current="page"] { color: var(--ink); border-bottom: 3px solid var(--pink); font-weight: 700; }
+.workspace-bar a:hover { color: var(--ink); }
+.workspace-content { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.notebook-guide { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; padding: 9px 16px; font-size: 12px; background: var(--wash); border-bottom: 1px solid var(--rule); flex: none; }
+.notebook-guide a { color: var(--ink); }
+.notebook-guide nav { display: flex; gap: 14px; }
+.notebook-guide a[aria-current="page"] { font-weight: 700; text-decoration-color: var(--pink); text-underline-offset: 3px; }
+.notebook-frame { display: block; width: 100%; flex: 1; min-height: 0; border: 0; background: #fff; }
 /* the session viewer fills the panel; chapters, figures and drawings open on a sheet over it */
 .session-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
 .sheet { position: absolute; inset: 0; z-index: 2; overflow-y: auto; background: #fff; display: flex; flex-direction: column; }

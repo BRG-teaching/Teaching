@@ -190,3 +190,45 @@ mkdir -p target/docs/vue        # the docs hook is skipped; the viewer only link
 REGEN_PROTO=0 trunk build --release --config Trunk.cas.toml --public-url ./ --dist ../../teaching/CAS/website/viewer
 python3 ../../teaching/CAS/website/tools/extract_viewer_commands.py   # refresh viewer-commands.js
 ```
+
+## Python exercises (`notebook.html`)
+
+`notebook.html` opens `library.html#/notebook`: JupyterLab on the left and the existing
+BRG terminal on the right. The default exercise is `01-compas-box.ipynb`. Choose
+**02 · Cable nodes** (or open `library.html#/notebook/cable`) for the first cable exercise:
+five COMPAS points, four segments, two supports and three downward nodal loads. Its
+three-equation force-density solve gives a midspan sag of 1 m for P = 1 kN and q = 2 kN/m.
+
+The notebook runs Python locally in the browser through JupyterLite/Pyodide, with no
+Python server or student installation. The first setup cell installs COMPAS 2.15.1 and
+Matplotlib. Choose **Run → Run All Cells**, or **Shift+Enter** for individual cells.
+The starter notebooks remain ordinary `.ipynb` files in `notebooks/`, usable in desktop
+Jupyter and Google Colab. **Open in Colab** opens the selected exercise in a new tab;
+the setup cell installs missing packages there as well. JupyterLite supports a subset of Python packages; advanced
+exercises with native CAD libraries need a desktop or server Python environment.
+
+The workspace keeps the notebook iframe and its kernels alive when switching exercises
+or switching to the 3D view. The terminal is the same one used by the library: its existing
+AI connection and `/key` settings apply, and `/notebook [box | cable]` prints exercise
+instructions. Notebook cells and terminal conversations have separate state: paste a
+cell or error into the terminal when asking for help. Viewer commands switch to the
+3D view, while library chapters open on a closable sheet above the notebook.
+
+Work is saved in the current browser's IndexedDB. Students should also use
+**File → Save and Export Notebook As → Notebook** to keep a copy on their computer.
+The download link above the iframe downloads the original exercise.
+
+GitHub Pages builds JupyterLite before deployment using the pinned tools in
+`../jupyter/requirements.txt`. To build and preview locally from the repository root:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r CAS/jupyter/requirements.txt
+.venv/bin/jupyter lite build --lite-dir CAS/jupyter --contents ../website/notebooks --output-dir CAS/website/jupyter --apps lab
+python3 -m http.server 8000
+# http://localhost:8000/CAS/website/notebook.html
+```
+
+`jupyter/` is generated and ignored by Git; the editable build settings are in
+`../jupyter/jupyter-lite.json`. Internet access is required on first launch to download
+the Pyodide runtime and Python packages. The same course password gate applies.

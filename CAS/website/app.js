@@ -27,6 +27,7 @@ createApp({
       ...chapters.map((c) => ({ id: 'ch' + c.n, n: c.n, color: c.color, label: c.short || c.title })),
       { id: 'library', href: 'library.html', label: 'Library: books, theses, papers' },
       { id: 'terminal', href: 'library.html#/terminal', label: 'BRG terminal' },
+      { id: 'notebook', href: 'notebook.html', label: 'Jupyter notebook + BRG' },
     ];
 
     const logo = (file) => `../logos/${file}`;
