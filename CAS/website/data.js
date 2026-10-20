@@ -100,10 +100,10 @@ window.CAS = {
       submission: {
         lead: 'The hand-drawn 2D topics, now coded.',
         notebookResources: {
-          text: 'Execute the Python exercises in the embedded Jupyter + BRG workspace using COMPAS. Start with the box example or the cable-nodes notebook.',
+          text: 'Run these Python tutorials in the embedded Jupyter + BRG workspace. Start with small COMPAS examples, then work through data exchange, geometry, data structures and solvers. Structural exercises extend the foundations.',
+          tutorials: window.CAS_NOTEBOOKS || [],
           links: [
             { label: 'Open COMPAS notebook workspace', url: 'library.html#/notebook' },
-            { label: 'Cable nodes notebook', url: 'library.html#/notebook/cable' },
             { label: 'Official COMPAS notebook examples', url: 'https://compas.dev/compas-jupyterlite/lab/index.html' },
           ],
         },

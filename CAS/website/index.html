@@ -133,12 +133,19 @@
       </ol>
 
       <div class="cards">
-        <details v-for="k in cardKeys(c)" :key="k" class="card" :class="[k, { 'history-submission': c[k].systems }]">
+        <details v-for="k in cardKeys(c)" :key="k" class="card" :class="[k, { 'history-submission': c[k].systems, 'notebook-submission': c[k].notebookResources }]">
           <summary><span>{{ cardTitle[k] }}</span><i class="pm" aria-hidden="true"></i></summary>
           <div class="card-body">
             <p class="lead">{{ c[k].lead }}</p>
             <div v-if="c[k].notebookResources" class="notebook-references">
               <p>{{ c[k].notebookResources.text }}</p>
+              <ol v-if="c[k].notebookResources.tutorials" class="notebook-tutorials" aria-label="Course notebook tutorials">
+                <li v-for="tutorial in c[k].notebookResources.tutorials" :key="tutorial.id">
+                  <a :href="'library.html#/notebook/' + tutorial.id">{{ tutorial.title }}</a>
+                  <small v-if="tutorial.section === 'extension'">Extension</small>
+                  <p>{{ tutorial.summary }}</p>
+                </li>
+              </ol>
               <nav class="system-links" aria-label="COMPAS notebook references">
                 <a v-for="link in c[k].notebookResources.links" :key="link.url" :href="link.url"
                    :target="link.url.startsWith('https://') ? '_blank' : null" rel="noopener">{{ link.label }}</a>
@@ -198,6 +205,7 @@
 </div>
 
 <script src="vendor/vue.global.prod.js"></script>
+<script src="notebook-exercises.js"></script>
 <script src="data.js"></script>
 <script src="history-submissions.js"></script>
 <script src="icon-sizes.js"></script>

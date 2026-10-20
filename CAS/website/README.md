@@ -25,7 +25,8 @@ photos from `../project/uploads/`.
 | `app.js` | The small amount of logic (chapter highlight, timeline placement) |
 | `library.html`, `library.js`, `library.css`, `library-config.js` | The library and BRG terminal (below) |
 | `gate.js` | The password screen |
-| `history-submissions.js`, `history-submissions.css` | History Submission: expandable structural systems, two reference images and direct PDF links |
+| `history-submissions.js`, `history-submissions.css` | History Submission: structural references; styles for the course notebook list |
+| `notebook-exercises.js`, `notebooks/` | Published tutorial registry and notebook copies; edit the canonical course sources |
 | `assets/history/` | History photographs, diagrams, source images and generated previews |
 | `history/` | Official worksheet PDFs, reference PDFs and source records |
 
@@ -33,8 +34,9 @@ The History chapter's **Submission** card opens a list of structural systems. Ea
 system shows a built-project photograph and a graphic-statics diagram, with plain titles
 below the images. There are no project-description paragraphs or inline worksheet viewers.
 The **Computational Structural Design with COMPAS** chapter's **Submission** card links
-to the embedded COMPAS notebook workspace, the cable-nodes starter and the official COMPAS
-notebook examples, and explains where Python exercises are executed.
+to the embedded COMPAS notebook workspace and an ordered list of 13 tutorials. Small
+COMPAS examples lead through data, JSON exchange, geometry, graphs, meshes, Model, IFC,
+matrix decomposition and optimisation. Truss and cable notebooks are later extensions.
 
 Resource links go directly to complete official worksheet PDFs, lecture PDFs and exercise
 notes. Notes use the English Structural Design I&II compendium at the relevant section,
@@ -215,14 +217,27 @@ python3 ../../teaching/CAS/website/tools/extract_viewer_commands.py   # refresh 
 ## Python exercises (`notebook.html`)
 
 `notebook.html` opens `library.html#/notebook`: JupyterLab on the left and the existing
-BRG terminal on the right. The default exercise is `01-compas-box-scene.ipynb`. Open
-`02-cable-graph.ipynb` in Jupyter's file browser (or `library.html#/notebook/cable`) for the first cable exercise:
-a COMPAS `Graph` with five nodes, four edges, two supports and three downward nodal
-loads. `compas_fd.solvers.fd_numpy` gives a midspan sag of 1 m for P = 1 kN and q = 2 kN/m.
-Both exercises use `compas_notebook.Viewer` and `viewer.scene.add(...)`, following the
-[official COMPAS JupyterLite examples](https://compas.dev/compas-jupyterlite/lab/index.html).
-The box becomes a COMPAS `Mesh`; the cable keeps its topology and computed coordinates
-in a COMPAS `Graph`. Visualization uses the interactive pythreejs notebook viewer.
+BRG terminal on the right. The default exercise remains `01-compas-box-scene.ipynb`.
+Chapter 2 → **Submission** links to each tutorial in teaching order. Each notebook is
+self-contained, explains why its concepts are needed, and includes a small working
+example before parameter experiments. `library.html#/notebook/<id>` and `/notebook <id>`
+open a tutorial without restarting the iframe; `/notebook list` lists the available IDs.
+The existing `#/notebook` and `#/notebook/cable` routes stay valid.
+
+The canonical sources are in the local `mcp-server-brg` repository at
+`knowledge/02_computational_design/notebooks/`, with teaching order in `tutorials.json`.
+The site serves its own copies; it does not fetch notebook content from workshop repos.
+After editing the source course, publish and verify the copies before committing Teaching:
+
+```bash
+python3 /path/to/mcp-server-brg/knowledge/02_computational_design/publish_notebooks.py --website /path/to/Teaching/CAS/website
+python3 /path/to/mcp-server-brg/knowledge/02_computational_design/publish_notebooks.py --website /path/to/Teaching/CAS/website --check
+```
+
+The publisher copies only declared notebooks and generates `notebook-exercises.js`,
+which supplies both the Submission list and workspace routes. It does not delete other
+files or deploy the website. Edit sources once rather than maintaining two versions.
+The course source README records workshop choices, revision dates and validation.
 
 Both the 3D and notebook workspaces start with two-thirds of the width for the workspace
 and one-third for chat. The thin divider has no arrow controls. Drag it to resize, click
@@ -234,9 +249,12 @@ divider resizes their heights.
 Workspace navigation uses the main horizontal header. Notebook files and exports are
 managed inside the embedded Jupyter interface. On narrow screens the header scrolls horizontally.
 
-The notebook runs Python locally in the browser through JupyterLite/Pyodide, with no
-Python server or student installation. The first setup cell installs COMPAS 2.15.1,
-pythreejs and `compas_notebook` (plus `compas_fd` for the cable). Choose
+The notebook runs Python locally through JupyterLite. The runtime is explicitly pinned
+to Pyodide 0.29.3 / Python 3.13.2, matching the official IfcOpenShell WebAssembly wheel.
+The first setup cell installs COMPAS 2.15.1, pythreejs 2.4.2 and `compas_notebook` 0.11.0.
+Model uses `compas_model` 0.9.3; IFC uses the official 0.8.4 WASM wheel in the browser
+and its desktop package elsewhere; the optional cable uses `compas_fd` 0.5.4.
+NumPy, SciPy and Shapely use the versions bundled with the pinned browser runtime. Choose
 **Run → Run All Cells**, or **Shift+Enter** for individual cells.
 The starter notebooks remain ordinary `.ipynb` files in `notebooks/`, usable in desktop
 Jupyter and Google Colab; the setup cell installs missing packages there as well.
@@ -245,7 +263,7 @@ exercises with native CAD libraries need a desktop or server Python environment.
 
 The workspace keeps the notebook iframe and its kernels alive when switching exercises
 or switching to the 3D view. The terminal is the same one used by the library: its existing
-AI connection and `/key` settings apply, and `/notebook [box | cable]` prints exercise
+AI connection and `/key` settings apply, and `/notebook <id>` prints exercise
 instructions. Notebook cells and terminal conversations have separate state: paste a
 cell or error into the terminal when asking for help. Viewer commands switch to the
 3D view, while library chapters open on a closable sheet above the notebook.

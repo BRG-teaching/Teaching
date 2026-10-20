@@ -4,6 +4,8 @@
 //     - `01-chapter.md` **Chapter title** summary
 const { createApp, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount } = Vue;
 const cfg = window.CAS_LIBRARY;
+const notebookExercises = window.CAS_NOTEBOOKS || [];
+const notebookExercise = (id) => notebookExercises.find((tutorial) => tutorial.id === id) || notebookExercises.find((tutorial) => tutorial.id === 'box');
 // ?chat=http://localhost:8788 tries a local copy of the Claude service (CAS/brg-terminal-ai/test/serve.mjs).
 // Only a local address: a link to another site could otherwise collect the conversation and the key.
 // ?anthropic=http://localhost:8790 points the own-key mode at the mock Claude API of those tests.
@@ -229,7 +231,7 @@ const PIXEL_COLS = PIXEL_ROWS[0].length;
 const PIXEL = PIXEL_ROWS.flatMap((row) => [...row].map((ch, x) => (ch === '#' ? RAMP[Math.round((x / (PIXEL_COLS - 1)) * (RAMP.length - 1))] : null)));
 
 const COMMANDS = [
-  { cmd: '/notebook', help: '[box | cable] open an exercise and its instructions', arg: true },
+  { cmd: '/notebook', help: '[exercise | list] open a course notebook or list tutorials', arg: true },
   { cmd: '/help', help: 'list the commands' },
   { cmd: '/books', help: 'show the books, theses and papers' },
   { cmd: '/book', help: '<id> show the chapters of one book', arg: true },
@@ -837,7 +839,7 @@ createApp({
       const [h, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
       const [head, id, ...rest] = h.split('/');
       route.page = +new URLSearchParams(query).get('p') || 0;
-      if (head === 'terminal' || head === 'notebook') Object.assign(route, { view: 'terminal', workspace: head === 'notebook' ? 'notebook' : 'viewer', exercise: id === 'cable' ? 'cable' : 'box' });
+      if (head === 'terminal' || head === 'notebook') Object.assign(route, { view: 'terminal', workspace: head === 'notebook' ? 'notebook' : 'viewer', exercise: notebookExercise(id)?.id || 'box' });
       else if (head === 's' && id) Object.assign(route, { view: 'series', book: id, section: '' });
       else if (head === 'b' && id) {
         const section = rest.length ? decodeURIComponent(rest.join('/')) : '';
@@ -1029,7 +1031,7 @@ createApp({
     // The session viewer frame (viewer/index.html, same site) and the line typed into its command line.
     const sessionEl = ref(null);
     const notebookEl = ref(null);
-    const notebookFile = computed(() => route.exercise === 'cable' ? '02-cable-graph.ipynb' : '01-compas-box-scene.ipynb');
+    const notebookFile = computed(() => notebookExercise(route.exercise)?.file || '01-compas-box-scene.ipynb');
     const notebookSrc = 'jupyter/lab/index.html?path=' + notebookFile.value;
     async function openNotebook() {
       // Same-origin JupyterLab API: open another file without reloading the iframe or its kernels.
@@ -1166,7 +1168,7 @@ createApp({
     }
     const say = (text, kind = 'out', act, href, img) => { log.value.push({ text, kind, act, href, img }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
-    if (route.workspace === 'notebook') say('COMPAS exercises: run the cells on the left from top to bottom (Shift+Enter). Open the Box or Cable nodes exercise in Jupyter’s file browser. /notebook or /notebook cable shows the instructions; viewer commands switch to the 3D view.', 'dim');
+    if (route.workspace === 'notebook') say('COMPAS tutorials: begin with the box, then follow the foundation notebooks in Chapter 2 → Submission. Run cells from top to bottom (Shift+Enter). /notebook list shows the tutorials; /notebook <exercise> opens one. Viewer commands switch to the 3D view.', 'dim');
     if (claudeOn.value) {
       say('Claude is connected: ask about the course and the books, or ask for a model. It searches the books first (historical ones first), reasons, computes, draws in the 3D view, and cites pages. /new starts over.', 'dim');
       say('Viewer commands (Box 0,0,0 100 50 30; /viewer lists them) run directly; /local <words> builds from plain words without Claude.', 'dim');
@@ -1348,9 +1350,15 @@ createApp({
           say('Or plain words: create a table, create a box and a sphere at 2000,0,0, select all and move up 200, rotate the box 45 degrees around x, delete everything, top view, undo.', 'dim');
         }
         else if (cmd === '/notebook') {
-          const cable = arg.toLowerCase() === 'cable';
-          location.hash = cable ? '/notebook/cable' : '/notebook'; closeSheet();
-          say(cable ? 'First cable exercise · 02-cable-graph.ipynb\nTwo fixed supports (nodes 0 and 4), three free nodes (1, 2, 3), four cable segments, and a downward load of 1 kN at each free node.\nRun all cells to view the COMPAS graph and solve it with compas_fd at q = 2 kN/m. The middle node settles 1 m below the supports.\nTry changing the nodal load or force density, predict the sag, and run again.' : 'A COMPAS box · 01-compas-box-scene.ipynb\n1. In Jupyter choose Run → Run All Cells (or Shift+Enter, cell by cell). The first cell installs COMPAS in browser Python.\n2. Box(xsize=2.0, ysize=1.0, zsize=1.5) creates the box; the next cell draws it.\n3. Change the dimensions and rerun. Predict the volume before you run: xsize × ysize × zsize.', 'out');
+          const id = arg.toLowerCase() || 'box';
+          const tutorial = notebookExercises.find((entry) => entry.id === id);
+          if (!tutorial) {
+            if (id !== 'list') say('Unknown notebook. Choose one of these tutorials:', 'dim');
+            notebookExercises.forEach((entry) => say(`/notebook ${entry.id} · ${entry.title}`, 'out', `/notebook ${entry.id}`));
+            return;
+          }
+          location.hash = '/notebook/' + tutorial.id; closeSheet();
+          say(`${tutorial.title} · ${tutorial.file}\n${tutorial.summary}\nChoose Run → Run All Cells, or use Shift+Enter cell by cell. Change one parameter, predict the result and run again.`, 'out');
           say('Save with Ctrl+S; use File → Save and Export Notebook As → Notebook to keep a copy on your computer. The notebook and terminal are separate: paste code or errors here when asking for help.', 'dim');
         }
         else if (cmd === '/viewer') VIEWER_CMDS.slice().sort((a, b) => a.cmd.localeCompare(b.cmd)).forEach((c) => say(`${c.cmd.padEnd(24)} ${c.help.replace(/^[^·:]*[·:]\s*/, '')}`, 'out', c.example || c.cmd));

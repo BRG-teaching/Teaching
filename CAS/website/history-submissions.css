@@ -2,6 +2,12 @@
 .history-submission[open] { grid-column: 1 / -1; }
 .notebook-references { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
 .notebook-references p { margin: 0; }
+.notebook-submission[open] { grid-column: 1 / -1; }
+.notebook-tutorials { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 36px; padding-left: 24px; margin: 20px 0; }
+.notebook-tutorials li { padding-left: 4px; }
+.notebook-tutorials a { font-weight: 600; text-underline-offset: 3px; }
+.notebook-tutorials p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.notebook-tutorials small { margin-left: 8px; font-size: 12px; color: var(--muted); }
 .system-links a { text-underline-offset: 3px; }
 .submission-systems { display: grid; gap: 8px; }
 .submission-system { min-width: 0; }
@@ -25,6 +31,7 @@
 .system-links a:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
 .system-links { display: flex; flex-wrap: wrap; gap: 10px 24px; padding-top: 16px; font-size: 15px; }
 @media (max-width: 600px) {
+  .notebook-tutorials { grid-template-columns: minmax(0, 1fr); }
   .history-submission .card-body { padding: 12px; }
   .card .submission-system > summary { padding: 12px; font-size: 16px; }
   .system-exercise { padding: 2px 12px 16px; }

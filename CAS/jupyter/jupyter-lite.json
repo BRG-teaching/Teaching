@@ -6,6 +6,11 @@
     "settingsStorageName": "cas-jupyter-settings",
     "contentsStorageName": "cas-jupyter-contents",
     "disabledExtensions": ["@jupyterlab/apputils-extension:announcements"],
+    "litePluginSettings": {
+      "@jupyterlite/pyodide-kernel-extension:kernel": {
+        "pyodideUrl": "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.mjs"
+      }
+    },
     "settingsOverrides": {
       "@jupyterlab/notebook-extension:tracker": {
         "autoStartDefaultKernel": true,
