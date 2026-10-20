@@ -34,17 +34,18 @@ and every original page. Cables has four exercises across five PDF pages. Materi
 forms includes the full steel, reinforced-concrete, timber and masonry handouts. Shared
 worksheets are available under each relevant system (for example, columns and bracing).
 
-Individual official PDFs are copied byte for byte. The combined download contains all
-eleven unique handouts (41 pages, 44 numbered or creative tasks), with bookmarks. Each
+Individual official PDFs are copied byte for byte. The complete set contains all
+eleven unique handouts (41 pages, 44 numbered or creative tasks). Each
 content page appears as a large uncropped preview with a title below it, a PDF link, and a short
 English task summary. The cable original is German. On a phone the sheet can scroll
 horizontally; opening its PDF preserves the official print format and scales.
 The blank fourth page in the cable PDF is labelled and remains in the original download.
 
-Built-project photographs and course links provide context separately from the official
-sheet. Cable tasks 3 and Creative refer to the Pavilhão de Portugal. Other references
-include Beauvais Cathedral, Centre Pompidou, Gym Vrin and Palestra Doppia. The earlier
-photo / diagram / exercise strip collection remains available as reference figures.
+Built-project photographs and graphic-statics diagrams appear as two images with titles
+below them; exercise imagery is kept in the official sheets below the reference row.
+Resource links are limited to worksheets, lectures and exercise notes. Cable tasks 3
+and Creative refer to the Pavilhão de Portugal. Other references
+include Beauvais Cathedral, Centre Pompidou, Gym Vrin and Palestra Doppia.
 
 Figure content comes from the `graphic-statics-student-course` collection in R2
 (`r2-books` profile, `brg-books` bucket) and the original course PDFs. The individual
@@ -54,6 +55,8 @@ The worksheet/task catalogue and project-reference mappings are in
 `python3 tools/build_history_worksheets.py /path/to/ETH-eQUILIBRIUM-course`
 (requires PyMuPDF and Pillow). `history/official/sources.json` records the source file,
 page count and SHA-256 hash of every official PDF.
+`python3 tools/build_history_diagrams.py` regenerates the separate diagram previews
+from the reference strips and the cable lecture image in `history/diagrams/`.
 
 ## Password
 
