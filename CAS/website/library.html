@@ -15,7 +15,7 @@
 <body class="lib">
 <div id="app" v-cloak>
 
-  <header class="lib-top">
+  <header class="lib-top" :class="{ 'workspace-top': route.view === 'terminal' }">
     <a class="back" href="index.html">← Course</a>
     <a class="lib-brand" href="#/books">Library</a>
     <nav class="lib-tabs" aria-label="Library">
@@ -24,6 +24,13 @@
       </a>
       <a href="#/terminal" class="term-tab" :class="{ on: route.view === 'terminal' && route.workspace === 'viewer' }">BRG terminal</a>
       <a href="#/notebook" :class="{ on: route.view === 'terminal' && route.workspace === 'notebook' }">Jupyter + BRG</a>
+    </nav>
+    <nav v-if="route.view === 'terminal' && route.workspace === 'notebook'" class="notebook-actions" aria-label="Notebook controls">
+      <a href="#/notebook" class="exercise-link" :aria-current="route.exercise === 'box' ? 'page' : null">01 · Box</a>
+      <a href="#/notebook/cable" class="exercise-link" :aria-current="route.exercise === 'cable' ? 'page' : null">02 · Cable nodes</a>
+      <a :href="'jupyter/lab/index.html?path=' + notebookFile" target="_blank" rel="noopener">Open Jupyter ↗</a>
+      <a :href="'notebooks/' + notebookFile" download>Download .ipynb</a>
+      <a :href="'https://colab.research.google.com/github/BRG-teaching/Teaching/blob/main/CAS/website/notebooks/' + notebookFile" target="_blank" rel="noopener">Open in Colab ↗</a>
     </nav>
   </header>
 
@@ -154,20 +161,7 @@
              :class="{ 'collapsed-workspace': collapsedPane === 'workspace', 'collapsed-chat': collapsedPane === 'chat', 'split-dragging': splitDragging }"
              :style="{ '--workspace-track': splitRatio + 'fr', '--chat-track': (1 - splitRatio) + 'fr' }">
       <div id="workspace-pane" class="viewer" v-show="collapsedPane !== 'workspace'">
-        <div class="workspace-bar">
-          <nav aria-label="Workspace">
-            <a href="#/notebook" :aria-current="route.workspace === 'notebook' ? 'page' : null">Jupyter notebook</a>
-            <a href="#/terminal" :aria-current="route.workspace === 'viewer' ? 'page' : null">3D view</a>
-          </nav>
-          <a v-if="route.workspace === 'notebook'" :href="'jupyter/lab/index.html?path=' + notebookFile" target="_blank" rel="noopener">Open Jupyter ↗</a>
-        </div>
         <div class="workspace-content">
-        <div v-if="route.workspace === 'notebook'" class="notebook-guide">
-          <nav aria-label="Exercises"><a href="#/notebook" :aria-current="route.exercise === 'box' ? 'page' : null">01 · Box</a><a href="#/notebook/cable" :aria-current="route.exercise === 'cable' ? 'page' : null">02 · Cable nodes</a></nav>
-          <span>Run → Run All Cells · first start downloads Python</span>
-          <a :href="'notebooks/' + notebookFile" download>Download .ipynb</a>
-          <a :href="'https://colab.research.google.com/github/BRG-teaching/Teaching/blob/main/CAS/website/notebooks/' + notebookFile" target="_blank" rel="noopener">Open in Colab ↗</a>
-        </div>
         <iframe v-if="notebookOpened" v-show="route.workspace === 'notebook'" ref="notebookEl" class="notebook-frame" :src="notebookSrc" @load="openNotebook" title="Jupyter notebook · COMPAS exercises" allow="clipboard-read; clipboard-write"></iframe>
         <!-- The session viewer (petrasvestartas/session, WebGPU): the backend's live scene, and what the terminal builds.
              :src, not src, so the page's raw HTML does not load it once more before Vue mounts. -->

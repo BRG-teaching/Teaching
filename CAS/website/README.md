@@ -225,6 +225,8 @@ pane without restarting its session. Double-click the divider or press Enter whi
 focused to reset the proportions. Arrow keys resize it as well (Shift for larger steps).
 The chosen ratio is remembered in this browser. On small screens the panes stack and the
 divider resizes their heights.
+Workspace navigation, exercise links, downloads, and the Jupyter/Colab links share the
+single horizontal header. On narrow screens this header scrolls horizontally.
 
 The notebook runs Python locally in the browser through JupyterLite/Pyodide, with no
 Python server or student installation. The first setup cell installs COMPAS 2.15.1,
