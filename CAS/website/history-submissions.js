@@ -1,6 +1,14 @@
 // Complete official worksheets and built references for History Submission.
 Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission, {
   "lead": "Choose a structural system for its worksheet, lecture and exercise notes.",
+  "notebookResources": {
+    "text": "Execute the Python exercises in the embedded Jupyter + BRG workspace using COMPAS. Start with the box example or the cable-nodes notebook.",
+    "links": [
+      { "label": "Open COMPAS notebook workspace", "url": "library.html#/notebook" },
+      { "label": "Cable nodes notebook", "url": "library.html#/notebook/cable" },
+      { "label": "Official COMPAS notebook examples", "url": "https://compas.dev/compas-jupyterlite/lab/index.html" }
+    ]
+  },
   "download": "history/all-worksheets.pdf",
   "systems": [
     {

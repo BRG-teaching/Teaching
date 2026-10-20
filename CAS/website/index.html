@@ -137,6 +137,13 @@
           <summary><span>{{ cardTitle[k] }}</span><i class="pm" aria-hidden="true"></i></summary>
           <div class="card-body">
             <p class="lead">{{ c[k].lead }}</p>
+            <div v-if="c[k].notebookResources" class="notebook-references">
+              <p>{{ c[k].notebookResources.text }}</p>
+              <nav class="system-links" aria-label="COMPAS notebook references">
+                <a v-for="link in c[k].notebookResources.links" :key="link.url" :href="link.url"
+                   :target="link.url.startsWith('https://') ? '_blank' : null" rel="noopener">{{ link.label }}</a>
+              </nav>
+            </div>
             <template v-if="c[k].systems">
               <div class="submission-systems">
                 <details v-for="s in c[k].systems" :key="s.id" class="submission-system" :id="'history-' + s.id">
