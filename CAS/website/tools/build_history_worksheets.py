@@ -76,7 +76,7 @@ def build(course_dir):
 
     combined.set_toc(bookmarks)
     combined.save(SITE / 'history/all-worksheets.pdf', garbage=0, deflate=True)
-    data['lead'] = 'Complete official worksheets. Open a structural system to see every task, all sheet pages and related built projects.'
+    data['lead'] = 'Choose a structural system for its worksheet, lecture and exercise notes.'
     data['download'] = 'history/all-worksheets.pdf'
     data['referenceDownload'] = 'history/all-figures.pdf'
     data['worksheets'] = worksheets

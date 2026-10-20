@@ -1,6 +1,6 @@
 // Complete official worksheets and built references for History Submission.
 Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission, {
-  "lead": "Complete official worksheets. Open a structural system to see every task, all sheet pages and related built projects.",
+  "lead": "Choose a structural system for its worksheet, lecture and exercise notes.",
   "download": "history/all-worksheets.pdf",
   "systems": [
     {
@@ -11,8 +11,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/01-cables.pdf",
       "worksheet": "history/worksheets/01-cables.pdf",
       "worksheetLabel": "Worksheet (PDF, German)",
-      "lecture": "library.html#/b/graphic-statics-student-course/08-sd1-l03-cables-p1.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/15-sd1-ex03-05-cables-arches-arch-cable.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L03-Cables_small_1667494910.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=15",
       "alt": "Golden Gate Bridge; Cable equilibrium; Cable form-finding. Draw a cable shape and its force diagram.",
       "worksheetIds": [
         "cables"
@@ -34,8 +34,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/02-arches.pdf",
       "worksheet": "history/worksheets/02-arches.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/10-sd1-l04-arches-p1.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/15-sd1-ex03-05-cables-arches-arch-cable.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L04-Arches_small_1668675570.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=19",
       "alt": "Beauvais Cathedral; Vault compression paths; Side vaults and buttresses. Complete the side vaults and buttresses; draw the compression paths.",
       "worksheetIds": [
         "arches"
@@ -57,8 +57,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/03-trusses.pdf",
       "worksheet": "history/worksheets/03-trusses.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/18-sd2-l06-trusses-p1.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/27-sd2-ex06-10-trusses-beams-frames-plates-columns.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L06_Trusses_LE_1677757604.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=28",
       "alt": "Centre Pompidou; Truss and force diagram; Truss member forces. Find support reactions and construct the member forces.",
       "worksheetIds": [
         "trusses"
@@ -80,8 +80,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/04-beams.pdf",
       "worksheet": "history/worksheets/04-beams.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/21-sd2-l07-beams-p2.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/27-sd2-ex06-10-trusses-beams-frames-plates-columns.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L07-Beams_1678966202.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=32",
       "alt": "House Kronleinstrasse; Beam force flow; Simply supported beam. Draw the internal force flow and find support reactions.",
       "worksheetIds": [
         "beams"
@@ -103,8 +103,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/05-frames.pdf",
       "worksheet": "history/worksheets/05-frames.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/22-sd2-l08-frames-p1.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/27-sd2-ex06-10-trusses-beams-frames-plates-columns.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L08_Frames_small_1680774620.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=35",
       "alt": "Tagliamento Bridge; Frame equilibrium; Three-hinged frame. Construct a force path through the frame and close the force diagram.",
       "worksheetIds": [
         "frames"
@@ -126,8 +126,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/06-plates-slabs.pdf",
       "worksheet": "history/worksheets/06-plates-slabs.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/24-sd2-l09-plates-columns-bracing-p1.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/27-sd2-ex06-10-trusses-beams-frames-plates-columns.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L09_Scheiben&Platten_small_1682589079.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=36",
       "alt": "Mushroom slab; Slab force flow; Slab and supporting beams. Trace the slab loads through the beams to the supports.",
       "worksheetIds": [
         "plates"
@@ -149,8 +149,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/11-shells.pdf",
       "worksheet": "history/worksheets/11-shells.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/11-sd1-l04-arches-p2.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/55-sd3-ex04-05-masonry-construction-details.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L04-Arches_small_1668675570.pdf",
+      "exercise": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/SchwartzSkriptTE_3_4.compressed_1475158034.pdf",
       "alt": "Cadyl Silo; Shell as arch strips; Tied masonry vault. Draw the vault compression paths and find the tie forces.",
       "worksheetIds": [
         "masonry"
@@ -172,8 +172,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/07-columns.pdf",
       "worksheet": "history/worksheets/07-columns.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/25-sd2-l09-plates-columns-bracing-p2.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/27-sd2-ex06-10-trusses-beams-frames-plates-columns.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L09_Scheiben&Platten_small_1682589079.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=38",
       "alt": "Carre d’Art; Column force flow; Column support conditions. Determine the buckling length for each support condition.",
       "worksheetIds": [
         "bracing-columns"
@@ -195,8 +195,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/08-bracing.pdf",
       "worksheet": "history/worksheets/08-bracing.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/26-sd2-l09-plates-columns-bracing-p3.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/27-sd2-ex06-10-trusses-beams-frames-plates-columns.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/L09_Scheiben&Platten_small_1682589079.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=37",
       "alt": "House R128; Bracing equilibrium; Horizontal load transfer. Transfer the horizontal load through the walls to the supports.",
       "worksheetIds": [
         "bracing-columns"
@@ -218,8 +218,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/09-material-specific.pdf",
       "worksheet": "history/worksheets/09-material-specific.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/42-sd3-l03-timber-p3.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/54-sd3-ex01-03-steel-concrete-timber.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/TEIII_L3_Timber_1667582391.pdf",
+      "exercise": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/SchwartzSkriptTE_3_4.compressed_1475158034.pdf",
       "alt": "Gym Vrin; Timber roof equilibrium; Cantilevers in three materials. Compare the required cantilever depth in timber, concrete and steel.",
       "worksheetIds": [
         "steel",
@@ -244,8 +244,8 @@ Object.assign(window.CAS.chapters.find((chapter) => chapter.n === 1).submission,
       "pdf": "history/figures/10-plastic-stress-fields.pdf",
       "worksheet": "history/worksheets/10-plastic-stress-fields.pdf",
       "worksheetLabel": "Worksheet (PDF)",
-      "lecture": "library.html#/b/graphic-statics-student-course/61-dbaug-l02-plasticity-p3.md",
-      "exercise": "library.html#/b/graphic-statics-student-course/27-sd2-ex06-10-trusses-beams-frames-plates-columns.md",
+      "lecture": "https://raw.githubusercontent.com/BRG-teaching/Teaching/pdf-archive/2_computational_form_finding/Equilibrium/files/20221012_Lecture2_OO_DT_OO_1665646086.pdf",
+      "exercise": "../../2_computational_form_finding/Equilibrium/drawings/web/pdf/compendium-structural-design-I-II-en.pdf#page=32",
       "alt": "Palestra Doppia; Strut-and-tie and stress field; Beams with openings. Draw strut-and-tie force paths around the openings.",
       "worksheetIds": [
         "beams",

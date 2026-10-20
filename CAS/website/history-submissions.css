@@ -13,41 +13,21 @@
 }
 .card .submission-system > summary:hover { color: var(--c); filter: none; }
 .card .submission-system > summary .pm { color: var(--c); }
-.submission-system small, .official-worksheet small { display: inline-block; margin-left: 10px; font-size: 13px; font-weight: 400; color: var(--muted); }
+.submission-system small { display: inline-block; margin-left: 10px; font-size: 13px; font-weight: 400; color: var(--muted); }
 .system-exercise { background: var(--paper); padding: 4px 16px 20px; min-width: 0; }
 .system-reference { margin: 18px 0 0; }
 .reference-images { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 24px; align-items: end; }
 .reference-images figure { margin: 0; min-width: 0; }
 .reference-images img { display: block; width: 100%; height: 280px; object-fit: contain; }
 .system-reference figcaption { margin-top: 10px; font-size: 15px; font-weight: 600; }
-.system-reference figcaption > a { font-weight: 600; }
-.system-reference > p { margin: 14px 0 0; font-size: 14px; line-height: 1.5; }
-.system-links a:focus-visible, .worksheet-body a:focus-visible, .worksheet-preview:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
+.system-links a:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
 .system-links { display: flex; flex-wrap: wrap; gap: 10px 24px; padding-top: 16px; font-size: 15px; }
-.official-worksheet { min-width: 0; margin-top: 22px; }
-.card .official-worksheet > summary { background: var(--wash); color: var(--ink); padding: 12px 16px; font-size: 16px; line-height: 1.5; }
-.card .official-worksheet > summary:hover { color: var(--c); filter: none; }
-.worksheet-body { padding: 16px 0 0; min-width: 0; }
-.worksheet-download { margin: 0 0 20px; font-size: 14px; line-height: 1.5; }
-.worksheet-tasks { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; font-size: 16px; line-height: 1.5; }
-.worksheet-tasks p { margin: 4px 0 0; }
-.worksheet-tasks a, .worksheet-references a, .worksheet-download a { text-underline-offset: 3px; }
-.worksheet-references { margin-top: 20px; padding: 12px 16px; background: var(--wash); font-size: 14px; line-height: 1.5; }
-.worksheet-references p { margin: 0; }
-.worksheet-references p + p { margin-top: 10px; }
-.worksheet-page { margin: 28px 0 0; scroll-margin-top: 18px; }
-.worksheet-preview { overflow-x: auto; background: #fff; }
-.worksheet-preview img { display: block; width: 100%; max-width: none; height: auto; }
-.worksheet-page figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; margin-top: 12px; font-size: 14px; line-height: 1.5; }
-@media (max-width: 800px) { .worksheet-preview img { min-width: 1100px; } }
 @media (max-width: 600px) {
   .history-submission .card-body { padding: 12px; }
   .card .submission-system > summary { padding: 12px; font-size: 16px; }
   .system-exercise { padding: 2px 12px 16px; }
   .system-links { gap: 10px 18px; }
-  .card .official-worksheet > summary { padding: 12px; }
-  .submission-system small, .official-worksheet small { display: block; margin: 4px 0 0; }
-  .worksheet-tasks { font-size: 15px; }
+  .submission-system small { display: block; margin: 4px 0 0; }
   .reference-images { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .reference-images img { height: auto; max-height: 300px; }
 }

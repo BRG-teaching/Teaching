@@ -25,27 +25,23 @@ photos from `../project/uploads/`.
 | `app.js` | The small amount of logic (chapter highlight, timeline placement) |
 | `library.html`, `library.js`, `library.css`, `library-config.js` | The library and BRG terminal (below) |
 | `gate.js` | The password screen |
-| `history-submissions.js`, `history-submissions.css` | History Submission: expandable structural systems, exercise instructions and course links |
+| `history-submissions.js`, `history-submissions.css` | History Submission: expandable structural systems, two reference images and direct PDF links |
 | `history/` | Figure previews, half-A3 PDFs, original worksheet pages and source records |
 
-The History chapter's **Submission** card opens a list of structural systems. Every
-system lists all tasks from its associated official worksheets, including creative tasks
-and every original page. Cables has four exercises across five PDF pages. Material-specific
-forms includes the full steel, reinforced-concrete, timber and masonry handouts. Shared
-worksheets are available under each relevant system (for example, columns and bracing).
+The History chapter's **Submission** card opens a list of structural systems. Each
+system shows a built-project photograph and a graphic-statics diagram, with plain titles
+below the images. There are no project-description paragraphs or inline worksheet viewers.
 
-Individual official PDFs are copied byte for byte. The complete set contains all
-eleven unique handouts (41 pages, 44 numbered or creative tasks). Each
-content page appears as a large uncropped preview with a title below it, a PDF link, and a short
-English task summary. The cable original is German. On a phone the sheet can scroll
-horizontally; opening its PDF preserves the official print format and scales.
-The blank fourth page in the cable PDF is labelled and remains in the original download.
+Resource links go directly to complete official worksheet PDFs, lecture PDFs and exercise
+notes. Notes use the English Structural Design I&II compendium at the relevant section,
+or the official Structural Design III&IV script for material-specific forms and shells.
+Lecture PDFs use the repository's `pdf-archive` branch.
 
-Built-project photographs and graphic-statics diagrams appear as two images with titles
-below them; exercise imagery is kept in the official sheets below the reference row.
-Resource links are limited to worksheets, lectures and exercise notes. Cable tasks 3
-and Creative refer to the Pavilhão de Portugal. Other references
-include Beauvais Cathedral, Centre Pompidou, Gym Vrin and Palestra Doppia.
+Individual official worksheets are copied byte for byte. The complete set contains eleven
+unique handouts (41 pages, 44 numbered or creative tasks). Cables has four exercises across
+five PDF pages, including the original blank fourth page. Material-specific forms includes
+the complete steel, reinforced-concrete, timber and masonry handouts. Shared worksheets
+remain available under each relevant system, including columns and bracing.
 
 Figure content comes from the `graphic-statics-student-course` collection in R2
 (`r2-books` profile, `brg-books` bucket) and the original course PDFs. The individual
