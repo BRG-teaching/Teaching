@@ -138,21 +138,41 @@
           <div class="card-body">
             <p class="lead">{{ c[k].lead }}</p>
             <template v-if="c[k].systems">
-              <p class="history-download"><a :href="c[k].download">Download all exercise figures (PDF)</a></p>
+              <p class="history-download"><a :href="c[k].download" target="_blank" rel="noopener">All official worksheets (PDF)</a> · <a :href="c[k].referenceDownload" target="_blank" rel="noopener">Reference figures (PDF)</a></p>
               <div class="submission-systems">
                 <details v-for="s in c[k].systems" :key="s.id" class="submission-system" :id="'history-' + s.id">
-                  <summary><span>{{ s.title }}</span><i class="pm" aria-hidden="true"></i></summary>
+                  <summary><span>{{ s.title }} <small>{{ s.exerciseCount }} exercises</small></span><i class="pm" aria-hidden="true"></i></summary>
                   <div class="system-exercise">
-                    <p class="system-task">{{ s.instruction }}</p>
-                    <a class="system-figure" :href="s.pdf" target="_blank" rel="noopener" :aria-label="'Open ' + s.title + ' figure at full size'">
-                      <img :src="s.figure" :alt="s.alt" width="2400" height="849" loading="lazy" decoding="async">
-                    </a>
-                    <nav class="system-links" :aria-label="s.title + ' exercise resources'">
-                      <a :href="s.worksheet" target="_blank" rel="noopener">{{ s.worksheetLabel }}</a>
-                      <a :href="s.pdf" target="_blank" rel="noopener">Full-size figure (PDF)</a>
+                    <figure class="system-reference">
+                      <img :src="c[k].references[s.referenceId].image" :alt="c[k].references[s.referenceId].title" :width="c[k].references[s.referenceId].width" :height="c[k].references[s.referenceId].height" loading="lazy" decoding="async">
+                      <figcaption><span class="reference-label">Built reference</span><a :href="c[k].references[s.referenceId].lecture">{{ c[k].references[s.referenceId].title }}</a><p>{{ c[k].references[s.referenceId].description }}</p></figcaption>
+                    </figure>
+                    <nav class="system-links" :aria-label="s.title + ' course resources'">
                       <a :href="s.lecture">Lecture</a>
                       <a :href="s.exercise">Exercise notes</a>
+                      <a :href="s.pdf" target="_blank" rel="noopener">Reference figure (PDF)</a>
                     </nav>
+                    <details v-for="wid in s.worksheetIds" :key="wid" class="official-worksheet" :open="s.worksheetIds.length === 1">
+                      <summary><span>{{ c[k].worksheets[wid].title }} <small>{{ c[k].worksheets[wid].tasks.length }} exercises · {{ c[k].worksheets[wid].pageCount }} pages</small></span><i class="pm" aria-hidden="true"></i></summary>
+                      <div class="worksheet-body">
+                        <p class="worksheet-download"><a :href="c[k].worksheets[wid].pdf" target="_blank" rel="noopener">Open complete official worksheet (PDF)</a><span v-if="c[k].worksheets[wid].language !== 'English'"> · {{ c[k].worksheets[wid].language }} original; English task summaries below</span></p>
+                        <ol class="worksheet-tasks">
+                          <li v-for="t in c[k].worksheets[wid].tasks" :key="t.number">
+                            <a :href="'#worksheet-' + s.id + '-' + wid + '-page-' + t.pages[0]"><b>{{ t.number === 'Creative' ? 'Creative task' : 'Task ' + t.number }} — {{ t.title }}</b></a>
+                            <p>{{ t.instruction }}</p>
+                          </li>
+                        </ol>
+                        <aside v-if="c[k].worksheets[wid].referenceIds.some(rid => rid !== s.referenceId)" class="worksheet-references" aria-label="Related built projects">
+                          <p v-for="rid in c[k].worksheets[wid].referenceIds.filter(rid => rid !== s.referenceId)" :key="rid"><a :href="c[k].references[rid].lecture">{{ c[k].references[rid].title }}</a> — {{ c[k].references[rid].description }}</p>
+                        </aside>
+                        <figure v-for="p in c[k].worksheets[wid].pages" :key="p.number" :id="'worksheet-' + s.id + '-' + wid + '-page-' + p.number" class="worksheet-page">
+                          <div v-if="!p.blank" class="worksheet-preview" tabindex="0" :aria-label="c[k].worksheets[wid].title + ', sheet ' + p.number + '. Scroll to view the full sheet.'">
+                            <img :src="p.image" :alt="c[k].worksheets[wid].title + ', complete official sheet ' + p.number" :width="p.width" :height="p.height" loading="lazy" decoding="async">
+                          </div>
+                          <figcaption><b>Sheet {{ p.number }} — {{ p.title }}</b><a :href="c[k].worksheets[wid].pdf + '#page=' + p.number" target="_blank" rel="noopener">Open this page in PDF</a></figcaption>
+                        </figure>
+                      </div>
+                    </details>
                   </div>
                 </details>
               </div>

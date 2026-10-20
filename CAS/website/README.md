@@ -28,16 +28,32 @@ photos from `../project/uploads/`.
 | `history-submissions.js`, `history-submissions.css` | History Submission: expandable structural systems, exercise instructions and course links |
 | `history/` | Figure previews, half-A3 PDFs, original worksheet pages and source records |
 
-The History chapter's **Submission** card opens a list of structural systems. Expand a
-system to see its photo / graphic-statics / exercise figure, a short task, and links to
-the original worksheet, full-size figure, lecture and exercise notes. Shells and vaults
-have their own entry. Opening Submission uses the full card row; on a phone the figure
-can scroll horizontally, or open as a full-size PDF. The figure PDF collection contains
-one 420 × 148.5 mm horizontal strip per system. Other chapters keep their existing cards.
+The History chapter's **Submission** card opens a list of structural systems. Every
+system lists all tasks from its associated official worksheets, including creative tasks
+and every original page. Cables has four exercises across five PDF pages. Material-specific
+forms includes the full steel, reinforced-concrete, timber and masonry handouts. Shared
+worksheets are available under each relevant system (for example, columns and bracing).
+
+Individual official PDFs are copied byte for byte. The combined download contains all
+eleven unique handouts (41 pages, 44 numbered or creative tasks), with bookmarks. Each
+content page appears as a large uncropped preview with a title below it, a PDF link, and a short
+English task summary. The cable original is German. On a phone the sheet can scroll
+horizontally; opening its PDF preserves the official print format and scales.
+The blank fourth page in the cable PDF is labelled and remains in the original download.
+
+Built-project photographs and course links provide context separately from the official
+sheet. Cable tasks 3 and Creative refer to the Pavilhão de Portugal. Other references
+include Beauvais Cathedral, Centre Pompidou, Gym Vrin and Palestra Doppia. The earlier
+photo / diagram / exercise strip collection remains available as reference figures.
 
 Figure content comes from the `graphic-statics-student-course` collection in R2
 (`r2-books` profile, `brg-books` bucket) and the original course PDFs. The individual
 file/page references and representative-model notes are in `history/sources.json`.
+The worksheet/task catalogue and project-reference mappings are in
+`history/official-worksheets.json`. Regenerate full PDFs, page previews and site data with
+`python3 tools/build_history_worksheets.py /path/to/ETH-eQUILIBRIUM-course`
+(requires PyMuPDF and Pillow). `history/official/sources.json` records the source file,
+page count and SHA-256 hash of every official PDF.
 
 ## Password
 
