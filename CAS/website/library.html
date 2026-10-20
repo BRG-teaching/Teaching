@@ -22,15 +22,8 @@
       <a v-for="g in cfg.groups" :key="g.id" :href="'#/' + g.id" :class="{ on: route.view === 'list' && route.group === g.id }">
         {{ g.label }} <span class="count" v-if="state === 'ready'">{{ shelfAll[g.id].length }}</span>
       </a>
-      <a href="#/terminal" class="term-tab" :class="{ on: route.view === 'terminal' && route.workspace === 'viewer' }">BRG terminal</a>
+      <a href="#/terminal" :class="{ on: route.view === 'terminal' && route.workspace === 'viewer' }">BRG terminal</a>
       <a href="#/notebook" :class="{ on: route.view === 'terminal' && route.workspace === 'notebook' }">Jupyter + BRG</a>
-    </nav>
-    <nav v-if="route.view === 'terminal' && route.workspace === 'notebook'" class="notebook-actions" aria-label="Notebook controls">
-      <a href="#/notebook" class="exercise-link" :aria-current="route.exercise === 'box' ? 'page' : null">01 · Box</a>
-      <a href="#/notebook/cable" class="exercise-link" :aria-current="route.exercise === 'cable' ? 'page' : null">02 · Cable nodes</a>
-      <a :href="'jupyter/lab/index.html?path=' + notebookFile" target="_blank" rel="noopener">Open Jupyter ↗</a>
-      <a :href="'notebooks/' + notebookFile" download>Download .ipynb</a>
-      <a :href="'https://colab.research.google.com/github/BRG-teaching/Teaching/blob/main/CAS/website/notebooks/' + notebookFile" target="_blank" rel="noopener">Open in Colab ↗</a>
     </nav>
   </header>
 

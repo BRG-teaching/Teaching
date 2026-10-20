@@ -213,8 +213,8 @@ python3 ../../teaching/CAS/website/tools/extract_viewer_commands.py   # refresh 
 ## Python exercises (`notebook.html`)
 
 `notebook.html` opens `library.html#/notebook`: JupyterLab on the left and the existing
-BRG terminal on the right. The default exercise is `01-compas-box-scene.ipynb`. Choose
-**02 · Cable nodes** (or open `library.html#/notebook/cable`) for the first cable exercise:
+BRG terminal on the right. The default exercise is `01-compas-box-scene.ipynb`. Open
+`02-cable-graph.ipynb` in Jupyter's file browser (or `library.html#/notebook/cable`) for the first cable exercise:
 a COMPAS `Graph` with five nodes, four edges, two supports and three downward nodal
 loads. `compas_fd.solvers.fd_numpy` gives a midspan sag of 1 m for P = 1 kN and q = 2 kN/m.
 Both exercises use `compas_notebook.Viewer` and `viewer.scene.add(...)`, following the
@@ -228,16 +228,16 @@ pane without restarting its session. Double-click the divider or press Enter whi
 focused to reset the proportions. Arrow keys resize it as well (Shift for larger steps).
 The chosen ratio is remembered in this browser. On small screens the panes stack and the
 divider resizes their heights.
-Workspace navigation, exercise links, downloads, and the Jupyter/Colab links share the
-single horizontal header. On narrow screens this header scrolls horizontally.
+Workspace navigation uses the main horizontal header. Notebook files and exports are
+managed inside the embedded Jupyter interface. On narrow screens the header scrolls horizontally.
 
 The notebook runs Python locally in the browser through JupyterLite/Pyodide, with no
 Python server or student installation. The first setup cell installs COMPAS 2.15.1,
 pythreejs and `compas_notebook` (plus `compas_fd` for the cable). Choose
 **Run → Run All Cells**, or **Shift+Enter** for individual cells.
 The starter notebooks remain ordinary `.ipynb` files in `notebooks/`, usable in desktop
-Jupyter and Google Colab. **Open in Colab** opens the selected exercise in a new tab;
-the setup cell installs missing packages there as well. JupyterLite supports a subset of Python packages; advanced
+Jupyter and Google Colab; the setup cell installs missing packages there as well.
+JupyterLite supports a subset of Python packages; advanced
 exercises with native CAD libraries need a desktop or server Python environment.
 
 The workspace keeps the notebook iframe and its kernels alive when switching exercises
@@ -249,7 +249,6 @@ cell or error into the terminal when asking for help. Viewer commands switch to 
 
 Work is saved in the current browser's IndexedDB. Students should also use
 **File → Save and Export Notebook As → Notebook** to keep a copy on their computer.
-The download link above the iframe downloads the original exercise.
 The scene-based exercises use new filenames, so previously saved copies of the earlier
 exercises stay available in the browser's file browser.
 

@@ -1157,7 +1157,7 @@ createApp({
     }
     const say = (text, kind = 'out', act, href, img) => { log.value.push({ text, kind, act, href, img }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
-    if (route.workspace === 'notebook') say('COMPAS exercises: run the cells on the left from top to bottom (Shift+Enter). Choose Box or Cable nodes above the notebook. /notebook or /notebook cable shows the instructions; viewer commands switch to the 3D view.', 'dim');
+    if (route.workspace === 'notebook') say('COMPAS exercises: run the cells on the left from top to bottom (Shift+Enter). Open the Box or Cable nodes exercise in Jupyter’s file browser. /notebook or /notebook cable shows the instructions; viewer commands switch to the 3D view.', 'dim');
     if (claudeOn.value) {
       say('Claude is connected: ask about the course and the books, or ask for a model. It searches the books first (historical ones first), reasons, computes, draws in the 3D view, and cites pages. /new starts over.', 'dim');
       say('Viewer commands (Box 0,0,0 100 50 30; /viewer lists them) run directly; /local <words> builds from plain words without Claude.', 'dim');
