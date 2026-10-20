@@ -973,12 +973,13 @@ createApp({
       try {
         await app.restored;
         await app.serviceManager.ready;
-        app.shell.collapseLeft();
-        await app.commands.execute('docmanager:open', {
+        const widget = await app.commands.execute('docmanager:open', {
           path: notebookFile.value, factory: 'Notebook',
           kernel: { name: app.serviceManager.kernelspecs.specs.default },
           kernelPreference: { language: 'python', autoStartDefault: true },
         });
+        await widget?.context.ready;
+        app.shell.collapseLeft();
       } catch (e) { console.warn('Could not open the exercise in Jupyter.', e); }
     }
     // Keep each frame mounted after its first visit: switching workspaces preserves the kernel and scene.
