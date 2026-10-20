@@ -32,8 +32,9 @@ photos from `../project/uploads/`.
 The History chapter's **Submission** card opens a list of structural systems. Each
 system shows a built-project photograph and a graphic-statics diagram, with plain titles
 below the images. There are no project-description paragraphs or inline worksheet viewers.
-The card also links to the embedded COMPAS notebook workspace, the cable-nodes starter,
-and the official COMPAS notebook examples, and explains where Python exercises are executed.
+The **Computational Structural Design with COMPAS** chapter's **Submission** card links
+to the embedded COMPAS notebook workspace, the cable-nodes starter and the official COMPAS
+notebook examples, and explains where Python exercises are executed.
 
 Resource links go directly to complete official worksheet PDFs, lecture PDFs and exercise
 notes. Notes use the English Structural Design I&II compendium at the relevant section,
