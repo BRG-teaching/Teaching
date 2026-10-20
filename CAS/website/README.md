@@ -219,9 +219,10 @@ The box becomes a COMPAS `Mesh`; the cable keeps its topology and computed coord
 in a COMPAS `Graph`. Visualization uses the interactive pythreejs notebook viewer.
 
 Both the 3D and notebook workspaces start with two-thirds of the width for the workspace
-and one-third for chat. Drag the divider to resize; the arrows collapse or restore either
-pane without restarting its session. Double-click the divider or press Enter while it is
-focused to reset the proportions. Arrow keys resize it as well (Shift for larger steps).
+and one-third for chat. The thin divider has no arrow controls. Drag it to resize, click
+it to hide or restore the terminal, or drag it to either outer edge to collapse that pane.
+Hidden panes keep their sessions. With the divider focused, Enter or Space toggles the
+terminal, Escape resets the proportions, and arrow keys resize (Shift for larger steps).
 The chosen ratio is remembered in this browser. On small screens the panes stack and the
 divider resizes their heights.
 Workspace navigation uses the main horizontal header. Notebook files and exports are

@@ -957,9 +957,10 @@ createApp({
     const savedRatio = Number(ratioStore.get());
     const splitRatio = ref(savedRatio >= 0.15 && savedRatio <= 0.85 ? savedRatio : 2 / 3);
     let splitPointer = null;
+    const dividerSize = () => parseFloat(getComputedStyle(splitEl.value).getPropertyValue('--divider-size')) || 6;
     function splitLimits() {
       const rect = splitEl.value?.getBoundingClientRect();
-      const space = rect ? (splitStacked.value ? rect.height - 28 : rect.width - 24) : 1000;
+      const space = rect ? (splitStacked.value ? rect.height : rect.width) - dividerSize() : 1000;
       return [Math.max(0.15, Math.min(0.4, (splitStacked.value ? 140 : 200) / Math.max(1, space))),
         Math.min(0.85, 1 - Math.min(0.4, (splitStacked.value ? 140 : 240) / Math.max(1, space)))];
     }
@@ -967,27 +968,34 @@ createApp({
       const [min, max] = splitLimits();
       splitRatio.value = Math.max(min, Math.min(max, value));
     }
-    function togglePane(pane) { collapsedPane.value = collapsedPane.value === pane ? '' : pane; }
+    function toggleTerminal() { collapsedPane.value = collapsedPane.value ? '' : 'chat'; }
     function resetSplit() { collapsedPane.value = ''; splitRatio.value = 2 / 3; ratioStore.set(String(splitRatio.value)); }
     function beginSplitDrag(event) {
       if (event.button !== 0) return;
       event.preventDefault();
-      collapsedPane.value = '';
-      splitPointer = event.pointerId;
-      splitDragging.value = true;
+      splitPointer = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false, collapse: '' };
       event.currentTarget.focus();
       event.currentTarget.setPointerCapture(event.pointerId);
     }
     function dragSplit(event) {
-      if (event.pointerId !== splitPointer) return;
+      if (event.pointerId !== splitPointer?.id) return;
+      if (!splitPointer.moved && Math.hypot(event.clientX - splitPointer.x, event.clientY - splitPointer.y) < 4) return;
+      splitPointer.moved = true;
+      splitDragging.value = true;
+      collapsedPane.value = '';
       const rect = splitEl.value.getBoundingClientRect();
-      const size = splitStacked.value ? 28 : 24;
+      const size = dividerSize();
       const position = splitStacked.value ? event.clientY - rect.top : event.clientX - rect.left;
       const available = (splitStacked.value ? rect.height : rect.width) - size;
+      splitPointer.collapse = position < 32 ? 'workspace' : position > available + size - 32 ? 'chat' : '';
       setSplitRatio((position - size / 2) / Math.max(1, available));
     }
     function endSplitDrag(event) {
-      if (event.pointerId !== splitPointer) return;
+      if (event.pointerId !== splitPointer?.id) return;
+      if (event.type === 'pointerup') {
+        if (splitPointer.moved) collapsedPane.value = splitPointer.collapse;
+        else toggleTerminal();
+      }
       splitPointer = null;
       splitDragging.value = false;
       ratioStore.set(String(splitRatio.value));
@@ -996,11 +1004,12 @@ createApp({
     function splitKey(event) {
       const back = splitStacked.value ? 'ArrowUp' : 'ArrowLeft';
       const forward = splitStacked.value ? 'ArrowDown' : 'ArrowRight';
-      if (![back, forward, 'Home', 'End', 'Enter'].includes(event.key)) return;
+      if (![back, forward, 'Home', 'End', 'Enter', ' ', 'Escape'].includes(event.key)) return;
       event.preventDefault();
-      collapsedPane.value = '';
-      if (event.key === 'Enter') resetSplit();
+      if (event.key === 'Enter' || event.key === ' ') toggleTerminal();
+      else if (event.key === 'Escape') resetSplit();
       else {
+        collapsedPane.value = '';
         const [min, max] = splitLimits();
         setSplitRatio(event.key === 'Home' ? min : event.key === 'End' ? max : splitRatio.value + (event.key === back ? -1 : 1) * (event.shiftKey ? 0.1 : 0.02));
         ratioStore.set(String(splitRatio.value));
@@ -1649,7 +1658,7 @@ createApp({
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years, coverImg,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
-      splitEl, splitRatio, collapsedPane, splitDragging, splitStacked, togglePane, resetSplit, beginSplitDrag, dragSplit, endSplitDrag, splitKey,
+      splitEl, splitRatio, collapsedPane, splitDragging, splitStacked, beginSplitDrag, dragSplit, endSplitDrag, splitKey,
       view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, sessionEl, viewerSrc, closeSheet, claudeLabel, notebookSrc, notebookOpened, viewerOpened, notebookEl, notebookFile, openNotebook,
     };
   },

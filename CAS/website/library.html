@@ -17,7 +17,6 @@
 
   <header class="lib-top" :class="{ 'workspace-top': route.view === 'terminal' }">
     <a class="back" href="index.html">← Course</a>
-    <a class="lib-brand" href="#/books">Library</a>
     <nav class="lib-tabs" aria-label="Library">
       <a v-for="g in cfg.groups" :key="g.id" :href="'#/' + g.id" :class="{ on: route.view === 'list' && route.group === g.id }">
         {{ g.label }} <span class="count" v-if="state === 'ready'">{{ shelfAll[g.id].length }}</span>
@@ -201,28 +200,14 @@
         </div>
       </div>
 
-      <div class="split-divider">
-        <button type="button" class="split-toggle" @click="togglePane('workspace')" aria-controls="workspace-pane"
-                :aria-expanded="collapsedPane !== 'workspace'" :aria-label="collapsedPane === 'workspace' ? 'Restore workspace' : 'Collapse workspace'"
-                :title="collapsedPane === 'workspace' ? 'Restore workspace' : 'Collapse workspace'">
-          <span class="split-horizontal" aria-hidden="true">{{ collapsedPane === 'workspace' ? '▶' : '◀' }}</span>
-          <span class="split-vertical" aria-hidden="true">{{ collapsedPane === 'workspace' ? '▼' : '▲' }}</span>
-        </button>
-        <div class="split-grip" role="separator" tabindex="0" aria-label="Resize workspace and chat"
-             aria-controls="workspace-pane chat-pane" :aria-orientation="splitStacked ? 'horizontal' : 'vertical'"
-             :aria-valuenow="Math.round((collapsedPane === 'workspace' ? 0 : collapsedPane === 'chat' ? 1 : splitRatio) * 100)"
-             aria-valuemin="0" aria-valuemax="100" title="Drag to resize · double-click to reset · arrow keys to adjust"
-             @pointerdown="beginSplitDrag" @pointermove="dragSplit" @pointerup="endSplitDrag"
-             @pointercancel="endSplitDrag" @lostpointercapture="endSplitDrag" @keydown="splitKey" @dblclick="resetSplit">
-          <span aria-hidden="true"></span>
-        </div>
-        <button type="button" class="split-toggle" @click="togglePane('chat')" aria-controls="chat-pane"
-                :aria-expanded="collapsedPane !== 'chat'" :aria-label="collapsedPane === 'chat' ? 'Restore chat' : 'Collapse chat'"
-                :title="collapsedPane === 'chat' ? 'Restore chat' : 'Collapse chat'">
-          <span class="split-horizontal" aria-hidden="true">{{ collapsedPane === 'chat' ? '◀' : '▶' }}</span>
-          <span class="split-vertical" aria-hidden="true">{{ collapsedPane === 'chat' ? '▲' : '▼' }}</span>
-        </button>
-      </div>
+      <div class="split-divider" role="separator" tabindex="0"
+           :aria-label="collapsedPane ? 'Resize panes or restore hidden pane' : 'Resize panes or hide terminal'"
+           aria-controls="workspace-pane chat-pane" :aria-orientation="splitStacked ? 'horizontal' : 'vertical'"
+           :aria-valuenow="Math.round((collapsedPane === 'workspace' ? 0 : collapsedPane === 'chat' ? 1 : splitRatio) * 100)"
+           aria-valuemin="0" aria-valuemax="100"
+           :title="'Drag to resize · click to ' + (collapsedPane ? 'restore hidden pane' : 'hide terminal')"
+           @pointerdown="beginSplitDrag" @pointermove="dragSplit" @pointerup="endSplitDrag"
+           @pointercancel="endSplitDrag" @lostpointercapture="endSplitDrag" @keydown="splitKey"></div>
 
       <div id="chat-pane" class="term" v-show="collapsedPane !== 'chat'" @click="focusPrompt">
         <div class="term-banner">
