@@ -23,10 +23,14 @@ function parseLibrary(text) {
     const g = line.match(/^#{1}\s+(.+)$/);           // "# Papers" etc. groups the entries below it
     if (g) { heading = g[1].trim(); continue; }
     const h = line.match(/^## `([a-zA-Z0-9_-]+)\/` — (.+)$/);
-    if (h) { cur = { id: h[1], title: h[2].trim(), heading, sections: [] }; books.push(cur); continue; }
+    if (h) { cur = { id: h[1], title: h[2].trim(), heading, sections: [], processed: '' }; books.push(cur); continue; }
+    const d = cur && !cur.sections.length && line.match(/^\d+ files? · processed (\d{4}-\d{2}-\d{2})\s*$/);
+    if (d) { cur.processed = d[1]; continue; }
     const e = line.match(/^\s+- `([^`]+\.md)` \*\*(.*?)\*\*(.*)$/);
     if (cur && e && safePath(e[1])) {
-      cur.sections.push({ book: cur.id, section: e[1], title: e[2], summary: e[3].replace(/^\s*[—-]\s*/, '').trim() });
+      const when = e[3].match(/ · processed (\d{4}-\d{2}-\d{2})\)/);
+      cur.sections.push({ book: cur.id, section: e[1], title: e[2], processed: when ? when[1] : '',
+        summary: e[3].replace(/ · processed \d{4}-\d{2}-\d{2}\)/, ')').replace(/^\s*[—-]\s*/, '').trim() });
     }
   }
   return books.filter((b) => b.sections.length);
@@ -779,16 +783,17 @@ createApp({
       const ps = seriesAll.value[k], i = bookInfo(ps[0].title);
       return { key: 's:' + k, id: k, series: true, title: i.name, name: i.name, byline: [i.author, years(ps)].filter(Boolean).join(' · '),
         short: shortTitle(i.name), subject: coverOf(ps[0]).subject, href: '#/s/' + k, img: coverImg(ps[0].id),
-        meta: `${plural(ps.length, 'part')} · ${plural(ps.reduce((n, b) => n + b.sections.length, 0), 'chapter')}` };
+        meta: `${plural(ps.length, 'part')} · ${plural(ps.reduce((n, b) => n + b.sections.length, 0), 'chapter')}`,
+        processed: ps.map((b) => b.processed).filter(Boolean).sort().pop() || '' };
     };
     const bookItem = (b) => {
       const i = bookInfo(b.title);
       return { key: b.id, id: b.id, title: b.title, name: i.name, byline: [i.author, i.year].filter(Boolean).join(' · '), ...coverOf(b),
-        href: '#/b/' + b.id, img: classify(b) === 'books' ? coverImg(b.id) : '', meta: plural(b.sections.length, 'chapter') };
+        href: '#/b/' + b.id, img: classify(b) === 'books' ? coverImg(b.id) : '', meta: plural(b.sections.length, 'chapter'), processed: b.processed };
     };
     const shelfAll = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) => {
       if (isCollection(b) && g.id !== 'books')
-        return b.sections.map((x) => ({ key: b.id + '/' + x.section, id: b.id, title: x.title, name: x.title, byline: '', short: shortTitle(x.title), subject: subjectOf(x.title + ' ' + x.summary), href: readerHref(b.id, x.section), meta: x.summary }));
+        return b.sections.map((x) => ({ key: b.id + '/' + x.section, id: b.id, title: x.title, name: x.title, byline: '', short: shortTitle(x.title), subject: subjectOf(x.title + ' ' + x.summary), href: readerHref(b.id, x.section), meta: x.summary, processed: x.processed }));
       const ps = g.id === 'books' && partsOf(b.id);
       if (ps) return ps[0].id === b.id ? [seriesItem(seriesKey(b.id))] : []; // one card per series, at its first part
       return [bookItem(b)];

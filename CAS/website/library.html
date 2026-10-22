@@ -71,6 +71,7 @@
             <b>{{ b.name }}</b>
             <span class="by" v-if="b.byline">{{ b.byline }}</span>
             <span class="meta"><span class="subj" :style="{ color: b.subject.color }">{{ b.subject.label }}</span> · {{ b.meta }}</span>
+            <span class="when" v-if="b.processed">Processed {{ b.processed }}</span>
           </a>
         </li>
       </ul>
