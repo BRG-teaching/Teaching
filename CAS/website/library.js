@@ -1036,7 +1036,7 @@ createApp({
     // The session viewer frame (viewer/index.html, same site) and the line typed into its command line.
     const sessionEl = ref(null);
     const notebookEl = ref(null);
-    const notebookFile = computed(() => notebookExercise(route.exercise)?.file || '01-compas-box-scene.ipynb');
+    const notebookFile = computed(() => notebookExercise(route.exercise)?.file || '01-basics/01-box.ipynb');
     const notebookSrc = 'jupyter/lab/index.html?path=' + notebookFile.value;
     async function openNotebook() {
       // Same-origin JupyterLab API: open another file without reloading the iframe or its kernels.

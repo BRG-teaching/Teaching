@@ -217,11 +217,12 @@ python3 ../../teaching/CAS/website/tools/extract_viewer_commands.py   # refresh 
 ## Python exercises (`notebook.html`)
 
 `notebook.html` opens `library.html#/notebook`: JupyterLab on the left and the existing
-BRG terminal on the right. The default exercise remains `01-compas-box-scene.ipynb`.
+BRG terminal on the right. The default exercise is `01-basics/01-box.ipynb`.
 Chapter 2 → **Submission** links to each tutorial in teaching order. Each notebook is
-self-contained, explains why its concepts are needed, and includes a small working
-example before parameter experiments. `library.html#/notebook/<id>` and `/notebook <id>`
-open a tutorial without restarting the iframe; `/notebook list` lists the available IDs.
+self-contained and minimal: a title, short section headings and runnable code
+with a COMPAS scene, grouped by topic in `notebooks/<topic>/`.
+`library.html#/notebook/<id>` and `/notebook <id>` open a tutorial without restarting
+the iframe; `/notebook list` lists the available IDs.
 The existing `#/notebook` and `#/notebook/cable` routes stay valid.
 
 The canonical sources are in the local `mcp-server-brg` repository at
@@ -257,7 +258,7 @@ and its desktop package elsewhere; the optional cable uses `compas_fd` 0.5.4.
 NumPy, SciPy and Shapely use the versions bundled with the pinned browser runtime. Choose
 **Run → Run All Cells**, or **Shift+Enter** for individual cells.
 The starter notebooks remain ordinary `.ipynb` files in `notebooks/`, usable in desktop
-Jupyter and Google Colab; the setup cell installs missing packages there as well.
+Jupyter; the setup cell installs missing packages there as well.
 JupyterLite supports a subset of Python packages; advanced
 exercises with native CAD libraries need a desktop or server Python environment.
 
