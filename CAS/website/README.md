@@ -34,9 +34,10 @@ The History chapter's **Submission** card opens a list of structural systems. Ea
 system shows a built-project photograph and a graphic-statics diagram, with plain titles
 below the images. There are no project-description paragraphs or inline worksheet viewers.
 The **Computational Structural Design with COMPAS** chapter's **Submission** card links
-to the embedded COMPAS notebook workspace and an ordered list of 13 tutorials. Small
+to the embedded COMPAS notebook workspace and an ordered list of 15 tutorials. Small
 COMPAS examples lead through data, JSON exchange, geometry, graphs, meshes, Model, IFC,
-matrix decomposition and optimisation. Truss and cable notebooks are later extensions.
+matrix decomposition and optimisation. Structures notebooks (`compas_ags`, `compas_fd`,
+`compas_dr`, `compas_tna`) are later extensions.
 
 Resource links go directly to complete official worksheet PDFs, lecture PDFs and exercise
 notes. Notes use the English Structural Design I&II compendium at the relevant section,
@@ -224,6 +225,8 @@ with a COMPAS scene, grouped by topic in `notebooks/<topic>/`.
 `library.html#/notebook/<id>` and `/notebook <id>` open a tutorial without restarting
 the iframe; `/notebook list` lists the available IDs.
 The existing `#/notebook` and `#/notebook/cable` routes stay valid.
+JupyterLite stores browser files under `cas-jupyter-contents-2`; renaming it hides
+earlier browser-saved copies for everyone.
 
 The canonical sources are in the local `mcp-server-brg` repository at
 `knowledge/02_computational_design/notebooks/`, with teaching order in `tutorials.json`.
@@ -253,8 +256,9 @@ managed inside the embedded Jupyter interface. On narrow screens the header scro
 The notebook runs Python locally through JupyterLite. The runtime is explicitly pinned
 to Pyodide 0.29.3 / Python 3.13.2, matching the official IfcOpenShell WebAssembly wheel.
 The first setup cell installs COMPAS 2.15.1, pythreejs 2.4.2 and `compas_notebook` 0.11.0.
-Model uses `compas_model` 0.9.3; IFC uses the official 0.8.4 WASM wheel in the browser
-and its desktop package elsewhere; the optional cable uses `compas_fd` 0.5.4.
+Model uses `compas_model` 0.9.3; IFC uses `compas_ifc` 2.1.0 with the official IfcOpenShell
+0.8.4 WASM wheel in the browser; the structures notebooks use `compas_ags` 1.3.3,
+`compas_fd` 0.5.4, `compas_dr` 0.3.1 and `compas_tna` 0.9.0.
 NumPy, SciPy and Shapely use the versions bundled with the pinned browser runtime. Choose
 **Run → Run All Cells**, or **Shift+Enter** for individual cells.
 The starter notebooks remain ordinary `.ipynb` files in `notebooks/`, usable in desktop

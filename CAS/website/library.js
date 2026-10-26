@@ -1055,6 +1055,8 @@ createApp({
           kernelPreference: { language: 'python', autoStartDefault: true },
         });
         await widget?.context.ready;
+        // List the topic folders, not only the opened notebook's folder.
+        await app.commands.execute('filebrowser:go-to-path', { path: '', dontShowBrowser: true });
         app.shell.collapseLeft();
       } catch (e) { console.warn('Could not open the exercise in Jupyter.', e); }
     }
