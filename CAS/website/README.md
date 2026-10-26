@@ -34,7 +34,7 @@ The History chapter's **Submission** card opens a list of structural systems. Ea
 system shows a built-project photograph and a graphic-statics diagram, with plain titles
 below the images. There are no project-description paragraphs or inline worksheet viewers.
 The **Computational Structural Design with COMPAS** chapter's **Submission** card links
-to the embedded COMPAS notebook workspace and an ordered list of 22 tutorials. Small
+to the embedded COMPAS notebook workspace and an ordered list of 34 tutorials. Small
 COMPAS examples lead through data, JSON exchange, geometry, graphs, meshes, Model, IFC,
 matrix decomposition and optimisation. Structures notebooks (`compas_ags`, `compas_fd`,
 `compas_dr`, `compas_tna`) are later extensions.
