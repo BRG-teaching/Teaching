@@ -144,6 +144,12 @@ its cells to the page's `notebook` tool, which writes `brg_mcp.ipynb` into Jupyt
 Questions are answered from the library, with its figures shown in the terminal and `/open` links to the pages.
 `/new` starts a new conversation, `/stop` stops an answer.
 
+**Notebook skills** (`/skills`) work without Claude: every tool of the BRG MCP server whose name ends in
+`_notebook` is a slash command (`compas_box_notebook` → `/box`), listed in `/skills`, `/help` and the `/` menu.
+`/box 3 2 1` (or `/box zsize=4 color=#ce4095`) calls the tool from this page and opens the notebook it returns.
+A new `*_notebook` tool in mcp-server-brg appears here once that server is deployed (its
+`docs/contributing/README.md`). `?mcp=http://localhost:8000/mcp` tries the skills against a local server.
+
 Chapters, figures, the shelf and the eQUILIBRIUM drawings open on a sheet over the notebook; ✕ or `/close`
 shows the notebook again.
 

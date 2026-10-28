@@ -11,8 +11,44 @@ const notebookExercise = (id) => notebookExercises.find((tutorial) => tutorial.i
 // ?anthropic=http://localhost:8790 points the own-key mode at the mock Claude API of those tests.
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1):\d+\/?$/, devParam = (k) => { const v = new URLSearchParams(location.search).get(k); return v && LOCAL.test(v) ? v : ''; };
 if (devParam('chat')) cfg.chatEndpoint = devParam('chat');
-// wake the BRG MCP server (on a free plan it sleeps when unused) before Claude needs it
-if (cfg.mcpEndpoint) fetch(cfg.mcpEndpoint, { mode: 'no-cors' }).catch(() => {});
+// The BRG MCP server, also called from this page for the notebook skills (/box, …). ?mcp=http://localhost:8000/mcp
+// tries a local server for the skills only (Claude needs a public address).
+const SKILLS_MCP = (() => { const v = new URLSearchParams(location.search).get('mcp'); return v && /^http:\/\/(localhost|127\.0\.0\.1):\d+\/mcp$/.test(v) ? v : cfg.mcpEndpoint; })();
+let mcpId = 0;
+async function mcpCall(method, params = {}) {
+  const res = await fetch(SKILLS_MCP, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: ++mcpId, method, params }) });
+  if (!res.ok) throw new Error(`The BRG MCP server answered HTTP ${res.status}.`);
+  const reply = await res.json();
+  if (reply.error) throw new Error(reply.error.message);
+  return reply.result;
+}
+// A notebook skill is any MCP tool named *_notebook: compas_box_notebook is /box. Its arguments are the
+// tool's parameters, in order or as name=value (/box 3 2 1, /box zsize=4 color=#ce4095).
+const skillName = (tool) => '/' + tool.replace(/^compas_/, '').replace(/_notebook$/, '').replace(/_/g, '-');
+function skillOf(tool) {
+  const props = tool.inputSchema?.properties || {};
+  const args = Object.keys(props);
+  const first = (tool.description || '').split(/\n\s*\n/)[0].replace(/\s+/g, ' ').trim();
+  return { cmd: skillName(tool.name), tool: tool.name, args, props, skill: true, arg: args.length > 0,
+    help: (args.length ? args.map((a) => `[${a}]`).join(' ') + ' ' : '') + first };
+}
+function skillArguments(skill, words) {
+  const out = {};
+  let next = 0;
+  for (const w of words) {
+    const m = w.match(/^([a-z_]\w*)=(.*)$/i);
+    const name = m ? m[1] : skill.args[next++];
+    if (!name || !(name in skill.props)) throw new Error(`${skill.cmd} takes ${skill.args.join(', ') || 'no arguments'}.`);
+    const raw = m ? m[2] : w, type = skill.props[name].type || (skill.props[name].anyOf || [])[0]?.type;
+    const value = type === 'number' || type === 'integer' ? Number(raw) : type === 'boolean' ? /^(true|yes|1)$/i.test(raw) : raw;
+    if (typeof value === 'number' && !Number.isFinite(value)) throw new Error(`${name} must be a number, not “${raw}”.`);
+    out[name] = value;
+  }
+  return out;
+}
+// asking for the tools also wakes the server (on a free plan it sleeps when unused) before Claude needs it
+const skillsLoaded = SKILLS_MCP ? mcpCall('tools/list').then((r) => r.tools.filter((t) => /_notebook$/.test(t.name)).map(skillOf)).catch(() => []) : Promise.resolve([]);
 const base = cfg.baseUrl.replace(/\/$/, '');
 
 const fileUrl = (path) => base + '/' + path.split('/').map(encodeURIComponent).join('/');
@@ -225,6 +261,7 @@ const PIXEL_COLS = PIXEL_ROWS[0].length;
 const PIXEL = PIXEL_ROWS.flatMap((row) => [...row].map((ch, x) => (ch === '#' ? RAMP[Math.round((x / (PIXEL_COLS - 1)) * (RAMP.length - 1))] : null)));
 
 const COMMANDS = [
+  { cmd: '/skills', help: 'list the notebook skills of the BRG MCP server (/box, …): each writes a runnable notebook' },
   { cmd: '/notebook', help: '[exercise | list] open a course notebook or list tutorials', arg: true },
   { cmd: '/help', help: 'list the commands' },
   { cmd: '/books', help: 'show the books, theses and papers' },
@@ -236,7 +273,7 @@ const COMMANDS = [
   { cmd: '/page', help: '<book>/<chapter.md> <page> print a printed page of a book here', arg: true },
   { cmd: '/drawings', help: 'show the eQUILIBRIUM step-by-step drawings' },
   { cmd: '/drawing', help: '<n> [step] play eQUILIBRIUM drawing n over the notebook', arg: true },
-  { cmd: '/close', help: 'close the sheet and show the 3D scene' },
+  { cmd: '/close', help: 'close the sheet and show the notebook' },
   { cmd: '/clear', help: 'clear the transcript' },
   { cmd: '/new', help: 'start a new conversation with Claude' },
   { cmd: '/stop', help: 'stop Claude’s answer' },
@@ -560,6 +597,17 @@ createApp({
     }
     // Claude's notebook tool: write the cells (from a BRG notebook tool of the MCP server) as a notebook in
     // JupyterLite's browser storage and open it in the notebook pane, for the student to run.
+    // A notebook skill: call its MCP tool from this page, no Claude, and open the notebook it returns.
+    async function runSkill(skill, words) {
+      const args = skillArguments(skill, words);
+      say(`· BRG tool: ${skill.tool}${Object.keys(args).length ? ' ' + JSON.stringify(args) : ''}`, 'dim');
+      const result = await mcpCall('tools/call', { name: skill.tool, arguments: args });
+      const text = (result.content || []).map((c) => c.text || '').join('');
+      if (result.isError) throw new Error(text || `${skill.tool} failed.`);
+      const notebook = JSON.parse(text);
+      say(`· notebook: ${notebook.file}`, 'dim');
+      say(await notebookForClaude(notebook.file, notebook.cells), 'out');
+    }
     async function notebookForClaude(file, cells) {
       if (route.view !== 'terminal') { location.hash = '/notebook'; await nextTick(); }
       await openNotebook();
@@ -581,7 +629,7 @@ createApp({
       // a file of the same name that was already open shows the new cells after a revert
       await widget?.context.ready;
       await widget?.context.revert();
-      return `Wrote and opened ${file} (${cells.length} cells) in the notebook pane. The user runs it from the top with Shift+Enter.`;
+      return `Wrote and opened ${file} (${cells.length} cells) in the notebook on the left. Run it from the top with Shift+Enter.`;
     }
     // Keep the notebook mounted after its first visit: leaving the page view preserves the kernel.
     const notebookOpened = ref(false);
@@ -636,9 +684,11 @@ createApp({
       if (page) nextTick(() => toPage(viewerEl.value, text, page));
     }
 
+    const skills = ref([]);
+    skillsLoaded.then((list) => { skills.value = list; });
     const menuItems = computed(() => {
       const v = input.value;
-      return v.startsWith('/') && !v.includes(' ') ? COMMANDS.filter((c) => c.cmd.startsWith(v.toLowerCase())) : [];
+      return v.startsWith('/') && !v.includes(' ') ? [...COMMANDS, ...skills.value].filter((c) => c.cmd.startsWith(v.toLowerCase())) : [];
     });
     watch(menuItems, () => { menuIndex.value = 0; });
     const takeMenu = (m) => { input.value = m.cmd + (m.arg ? ' ' : ''); if (!m.arg) submit(); prompt.value && prompt.value.focus(); };
@@ -686,6 +736,7 @@ createApp({
         busy.value = true;
         if (cmd === '/help' || cmd === '?') {
           COMMANDS.forEach((c) => say(`${c.cmd.padEnd(10)} ${c.help}`));
+          if (skills.value.length) say('Notebook skills (/skills): ' + skills.value.map((k) => k.cmd).join(' · '), 'dim');
           say('Anything else goes to Claude when it is connected (/key), else it searches the library.', 'dim');
         }
         else if (cmd === '/notebook') {
@@ -799,7 +850,16 @@ createApp({
           const src = `${PLAYER}index.html?view=${n}${step}`;
           setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
           say(`Drawing ${n} playing over the notebook. Use its controls to step through the construction.`, 'dim'); keep();
-        } else if (cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
+        } else if (cmd === '/skills') {
+          const list = await skillsLoaded;
+          if (!list.length) say('No notebook skills: the BRG MCP server did not answer (it may be waking up; try again in a minute).', 'err');
+          else {
+            say('Notebook skills of the BRG MCP server; each writes a runnable notebook on the left:', 'dim');
+            list.forEach((k) => say(`${k.cmd.padEnd(10)} ${k.help}`, 'out', k.cmd));
+            say('Arguments in order or as name=value, e.g. ' + list[0].cmd + (list[0].args.length ? ' ' + list[0].args[0] + '=3' : '') + '. Or ask Claude in words.', 'dim');
+          }
+        } else if (skills.value.some((k) => k.cmd === cmd.toLowerCase())) await runSkill(skills.value.find((k) => k.cmd === cmd.toLowerCase()), args);
+        else if (cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
         else if (claudeOn.value) await askClaude(line);
         else if (ready() && showHits(line, search(line, allSections.value))) keep();
       } catch (e) {
