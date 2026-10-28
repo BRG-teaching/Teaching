@@ -2,34 +2,36 @@
 // scripted answers in the API's server-sent-event format and checks each request the Worker makes.
 // The BRG MCP server's tools run at the API, so the mock answers them itself, in mcp_tool_use and
 // mcp_tool_result blocks, from a tiny library (one search hit and one Lévy chapter).
+import fs from 'node:fs';
 import http from 'node:http';
 
 export const MCP_URL = 'https://brg-mcp.example.workers.dev/mcp';
 const CHAPTER = ['# Chapitre I', '', '## § 1. Polygone funiculaire', '', 'Soient des forces P1, P2, ... appliquées à un fil; le polygone funiculaire a ses côtés parallèles aux rayons menés du pôle O.', '', '<sub>page 3</sub>'].join('\n');
 
-export const DRAWING = ['Escape', 'Select All', 'Delete', 'Polyline 0,0,0 2500,0,-1875 5000,0,-2500 7500,0,-1875 10000,0,0',
-  'Line 0,0,0 10000,0,0', 'Text form diagram', '=Height 250', '0,0,800', 'View Front', 'Fit'];
+// MOCK_BOX=<file.json>: answer "create a box" with that notebook (e.g. the live compas_box_notebook's), for browser tests
+export const BOX = process.env.MOCK_BOX ? JSON.parse(fs.readFileSync(process.env.MOCK_BOX, 'utf8')) : { name: 'brg_mcp', file: 'brg_mcp.ipynb', cells: [{ type: 'markdown', source: '# A COMPAS box: brg_mcp' }, { type: 'code', source: 'box = Box(2.0, 1.0, 1.5)\nbox.name = "brg_mcp"' }] };
 
 // The next answer, from where the conversation stands.
 function answer(body) {
   const last = body.messages[body.messages.length - 1];
   const results = Array.isArray(last.content) ? last.content.filter((b) => b.type === 'tool_result') : [];
-  const named = (name) => body.messages.flatMap((m) => (Array.isArray(m.content) ? m.content : []))
-    .find((b) => b.type === 'tool_use' && b.name === name && results.some((r) => r.tool_use_id === b.id));
+  const asked = body.messages[0].content;
+  if (/create a box/.test(asked) && !results.length) {
+    return { stop: 'tool_use', content: [
+      { type: 'mcp_tool_use', id: 'mcptoolu_box', name: 'compas_box_notebook', server_name: 'brg', input: {} },
+      { type: 'mcp_tool_result', tool_use_id: 'mcptoolu_box', is_error: false, content: [{ type: 'text', text: JSON.stringify(BOX) }] },
+      { type: 'tool_use', id: 'toolu_nb', name: 'notebook', input: { file: BOX.file, cells: BOX.cells } }] };
+  }
+  if (/create a box/.test(asked)) return { stop: 'end_turn', content: [{ type: 'text', text: 'Run the cells from the top with Shift+Enter.' }] };
   if (!results.length) {
     const hit = { book: 'graphic-statics-levy-part-1', section: '01-chapter-1.md', title: 'Chapitre I. Polygone des forces et polygone funiculaire', historical: true };
-    return { stop: 'tool_use', content: [
+    return { stop: 'end_turn', content: [
       { type: 'thinking', thinking: 'The student wants a funicular cable after Lévy. Find the chapter first.' },
       { type: 'mcp_tool_use', id: 'mcptoolu_search', name: 'search_books', server_name: 'brg', input: { query: 'funicular polygon' } },
       { type: 'mcp_tool_result', tool_use_id: 'mcptoolu_search', is_error: false, content: [{ type: 'text', text: JSON.stringify(hit) }] },
       { type: 'mcp_tool_use', id: 'mcptoolu_read', name: 'read_book_section', server_name: 'brg', input: { book: hit.book, section: hit.section, line_count: 40 } },
       { type: 'mcp_tool_result', tool_use_id: 'mcptoolu_read', is_error: false, content: [{ type: 'text', text: JSON.stringify({ ...hit, text: CHAPTER }) }] },
-      { type: 'text', text: 'Lévy builds the cable from the force polygon: each side is parallel to a ray from the pole O. Drawing it now.' },
-      { type: 'tool_use', id: 'toolu_view', name: 'viewer', input: { commands: DRAWING, note: 'form diagram of the cable' } }] };
-  }
-  if (named('viewer')) {
-    const said = JSON.stringify(results.find((r) => r.tool_use_id === 'toolu_view').content);
-    return { stop: 'end_turn', content: [{ type: 'text', text: `Done: 5 loads of 10 kN, H = 30 kN.\nThe viewer said: ${said.slice(0, 80)}\n/open graphic-statics-levy-part-1/01-chapter-1.md 3` }] };
+      { type: 'text', text: 'Lévy builds the cable from the force polygon: each side is parallel to a ray from the pole O.\n/open graphic-statics-levy-part-1/01-chapter-1.md 3' }] };
   }
   return { stop: 'end_turn', content: [{ type: 'text', text: 'unexpected state' }] };
 }
@@ -44,10 +46,10 @@ function check(body, headers) {
   if (body.cache_control?.type !== 'ephemeral' || body.system?.[0]?.cache_control?.type !== 'ephemeral') problems.push('caching');
   if (body.output_config?.effort !== 'medium') problems.push('effort');
   const names = (body.tools || []).map((t) => t.name || `${t.type}:${t.mcp_server_name}`).join(',');
-  if (names !== 'code_execution,mcp_toolset:brg,viewer') problems.push(`tools ${names}`);
+  if (names !== 'code_execution,mcp_toolset:brg,notebook') problems.push(`tools ${names}`);
   const mcp = body.mcp_servers?.[0];
-  if (body.mcp_servers?.length !== 1 || mcp.type !== 'url' || mcp.name !== 'brg' || mcp.url !== MCP_URL || !String(headers['anthropic-beta']).includes('mcp-client-2025-11-20')) problems.push('mcp server');
-  if (!/session viewer/.test(body.system?.[0]?.text || '') || !/- Box: /.test(body.system[0].text)) problems.push('system prompt');
+  if (body.mcp_servers?.length !== 1 || mcp.type !== 'url' || mcp.name !== 'brg' || !/^https:\/\//.test(mcp.url) || !String(headers['anthropic-beta']).includes('mcp-client-2025-11-20')) problems.push('mcp server');
+  if (!/Jupyter \+ BRG/.test(body.system?.[0]?.text || '') || !/compas_box_notebook/.test(body.system[0].text)) problems.push('system prompt');
   return problems;
 }
 

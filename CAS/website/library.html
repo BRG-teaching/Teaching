@@ -21,8 +21,7 @@
       <a v-for="g in cfg.groups" :key="g.id" :href="'#/' + g.id" :class="{ on: route.view === 'list' && route.group === g.id }">
         {{ g.label }} <span class="count" v-if="state === 'ready'">{{ shelfAll[g.id].length }}</span>
       </a>
-      <a href="#/terminal" :class="{ on: route.view === 'terminal' && route.workspace === 'viewer' }">BRG terminal</a>
-      <a href="#/notebook" :class="{ on: route.view === 'terminal' && route.workspace === 'notebook' }">Jupyter + BRG</a>
+      <a href="#/notebook" :class="{ on: route.view === 'terminal' }">Jupyter + BRG</a>
     </nav>
   </header>
 
@@ -149,16 +148,13 @@
       </article>
     </section>
 
-    <!-- terminal: session viewer (left) + CLI (right), filling the screen -->
+    <!-- Jupyter + BRG: the notebook (left) + the BRG terminal (right), filling the screen -->
     <section v-else-if="route.view === 'terminal'" ref="splitEl" class="split"
              :class="{ 'collapsed-workspace': collapsedPane === 'workspace', 'collapsed-chat': collapsedPane === 'chat', 'split-dragging': splitDragging }"
              :style="{ '--workspace-track': splitRatio + 'fr', '--chat-track': (1 - splitRatio) + 'fr' }">
       <div id="workspace-pane" class="viewer" v-show="collapsedPane !== 'workspace'">
         <div class="workspace-content">
-        <iframe v-if="notebookOpened" v-show="route.workspace === 'notebook'" ref="notebookEl" class="notebook-frame" :src="notebookSrc" @load="openNotebook" title="Jupyter notebook · COMPAS exercises" allow="clipboard-read; clipboard-write"></iframe>
-        <!-- The session viewer (petrasvestartas/session, WebGPU): the backend's live scene, and what the terminal builds.
-             :src, not src, so the page's raw HTML does not load it once more before Vue mounts. -->
-        <iframe v-if="viewerOpened" v-show="route.workspace === 'viewer'" ref="sessionEl" class="session-frame" :src="viewerSrc" title="Session viewer"></iframe>
+        <iframe v-if="notebookOpened" ref="notebookEl" class="notebook-frame" :src="notebookSrc" @load="openNotebook" title="Jupyter notebook · COMPAS exercises" allow="clipboard-read; clipboard-write"></iframe>
         <div class="sheet" v-if="view.kind !== 'welcome'" ref="viewerEl" @click="onViewerClick">
           <div class="viewer-bar">
             <button type="button" class="vb-back" :disabled="viewStack.length < 2" @click.stop="viewBack" aria-label="Back">←</button>
@@ -249,7 +245,6 @@
 <script src="vendor/marked.min.js"></script>
 <script src="vendor/purify.min.js"></script>
 <script src="vendor/katex/katex.min.js"></script>
-<script src="viewer-commands.js"></script>
 <script src="library-config.js"></script>
 <script src="notebook-exercises.js"></script>
 <script src="library.js"></script>

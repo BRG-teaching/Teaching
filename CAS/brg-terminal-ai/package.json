@@ -2,12 +2,11 @@
   "name": "brg-terminal-ai",
   "private": true,
   "type": "module",
-  "description": "Cloudflare Worker that gives the CAS website's BRG terminal Claude: it reads the BRG library and builds models in the 3D view.",
+  "description": "Cloudflare Worker that gives the CAS website's BRG terminal Claude, with the BRG MCP server's tools and the JupyterLite notebook.",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "test": "node test/mock-test.mjs",
-    "try": "node test/try-prompts.mjs",
     "build:browser": "esbuild src/browser.js --bundle --format=iife --platform=browser --target=es2022 --minify --legal-comments=eof --outfile=../website/vendor/brg-claude.js"
   },
   "dependencies": {

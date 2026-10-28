@@ -1,15 +1,14 @@
 # BRG terminal: Claude
 
-A Cloudflare Worker that gives the BRG terminal of the CAS website (`CAS/website/library.html#/terminal`)
-Claude. Claude reads the BRG library, thinks, computes, and builds models in the 3D view next to the terminal.
+A Cloudflare Worker that gives the BRG terminal of the CAS website (`CAS/website/library.html#/notebook`, Jupyter + BRG)
+Claude. Claude uses the BRG MCP server's tools, reads the BRG library, computes, and writes course notebooks into the
+JupyterLite notebook left of the terminal.
 
 ```
 page (GitHub Pages)                 this Worker (Cloudflare)             Claude API                 BRG MCP server
  keeps the conversation   ──POST──▶  streams the answer back   ──────▶  claude-sonnet-5-5  ──────▶  mcp-server-brg
- runs viewer commands                viewer calls go to the page        adaptive thinking            (Render, free
- in the 3D view           ◀─lines──                             ◀──────  code execution     ◀──────  plan)
- sends back the viewer's
- answers
+ writes notebooks into               notebook calls go to the page      adaptive thinking            (Render, free
+ JupyterLite              ◀─lines──                             ◀──────  code execution     ◀──────  plan)
 ```
 
 - **The BRG MCP server** ([mcp-server-brg](https://github.com/BRG-research/mcp-server-brg)) gives Claude the
@@ -19,16 +18,14 @@ page (GitHub Pages)                 this Worker (Cloudflare)             Claude 
   (`website/library-config.js`) in the own-key mode. Nothing of the library is implemented here: a tool added to
   the MCP server is in the terminal as soon as that server is deployed (on every push to its `main`; see its
   `deploy/README.md`).
-- **Code execution** (Anthropic's sandbox) lets Claude compute geometry, such as a funicular polygon or a thrust line,
-  before it draws.
-- **The `viewer` tool** sends session viewer command lines to the page, which runs them in the 3D view and sends
-  back each line with the viewer's answer, so Claude sees what was created and corrects errors. Claude knows
-  the viewer's 86 commands (`src/viewer-commands.js`, written by `CAS/website/tools/extract_viewer_commands.py`).
-- **Instructions** (`src/prompt.js`) set the order of work: search the library first, historical books first
-  (`search_books` ranks them first), read the chapter, look at the book's figure (the terminal shows it),
-  recreate the construction in the 3D view in the Equilibrium palette (compression navy, tension pink, forces green,
-  guides grey), then answer and cite author, §, page and figure with `/open book/chapter.md` lines, which the terminal
-  turns into links. They follow BRG's own guidance for these books (mcp-server-brg's `book_guidance.md`).
+- **Code execution** (Anthropic's sandbox) lets Claude compute, such as a funicular polygon or a thrust line.
+- **The `notebook` tool** is the one tool the page runs itself: Claude passes it the cells a BRG notebook tool of
+  the MCP server returned (`compas_box_notebook`, …), and the page writes them as a notebook into JupyterLite and
+  opens it on the left, for the student to run. Claude does not write notebook code itself.
+- **Instructions** (`src/prompt.js`): for "create …", call the matching BRG notebook tool and pass its cells to the
+  notebook tool; for questions, search the library first (historical books first), read the chapter, look at the
+  book's figure (the terminal shows it), then answer and cite author, §, page and figure with `/open book/chapter.md`
+  lines, which the terminal turns into links.
 - **Streaming:** thinking summaries, text and tool use stream to the terminal while Claude works.
 - **Fallback:** requests use `fallbacks: "default"`. If a safety check declines a request, the API runs it again
   on the model Anthropic recommends for that case, instead of failing.
@@ -43,16 +40,6 @@ On the website, `/key sk-ant-…` (an Anthropic API key) switches Claude on in t
 calls the Anthropic API directly. The key is kept in the browser's local storage, sent only to Anthropic, masked in
 the terminal, and removed with `/key off`. Each person pays for their own use. Use a key with a spend limit, in a
 browser profile you trust, since a script running on the page could read it. The Worker below is for a class: one key, kept on the server.
-
-## Try it on many questions
-
-`ANTHROPIC_API_KEY=sk-ant-… npm run try` runs `test/try-prompts.mjs`: fourteen questions from the historical
-books beyond cables and trusses (resultants, moment diagrams, centroids, masonry arches and the middle third,
-three-hinged arches, Ritter and Culmann sections, earth pressure, Williot diagrams, moments of inertia, Maxwell's
-reciprocal figures, the kern, a circular truss, Lévy on vaults). It writes `try-report.html`, one section per question:
-the searches, readings and figures, the cited pages, the answer, and the drawing rendered from the viewer commands
-in their colours, with any command the viewer would refuse. `--only 3,7` runs some; the whole set costs one to three
-dollars on Sonnet 5.5.
 
 ## An Anthropic API key
 
@@ -104,7 +91,7 @@ The Workers Paid plan ($5 a month) avoids that.
 ## Test without an API key
 
 ```bash
-npm test                       # the Worker against a mock Claude API: tools, streaming, viewer round trip
+npm test                       # the Worker against a mock Claude API: tools, streaming, notebook round trip
 node test/serve.mjs --mock     # the Worker on http://localhost:8788 with the mock
 ```
 
