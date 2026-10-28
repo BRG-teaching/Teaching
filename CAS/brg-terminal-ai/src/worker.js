@@ -1,7 +1,7 @@
 // The BRG terminal's Claude, as a Cloudflare Worker. The page keeps the conversation and POSTs it here
-// ({ messages, container }); this runs Claude on it with the library tools, which run here, and the
+// ({ messages, container }); this runs Claude on it with the BRG MCP server's tools, which the Claude API calls, and the
 // viewer tool, whose command lines go back to the page to run in the 3D view. The answer streams back
-// as lines of JSON: thinking and text as they come, the library tools as they run, then "done" with the
+// as lines of JSON: thinking and text as they come, the MCP tools as they run, then "done" with the
 // messages to append and any viewer calls to answer.
 import { converse, explain } from './agent.js';
 

@@ -1,15 +1,10 @@
 // A stand-in for the Claude Messages API, for testing the Worker without an API key: it streams
 // scripted answers in the API's server-sent-event format and checks each request the Worker makes.
-// It also serves a tiny library (LIBRARY.md and one Lévy chapter) under /library.
+// The BRG MCP server's tools run at the API, so the mock answers them itself, in mcp_tool_use and
+// mcp_tool_result blocks, from a tiny library (one search hit and one Lévy chapter).
 import http from 'node:http';
 
-const LIBRARY = `# Books
-
-## \`graphic-statics-levy-part-1/\` — La Statique graphique, Part I (Maurice Lévy)
-
-  - \`01-chapter-1.md\` **Chapitre I. Polygone des forces et polygone funiculaire** Composition des forces; polygone funiculaire, pôle et rayons.
-  - \`02-chapter-2.md\` **Chapitre II. Moments** Moments read from the funicular polygon.
-`;
+export const MCP_URL = 'https://brg-mcp.example.workers.dev/mcp';
 const CHAPTER = ['# Chapitre I', '', '## § 1. Polygone funiculaire', '', 'Soient des forces P1, P2, ... appliquées à un fil; le polygone funiculaire a ses côtés parallèles aux rayons menés du pôle O.', '', '<sub>page 3</sub>'].join('\n');
 
 export const DRAWING = ['Escape', 'Select All', 'Delete', 'Polyline 0,0,0 2500,0,-1875 5000,0,-2500 7500,0,-1875 10000,0,0',
@@ -22,15 +17,13 @@ function answer(body) {
   const named = (name) => body.messages.flatMap((m) => (Array.isArray(m.content) ? m.content : []))
     .find((b) => b.type === 'tool_use' && b.name === name && results.some((r) => r.tool_use_id === b.id));
   if (!results.length) {
+    const hit = { book: 'graphic-statics-levy-part-1', section: '01-chapter-1.md', title: 'Chapitre I. Polygone des forces et polygone funiculaire', historical: true };
     return { stop: 'tool_use', content: [
       { type: 'thinking', thinking: 'The student wants a funicular cable after Lévy. Find the chapter first.' },
-      { type: 'tool_use', id: 'toolu_search', name: 'search_books', input: { query: 'polygone funiculaire' } }] };
-  }
-  if (named('search_books')) {
-    return { stop: 'tool_use', content: [{ type: 'tool_use', id: 'toolu_read', name: 'read_book_section', input: { book: 'graphic-statics-levy-part-1', section: '01-chapter-1.md', line_count: 40 } }] };
-  }
-  if (named('read_book_section')) {
-    return { stop: 'tool_use', content: [
+      { type: 'mcp_tool_use', id: 'mcptoolu_search', name: 'search_books', server_name: 'brg', input: { query: 'funicular polygon' } },
+      { type: 'mcp_tool_result', tool_use_id: 'mcptoolu_search', is_error: false, content: [{ type: 'text', text: JSON.stringify(hit) }] },
+      { type: 'mcp_tool_use', id: 'mcptoolu_read', name: 'read_book_section', server_name: 'brg', input: { book: hit.book, section: hit.section, line_count: 40 } },
+      { type: 'mcp_tool_result', tool_use_id: 'mcptoolu_read', is_error: false, content: [{ type: 'text', text: JSON.stringify({ ...hit, text: CHAPTER }) }] },
       { type: 'text', text: 'Lévy builds the cable from the force polygon: each side is parallel to a ray from the pole O. Drawing it now.' },
       { type: 'tool_use', id: 'toolu_view', name: 'viewer', input: { commands: DRAWING, note: 'form diagram of the cable' } }] };
   }
@@ -50,8 +43,10 @@ function check(body, headers) {
   if (body.fallbacks !== 'default' || !String(headers['anthropic-beta']).includes('server-side-fallback-2026-07-01')) problems.push('fallbacks');
   if (body.cache_control?.type !== 'ephemeral' || body.system?.[0]?.cache_control?.type !== 'ephemeral') problems.push('caching');
   if (body.output_config?.effort !== 'medium') problems.push('effort');
-  const names = (body.tools || []).map((t) => t.name).join(',');
-  if (names !== 'code_execution,list_books,search_books,read_book_section,look_at_figure,viewer') problems.push(`tools ${names}`);
+  const names = (body.tools || []).map((t) => t.name || `${t.type}:${t.mcp_server_name}`).join(',');
+  if (names !== 'code_execution,mcp_toolset:brg,viewer') problems.push(`tools ${names}`);
+  const mcp = body.mcp_servers?.[0];
+  if (body.mcp_servers?.length !== 1 || mcp.type !== 'url' || mcp.name !== 'brg' || mcp.url !== MCP_URL || !String(headers['anthropic-beta']).includes('mcp-client-2025-11-20')) problems.push('mcp server');
   if (!/session viewer/.test(body.system?.[0]?.text || '') || !/- Box: /.test(body.system[0].text)) problems.push('system prompt');
   return problems;
 }
@@ -69,8 +64,10 @@ function sse(res, reply) {
     } else if (block.type === 'text') {
       write('content_block_start', { index, content_block: { type: 'text', text: '' } });
       write('content_block_delta', { index, delta: { type: 'text_delta', text: block.text } });
+    } else if (block.type === 'mcp_tool_result') {
+      write('content_block_start', { index, content_block: block });
     } else {
-      write('content_block_start', { index, content_block: { type: 'tool_use', id: block.id, name: block.name, input: {} } });
+      write('content_block_start', { index, content_block: { ...block, input: {} } });
       write('content_block_delta', { index, delta: { type: 'input_json_delta', partial_json: JSON.stringify(block.input) } });
     }
     write('content_block_stop', { index });
@@ -87,12 +84,6 @@ export function startMock(port) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', '*');
     if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
-    if (req.method === 'GET' && req.url.startsWith('/library/')) {
-      const path = decodeURIComponent(req.url.slice('/library/'.length));
-      const file = path === 'LIBRARY.md' ? LIBRARY : path === 'graphic-statics-levy-part-1/01-chapter-1.md' ? CHAPTER : null;
-      res.writeHead(file ? 200 : 404, { 'Content-Type': 'text/markdown' });
-      return res.end(file || 'not found');
-    }
     let raw = '';
     for await (const chunk of req) raw += chunk;
     const body = JSON.parse(raw);

@@ -4,8 +4,8 @@ main = "src/worker.js"
 compatibility_date = "2026-06-01"
 
 [vars]
-# The public R2 bucket of the BRG library (LIBRARY.md and the chapters)
-LIBRARY_BASE = "https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev"
+# The BRG MCP server (mcp-server-brg on Render): the library and every BRG tool Claude uses
+MCP_URL = "https://brg-mcp.onrender.com/mcp"
 # Pages allowed to call this service, comma separated
 ALLOWED_ORIGINS = "https://brg-teaching.github.io"
 MODEL = "claude-sonnet-5-5"

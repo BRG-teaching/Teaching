@@ -4,14 +4,14 @@
 // then open library.html?chat=http://localhost:8788#/terminal from a local copy of the website.
 import http from 'node:http';
 import worker from '../src/worker.js';
-import { startMock } from './mock-anthropic.mjs';
+import { startMock, MCP_URL as MOCK_MCP_URL } from './mock-anthropic.mjs';
 
 const mock = process.argv.includes('--mock');
 if (mock) await startMock(8790);
 const env = {
   ANTHROPIC_API_KEY: mock ? 'test-key' : process.env.ANTHROPIC_API_KEY,
   ANTHROPIC_BASE_URL: mock ? 'http://localhost:8790' : process.env.ANTHROPIC_BASE_URL,
-  LIBRARY_BASE: mock ? 'http://localhost:8790/library' : (process.env.LIBRARY_BASE || 'https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev'),
+  MCP_URL: mock ? MOCK_MCP_URL : process.env.MCP_URL,
   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || '',
   ACCESS_KEY: process.env.ACCESS_KEY || '',
   MODEL: process.env.MODEL, EFFORT: process.env.EFFORT,

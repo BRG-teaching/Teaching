@@ -12,7 +12,7 @@
 import fs from 'node:fs';
 import { converse, costOf, DEFAULT_MODEL, DEFAULT_EFFORT } from '../src/agent.js';
 import VIEWER_COMMANDS from '../src/viewer-commands.js';
-import { startMock } from './mock-anthropic.mjs';
+import { startMock, MCP_URL as MOCK_MCP_URL } from './mock-anthropic.mjs';
 
 export const PROMPTS = [
   'Find the resultant of four non-concurrent forces in a plane with the force polygon and the funicular polygon, as Lévy does, and draw it.',
@@ -36,7 +36,7 @@ const only = (args[args.indexOf('--only') + 1] || '').split(',').map(Number).fil
 const env = {
   ANTHROPIC_API_KEY: mock ? 'test-key' : process.env.ANTHROPIC_API_KEY,
   ANTHROPIC_BASE_URL: mock ? 'http://localhost:8790' : process.env.ANTHROPIC_BASE_URL,
-  LIBRARY_BASE: mock ? 'http://localhost:8790/library' : process.env.LIBRARY_BASE || 'https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev',
+  MCP_URL: mock ? MOCK_MCP_URL : process.env.MCP_URL,
   MODEL: process.env.MODEL || DEFAULT_MODEL, EFFORT: process.env.EFFORT || DEFAULT_EFFORT,
 };
 if (!env.ANTHROPIC_API_KEY) { console.error('Set ANTHROPIC_API_KEY, or use --mock.'); process.exit(1); }

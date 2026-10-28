@@ -11,6 +11,8 @@ const notebookExercise = (id) => notebookExercises.find((tutorial) => tutorial.i
 // ?anthropic=http://localhost:8790 points the own-key mode at the mock Claude API of those tests.
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1):\d+\/?$/, devParam = (k) => { const v = new URLSearchParams(location.search).get(k); return v && LOCAL.test(v) ? v : ''; };
 if (devParam('chat')) cfg.chatEndpoint = devParam('chat');
+// wake the BRG MCP server (on a free plan it sleeps when unused) before Claude needs it
+if (cfg.mcpEndpoint) fetch(cfg.mcpEndpoint, { mode: 'no-cors' }).catch(() => {});
 const base = cfg.baseUrl.replace(/\/$/, '');
 
 const fileUrl = (path) => base + '/' + path.split('/').map(encodeURIComponent).join('/');
@@ -1563,7 +1565,7 @@ createApp({
       if (!cfg.chatEndpoint) {
         await loadClaude();
         const env = { ANTHROPIC_API_KEY: ownKey.get(), ANTHROPIC_BASE_URL: devParam('anthropic') || undefined, BROWSER: true, MODEL: window.BRGClaude.DEFAULT_MODEL, EFFORT: 'medium',
-          LIBRARY_BASE: new URL(cfg.mirrorPath || '.', location.href).href.replace(/\/$/, ''), FIGURE_BASE: cfg.baseUrl };
+          MCP_URL: cfg.mcpEndpoint };
         try {
           const done = await window.BRGClaude.converse(env, [...ai.history], ai.container, onClaudeEvent, signal);
           endStream();

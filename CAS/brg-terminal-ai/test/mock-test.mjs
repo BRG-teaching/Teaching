@@ -3,13 +3,13 @@
 //     npm test
 import assert from 'node:assert/strict';
 import worker from '../src/worker.js';
-import { startMock, DRAWING } from './mock-anthropic.mjs';
+import { startMock, DRAWING, MCP_URL } from './mock-anthropic.mjs';
 
 const { server, requests } = await startMock(8790);
 const env = {
   ANTHROPIC_API_KEY: 'test-key',
   ANTHROPIC_BASE_URL: 'http://localhost:8790',
-  LIBRARY_BASE: 'http://localhost:8790/library',
+  MCP_URL,
   ALLOWED_ORIGINS: 'https://brg-teaching.github.io',
   ACCESS_KEY: 'k',
 };
@@ -31,7 +31,7 @@ assert.equal((await post({ messages: [] }, { 'X-BRG-Key': 'wrong' })).status, 40
 assert.equal((await post({ messages: [{ role: 'user', content: 'hi' }] }, { Origin: 'https://evil.example' })).status, 403);
 assert.equal((await post({ messages: [{ role: 'assistant', content: 'hi' }] })).status, 400);
 
-// 1. the question: Claude searches, reads Lévy, and calls the viewer
+// 1. the question: Claude searches and reads Lévy through the BRG MCP server, and calls the viewer
 const history = [{ role: 'user', content: 'clear the view and create a funicular cable with form and force diagram based on the Lévy books' }];
 let r = await post({ messages: history });
 assert.ifError(r.error && new Error(r.error.error));
@@ -42,10 +42,11 @@ assert.ok(r.events.some((e) => e.t === 'tool' && e.name === 'read_book_section')
 assert.ok(r.events.some((e) => e.t === 'text' && /pole O/.test(e.d)), 'text streamed');
 assert.equal(r.done.stop, 'tool_use');
 assert.deepEqual(r.done.viewer, [{ id: 'toolu_view', commands: DRAWING, note: 'form diagram of the cable' }]);
-assert.equal(r.done.messages.length, 5, 'assistant, results, assistant, results, assistant');
-const searchResult = JSON.stringify(r.done.messages[1].content);
-assert.match(searchResult, /graphic-statics-levy-part-1\/01-chapter-1\.md/, 'search found the chapter');
-assert.match(JSON.stringify(r.done.messages[3].content), /pôle O/, 'chapter read');
+assert.ok(r.events.some((e) => e.t === 'tool' && e.name === 'read_book_section' && e.input.section === '01-chapter-1.md'), 'tool input shown');
+assert.equal(r.done.messages.length, 1, 'one assistant message: the API ran the MCP tools');
+const results = r.done.messages[0].content.filter((b) => b.type === 'mcp_tool_result');
+assert.match(JSON.stringify(results[0].content), /01-chapter-1\.md/, 'search found the chapter');
+assert.match(JSON.stringify(results[1].content), /pôle O/, 'chapter read');
 assert.equal(r.done.messages[0].content[0].signature, 'mock-signature', 'thinking block kept whole');
 history.push(...r.done.messages);
 
@@ -60,5 +61,5 @@ assert.ok(r.done.usage.cache_read > 0, 'usage reported');
 
 await Promise.all(waits);
 assert.ok(requests.every((q) => !q.problems.length), requests.map((q) => q.problems).join(' '));
-console.log(`ok: ${requests.length} Claude requests, each with the expected model, thinking, fallbacks, caching and tools`);
+console.log(`ok: ${requests.length} Claude requests, each with the expected model, thinking, fallbacks, caching, tools and MCP server`);
 server.close();

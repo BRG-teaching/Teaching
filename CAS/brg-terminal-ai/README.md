@@ -4,17 +4,21 @@ A Cloudflare Worker that gives the BRG terminal of the CAS website (`CAS/website
 Claude. Claude reads the BRG library, thinks, computes, and builds models in the 3D view next to the terminal.
 
 ```
-page (GitHub Pages)                 this Worker (Cloudflare)               Claude API
- keeps the conversation   ──POST──▶  library tools run here:      ──────▶  claude-sonnet-5-5
- runs viewer commands               list_books, search_books,               adaptive thinking
- in the 3D view           ◀─lines──  read_book_section,           ◀──────   code execution (Python)
- sends back the viewer's             look_at_figure (R2 bucket)
- answers                             viewer calls go to the page
+page (GitHub Pages)                 this Worker (Cloudflare)             Claude API                 BRG MCP server
+ keeps the conversation   ──POST──▶  streams the answer back   ──────▶  claude-sonnet-5-5  ──────▶  mcp-server-brg
+ runs viewer commands                viewer calls go to the page        adaptive thinking            (Render, free
+ in the 3D view           ◀─lines──                             ◀──────  code execution     ◀──────  plan)
+ sends back the viewer's
+ answers
 ```
 
-- **Library tools** read `LIBRARY.md` and the chapter Markdown from the public R2 bucket, with the tool names of
-  mcp-server-brg: `list_books`, `search_books`, `read_book_section`, plus `look_at_figure`, which shows Claude
-  a plate or figure as an image.
+- **The BRG MCP server** ([mcp-server-brg](https://github.com/BRG-research/mcp-server-brg)) gives Claude the
+  library and every other BRG tool: `search_books` (historical books first), `read_book_section`, `look_at_figure`
+  (a plate or figure as an image; the terminal shows it), `search_knowledge`, `funicular_cable` and the rest. The
+  Claude API calls it directly through the MCP connector, at `MCP_URL` (`wrangler.toml`) or `mcpEndpoint`
+  (`website/library-config.js`) in the own-key mode. Nothing of the library is implemented here: a tool added to
+  the MCP server is in the terminal as soon as that server is deployed (on every push to its `main`; see its
+  `deploy/README.md`).
 - **Code execution** (Anthropic's sandbox) lets Claude compute geometry, such as a funicular polygon or a thrust line,
   before it draws.
 - **The `viewer` tool** sends session viewer command lines to the page, which runs them in the 3D view and sends
@@ -81,7 +85,7 @@ Then put that address in `CAS/website/library-config.js` as `chatEndpoint`, push
 type `/key <ACCESS_KEY>` once per browser.
 
 Settings in `wrangler.toml`: `MODEL` (default `claude-sonnet-5-5`), `EFFORT` (`low` … `max`, default `medium`: how
-much Claude thinks), `ALLOWED_ORIGINS` (pages that may call it), `LIBRARY_BASE` (the bucket). The website's own-key
+much Claude thinks), `ALLOWED_ORIGINS` (pages that may call it), `MCP_URL` (the BRG MCP server). The website's own-key
 mode uses the same defaults (`src/agent.js`).
 
 **Keep `ACCESS_KEY` set.** The Worker spends your API key. The origin check only stops other web pages; a script can

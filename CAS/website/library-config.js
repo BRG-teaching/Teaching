@@ -27,4 +27,8 @@ window.CAS_LIBRARY = {
   // README), e.g. 'https://brg-terminal.<account>.workers.dev'. Empty: the terminal searches the library
   // and builds from plain words without Claude.
   chatEndpoint: '',
+
+  // The BRG MCP server that Claude in the terminal uses for the library and every BRG tool, in both the
+  // Worker and the own-key mode: mcp-server-brg on Render (its deploy/README.md).
+  mcpEndpoint: 'https://brg-mcp.onrender.com/mcp',
 };

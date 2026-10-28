@@ -1,8 +1,8 @@
 // The BRG terminal's Claude: the agent loop, shared by the Cloudflare Worker (worker.js) and the browser build
-// (browser.js, with the visitor's own API key). Library tools run here; viewer calls go back to the page.
+// (browser.js, with the visitor's own API key). The library and every other BRG tool come from the BRG MCP
+// server (mcp-server-brg), which the Claude API calls itself; viewer calls go back to the page.
 import Anthropic from '@anthropic-ai/sdk';
 import { SYSTEM } from './prompt.js';
-import { LIBRARY_TOOLS, runLibraryTool } from './library.js';
 
 const MAX_ROUNDS = 16;
 // Claude Sonnet 5.5 at medium effort by default: about half the price of Opus 5.5, strong at multi-step tool use.
@@ -27,7 +27,8 @@ const VIEWER_TOOL = {
 // Always in this order, so the prompt cache holds tools and instructions together.
 export const TOOLS = [
   { type: 'code_execution_20260521', name: 'code_execution' },
-  ...[...LIBRARY_TOOLS, VIEWER_TOOL].map((tool) => ({ ...tool, eager_input_streaming: true })),
+  { type: 'mcp_toolset', mcp_server_name: 'brg' },
+  { ...VIEWER_TOOL, eager_input_streaming: true },
 ];
 
 export function explain(err) {
@@ -43,6 +44,7 @@ export function explain(err) {
 // page sends them back together with the viewer's answers, in one message).
 export async function converse(env, history, container, send, signal) {
   // in a browser the visitor's own key goes straight to Anthropic
+  if (!env.MCP_URL) throw new Error('The BRG MCP server is not set: MCP_URL (the Worker) or mcpEndpoint (library-config.js).');
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, baseURL: env.ANTHROPIC_BASE_URL || undefined, dangerouslyAllowBrowser: !!env.BROWSER });
   const added = [];
   const push = (message) => { history.push(message); added.push(message); };
@@ -53,13 +55,14 @@ export async function converse(env, history, container, send, signal) {
     const stream = client.beta.messages.stream({
       model: env.MODEL || DEFAULT_MODEL,
       max_tokens: 64000,
-      betas: ['server-side-fallback-2026-07-01'],
+      betas: ['server-side-fallback-2026-07-01', 'mcp-client-2025-11-20'],
       fallbacks: 'default', // a declined request runs again on the model Anthropic recommends for that case
       thinking: { type: 'adaptive', display: 'summarized' },
       output_config: { effort: env.EFFORT || DEFAULT_EFFORT },
       cache_control: { type: 'ephemeral' }, // the conversation so far
       system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }], // tools and instructions
       tools: TOOLS,
+      mcp_servers: [{ type: 'url', url: env.MCP_URL, name: 'brg' }], // mcp-server-brg over Streamable HTTP
       messages: history,
       ...(container ? { container } : {}),
     }, signal ? { signal } : undefined);
@@ -68,6 +71,8 @@ export async function converse(env, history, container, send, signal) {
     stream.on('streamEvent', (event) => {
       if (event.type === 'content_block_start' && event.content_block.type === 'server_tool_use') send({ t: 'tool', name: event.content_block.name });
     });
+    // MCP tools run at the API; the page shows each call with its input (look_at_figure shows the figure)
+    stream.on('contentBlock', (block) => { if (block.type === 'mcp_tool_use') send({ t: 'tool', name: block.name, input: block.input }); });
 
     let message;
     try {
@@ -107,12 +112,7 @@ export async function converse(env, history, container, send, signal) {
         }
         continue;
       }
-      send({ t: 'tool', name: call.name, input: call.input });
-      try {
-        results.push({ type: 'tool_result', tool_use_id: call.id, content: await runLibraryTool(call.name, call.input, env) });
-      } catch (err) {
-        results.push({ type: 'tool_result', tool_use_id: call.id, is_error: true, content: err.message });
-      }
+      results.push({ type: 'tool_result', tool_use_id: call.id, is_error: true, content: `No tool named ${call.name}.` });
     }
     if (viewer.length) return { messages: added, container, viewer, results, usage, model: env.MODEL || DEFAULT_MODEL, cost: costOf(env.MODEL || DEFAULT_MODEL, usage), stop: 'tool_use' };
     push({ role: 'user', content: results });
