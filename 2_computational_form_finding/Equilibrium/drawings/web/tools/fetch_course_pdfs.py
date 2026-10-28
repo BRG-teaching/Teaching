@@ -17,7 +17,7 @@ behind the login under "gated" so it is clear what is missing and why.
 
     uv run python drawings/web/tools/fetch_course_pdfs.py --lectures
         include the lecture decks -- 338 MB, gitignored on main, and already
-        mirrored on the pdf-archive branch under their platform filenames
+        mirrored in the R2 bucket (teaching/equilibrium/files/) under their platform filenames
 
 Filenames are rewritten to something readable: a compendium chapter published
 as "/eq/files/4.1 Thrust Line_Trial Funicular_1668678412.pdf" lands as

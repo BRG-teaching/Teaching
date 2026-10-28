@@ -307,7 +307,7 @@ window.CAS = {
     'eQUILIBRIUM views': 'https://brg-teaching.github.io/Teaching/2_computational_form_finding/Equilibrium/drawings/web/gallery.html',
     'Gitbook: Computational Graphic Statics': 'https://sites.gitbook.com/preview/site_gbuez',
     'Library': 'library.html',
-    'Course PDF archive': 'https://github.com/BRG-teaching/Teaching/tree/pdf-archive/2_computational_form_finding/Equilibrium/files',
+    'Course PDF archive': 'https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev/teaching/equilibrium/files/index.html',
     'compas_ags': 'https://github.com/BlockResearchGroup/compas_ags',
     'compas-IGS': 'https://github.com/BlockResearchGroup/compas-IGS',
     'compas.dev': 'https://compas.dev/#/gettingstarted',

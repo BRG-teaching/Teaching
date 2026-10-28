@@ -42,7 +42,7 @@ matrix decomposition and optimisation. Structures notebooks (`compas_ags`, `comp
 Resource links go directly to complete official worksheet PDFs, lecture PDFs and exercise
 notes. Notes use the English Structural Design I&II compendium at the relevant section,
 or the official Structural Design III&IV script for material-specific forms and shells.
-Lecture PDFs use the repository's `pdf-archive` branch.
+Lecture PDFs are in the R2 bucket under `teaching/equilibrium/files/`.
 
 Individual official worksheets are copied byte for byte. The complete set contains eleven
 unique handouts (41 pages, 44 numbered or creative tasks). Cables has four exercises across

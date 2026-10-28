@@ -1,12 +1,13 @@
-# The `pdf-archive` branch, classified (2026-08-15)
+# The course PDF archive, classified (2026-08-15)
 
-163 PDFs live on branch `pdf-archive` under
-`2_computational_form_finding/Equilibrium/files/`. Many carry opaque hash
+163 PDFs, formerly on branch `pdf-archive` under
+`2_computational_form_finding/Equilibrium/files/`, live in the R2 bucket under
+`teaching/equilibrium/files/` since 2026-10-28. Many carry opaque hash
 filenames, so every file was opened and classified by its printed first
 page (`pdftotext`), not by its name. Raw-file URL pattern:
 
 ```
-https://github.com/BRG-teaching/Teaching/raw/pdf-archive/2_computational_form_finding/Equilibrium/files/<FILENAME>
+https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev/teaching/equilibrium/files/<FILENAME>
 ```
 
 ## The three families, and how they line up

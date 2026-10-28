@@ -13,20 +13,18 @@ Downloaded 2026-06-30.
 - **courses/** — 9 courses; each `course_<id>/` has its index plus
   `lecture/`, `exercise/`, `project/`, `schedule/`, `thisweek/` subfolders with the saved item pages.
 - **files/** — 163 PDF resources (857 MB): lecture slides, exercise tasks/solutions,
-  scripts, formularies (German `_de` and English `_en` variants). Kept on the
-  `pdf-archive` branch, not on `main`: the published site is only the drawings
-  grid and its view pages, and the PDFs alone would put the GitHub Pages
-  deployment near its 1 GB limit. Retrieve them into the working tree with
+  scripts, formularies (German `_de` and English `_en` variants). Kept in the
+  public R2 bucket of the BRG library, not in git: the PDFs alone would put the
+  GitHub Pages deployment near its 1 GB limit. Every file keeps its original
+  name under https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev/teaching/equilibrium/files/ (list: `index.html` there).
+  Download them into the working tree with
 
   ```bash
-  git fetch origin pdf-archive
-  git restore --source=origin/pdf-archive --worktree -- 2_computational_form_finding/Equilibrium/files
+  aws --profile r2-books --endpoint-url https://7a0d8a20a1daaaab0534f11839b6a552.r2.cloudflarestorage.com \
+    s3 sync s3://brg-books/teaching/equilibrium/files/ 2_computational_form_finding/Equilibrium/files/
   ```
 
-  `restore --worktree` deliberately does not stage them, and `.gitignore`
-  covers the folder, so a restored copy cannot drift back onto `main` and
-  re-inflate the deployment. Use `git checkout pdf-archive` only to work on
-  the archive itself.
+  `.gitignore` covers the folder, so a local copy cannot drift onto `main`.
 - **MANIFEST.json** — machine-readable index of every drawing, course, and file.
 
 ## Drawings index
