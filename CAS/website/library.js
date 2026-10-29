@@ -23,14 +23,15 @@ async function mcpCall(method, params = {}) {
   if (reply.error) throw new Error(reply.error.message);
   return reply.result;
 }
-// A notebook skill is any MCP tool named *_notebook: compas_box_notebook is /box. Its arguments are the
-// tool's parameters, in order or as name=value (/box 3 2 1, /box zsize=4 color=#ce4095).
-const skillName = (tool) => '/' + tool.replace(/^compas_/, '').replace(/_notebook$/, '').replace(/_/g, '-');
+// A notebook skill is any MCP tool named *_notebook: compas_box_notebook is /box, and writes a new notebook.
+// An addition is any tool named *_add: compas_primitives_add is /add-primitives, and adds to the open notebook.
+// Their arguments are the tool's parameters, in order or as name=value (/box 3 2 1, /box zsize=4 color=#ce4095).
+const skillName = (tool) => (/_add$/.test(tool) ? '/add-' : '/') + tool.replace(/^compas_/, '').replace(/_(notebook|add)$/, '').replace(/_/g, '-');
 function skillOf(tool) {
   const props = tool.inputSchema?.properties || {};
   const args = Object.keys(props);
   const first = (tool.description || '').split(/\n\s*\n/)[0].replace(/\s+/g, ' ').trim();
-  return { cmd: skillName(tool.name), tool: tool.name, args, props, skill: true, arg: args.length > 0,
+  return { cmd: skillName(tool.name), tool: tool.name, args, props, skill: true, add: /_add$/.test(tool.name), arg: args.length > 0,
     help: (args.length ? args.map((a) => `[${a}]`).join(' ') + ' ' : '') + first };
 }
 function skillArguments(skill, words) {
@@ -47,8 +48,21 @@ function skillArguments(skill, words) {
   }
   return out;
 }
+// Merge import lines into an imports cell's source: a missing name joins its `from … import` line.
+function mergeImports(source, lines) {
+  const have = source ? source.split('\n') : [];
+  for (const line of lines) {
+    const m = line.match(/^from\s+(\S+)\s+import\s+([^()]+)$/);
+    const at = m ? have.findIndex((h) => new RegExp(`^from\\s+${m[1].replace(/\./g, '\\.')}\\s+import\\s+[^()]+$`).test(h)) : -1;
+    if (at < 0) { if (!have.some((h) => h.trim() === line.trim())) have.push(line); continue; }
+    const names = have[at].replace(/^from\s+\S+\s+import\s+/, '').split(',').map((n) => n.trim());
+    const missing = m[2].split(',').map((n) => n.trim()).filter((n) => !names.includes(n));
+    if (missing.length) have[at] = `from ${m[1]} import ${[...names, ...missing].join(', ')}`;
+  }
+  return have.join('\n');
+}
 // asking for the tools also wakes the server (on a free plan it sleeps when unused) before Claude needs it
-const skillsLoaded = SKILLS_MCP ? mcpCall('tools/list').then((r) => r.tools.filter((t) => /_notebook$/.test(t.name)).map(skillOf)).catch(() => []) : Promise.resolve([]);
+const skillsLoaded = SKILLS_MCP ? mcpCall('tools/list').then((r) => r.tools.filter((t) => /_(notebook|add)$/.test(t.name)).map(skillOf)).catch(() => []) : Promise.resolve([]);
 const base = cfg.baseUrl.replace(/\/$/, '');
 
 const fileUrl = (path) => base + '/' + path.split('/').map(encodeURIComponent).join('/');
@@ -261,7 +275,7 @@ const PIXEL_COLS = PIXEL_ROWS[0].length;
 const PIXEL = PIXEL_ROWS.flatMap((row) => [...row].map((ch, x) => (ch === '#' ? RAMP[Math.round((x / (PIXEL_COLS - 1)) * (RAMP.length - 1))] : null)));
 
 const COMMANDS = [
-  { cmd: '/skills', help: 'list the notebook skills of the BRG MCP server (/box, …): each writes a runnable notebook' },
+  { cmd: '/skills', help: 'list the skills of the BRG MCP server: /box, … write a notebook; /add-… add to the open one' },
   { cmd: '/notebook', help: '[exercise | list] open a course notebook or list tutorials', arg: true },
   { cmd: '/help', help: 'list the commands' },
   { cmd: '/books', help: 'show the books, theses and papers' },
@@ -604,9 +618,42 @@ createApp({
       const result = await mcpCall('tools/call', { name: skill.tool, arguments: args });
       const text = (result.content || []).map((c) => c.text || '').join('');
       if (result.isError) throw new Error(text || `${skill.tool} failed.`);
+      if (skill.add) { say(await addToNotebook(JSON.parse(text)), 'out'); return; }
       const notebook = JSON.parse(text);
       say(`· notebook: ${notebook.file}`, 'dim');
       say(await notebookForClaude(notebook.file, notebook.cells), 'out');
+    }
+    // An addition (a *_add tool): its imports into the imports cell, its code in a new cell below the cursor
+    // (after the imports, before the scene), its scene lines before viewer.show().
+    async function addToNotebook(addition) {
+      const panel = notebookEl.value?.contentWindow?.jupyterapp?.shell.currentWidget;
+      const nb = panel?.content, shared = nb?.model?.sharedModel;
+      if (!shared?.insertCell) throw new Error('Open a notebook on the left first (/notebook, /box, …), and click the cell to add below.');
+      const code = (i) => shared.cells[i]?.cell_type === 'code';
+      const find = (test) => shared.cells.findIndex((c, i) => code(i) && test(c.getSource()));
+      const isImports = (src) => src.split('\n').some((l) => /^(from\s+\S+\s+)?import\s/.test(l));
+      let active = nb.activeCellIndex, imports = find(isImports);
+      if (imports < 0) {
+        imports = find((src) => /^\s*%pip\b/.test(src)) + 1;
+        shared.insertCell(imports, { cell_type: 'code', source: '' });
+        if (active >= imports) active += 1;
+      }
+      shared.cells[imports].setSource(mergeImports(shared.cells[imports].getSource(), addition.imports));
+      let scene = -1;
+      shared.cells.forEach((c, i) => { if (code(i) && /^viewer\.show\(\)/m.test(c.getSource())) scene = i; });
+      let at = Math.max(active + 1, imports + 1);
+      if (scene >= 0 && at > scene) at = scene;
+      const own = scene < 0 ? ['', addition.viewer, ...addition.scene, 'viewer.show()'] : [];
+      shared.insertCell(at, { cell_type: 'code', source: [addition.code, ...own].join('\n') });
+      if (scene >= at) scene += 1;
+      if (scene >= 0) {
+        const lines = shared.cells[scene].getSource().split('\n'), show = lines.findIndex((l) => /^viewer\.show\(\)/.test(l));
+        lines.splice(show, 0, ...addition.scene.filter((l) => !lines.includes(l)));
+        shared.cells[scene].setSource(lines.join('\n'));
+      }
+      nb.activeCellIndex = at;
+      return `Added ${addition.name} to ${panel.context.path}: imports in cell ${imports + 1}, code in the new cell ${at + 1}` +
+        (scene >= 0 ? `, scene in cell ${scene + 1}` : ' with its own viewer') + '. Run the notebook from the top (Run → Run All Cells).';
     }
     async function notebookForClaude(file, cells) {
       if (route.view !== 'terminal') { location.hash = '/notebook'; await nextTick(); }
@@ -854,8 +901,13 @@ createApp({
           const list = await skillsLoaded;
           if (!list.length) say('No notebook skills: the BRG MCP server did not answer (it may be waking up; try again in a minute).', 'err');
           else {
-            say('Notebook skills of the BRG MCP server; each writes a runnable notebook on the left:', 'dim');
-            list.forEach((k) => say(`${k.cmd.padEnd(10)} ${k.help}`, 'out', k.cmd));
+            for (const [add, title] of [[false, 'New notebooks: each writes a runnable notebook on the left'],
+              [true, 'Additions: each adds to the open notebook, below the cell you clicked']]) {
+              const group = list.filter((k) => k.add === add);
+              if (!group.length) continue;
+              say(title + ':', 'dim');
+              group.forEach((k) => say(`${k.cmd.padEnd(16)} ${k.help}`, 'out', k.cmd));
+            }
             say('Arguments in order or as name=value, e.g. ' + list[0].cmd + (list[0].args.length ? ' ' + list[0].args[0] + '=3' : '') + '. Or ask Claude in words.', 'dim');
           }
         } else if (skills.value.some((k) => k.cmd === cmd.toLowerCase())) await runSkill(skills.value.find((k) => k.cmd === cmd.toLowerCase()), args);
