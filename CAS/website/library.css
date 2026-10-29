@@ -202,8 +202,18 @@ body.term-full .lib-main { flex: 1; min-height: 0; }
 .parts-mini a.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .doc .md sub a.scan-link { color: inherit; text-decoration: underline dotted; }
 
-/* Scanned books show their own cover (or title page); the Books tab is one horizontal row of covers */
+/* Scanned books show their own cover (or title page); the Books tab is a grid of covers standing on shelves */
 .cover.cover-img { background: transparent; }
-.cover.cover-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
-.shelf.shelf-row { display: flex; gap: 22px; overflow-x: auto; padding-bottom: 14px; scroll-snap-type: x proximity; }
-.shelf.shelf-row > li { flex: 0 0 170px; scroll-snap-align: start; }
+.cover.cover-img:not(.stack) { box-shadow: none; overflow: visible; }
+.cover.cover-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom;
+  filter: drop-shadow(0 4px 8px rgba(20, 27, 61, 0.22)); transition: filter .15s; }
+.book-card:hover .cover.cover-img:not(.stack) { box-shadow: none; }
+.book-card:hover .cover.cover-img img { filter: drop-shadow(0 12px 18px rgba(20, 27, 61, 0.3)); }
+.shelf.shelf-row { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 44px 32px; }
+.shelf.shelf-row .book-card { gap: 6px; }
+.shelf.shelf-row .cover { margin-bottom: 8px; }
+.shelf.shelf-row .cover::after { content: ""; position: absolute; left: -10%; right: -10%; bottom: -8px; height: 5px;
+  background: linear-gradient(var(--rule), transparent); border-top: 1px solid var(--rule); }
+.shelf.shelf-row .cover.stack::after { right: -16%; }
+.shelf.shelf-row .book-card b { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+@media (max-width: 520px) { .shelf.shelf-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 18px; } }
