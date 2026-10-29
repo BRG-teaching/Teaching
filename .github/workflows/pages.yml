@@ -36,6 +36,13 @@ jobs:
         run: |
           python -m pip install -r CAS/jupyter/requirements.txt
           jupyter lite build --lite-dir CAS/jupyter --contents ../website/notebooks --output-dir CAS/website/jupyter --apps lab
+      - name: Version the course website's own scripts and styles
+        # each deploy gets new URLs (library.js?v=<commit>), so browsers never mix a cached old file with new ones
+        run: |
+          v=${GITHUB_SHA::7}
+          sed -i -E 's#(src|href)="((gate|library-config|notebook-exercises|library)\.js|(style|library)\.css)"#\1="\2?v='"$v"'"#g' CAS/website/library.html
+          sed -i "s#src: 'vendor/brg-claude.js'#src: 'vendor/brg-claude.js?v=$v'#" CAS/website/library.js
+          grep -c "?v=$v" CAS/website/library.html CAS/website/library.js
       - name: Build gallery manifest
         run: python3 2_computational_form_finding/Equilibrium/drawings/web/tools/make_manifest.py
       - name: Copy the CAS library markdown from R2
