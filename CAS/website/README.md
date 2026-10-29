@@ -149,6 +149,7 @@ Questions are answered from the library, with its figures shown in the terminal 
 `/box 3 2 1` (or `/box zsize=4 color=#ce4095`) calls the tool from this page and opens the notebook it returns.
 Tools ending in `_add` are additions (`compas_primitives_add` → `/add-primitives`): they add imports, a new cell
 below the clicked cell and scene lines to the notebook that is open, instead of writing a new one.
+`/undo` takes the last addition back (Jupyter's own undo only removes the new cell, not the merged lines).
 A new `*_notebook` tool in mcp-server-brg appears here once that server is deployed (its
 `docs/contributing/README.md`). `?mcp=http://localhost:8000/mcp` tries the skills against a local server.
 

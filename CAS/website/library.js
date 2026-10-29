@@ -276,6 +276,7 @@ const PIXEL = PIXEL_ROWS.flatMap((row) => [...row].map((ch, x) => (ch === '#' ? 
 
 const COMMANDS = [
   { cmd: '/skills', help: 'list the skills of the BRG MCP server: /box, … write a notebook; /add-… add to the open one' },
+  { cmd: '/undo', help: 'take back the last /add-… in the open notebook' },
   { cmd: '/notebook', help: '[exercise | list] open a course notebook or list tutorials', arg: true },
   { cmd: '/help', help: 'list the commands' },
   { cmd: '/books', help: 'show the books, theses and papers' },
@@ -632,28 +633,49 @@ createApp({
       const code = (i) => shared.cells[i]?.cell_type === 'code';
       const find = (test) => shared.cells.findIndex((c, i) => code(i) && test(c.getSource()));
       const isImports = (src) => src.split('\n').some((l) => /^(from\s+\S+\s+)?import\s/.test(l));
+      // what /undo needs: the cells it inserted, and the old source of the cells it changed, by cell id
+      const undo = { path: panel.context.path, name: addition.name, inserted: [], changed: [] };
+      const change = (i, source) => { undo.changed.push([shared.cells[i].getId(), shared.cells[i].getSource()]); shared.cells[i].setSource(source); };
       let active = nb.activeCellIndex, imports = find(isImports);
       if (imports < 0) {
         imports = find((src) => /^\s*%pip\b/.test(src)) + 1;
-        shared.insertCell(imports, { cell_type: 'code', source: '' });
+        undo.inserted.push(shared.insertCell(imports, { cell_type: 'code', source: '' }).getId());
         if (active >= imports) active += 1;
       }
-      shared.cells[imports].setSource(mergeImports(shared.cells[imports].getSource(), addition.imports));
+      change(imports, mergeImports(shared.cells[imports].getSource(), addition.imports));
       let scene = -1;
       shared.cells.forEach((c, i) => { if (code(i) && /^viewer\.show\(\)/m.test(c.getSource())) scene = i; });
       let at = Math.max(active + 1, imports + 1);
       if (scene >= 0 && at > scene) at = scene;
       const own = scene < 0 ? ['', addition.viewer, ...addition.scene, 'viewer.show()'] : [];
-      shared.insertCell(at, { cell_type: 'code', source: [addition.code, ...own].join('\n') });
+      undo.inserted.push(shared.insertCell(at, { cell_type: 'code', source: [addition.code, ...own].join('\n') }).getId());
       if (scene >= at) scene += 1;
       if (scene >= 0) {
         const lines = shared.cells[scene].getSource().split('\n'), show = lines.findIndex((l) => /^viewer\.show\(\)/.test(l));
         lines.splice(show, 0, ...addition.scene.filter((l) => !lines.includes(l)));
-        shared.cells[scene].setSource(lines.join('\n'));
+        change(scene, lines.join('\n'));
       }
       nb.activeCellIndex = at;
+      lastAddition = undo;
       return `Added ${addition.name} to ${panel.context.path}: imports in cell ${imports + 1}, code in the new cell ${at + 1}` +
-        (scene >= 0 ? `, scene in cell ${scene + 1}` : ' with its own viewer') + '. Run the notebook from the top (Run → Run All Cells).';
+        (scene >= 0 ? `, scene in cell ${scene + 1}` : ' with its own viewer') + '. Run the notebook from the top (Run → Run All Cells). /undo takes it back.';
+    }
+    // /undo: take back the last addition: remove the cells it inserted and give the changed cells their old source.
+    let lastAddition = null;
+    function undoAddition() {
+      const undo = lastAddition, app = notebookEl.value?.contentWindow?.jupyterapp;
+      if (!undo) throw new Error('Nothing to undo: /undo takes back the last /add-… command.');
+      const panel = app && [...app.shell.widgets('main')].find((w) => w.context?.path === undo.path);
+      const shared = panel?.content?.model?.sharedModel;
+      if (!shared) throw new Error(`${undo.path} is no longer open, so its last addition cannot be taken back.`);
+      const index = (id) => shared.cells.findIndex((c) => c.getId() === id);
+      shared.transact(() => {
+        for (const [id, source] of undo.changed.reverse()) if (index(id) >= 0) shared.cells[index(id)].setSource(source);
+        for (const id of undo.inserted) if (index(id) >= 0) shared.deleteCell(index(id));
+      });
+      lastAddition = null;
+      app.shell.activateById(panel.id);
+      return `Took back ${undo.name} from ${undo.path}. Rerun the notebook from the top.`;
     }
     async function notebookForClaude(file, cells) {
       if (route.view !== 'terminal') { location.hash = '/notebook'; await nextTick(); }
@@ -897,7 +919,8 @@ createApp({
           const src = `${PLAYER}index.html?view=${n}${step}`;
           setView({ kind: 'drawing', title: `eQUILIBRIUM drawing ${n}`, src, open: src });
           say(`Drawing ${n} playing over the notebook. Use its controls to step through the construction.`, 'dim'); keep();
-        } else if (cmd === '/skills') {
+        } else if (cmd === '/undo') say(undoAddition(), 'out');
+        else if (cmd === '/skills') {
           const list = await skillsLoaded;
           if (!list.length) say('No notebook skills: the BRG MCP server did not answer (it may be waking up; try again in a minute).', 'err');
           else {
