@@ -434,6 +434,7 @@ createApp({
         Object.assign(doc, { state: 'ready', html: renderMarkdown(t, path, bookIds.value) });
         if (route.page) nextTick(() => toPage(document.querySelector('.doc .md'), t, route.page));
         linkScans(route.book, path);
+        linkOrigFigures(route.book, () => doc.path === path, () => document.querySelector('.doc .md'));
       } catch (e) {
         if (doc.path === path) Object.assign(doc, { state: 'error', error: e.message + ' Some books do not have every extra page.' });
       }
@@ -463,6 +464,73 @@ createApp({
         a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'scan-link'; a.title = 'Open the scanned page';
         a.textContent = el.textContent.trim();
         el.textContent = ''; el.appendChild(a);
+      });
+    }
+    // Redrawn figure → original book image, from FIGURES.md ("| [Fig. 1](figures/txt-fig001.svg) · [original](figures/orig/txt-fig001.png) |").
+    // Clicking a redrawn figure toggles in place between the CAD drawing and the original book scan.
+    const origMaps = new Map();
+    async function origMap(id) {
+      if (!origMaps.has(id)) origMaps.set(id, getText(`${id}/FIGURES.md`).then((t) => {
+        const m = new Map();
+        for (const line of t.split(/\r?\n/)) {
+          if (!line.startsWith('|')) continue;
+          const cur = line.match(/\]\((figures\/(?!orig\/)([^)\s]+))\)/i);
+          const orig = line.match(/\]\((figures\/orig\/([^)\s]+))\)/i);
+          if (cur && orig) m.set(cur[2].replace(/\.[^.]+$/, '').toLowerCase(), fileUrl(`${id}/${orig[1]}`));
+        }
+        return m;
+      }).catch(() => new Map()));
+      return origMaps.get(id);
+    }
+    async function linkOrigFigures(id, active, getRoot) {
+      const m = await origMap(id);
+      if (!m.size || !active()) return;
+      await nextTick();
+      const root = getRoot();
+      if (!root) return;
+      root.querySelectorAll('img[src]').forEach((img) => {
+        if (img.closest('.fig-compare') || img.closest('a')) return;
+        const fn = decodeURIComponent((img.getAttribute('src') || '').split('?')[0].split('#')[0]).split('/').pop() || '';
+        const stem = fn.replace(/\.[^.]+$/, '').toLowerCase();
+        const origUrl = m.get(stem);
+        if (!origUrl) return;
+        const cadUrl = img.src;
+        const wrap = document.createElement('span');
+        wrap.className = 'fig-compare';
+        wrap.setAttribute('role', 'button');
+        wrap.setAttribute('tabindex', '0');
+        wrap.setAttribute('aria-pressed', 'false');
+        wrap.title = 'Click to switch between 2D CAD redraw and original book image';
+        const badge = document.createElement('span');
+        badge.className = 'fig-compare-badge';
+        badge.textContent = 'CAD · click for original';
+        img.parentNode.insertBefore(wrap, img);
+        wrap.appendChild(img);
+        wrap.appendChild(badge);
+        let preloaded = false;
+        const preload = () => {
+          if (preloaded) return;
+          preloaded = true;
+          const pre = new Image();
+          pre.src = origUrl;
+        };
+        const toggle = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          preload();
+          const toOrig = !wrap.classList.contains('is-orig');
+          if (toOrig && !img.getAttribute('width') && !img.closest('.v-figs') && !img.style.width) {
+            const w = Math.round(img.getBoundingClientRect().width);
+            if (w > 0) img.style.width = w + 'px';
+          }
+          wrap.classList.toggle('is-orig', toOrig);
+          wrap.setAttribute('aria-pressed', toOrig ? 'true' : 'false');
+          img.src = toOrig ? origUrl : cadUrl;
+          badge.textContent = toOrig ? 'Original book image · click for CAD' : 'CAD · click for original';
+        };
+        wrap.addEventListener('pointerenter', preload, { once: true });
+        wrap.addEventListener('click', toggle);
+        wrap.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') toggle(e); });
       });
     }
     // Scroll a rendered chapter to where printed page `page` begins, and mark it.
@@ -751,6 +819,7 @@ createApp({
       const s = books.value.find((b) => b.id === id)?.sections.find((x) => x.section === section);
       setView({ kind: 'doc', title: `${bookTitle(id)} · ${s ? s.title : section}${page ? ' · p. ' + page : ''}`, html, open: `library.html${readerHref(id, section, page)}` });
       if (page) nextTick(() => toPage(viewerEl.value, text, page));
+      linkOrigFigures(id, () => view.kind === 'doc', () => viewerEl.value?.querySelector('.md'));
     }
 
     const skills = ref([]);
@@ -885,6 +954,7 @@ createApp({
             const tpl = document.createElement('template'); tpl.innerHTML = view.html;
             const items = [...tpl.content.querySelectorAll('img')].map((img) => ({ src: img.src, alt: img.alt, name: img.src.split('/').pop() }));
             setView({ kind: 'figures', title: `Figures · ${view.title}`, items, open: view.open });
+            linkOrigFigures(id, () => view.kind === 'figures', () => viewerEl.value?.querySelector('.v-figs'));
             say(`${items.length} figure${items.length === 1 ? '' : 's'} over the notebook.`, 'dim');
           } else {
             await showDoc(id, section, page);

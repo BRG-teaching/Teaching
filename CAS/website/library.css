@@ -201,6 +201,20 @@ body.term-full .lib-main { flex: 1; min-height: 0; }
 .parts-mini a span { color: var(--muted); }
 .parts-mini a.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .doc .md sub a.scan-link { color: inherit; text-decoration: underline dotted; }
+.fig-compare { display: flex; flex-direction: column; align-items: center; width: fit-content; max-width: 100%;
+  margin: 1.2em auto 0.35em; padding: 6px; border: 1px solid transparent; border-radius: 6px; cursor: pointer;
+  transition: border-color .15s, background-color .15s, box-shadow .15s; user-select: none; }
+.fig-compare:hover { border-color: var(--rule); box-shadow: 0 2px 10px rgba(20, 27, 61, 0.07); }
+.fig-compare:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+.fig-compare.is-orig { border-color: #d6c8ad; background: #fcfaf5; }
+.fig-compare img { margin: 0; max-width: 100%; height: auto; }
+.md .fig-compare + br { display: none; }
+.fig-compare-badge { align-self: flex-end; margin-top: 5px; padding: 2px 8px; border-radius: 999px;
+  font-size: 11px; line-height: 1.4; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--muted); background: var(--wash, #f4f5f8); border: 1px solid var(--rule); transition: color .15s, background-color .15s, border-color .15s; }
+.fig-compare:hover .fig-compare-badge { color: var(--ink); border-color: #b7bfd2; }
+.fig-compare.is-orig .fig-compare-badge { color: #7a3e08; background: #fef3c7; border-color: #e6c67c; }
+.v-figs .fig-compare { width: 100%; margin: 0; padding: 4px; box-sizing: border-box; }
 
 /* Scanned books show their own cover (or title page); the Books tab is a grid of covers standing on shelves */
 .cover.cover-img { background: transparent; }
