@@ -63,7 +63,7 @@
 .chapters b { font-weight: 600; }
 
 /* Reader */
-.reader { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px; max-width: 1700px; margin: 0 auto; padding: 32px var(--pad) 80px; }
+.reader { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px; max-width: none; margin: 0 auto; padding: 32px var(--pad) 80px; }
 .toc-side { position: sticky; top: 72px; align-self: start; max-height: calc(100vh - 96px); overflow-y: auto; font-size: 14px; }
 .toc-book { display: block; font-weight: 700; text-decoration: none; margin-bottom: 10px; line-height: 1.35; }
 .toc-side ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -71,7 +71,7 @@
 .toc-side ol a:hover { color: var(--ink); }
 .toc-side ol a.on { color: var(--ink); font-weight: 600; border-left-color: var(--pink); background: var(--wash); }
 @media (max-width: 900px) { .reader { grid-template-columns: 1fr; gap: 20px; } .toc-side { position: static; max-height: 240px; border-bottom: 1px solid var(--rule); padding-bottom: 12px; } }
-.doc { min-width: 0; max-width: 1200px; display: flex; flex-direction: column; gap: 16px; }
+.doc { min-width: 0; max-width: none; display: flex; flex-direction: column; gap: 16px; }
 .md { font-size: 17px; line-height: 1.7; overflow-wrap: break-word; }
 .md h1, .md h2, .md h3, .md h4 { line-height: 1.25; margin: 1.6em 0 .5em; font-weight: 600; letter-spacing: -0.01em; }
 .md h1 { font-size: 32px; margin-top: .2em; } .md h2 { font-size: 24px; } .md h3 { font-size: 19px; }
@@ -137,7 +137,7 @@ body.term-full .lib-main { flex: 1; min-height: 0; }
 .viewer .chapters button { display: grid; grid-template-columns: 40px 1fr; gap: 12px; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid var(--rule);
   background: none; font: inherit; color: var(--ink); text-align: left; cursor: pointer; }
 .viewer .chapters button:hover b { text-decoration: underline; text-underline-offset: 3px; }
-.viewer .md { max-width: 1200px; }
+.viewer .md { max-width: none; }
 .v-figs { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
 .v-figs figure { margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .v-figs img { width: 100%; height: auto; border: 1px solid var(--rule); background: #fff; }
