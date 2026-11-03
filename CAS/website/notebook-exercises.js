@@ -220,7 +220,7 @@ window.CAS_NOTEBOOKS = [
   {
     "id": "fdm-linkwitz",
     "file": "05-solvers/05-force-density-linkwitz.ipynb",
-    "title": "Solvers: force density, Linkwitz's chapter on one node",
+    "title": "Solvers: Force Density Method",
     "summary": "Linkwitz's Chapter 6 section by section: lengths, direction cosines, force densities, branch-node matrix, Jacobian, D_N and D_F, materialization, all on one free node with four bars, then the 36-node grid.",
     "minutes": 90,
     "section": "foundation"
