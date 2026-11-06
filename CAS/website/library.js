@@ -668,6 +668,13 @@ createApp({
       if (!frame) return;
       const frameDocument = frame.contentDocument;
       if (frameDocument && !frameDocument.getElementById('brg-jupyter-theme')) {
+        const fontStyles = document.querySelector('link[href^="https://fonts.googleapis.com"]');
+        if (fontStyles) {
+          const fonts = frameDocument.createElement('link');
+          fonts.rel = 'stylesheet';
+          fonts.href = fontStyles.href;
+          frameDocument.head.append(fonts);
+        }
         const stylesheet = frameDocument.createElement('link');
         stylesheet.id = 'brg-jupyter-theme';
         stylesheet.rel = 'stylesheet';
@@ -687,9 +694,13 @@ createApp({
           kernelPreference: { language: 'python', autoStartDefault: true },
         });
         await widget?.context.ready;
-        // List the topic folders, not only the opened notebook's folder.
-        await app.commands.execute('filebrowser:go-to-path', { path: '', dontShowBrowser: true });
+        app.shell.mode = 'single-document';
         app.shell.collapseLeft();
+        app.shell.collapseRight();
+        app.shell._leftHandler.sideBar.hide();
+        app.shell._rightHandler.sideBar.hide();
+        for (const id of ['jp-top-panel', 'jp-bottom-panel']) app.shell.layout.widgets.find((widget) => widget.id === id)?.hide();
+        await app.commands.execute('notebook:render-all-markdown');
       } catch (e) { console.warn('Could not open the exercise in Jupyter.', e); }
     }
     // Claude's notebook tool: write the cells (from a BRG notebook tool of the MCP server) as a notebook in

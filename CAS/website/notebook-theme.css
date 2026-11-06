@@ -2,47 +2,146 @@ body[data-jp-theme-light="false"] {
   color-scheme: dark;
   background: var(--jp-layout-color0);
   color: var(--jp-ui-font-color1);
-  --jp-layout-color0: #0b1220;
-  --jp-layout-color1: #0b1220;
-  --jp-layout-color2: #151f33;
-  --jp-layout-color3: #1e2944;
-  --jp-layout-color4: #3d4a6b;
-  --jp-border-color0: #3d4a6b;
-  --jp-border-color1: #1e2944;
-  --jp-border-color2: #1e2944;
-  --jp-border-color3: #151f33;
-  --jp-ui-font-color0: #f5f6fc;
-  --jp-ui-font-color1: #d7dcef;
-  --jp-ui-font-color2: #a6b0c8;
-  --jp-ui-font-color3: #7f88a8;
-  --jp-content-font-color0: #f5f6fc;
-  --jp-content-font-color1: #d7dcef;
-  --jp-content-font-color2: #a6b0c8;
-  --jp-content-font-color3: #7f88a8;
-  --jp-content-link-color: #8fb4ff;
-  --jp-brand-color1: #8fb4ff;
-  --jp-cell-editor-background: #0b1220;
-  --jp-cell-editor-active-background: #0f182b;
-  --jp-cell-editor-border-color: #1e2944;
+  --jp-layout-color0: #000;
+  --jp-layout-color1: #000;
+  --jp-layout-color2: #141414;
+  --jp-layout-color3: #242424;
+  --jp-layout-color4: #383838;
+  --jp-border-color0: #383838;
+  --jp-border-color1: #262626;
+  --jp-border-color2: #202020;
+  --jp-border-color3: #141414;
+  --jp-ui-font-family: "Open Sans", system-ui, sans-serif;
+  --jp-ui-font-color0: #f5f5f5;
+  --jp-ui-font-color1: #e5e5e5;
+  --jp-ui-font-color2: #a6a6a6;
+  --jp-ui-font-color3: #858585;
+  --jp-content-font-family: "Open Sans", system-ui, sans-serif;
+  --jp-content-font-size1: 15px;
+  --jp-content-line-height: 1.65;
+  --jp-content-font-color0: #f5f5f5;
+  --jp-content-font-color1: #e5e5e5;
+  --jp-content-font-color2: #a6a6a6;
+  --jp-content-font-color3: #858585;
+  --jp-content-link-color: #9fb6ff;
+  --jp-code-font-family: "JetBrains Mono", Consolas, monospace;
+  --jp-code-font-size: 14px;
+  --jp-code-line-height: 1.5;
+  --jp-brand-color1: #dc4b8d;
+  --jp-cell-padding: 10px 0;
+  --jp-cell-prompt-width: 0;
+  --jp-cell-collapser-width: 0;
+  --jp-cell-editor-background: #000;
+  --jp-cell-editor-active-background: #080808;
+  --jp-cell-editor-border-color: transparent;
   --jp-cell-editor-active-border-color: #dc4b8d;
-  --jp-cell-inprompt-font-color: #8fb4ff;
-  --jp-cell-outprompt-font-color: #dc8bb1;
-  --jp-notebook-select-background: #0f182b;
-  --jp-toolbar-background: #0b1220;
-  --jp-input-background: #0f182b;
-  --jp-input-hover-background: #151f33;
-  --jp-input-active-background: #0b1220;
-  --jp-input-border-color: #1e2944;
+  --jp-cell-editor-box-shadow: none;
+  --jp-cell-inprompt-font-color: #858585;
+  --jp-cell-outprompt-font-color: #858585;
+  --jp-notebook-padding: 32px 48px;
+  --jp-notebook-scroll-padding: 48px;
+  --jp-notebook-select-background: #080808;
+  --jp-notebook-multiselected-color: rgba(220, 75, 141, 0.16);
+  --jp-toolbar-header-margin: 0;
+  --jp-toolbar-background: #000;
+  --jp-toolbar-box-shadow: none;
+  --jp-input-background: #080808;
+  --jp-input-hover-background: #141414;
+  --jp-input-active-background: #000;
+  --jp-input-border-color: #262626;
   --jp-input-active-border-color: #dc4b8d;
-  --jp-editor-selected-background: #1b2742;
-  --jp-editor-selected-focused-background: #1b2742;
+  --jp-editor-selected-background: #262626;
+  --jp-editor-selected-focused-background: #303030;
   --jp-editor-cursor-color: #dc4b8d;
-  --jp-scrollbar-background-color: #0b1220;
-  --jp-scrollbar-thumb-color: 61, 74, 107;
+  --jp-scrollbar-background-color: #000;
+  --jp-scrollbar-thumb-color: 70, 70, 70;
   --jp-mirror-editor-keyword-color: #8fd3c7;
-  --jp-mirror-editor-def-color: #8fb4ff;
-  --jp-mirror-editor-variable-color: #d7dcef;
-  --jp-mirror-editor-comment-color: #7f88a8;
+  --jp-mirror-editor-def-color: #9fb6ff;
+  --jp-mirror-editor-variable-color: #e5e5e5;
+  --jp-mirror-editor-comment-color: #858585;
   --jp-mirror-editor-string-color: #ff8fb8;
-  --jp-mirror-editor-link-color: #8fb4ff;
+  --jp-mirror-editor-link-color: #9fb6ff;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+body[data-jp-theme-light="false"] .jp-SideBar.lm-TabBar[data-orientation="vertical"],
+body[data-jp-theme-light="false"] .lm-DockPanel-tabBar,
+body[data-jp-theme-light="false"] #jp-main-statusbar {
+  display: none;
+}
+
+body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item {
+  display: none;
+}
+
+body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:first-child,
+body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:nth-child(4) {
+  display: flex;
+}
+
+body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar {
+  min-height: 36px;
+  margin: 0;
+  padding: 0 12px;
+  border-bottom: 1px solid #202020;
+}
+
+body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar > :is(
+  [data-jp-item-name="insert"],
+  [data-jp-item-name="cut"],
+  [data-jp-item-name="copy"],
+  [data-jp-item-name="paste"],
+  [data-jp-item-name="restart"],
+  [data-jp-item-name="cellType"],
+  [data-jp-item-name="executionProgress"]
+) {
+  display: none;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook .jp-InputPrompt,
+body[data-jp-theme-light="false"] .jp-Notebook .jp-OutputPrompt,
+body[data-jp-theme-light="false"] .jp-Notebook .jp-Collapser,
+body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell .jp-Cell-header,
+body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell .jp-cell-toolbar {
+  display: none;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell-inputWrapper {
+  border: 1px solid transparent;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell.jp-mod-active .jp-Cell-inputWrapper {
+  border-color: transparent;
+  outline: 0;
+  box-shadow: inset 2px 0 #dc4b8d;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell.jp-mod-active .jp-Cell-inputArea {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell.jp-mod-active {
+  box-shadow: inset 2px 0 #dc4b8d !important;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell-editor {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+@media (max-width: 700px) {
+  body[data-jp-theme-light="false"] {
+    --jp-notebook-padding: 20px 14px;
+    --jp-cell-padding: 8px 0;
+  }
+
+  body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar {
+    padding: 0 6px;
+  }
 }

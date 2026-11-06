@@ -48,6 +48,7 @@ def main():
     parser = argparse.ArgumentParser(description="Assemble the GitHub Pages deployment in docs/.")
     parser.add_argument("--equilibrium", type=Path, help="Checkout of the equilibrium branch")
     args = parser.parse_args()
+    (ROOT / ".jupyterlite.doit.db").unlink(missing_ok=True)
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir()
