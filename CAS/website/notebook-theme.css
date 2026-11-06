@@ -11,12 +11,16 @@ body[data-jp-theme-light="false"] {
   --jp-border-color1: #262626;
   --jp-border-color2: #202020;
   --jp-border-color3: #141414;
-  --jp-ui-font-family: "Open Sans", system-ui, sans-serif;
+  --jp-ui-font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  --jp-ui-font-size1: 13px;
+  --brg-nav-font: 400 13px/1.5 "Open Sans", Helvetica, Arial, sans-serif;
+  --body-font: var(--jp-ui-font-family) !important;
+  --type-ramp-base-line-height: 19.5px !important;
   --jp-ui-font-color0: #f5f5f5;
   --jp-ui-font-color1: #e5e5e5;
   --jp-ui-font-color2: #a6a6a6;
   --jp-ui-font-color3: #858585;
-  --jp-content-font-family: "Open Sans", system-ui, sans-serif;
+  --jp-content-font-family: "Open Sans", Helvetica, Arial, sans-serif;
   --jp-content-font-size1: 15px;
   --jp-content-line-height: 1.65;
   --jp-content-font-color0: #f5f5f5;
@@ -74,8 +78,20 @@ body[data-jp-theme-light="false"] #jp-main-statusbar {
   display: none;
 }
 
+body[data-jp-theme-light="false"] #jp-menu-panel,
+body[data-jp-theme-light="false"] #jp-MainMenu {
+  background: #000;
+  font: var(--brg-nav-font);
+}
+
+body[data-jp-theme-light="false"] #jp-menu-panel {
+  border-bottom: 1px solid #202020;
+}
+
 body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item {
   display: none;
+  font: inherit;
+  background: #000;
 }
 
 body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:first-child,
@@ -88,6 +104,8 @@ body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar {
   margin: 0;
   padding: 0 12px;
   border-bottom: 1px solid #202020;
+  background: #000;
+  font: var(--brg-nav-font);
 }
 
 body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar > :is(
