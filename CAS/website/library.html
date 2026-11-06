@@ -17,12 +17,21 @@
 
   <header class="lib-top" :class="{ 'workspace-top': route.view === 'terminal' }">
     <a class="back" href="index.html">← Course</a>
-    <nav class="lib-tabs" aria-label="Library">
+    <nav v-if="route.view !== 'terminal'" class="lib-tabs" aria-label="Library">
       <a v-for="g in cfg.groups" :key="g.id" :href="'#/' + g.id" :class="{ on: route.view === 'list' && route.group === g.id }">
         {{ g.label }} <span class="count" v-if="state === 'ready'">{{ shelfAll[g.id].length }}</span>
       </a>
       <a href="#/notebook" :class="{ on: route.view === 'terminal' }">Jupyter + BRG</a>
     </nav>
+    <template v-else>
+      <span class="workspace-name">COMPAS notebooks</span>
+      <div class="workspace-actions">
+        <a href="#/books">Library</a>
+        <button type="button" class="terminal-toggle" :aria-expanded="String(collapsedPane !== 'chat')" aria-controls="chat-pane" @click="toggleTerminal">
+          {{ collapsedPane === 'chat' ? 'Terminal' : 'Close terminal' }}
+        </button>
+      </div>
+    </template>
   </header>
 
   <main class="lib-main">
@@ -148,7 +157,7 @@
       </article>
     </section>
 
-    <!-- Jupyter + BRG: the notebook (left) + the BRG terminal (right), filling the screen -->
+    <!-- Jupyter + BRG: a full-width editor with an optional terminal -->
     <section v-else-if="route.view === 'terminal'" ref="splitEl" class="split"
              :class="{ 'collapsed-workspace': collapsedPane === 'workspace', 'collapsed-chat': collapsedPane === 'chat', 'split-dragging': splitDragging }"
              :style="{ '--workspace-track': splitRatio + 'fr', '--chat-track': (1 - splitRatio) + 'fr' }">
@@ -197,7 +206,7 @@
         </div>
       </div>
 
-      <div class="split-divider" role="separator" tabindex="0"
+      <div v-if="collapsedPane !== 'chat'" class="split-divider" role="separator" tabindex="0"
            :aria-label="collapsedPane ? 'Resize panes or restore hidden pane' : 'Resize panes or hide terminal'"
            aria-controls="workspace-pane chat-pane" :aria-orientation="splitStacked ? 'horizontal' : 'vertical'"
            :aria-valuenow="Math.round((collapsedPane === 'workspace' ? 0 : collapsedPane === 'chat' ? 1 : splitRatio) * 100)"
@@ -208,13 +217,11 @@
 
       <div id="chat-pane" class="term" v-show="collapsedPane !== 'chat'" @click="focusPrompt">
         <div class="term-banner">
-          <div class="pixel" role="img" aria-label="BRG" :style="{ gridTemplateColumns: `repeat(${pixelCols}, var(--px))` }"><i v-for="(c, i) in pixel" :key="i" :style="c ? { background: c } : null"></i></div>
           <div class="term-info">
             <b>BRG terminal</b>
-            <span>{{ claudeLabel ? claudeLabel + ' · ' : 'templates only · ' }}{{ state === 'ready' ? books.length + ' books, ' + sectionCount + ' chapters' : state }}</span>
-            <span>library {{ host }}</span>
-            <span>{{ busy ? 'working…' : 'idle' }}</span>
+            <span>{{ busy ? 'working…' : (claudeLabel || 'library tools') }}</span>
           </div>
+          <button type="button" class="term-close" @click.stop="toggleTerminal">Close</button>
         </div>
         <div class="term-log" ref="logEl" aria-live="polite">
           <div v-for="(l, i) in log" :key="i" :class="'line ' + l.kind">
@@ -235,7 +242,6 @@
           <input id="term-prompt" ref="prompt" v-model="input" autocomplete="off" spellcheck="false"
                  placeholder="Ask, or type / for commands" @keydown="onKey">
         </form>
-        <div class="term-hints">/ commands · ↑↓ history · Tab complete · Enter run</div>
       </div>
     </section>
   </main>

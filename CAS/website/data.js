@@ -1,6 +1,5 @@
-// Content of the CAS Computational Form-finding site, taken from the deck
-// (../project/CAS Computational Form-Finding.dc.html). Edit text here; the
-// page layout lives in index.html and app.js.
+// Content of the CAS Computational Form-finding site.
+// The page layout lives in index.html and app.js.
 window.CAS = {
   title: 'Computational Form-finding',
   org: 'Block Research Group · ITA · D-ARCH · ETH Zürich',
@@ -15,49 +14,45 @@ window.CAS = {
   chapters: [
     {
       n: 1, color: '#3057b1', ects: 1, hours: 30, weeks: 'Weeks 1–2',
-      title: 'History of Computational Structural Design',
-      logo: 'slide03-icon02.svg',
-      focus: [
-        { logo: 'slide05-icon01.svg', label: 'Cables' },
-        { logo: 'slide05-icon02.svg', label: 'Arches' },
-        { logo: 'slide05-icon03.svg', label: 'Trusses' },
-        { logo: 'slide05-icon04.svg', label: 'Beams' },
-        { logo: 'slide05-icon05.svg', label: 'Frames' },
-        { logo: 'slide05-icon06.svg', label: 'Plates and slabs' },
-        { logo: 'slide05-icon07.svg', label: 'Columns' },
-        { logo: 'slide05-icon08.svg', label: 'Bracing' },
-        { logo: 'slide05-icon09.svg', label: 'Material-specific forms' },
-        { logo: 'slide05-icon10.svg', label: 'Plastic and stress-field models' },
-      ],
+      title: 'LLM for BRG Framework',
+      logo: 'slide03-icon09.svg',
+      mcp: {
+        client: { title: 'LLM', subtitle: 'Claude · agents' },
+        protocol: { title: 'MCP', subtitle: 'Model Context Protocol', detail: 'mcp-server-brg' },
+        groups: [
+          { title: 'BRG', items: ['Library', 'Knowledge', 'Structural workflows'] },
+          { title: 'COMPAS', items: ['compas', 'compas_ags', 'compas_fd', 'compas_dr', 'compas_tna', 'compas_tno', 'compas_dem', 'compas_model', 'compas_ifc'] },
+        ],
+        caption: 'One interface to BRG knowledge, COMPAS packages and reproducible notebooks.',
+      },
       contents: {
-        lead: 'Structural typologies, taught through classic drawing techniques.',
+        lead: 'A practical LLM layer over BRG knowledge and the COMPAS ecosystem.',
         items: [
-          'Equilibrium & graphic-statics fundamentals',
-          'Cables: funicular lines, distributed loads, prestress',
-          'Arches: thrust lines, masonry on spreading supports',
-          'Arch-cable hybrids; span vs cantilever',
-          'Trusses: Pratt/Howe, lenticular, constant-force',
-          'Beams & frames: internal forces, superposition',
-          'Techniques: form/force diagrams, funicular polygon, trial funiculars, dividing systems',
+          'LLM fundamentals: prompts, context, tools and agents',
+          'Model Context Protocol (MCP): clients, tools and resources',
+          'BRG library and knowledge as grounded context',
+          'COMPAS geometry and structural solvers as callable tools',
+          'Notebook generation and reproducible computational workflows',
+          'Evaluation, limitations and responsible use',
         ],
       },
       resources: {
-        lead: 'Interactive platform',
+        lead: 'The existing BRG and COMPAS infrastructure.',
         items: [
-          'eQUILIBRIUM platform: drawings, courses, exams',
-          'Gitbook: Computational Graphic Statics',
-          'compas-IGS: graphic statics in Rhino',
-          'Course PDF archive: slides, exercises + solutions',
-          'Library: scanned books on the history of structures, readable chapter by chapter',
+          'BRG Library: books, chapters and figures',
+          'BRG MCP server: searchable knowledge and structural tools',
+          'COMPAS core: geometry, data structures and exchange',
+          'compas_ags, compas_fd, compas_dr and compas_tna',
+          'Jupyter + BRG: browser notebooks and terminal',
         ],
       },
       submission: {
-        lead: 'Hand-drawn graphic-statics exercises and calculations.',
+        lead: 'A working LLM workflow grounded in BRG and COMPAS.',
         items: [
-          'Funicular constructions: cable through 2–3 points, parabola vs catenary',
-          'Masonry arch check: thrust line, min/max thrust',
-          'Truss member forces via force diagram',
-          'Beam/frame internal forces (superposition)',
+          'A question answered from traceable BRG sources',
+          'A structural object generated through MCP tools',
+          'A runnable Jupyter notebook with reproducible results',
+          'A short evaluation of accuracy and limitations',
         ],
       },
     },
@@ -306,6 +301,11 @@ window.CAS = {
     'eQUILIBRIUM platform': 'https://block.arch.ethz.ch/eq/',
     'eQUILIBRIUM views': 'https://brg-teaching.github.io/Teaching/2_computational_form_finding/Equilibrium/drawings/web/gallery.html',
     'Gitbook: Computational Graphic Statics': 'https://sites.gitbook.com/preview/site_gbuez',
+    'Model Context Protocol': 'https://modelcontextprotocol.io/',
+    'BRG Library': 'library.html',
+    'BRG MCP server': 'https://github.com/BRG-research/mcp-server-brg',
+    'COMPAS core': 'https://compas.dev/',
+    'Jupyter + BRG': 'library.html#/notebook',
     'Library': 'library.html',
     'Course PDF archive': 'https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev/teaching/equilibrium/files/index.html',
     'compas_ags': 'https://github.com/BlockResearchGroup/compas_ags',
@@ -331,7 +331,7 @@ window.CAS = {
   },
 
   grading: [
-    { ch: 1, weight: 'ungraded', what: 'Annotated constructions, one essay' },
+    { ch: 1, weight: 'ungraded', what: 'MCP workflow, one evaluation' },
     { ch: 2, weight: '10 %', what: 'Notebooks, truss module' },
     { ch: 3, weight: '10 %', what: 'Three views in code' },
     { ch: 4, weight: '10 %', what: 'Net and canopy, FD vs DR' },

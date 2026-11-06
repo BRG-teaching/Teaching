@@ -6,9 +6,9 @@ const { createApp, ref, reactive, computed, watch, nextTick, onMounted, onBefore
 const cfg = window.CAS_LIBRARY;
 const notebookExercises = window.CAS_NOTEBOOKS || [];
 const notebookExercise = (id) => notebookExercises.find((tutorial) => tutorial.id === id) || notebookExercises.find((tutorial) => tutorial.id === 'box');
-// ?chat=http://localhost:8788 tries a local copy of the Claude service (CAS/brg-terminal-ai/test/serve.mjs).
+// ?chat=http://localhost:8788 tries a local copy of the Claude service.
 // Only a local address: a link to another site could otherwise collect the conversation and the key.
-// ?anthropic=http://localhost:8790 points the own-key mode at the mock Claude API of those tests.
+// ?anthropic=http://localhost:8790 points the own-key mode at a mock Claude API.
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1):\d+\/?$/, devParam = (k) => { const v = new URLSearchParams(location.search).get(k); return v && LOCAL.test(v) ? v : ''; };
 if (devParam('chat')) cfg.chatEndpoint = devParam('chat');
 // The BRG MCP server, also called from this page for the notebook skills (/box, …). ?mcp=http://localhost:8000/mcp
@@ -562,13 +562,13 @@ createApp({
     const start = () => { if (state.value === 'loading' && !books.value.length) loadLibrary(); };
     onMounted(start);
 
-    // ---- Jupyter + BRG: the notebook on the left, the BRG terminal on the right ----
+    // ---- Jupyter + BRG: the editor and its optional terminal ----
     const log = ref([]);
     const input = ref('');
     const busy = ref(false);
     const history = [];
     let hpos = 0;
-    // The conversation with Claude (CAS/brg-terminal-ai): the page keeps it and sends it each time,
+    // The page keeps the Claude conversation and sends it each time,
     // exactly as the service returned it (thinking blocks included).
     const ai = { history: [], container: undefined, abort: null };
     const stored = (name) => ({ get: () => { try { return localStorage.getItem(name) || ''; } catch (e) { return ''; } },
@@ -580,14 +580,14 @@ createApp({
     const spentLog = { all: () => { try { return JSON.parse(localStorage.getItem('brg-spent') || '[]'); } catch (e) { return []; } },
       add(cost) { try { localStorage.setItem('brg-spent', JSON.stringify([...this.all(), { at: Date.now(), cost }].slice(-5000))); } catch (e) { /* private window */ } } };
     const budget = stored('brg-budget');
-    // The split between notebook and terminal; hiding a pane keeps its session mounted.
-    const splitEl = ref(null), collapsedPane = ref(''), splitDragging = ref(false);
+    // The editor starts alone; opening the terminal does not remount either session.
+    const splitEl = ref(null), collapsedPane = ref('chat'), splitDragging = ref(false);
     const splitStacked = ref(matchMedia('(max-width: 900px)').matches);
     const ratioStore = stored('brg-workspace-ratio');
     const savedRatio = Number(ratioStore.get());
-    const splitRatio = ref(savedRatio >= 0.15 && savedRatio <= 0.85 ? savedRatio : 2 / 3);
+    const splitRatio = ref(savedRatio >= 0.15 && savedRatio <= 0.85 ? savedRatio : 0.72);
     let splitPointer = null;
-    const dividerSize = () => parseFloat(getComputedStyle(splitEl.value).getPropertyValue('--divider-size')) || 6;
+    const dividerSize = () => parseFloat(getComputedStyle(splitEl.value).getPropertyValue('--divider-size')) || 1;
     function splitLimits() {
       const rect = splitEl.value?.getBoundingClientRect();
       const space = rect ? (splitStacked.value ? rect.height : rect.width) - dividerSize() : 1000;
@@ -598,8 +598,11 @@ createApp({
       const [min, max] = splitLimits();
       splitRatio.value = Math.max(min, Math.min(max, value));
     }
-    function toggleTerminal() { collapsedPane.value = collapsedPane.value ? '' : 'chat'; }
-    function resetSplit() { collapsedPane.value = ''; splitRatio.value = 2 / 3; ratioStore.set(String(splitRatio.value)); }
+    function toggleTerminal() {
+      collapsedPane.value = collapsedPane.value === 'chat' ? '' : 'chat';
+      if (!collapsedPane.value) nextTick(() => prompt.value?.focus());
+    }
+    function resetSplit() { collapsedPane.value = 'chat'; splitRatio.value = 0.72; ratioStore.set(String(splitRatio.value)); }
     function beginSplitDrag(event) {
       if (event.button !== 0) return;
       event.preventDefault();
@@ -782,15 +785,9 @@ createApp({
       if (route.workspace === 'notebook') nextTick(openNotebook);
     });
     const say = (text, kind = 'out', act, href, img) => { log.value.push({ text, kind, act, href, img }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
-    say('BRG terminal for the CAS library. Type /help for commands.', 'dim');
-    say('COMPAS tutorials: begin with the box, then follow the foundation notebooks in Chapter 2 → Submission. Run cells from top to bottom (Shift+Enter). /notebook list shows the tutorials; /notebook <exercise> opens one.', 'dim');
-    if (claudeOn.value) {
-      say('Claude is connected: ask about the course and the books, or ask for a notebook (“create a box”). It uses the BRG tools, writes notebooks on the left, and cites pages. /new starts over.', 'dim');
-    } else {
-      say('Claude is not connected: the terminal searches the library only.', 'err');
-      say('To connect Claude in this browser: /key <your Anthropic API key> (from console.anthropic.com; set a spend limit there). The key stays in this browser and goes only to Anthropic.', 'dim');
-    }
-    say('Sources, pages and figures appear here in the terminal. /open shows a whole chapter over the notebook, /close hides it.', 'dim');
+    say('BRG terminal · /help for commands.', 'dim');
+    if (claudeOn.value) say('Ask for BRG sources, figures or a COMPAS notebook.', 'dim');
+    else say('Library tools are ready. Connect Claude with /key <Anthropic API key>.', 'dim');
 
     // The sheet over the notebook: what it shows, with a back stack of the commands that produced it.
     const view = reactive({ kind: 'welcome', title: '', open: '', html: '', items: [], src: '', error: '', showBook: false });
@@ -1162,14 +1159,14 @@ createApp({
     function submit() { const line = input.value; input.value = ''; run(line); }
     watch(() => route.view, (v) => {
       document.body.classList.toggle('term-full', v === 'terminal');
-      if (v === 'terminal') nextTick(() => prompt.value && prompt.value.focus());
+      if (v === 'terminal' && collapsedPane.value !== 'chat') nextTick(() => prompt.value?.focus());
     }, { immediate: true });
 
     return {
       cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years, coverImg,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
-      splitEl, splitRatio, collapsedPane, splitDragging, splitStacked, beginSplitDrag, dragSplit, endSplitDrag, splitKey,
+      splitEl, splitRatio, collapsedPane, splitDragging, splitStacked, beginSplitDrag, dragSplit, endSplitDrag, splitKey, toggleTerminal,
       view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, closeSheet, claudeLabel, notebookSrc, notebookOpened, notebookEl, notebookFile, openNotebook,
     };
   },

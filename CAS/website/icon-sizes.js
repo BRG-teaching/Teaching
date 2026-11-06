@@ -8,6 +8,7 @@ window.CAS_ICON_SIZES = {
   "slide03-icon06.svg":[139.4,136],
   "slide03-icon07.svg":[136,136],
   "slide03-icon08.svg":[136,137.8],
+  "slide03-icon09.svg":[136,136],
   "slide04-icon01.svg":[108,108],
   "slide04-icon02.svg":[110.7,115.0],
   "slide04-icon03.svg":[108,108],

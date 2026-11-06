@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CAS Computational Form-finding</title>
 <script src="gate.js"></script>
-<meta name="description" content="CAS ETH in Computational Form-finding: seven chapters from graphic statics to an individual built project.">
+<meta name="description" content="CAS ETH in Computational Form-finding: LLM, COMPAS, structural design and an individual built project.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="history-submissions.css">
+<link rel="stylesheet" href="notebook-submissions.css">
 </head>
 <body>
 <div id="app" v-cloak>
@@ -123,6 +123,29 @@
         </figure>
       </div>
 
+      <figure v-if="c.mcp" class="mcp-figure">
+        <div class="mcp-diagram">
+          <div class="mcp-node mcp-client">
+            <strong>{{ c.mcp.client.title }}</strong>
+            <span>{{ c.mcp.client.subtitle }}</span>
+          </div>
+          <div class="mcp-connector" aria-hidden="true"><span>tool calls</span></div>
+          <div class="mcp-node mcp-protocol">
+            <strong>{{ c.mcp.protocol.title }}</strong>
+            <span>{{ c.mcp.protocol.subtitle }}</span>
+            <small>{{ c.mcp.protocol.detail }}</small>
+          </div>
+          <div class="mcp-connector" aria-hidden="true"><span>tools · data</span></div>
+          <div class="mcp-packages">
+            <section v-for="group in c.mcp.groups" :key="group.title">
+              <strong>{{ group.title }}</strong>
+              <p>{{ group.items.join(' · ') }}</p>
+            </section>
+          </div>
+        </div>
+        <figcaption>{{ c.mcp.caption }}</figcaption>
+      </figure>
+
       <ol v-if="c.steps" class="steps">
         <li v-for="(s, i) in c.steps" :key="s.label">
           <div class="art"><img v-for="l in logos(s)" :key="l" :src="logo(l)" alt="" :style="iconBox(l)"></div>
@@ -133,7 +156,7 @@
       </ol>
 
       <div class="cards">
-        <details v-for="k in cardKeys(c)" :key="k" class="card" :class="[k, { 'history-submission': c[k].systems, 'notebook-submission': c[k].notebookResources }]">
+        <details v-for="k in cardKeys(c)" :key="k" class="card" :class="[k, { 'notebook-submission': c[k].notebookResources }]">
           <summary><span>{{ cardTitle[k] }}</span><i class="pm" aria-hidden="true"></i></summary>
           <div class="card-body">
             <p class="lead">{{ c[k].lead }}</p>
@@ -151,33 +174,7 @@
                    :target="link.url.startsWith('https://') ? '_blank' : null" rel="noopener">{{ link.label }}</a>
               </nav>
             </div>
-            <template v-if="c[k].systems">
-              <div class="submission-systems">
-                <details v-for="s in c[k].systems" :key="s.id" class="submission-system" :id="'history-' + s.id">
-                  <summary><span>{{ s.title }} <small>{{ s.exerciseCount }} exercises</small></span><i class="pm" aria-hidden="true"></i></summary>
-                  <div class="system-exercise">
-                    <div class="system-reference">
-                      <div class="reference-images">
-                        <figure>
-                          <img :src="c[k].references[s.referenceId].image" :alt="c[k].references[s.referenceId].title" :width="c[k].references[s.referenceId].width" :height="c[k].references[s.referenceId].height" loading="lazy" decoding="async">
-                          <figcaption>{{ c[k].references[s.referenceId].title }}</figcaption>
-                        </figure>
-                        <figure>
-                          <img :src="s.diagram.image" :alt="s.diagram.title" :width="s.diagram.width" :height="s.diagram.height" loading="lazy" decoding="async">
-                          <figcaption>{{ s.diagram.title }}</figcaption>
-                        </figure>
-                      </div>
-                    </div>
-                    <nav class="system-links" :aria-label="s.title + ' course resources'">
-                      <a v-for="wid in s.worksheetIds" :key="wid" :href="c[k].worksheets[wid].pdf" target="_blank" rel="noopener">{{ s.worksheetIds.length === 1 ? 'Worksheet (PDF)' : c[k].worksheets[wid].title + ' worksheet (PDF)' }}</a>
-                      <a :href="s.lecture" target="_blank" rel="noopener">Lecture (PDF)</a>
-                      <a :href="s.exercise" target="_blank" rel="noopener">Exercise notes (PDF)</a>
-                    </nav>
-                  </div>
-                </details>
-              </div>
-            </template>
-            <ul v-else class="sq">
+            <ul class="sq">
               <li v-for="t in c[k].items" :key="t"><template v-for="(seg, i) in segments(t)" :key="i"><a v-if="seg.url" :href="seg.url" :target="seg.url.startsWith('http') ? '_blank' : null" rel="noopener">{{ seg.text }}</a><template v-else>{{ seg.text }}</template></template></li>
             </ul>
           </div>
@@ -207,7 +204,6 @@
 <script src="vendor/vue.global.prod.js"></script>
 <script src="notebook-exercises.js"></script>
 <script src="data.js"></script>
-<script src="history-submissions.js"></script>
 <script src="icon-sizes.js"></script>
 <script src="app.js"></script>
 </body>
