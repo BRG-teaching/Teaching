@@ -33,8 +33,8 @@ body[data-jp-theme-light="false"] {
   --jp-code-line-height: 1.5;
   --jp-brand-color1: #dc4b8d;
   --jp-cell-padding: 10px 0;
-  --jp-cell-prompt-width: 0;
-  --jp-cell-collapser-width: 0;
+  --jp-cell-prompt-width: 64px;
+  --jp-cell-collapser-width: 8px;
   --jp-cell-editor-background: #000;
   --jp-cell-editor-active-background: #080808;
   --jp-cell-editor-border-color: transparent;
@@ -75,7 +75,8 @@ body[data-jp-theme-light="false"] .jp-Notebook {
 body[data-jp-theme-light="false"] .jp-SideBar.lm-TabBar[data-orientation="vertical"],
 body[data-jp-theme-light="false"] .lm-DockPanel-tabBar,
 body[data-jp-theme-light="false"] #jp-main-statusbar {
-  display: none;
+  background: #000;
+  color: var(--jp-ui-font-color1);
 }
 
 body[data-jp-theme-light="false"] #jp-menu-panel,
@@ -99,27 +100,16 @@ body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-content {
 }
 
 body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item {
-  display: none;
   font: inherit;
   background: #000;
-}
-
-body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:first-child,
-body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:nth-child(4),
-body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:nth-child(5) {
-  display: flex;
 }
 
 body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar {
   display: none;
 }
 
-body[data-jp-theme-light="false"] .jp-Notebook .jp-InputPrompt,
-body[data-jp-theme-light="false"] .jp-Notebook .jp-OutputPrompt,
-body[data-jp-theme-light="false"] .jp-Notebook .jp-Collapser,
-body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell .jp-Cell-header,
-body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell .jp-cell-toolbar {
-  display: none;
+body[data-jp-theme-light="false"] .jp-Notebook .jp-cell-toolbar {
+  background: #000;
 }
 
 body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell-inputWrapper {
@@ -155,5 +145,39 @@ body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell-editor {
 
   body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar {
     padding: 0 6px;
+  }
+
+  body[data-jp-theme-light="false"] #jp-menu-panel {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    overflow: visible;
+  }
+
+  body[data-jp-theme-light="false"] #jp-MainMenu {
+    position: static !important;
+    width: 100% !important;
+  }
+
+  body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item {
+    flex-shrink: 0;
+    padding: 0 4px;
+  }
+
+  body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-content {
+    justify-content: flex-end;
+    box-sizing: border-box;
+    padding-left: 33px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #383838 #000;
+  }
+
+  body[data-jp-theme-light="false"] #jp-main-statusbar {
+    box-sizing: border-box;
+    padding-left: 33px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #383838 #000;
   }
 }

@@ -662,6 +662,28 @@ createApp({
     const notebookEl = ref(null);
     const notebookFile = computed(() => notebookExercise(route.exercise)?.file || '01-basics/01-box.ipynb');
     const notebookSrc = 'jupyter/lab/index.html?path=' + notebookFile.value;
+    function fitNotebookChrome(frame, app) {
+      app.shell._leftHandler.sideBar.show();
+      app.shell._rightHandler.sideBar.show();
+      for (const id of ['jp-top-panel', 'jp-bottom-panel']) app.shell.layout.widgets.find((widget) => widget.id === id)?.show();
+      if (frame.clientWidth < 700) {
+        app.shell.collapseLeft();
+        app.shell._rightHandler.sideBar.hide();
+      } else {
+        app.shell.expandLeft();
+        app.shell._rightHandler.sideBar.show();
+        app.shell.activateById('filebrowser');
+      }
+      frame.contentWindow.onresize = () => {
+        if (frame.clientWidth < 700) {
+          app.shell.collapseLeft();
+          app.shell._rightHandler.sideBar.hide();
+        } else {
+          app.shell.expandLeft();
+          app.shell._rightHandler.sideBar.show();
+        }
+      };
+    }
     async function openNotebook() {
       // Same-origin JupyterLab API: open another file without reloading the iframe or its kernels.
       const frame = notebookEl.value;
@@ -694,12 +716,11 @@ createApp({
           kernelPreference: { language: 'python', autoStartDefault: true },
         });
         await widget?.context.ready;
-        app.shell.mode = 'single-document';
-        app.shell.collapseLeft();
+        app.shell.mode = 'multiple-document';
         app.shell.collapseRight();
-        app.shell._leftHandler.sideBar.hide();
-        app.shell._rightHandler.sideBar.hide();
-        for (const id of ['jp-top-panel', 'jp-bottom-panel']) app.shell.layout.widgets.find((widget) => widget.id === id)?.hide();
+        fitNotebookChrome(frame, app);
+        await app.commands.execute('filebrowser:go-to-path', { path: '', dontShowBrowser: true });
+        if (widget?.id) app.shell.activateById(widget.id);
         await app.commands.execute('notebook:render-all-markdown');
       } catch (e) { console.warn('Could not open the exercise in Jupyter.', e); }
     }
