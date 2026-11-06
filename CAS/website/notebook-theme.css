@@ -7,6 +7,8 @@ body[data-jp-theme-light="false"] {
   --jp-layout-color2: #141414;
   --jp-layout-color3: #242424;
   --jp-layout-color4: #383838;
+  --jp-border-width: 1px;
+  --jp-focus-outline-width: 1px;
   --jp-border-color0: #383838;
   --jp-border-color1: #262626;
   --jp-border-color2: #202020;
@@ -107,7 +109,22 @@ body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item {
 }
 
 body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar {
-  display: none;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 12px;
+  border-bottom: 1px solid #202020;
+  background: #000;
+  font: var(--brg-nav-font);
+  justify-content: flex-end;
+}
+
+body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar > .jp-Toolbar-spacer {
+  order: -1;
+}
+
+body[data-jp-theme-light="false"] .lm-DockPanel-tabBar .lm-TabBar-tab.jp-mod-active {
+  border-top: 1px solid var(--jp-brand-color1);
+  box-shadow: none;
 }
 
 body[data-jp-theme-light="false"] .jp-Notebook .jp-cell-toolbar {
@@ -121,7 +138,7 @@ body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell-inputWrapper {
 body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell.jp-mod-active .jp-Cell-inputWrapper {
   border-color: transparent;
   outline: 0;
-  box-shadow: inset 2px 0 #dc4b8d;
+  box-shadow: inset 1px 0 #dc4b8d;
 }
 
 body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell.jp-mod-active .jp-Cell-inputArea {
@@ -131,7 +148,7 @@ body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell.jp-mod-active .jp-Cell-i
 }
 
 body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell.jp-mod-active {
-  box-shadow: inset 2px 0 #dc4b8d !important;
+  box-shadow: inset 1px 0 #dc4b8d !important;
 }
 
 body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell-editor {
