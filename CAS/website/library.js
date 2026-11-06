@@ -107,7 +107,9 @@ function renderMarkdown(text, docPath, bookIds) {
   tpl.innerHTML = html;
   const here = new URL(fileUrl(docPath));
   tpl.content.querySelectorAll('img[src]').forEach((img) => {
-    img.src = new URL(img.getAttribute('src'), here).href; img.loading = 'lazy';
+    const u = new URL(img.getAttribute('src'), here);
+    if (u.pathname.endsWith('.svg')) u.searchParams.set('v', 'cad3');
+    img.src = u.href; img.loading = 'lazy';
   });
   tpl.content.querySelectorAll('a[href]').forEach((a) => {
     const raw = a.getAttribute('href');
@@ -117,6 +119,7 @@ function renderMarkdown(text, docPath, bookIds) {
       const parts = decodeURIComponent(u.pathname).replace(/^\//, '').split('/');
       if (bookIds.has(parts[0])) { a.setAttribute('href', `#/b/${parts[0]}/${encodeURIComponent(parts.slice(1).join('/'))}${u.hash}`); return; }
     }
+    if (u.pathname.endsWith('.svg')) u.searchParams.set('v', 'cad3');
     a.href = u.href; a.target = '_blank'; a.rel = 'noopener';
   });
   return tpl.innerHTML;
@@ -952,7 +955,7 @@ createApp({
           if (cmd === '/figures') {
             await showDoc(id, section);
             const tpl = document.createElement('template'); tpl.innerHTML = view.html;
-            const items = [...tpl.content.querySelectorAll('img')].map((img) => ({ src: img.src, alt: img.alt, name: img.src.split('/').pop() }));
+            const items = [...tpl.content.querySelectorAll('img')].map((img) => ({ src: img.src, alt: img.alt, name: img.src.split('/').pop().split('?')[0] }));
             setView({ kind: 'figures', title: `Figures · ${view.title}`, items, open: view.open });
             linkOrigFigures(id, () => view.kind === 'figures', () => viewerEl.value?.querySelector('.v-figs'));
             say(`${items.length} figure${items.length === 1 ? '' : 's'} over the notebook.`, 'dim');
