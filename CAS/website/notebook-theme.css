@@ -86,6 +86,16 @@ body[data-jp-theme-light="false"] #jp-MainMenu {
 
 body[data-jp-theme-light="false"] #jp-menu-panel {
   border-bottom: 1px solid #202020;
+  width: 100% !important;
+}
+
+body[data-jp-theme-light="false"] #jp-MainMenu,
+body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-content {
+  width: 100%;
+}
+
+body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-content {
+  justify-content: flex-end;
 }
 
 body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item {
@@ -106,6 +116,11 @@ body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar {
   border-bottom: 1px solid #202020;
   background: #000;
   font: var(--brg-nav-font);
+  justify-content: flex-end;
+}
+
+body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar > .jp-Toolbar-spacer {
+  order: -1;
 }
 
 body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar > :is(

@@ -11,9 +11,9 @@
 .lib-tabs a.on { color: var(--ink); font-weight: 600; border-bottom-color: var(--pink); }
 .lib-tabs .count { font-size: inherit; color: var(--muted); font-weight: 400; }
 .lib-top.workspace-top { flex-wrap: nowrap; gap: 12px; height: 44px; min-height: 44px; padding: 0 12px; overflow: visible; flex-shrink: 0; min-width: 0; white-space: nowrap; background: #000; border-bottom-color: #262626; }
-.workspace-top > a { flex-shrink: 0; }
-.workspace-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: var(--nav-font); font-weight: 400; color: #e5e5e5; }
-.workspace-actions { margin-left: auto; display: flex; align-items: center; gap: 2px; flex: none; }
+.workspace-top > a { flex-shrink: 0; order: 2; margin-left: auto; }
+.workspace-name { order: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; font: var(--nav-font); font-weight: 400; color: #e5e5e5; }
+.workspace-actions { order: 3; margin-left: 0; display: flex; align-items: center; gap: 2px; flex: none; }
 .workspace-actions a, .terminal-toggle { padding: 4px 8px; font: var(--nav-font); color: var(--muted); text-decoration: none; background: transparent; border: 0; cursor: pointer; }
 .lib-top.workspace-top .back, .workspace-actions a, .terminal-toggle { color: #a6a6a6; }
 .lib-top.workspace-top .back:hover, .workspace-actions a:hover, .terminal-toggle:hover { color: #fff; background: #141414; }
