@@ -666,6 +666,14 @@ createApp({
       // Same-origin JupyterLab API: open another file without reloading the iframe or its kernels.
       const frame = notebookEl.value;
       if (!frame) return;
+      const frameDocument = frame.contentDocument;
+      if (frameDocument && !frameDocument.getElementById('brg-jupyter-theme')) {
+        const stylesheet = frameDocument.createElement('link');
+        stylesheet.id = 'brg-jupyter-theme';
+        stylesheet.rel = 'stylesheet';
+        stylesheet.href = new URL('notebook-theme.css', location.href).href;
+        frameDocument.head.append(stylesheet);
+      }
       const started = Date.now();
       while (frame === notebookEl.value && !frame.contentWindow?.jupyterapp && Date.now() - started < 30000) await new Promise((done) => setTimeout(done, 100));
       const app = frame.contentWindow?.jupyterapp;
