@@ -664,24 +664,16 @@ createApp({
     const notebookSrc = 'jupyter/lab/index.html?path=' + notebookFile.value;
     function fitNotebookChrome(frame, app) {
       app.shell._leftHandler.sideBar.show();
-      app.shell._rightHandler.sideBar.show();
+      app.shell._rightHandler.sideBar.hide();
       for (const id of ['jp-top-panel', 'jp-bottom-panel']) app.shell.layout.widgets.find((widget) => widget.id === id)?.show();
-      if (frame.clientWidth < 700) {
-        app.shell.collapseLeft();
-        app.shell._rightHandler.sideBar.hide();
-      } else {
+      if (frame.clientWidth < 700) app.shell.collapseLeft();
+      else {
         app.shell.expandLeft();
-        app.shell._rightHandler.sideBar.show();
         app.shell.activateById('filebrowser');
       }
       frame.contentWindow.onresize = () => {
-        if (frame.clientWidth < 700) {
-          app.shell.collapseLeft();
-          app.shell._rightHandler.sideBar.hide();
-        } else {
-          app.shell.expandLeft();
-          app.shell._rightHandler.sideBar.show();
-        }
+        if (frame.clientWidth < 700) app.shell.collapseLeft();
+        else app.shell.expandLeft();
       };
     }
     async function openNotebook() {
