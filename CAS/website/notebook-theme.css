@@ -105,33 +105,12 @@ body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item {
 }
 
 body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:first-child,
-body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:nth-child(4) {
+body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:nth-child(4),
+body[data-jp-theme-light="false"] #jp-MainMenu .lm-MenuBar-item:nth-child(5) {
   display: flex;
 }
 
 body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar {
-  min-height: 36px;
-  margin: 0;
-  padding: 0 12px;
-  border-bottom: 1px solid #202020;
-  background: #000;
-  font: var(--brg-nav-font);
-  justify-content: flex-end;
-}
-
-body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar > .jp-Toolbar-spacer {
-  order: -1;
-}
-
-body[data-jp-theme-light="false"] .jp-NotebookPanel > .jp-Toolbar > :is(
-  [data-jp-item-name="insert"],
-  [data-jp-item-name="cut"],
-  [data-jp-item-name="copy"],
-  [data-jp-item-name="paste"],
-  [data-jp-item-name="restart"],
-  [data-jp-item-name="cellType"],
-  [data-jp-item-name="executionProgress"]
-) {
   display: none;
 }
 
