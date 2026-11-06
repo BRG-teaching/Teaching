@@ -222,7 +222,6 @@
             <b>BRG terminal</b>
             <span>{{ busy ? 'working…' : (claudeLabel || 'library tools') }}</span>
           </div>
-          <button type="button" class="term-close" @click.stop="toggleTerminal">Close</button>
         </div>
         <div class="term-log" ref="logEl" aria-live="polite">
           <div v-for="(l, i) in log" :key="i" :class="'line ' + l.kind">
