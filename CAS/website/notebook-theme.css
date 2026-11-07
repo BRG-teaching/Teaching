@@ -142,8 +142,19 @@ body[data-jp-theme-light="false"] .jp-Notebook .jp-cell-toolbar {
   background: #000;
 }
 
-body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell-inputWrapper {
-  border: 1px solid transparent;
+body[data-jp-theme-light="false"] .jp-Notebook .jp-CodeCell .jp-Cell-inputWrapper {
+  background: #141414;
+  border: 1px solid #262626;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook .jp-CodeCell .jp-Cell-inputWrapper:hover {
+  background: #1a1a1a;
+}
+
+body[data-jp-theme-light="false"] .jp-Notebook .jp-CodeCell .jp-Cell-editor,
+body[data-jp-theme-light="false"] .jp-Notebook .jp-CodeCell .cm-editor,
+body[data-jp-theme-light="false"] .jp-Notebook .jp-CodeCell .cm-gutters {
+  background: transparent;
 }
 
 body[data-jp-theme-light="false"] .jp-Notebook .jp-Cell.jp-mod-active .jp-Cell-inputWrapper {
