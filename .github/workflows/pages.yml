@@ -53,13 +53,17 @@ jobs:
         run: |
           python -m pip install -r CAS/jupyter/requirements.txt
           jupyter lite build --lite-dir CAS/jupyter --contents ../website/notebooks --output-dir docs/CAS/website/jupyter --apps lab
-      - name: Version the course website's own scripts and styles
-        # each deploy gets new URLs (library.js?v=<commit>), so browsers never mix a cached old file with new ones
+      - name: Version the website and notebook URLs
+        # New commit-specific URLs prevent cached website files, Jupyter HTML, or theme CSS from mixing versions.
         run: |
           v=${GITHUB_SHA::7}
           sed -i -E 's#(src|href)="((gate|library-config|notebook-exercises|library)\.js|(style|library)\.css)"#\1="\2?v='"$v"'"#g' docs/CAS/website/library.html
           sed -i "s#src: 'vendor/brg-claude.js'#src: 'vendor/brg-claude.js?v=$v'#" docs/CAS/website/library.js
+          sed -i "s#jupyter/lab/index.html?path=#jupyter/lab/index.html?v=$v\\&path=#" docs/CAS/website/library.js
+          sed -i "s#new URL('notebook-theme.css', location.href).href#& + '?v=$v'#" docs/CAS/website/library.js
           grep -c "?v=$v" docs/CAS/website/library.html docs/CAS/website/library.js
+          grep -F "jupyter/lab/index.html?v=$v&path=" docs/CAS/website/library.js
+          grep -F "new URL('notebook-theme.css', location.href).href + '?v=$v'" docs/CAS/website/library.js
       - name: Copy the CAS library markdown from R2
         run: python3 CAS/website/tools/mirror_books.py docs/CAS/website/books
       - name: Setup Pages
