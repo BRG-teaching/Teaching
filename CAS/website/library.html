@@ -158,7 +158,7 @@
     </section>
 
     <!-- Jupyter + BRG: a full-width editor with an optional terminal -->
-    <section v-else-if="route.view === 'terminal'" ref="splitEl" class="split"
+    <section v-show="route.view === 'terminal'" ref="splitEl" class="split"
              :class="{ 'collapsed-workspace': collapsedPane === 'workspace', 'collapsed-chat': collapsedPane === 'chat', 'split-dragging': splitDragging }"
              :style="{ '--workspace-track': splitRatio + 'fr', '--chat-track': (1 - splitRatio) + 'fr' }">
       <div id="workspace-pane" class="viewer" v-show="collapsedPane !== 'workspace'">

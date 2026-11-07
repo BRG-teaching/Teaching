@@ -679,11 +679,24 @@ createApp({
     const notebookEl = ref(null);
     const notebookFile = computed(() => notebookExercise(route.exercise)?.file || '01-basics/01-box.ipynb');
     const notebookSrc = 'jupyter/lab/index.html';
+    const fileBrowserState = stored('brg-jupyter-file-browser');
+    let notebookChromeInitialized = false;
+    function rememberNotebookChrome() {
+      const fileBrowser = notebookEl.value?.contentDocument?.querySelector('.jp-FileBrowser');
+      if (fileBrowser) fileBrowserState.set(fileBrowser.closest('[hidden], .lm-mod-hidden') ? 'closed' : 'open');
+    }
+    onMounted(() => addEventListener('pagehide', rememberNotebookChrome));
+    onBeforeUnmount(() => removeEventListener('pagehide', rememberNotebookChrome));
     function fitNotebookChrome(app) {
       app.shell._leftHandler.sideBar.show();
       app.shell._rightHandler.sideBar.hide();
       for (const id of ['jp-top-panel', 'jp-bottom-panel']) app.shell.layout.widgets.find((widget) => widget.id === id)?.show();
-      app.shell.collapseLeft();
+      if (notebookChromeInitialized) return;
+      if (fileBrowserState.get() === 'open') {
+        app.shell.expandLeft();
+        app.shell.activateById('filebrowser');
+      } else app.shell.collapseLeft();
+      notebookChromeInitialized = true;
     }
     async function openNotebook() {
       // Same-origin JupyterLab API: open another file without reloading the iframe or its kernels.
