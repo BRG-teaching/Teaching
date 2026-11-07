@@ -1,4 +1,5 @@
 import argparse
+import os
 import runpy
 import shutil
 import subprocess
@@ -65,6 +66,11 @@ def main():
         copy_equilibrium(args.equilibrium.resolve(), OUT)
     else:
         extract_equilibrium(OUT)
+    npm = shutil.which("npm")
+    if npm is None:
+        raise RuntimeError("npm is required to build the Vue website; run 'npm ci --prefix website' first.")
+    version = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, text=True).strip()
+    subprocess.run([npm, "run", "build"], cwd=ROOT / "website", check=True, env={**os.environ, "VITE_BUILD_VERSION": version})
     files = sum(1 for path in OUT.rglob("*") if path.is_file())
     print(f"docs: assembled {files} deployment files")
 

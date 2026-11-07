@@ -1,5 +1,5 @@
 // Content of the CAS Computational Form-finding site.
-// The page layout lives in index.html and app.js.
+// The page layout lives in website/src/CourseApp.vue and website/src/useCourse.js.
 window.CAS = {
   title: 'Computational Form-finding',
   org: 'Block Research Group · ITA · D-ARCH · ETH Zürich',

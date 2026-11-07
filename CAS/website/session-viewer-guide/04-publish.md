@@ -35,14 +35,15 @@ This prevents an existing browser's Jupyter contents storage from hiding the upd
 
 ## 4.3 Build locally
 
-From the repository root:
+From the repository root, install the Vue dependencies once, then build:
 
 ```bash
+npm ci --prefix website
 py tools/build_site.py
 py -m jupyter lite build --lite-dir CAS/jupyter --contents ../website/notebooks --output-dir docs/CAS/website/jupyter --apps lab
 ```
 
-The first command assembles `docs/`. The second builds JupyterLite into `docs/CAS/website/jupyter/`. Always keep deployment output in `docs/`; do not commit it.
+The Python command builds the Vite + Vue single-file-component website from `website/` and assembles `docs/`. The second command builds JupyterLite into `docs/CAS/website/jupyter/`. Always keep deployment output in `docs/`; do not commit it.
 
 A local server can then serve the deployment:
 

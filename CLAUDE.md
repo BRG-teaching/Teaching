@@ -1,7 +1,8 @@
 # Claude instructions
 
 - Keep source files outside `docs/`; never edit the generated deployment.
-- Build the deployment with `python tools/build_site.py`. The script reads the local `equilibrium` branch unless `--equilibrium` supplies a checkout.
+- The website is a Vite + Vue 3 single-file-component app. Source entries are `website/index.html` and `website/library.html`; `CourseApp.vue` and `LibraryApp.vue` use `Spine.vue` and `BookCover.vue`, with shared logic in `useCourse.js` and `useLibrary.js`. Static course data, notebook integrations, viewer assets, and styles remain under `CAS/website/`.
+- Install the website dependencies with `npm ci --prefix website`. Build the deployment with `python tools/build_site.py`; it runs Vite and reads the local `equilibrium` branch unless `--equilibrium` supplies a checkout.
 - Build JupyterLite into `docs/CAS/website/jupyter/` and upload only `docs/` to GitHub Pages.
 - The first notebook visit starts with the file browser collapsed to the left icon rail and the terminal hidden. Keep the file browser available on demand and restore its last open/closed state. Navigation must hide rather than remount the notebook iframe, preserving its editor, sidebar and live kernel. Keep full Jupyter functionality with the black theme, and preserve the terminal conversation.
 - Use the shared `--nav-font` token for navigation: 13px Open Sans with compact spacing.

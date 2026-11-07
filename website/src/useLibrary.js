@@ -2,7 +2,7 @@
 // The catalogue format is the one mcp-server-brg parses (src/brg_mcp/adapters/public_books.py):
 //   ## `book-id/` — Title, Author, Year
 //     - `01-chapter.md` **Chapter title** summary
-const { createApp, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount } = Vue;
+import { ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 const cfg = window.CAS_LIBRARY;
 const notebookExercises = window.CAS_NOTEBOOKS || [];
 const notebookExercise = (id) => notebookExercises.find((tutorial) => tutorial.id === id) || notebookExercises.find((tutorial) => tutorial.id === 'box');
@@ -242,37 +242,6 @@ const plain = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 // Each word with its weight; `avoid` marks chapters on something else that shares the words (3D reciprocals).
 
 // Cover: only the short title, on the colour of the entry's subject.
-const BookCover = {
-  props: { title: String, color: String, img: String },
-  data: () => ({ failed: false }),
-  watch: { img() { this.failed = false; } },
-  // Shrink the title until its longest word fits the cover (long German compounds).
-  mounted() { this.fit(); document.fonts && document.fonts.ready.then(() => this.fit()); this.ro = new ResizeObserver(() => this.fit()); this.ro.observe(this.$el); },
-  beforeUnmount() { this.ro && this.ro.disconnect(); },
-  updated() { this.fit(); },
-  methods: {
-    fit() {
-      // Titles hyphenate (CSS hyphens: auto); only a word that still overflows shrinks the title.
-      const b = this.$el.querySelector && this.$el.querySelector('.cover-gen b');
-      if (!b) return;
-      b.style.fontSize = '';
-      let size = parseFloat(getComputedStyle(b).fontSize);
-      while (b.scrollWidth > b.clientWidth + 0.5 && size > 11) { size -= 0.5; b.style.fontSize = size + 'px'; }
-    },
-  },
-  computed: {
-    // Language of the title, so the browser hyphenates German and French titles correctly.
-    lang() {
-      const t = ` ${(this.title || '').toLowerCase()} `;
-      if (/[äöüß]|\b(und|der|die|das|des|im|zur|für)\b|tragwerk|statik|bau/.test(t)) return 'de';
-      if (/[éèêàç]|\b(la|le|les|du|et|des)\b|statique/.test(t)) return 'fr';
-      return 'en';
-    },
-  },
-  template: `<span v-if="img && !failed" class="cover cover-img" :style="{ '--cc': color }"><img :src="img" :alt="title" loading="lazy" @error="failed = true"></span>
-    <span v-else class="cover" :style="{ '--cc': color }"><span class="cover-gen"><i></i><b :lang="lang">{{ title }}</b></span></span>`,
-};
-
 const PIXEL_ROWS = [
   '###  ###   ###',
   '#  # #  # #   ',
@@ -316,9 +285,8 @@ const COMMANDS = [
 // The eQUILIBRIUM step-by-step player, on the same GitHub Pages site.
 const PLAYER = '../../2_computational_form_finding/Equilibrium/drawings/web/';
 
-createApp({
-  components: { BookCover },
-  setup() {
+
+export function useLibrary() {
     const state = ref('loading');
     const error = ref('');
     const books = ref([]);
@@ -741,7 +709,7 @@ createApp({
     const drawingIds = ref([]);
     const notebookEl = ref(null);
     const notebookFile = computed(() => notebookExercise(route.exercise)?.file || '01-basics/01-box.ipynb');
-    const notebookSrc = 'jupyter/lab/index.html';
+    const notebookSrc = `jupyter/lab/index.html${import.meta.env.VITE_BUILD_VERSION ? '?v=' + import.meta.env.VITE_BUILD_VERSION : ''}`;
     const fileBrowserState = stored('brg-jupyter-file-browser');
     let notebookChromeInitialized = false;
     function rememberNotebookChrome() {
@@ -777,7 +745,7 @@ createApp({
         const stylesheet = frameDocument.createElement('link');
         stylesheet.id = 'brg-jupyter-theme';
         stylesheet.rel = 'stylesheet';
-        stylesheet.href = new URL('notebook-theme.css', location.href).href;
+        stylesheet.href = new URL('../../CAS/website/notebook-theme.css', import.meta.url).href + (import.meta.env.VITE_BUILD_VERSION ? '?v=' + import.meta.env.VITE_BUILD_VERSION : '');
         frameDocument.head.append(stylesheet);
       }
       const started = Date.now();
@@ -1283,17 +1251,17 @@ createApp({
     }
     let lastUsage = null;
     let claudeScript = null, geminiScript = null, kimiScript = null;
-    const loadClaude = () => claudeScript || (claudeScript = new Promise((done, fail) => {
-      const tag = Object.assign(document.createElement('script'), { src: 'vendor/brg-claude.js', onload: done, onerror: () => { claudeScript = null; fail(new Error('Could not load the Claude client.')); } });
-      document.head.append(tag);
+    const loadClaude = () => claudeScript || (claudeScript = import('../../CAS/website/vendor/brg-claude.js').catch(() => {
+      claudeScript = null;
+      throw new Error('Could not load the Claude client.');
     }));
-    const loadGemini = () => geminiScript || (geminiScript = new Promise((done, fail) => {
-      const tag = Object.assign(document.createElement('script'), { src: 'brg-gemini.js', onload: done, onerror: () => { geminiScript = null; fail(new Error('Could not load the Gemini client.')); } });
-      document.head.append(tag);
+    const loadGemini = () => geminiScript || (geminiScript = import('../../CAS/website/brg-gemini.js').catch(() => {
+      geminiScript = null;
+      throw new Error('Could not load the Gemini client.');
     }));
-    const loadKimi = () => kimiScript || (kimiScript = new Promise((done, fail) => {
-      const tag = Object.assign(document.createElement('script'), { src: 'brg-kimi.js', onload: done, onerror: () => { kimiScript = null; fail(new Error('Could not load the Kimi client.')); } });
-      document.head.append(tag);
+    const loadKimi = () => kimiScript || (kimiScript = import('../../CAS/website/brg-kimi.js').catch(() => {
+      kimiScript = null;
+      throw new Error('Could not load the Kimi client.');
     }));
     function onAIEvent(e) {
       if (e.t === 'thinking' || e.t === 'text') streamInto(e.t, e.d);
@@ -1414,5 +1382,4 @@ createApp({
       aiOn, aiProvider, providerInfo, providerItems, providerName, providerHasPersonalKey, providerMenuOpen, providerMenuEl, keyFormProvider, keyInput, keyInputEl,
       toggleProviderMenu, closeProviderMenu, chooseProvider, editProviderKey, submitProviderKey, removeProviderKey,
     };
-  },
-}).mount('#app');
+}

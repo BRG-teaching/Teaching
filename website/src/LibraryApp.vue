@@ -1,20 +1,19 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Library · CAS Computational Form-finding</title>
-<script src="gate.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="vendor/katex/katex.min.css">
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="library.css">
-</head>
-<body class="lib">
-<div id="app" v-cloak>
+<script setup>
+import BookCover from './BookCover.vue';
+import { useLibrary } from './useLibrary';
 
+const {
+  cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
+  prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years, coverImg,
+  pixel, pixelCols, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
+  splitEl, splitRatio, collapsedPane, splitDragging, splitStacked, beginSplitDrag, dragSplit, endSplitDrag, splitKey, toggleTerminal,
+  view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, closeSheet, aiLabel, notebookSrc, notebookOpened, notebookEl, notebookFile, openNotebook,
+  aiOn, aiProvider, providerInfo, providerItems, providerName, providerHasPersonalKey, providerMenuOpen, providerMenuEl, keyFormProvider, keyInput, keyInputEl,
+  toggleProviderMenu, closeProviderMenu, chooseProvider, editProviderKey, submitProviderKey, removeProviderKey,
+} = useLibrary();
+</script>
+
+<template>
   <header class="lib-top" :class="{ 'workspace-top': route.view === 'terminal' }">
     <a class="back" href="index.html">← Course</a>
     <nav v-if="route.view !== 'terminal'" class="lib-tabs" aria-label="Library">
@@ -280,16 +279,4 @@
       </div>
     </section>
   </main>
-</div>
-
-<script src="vendor/vue.global.prod.js"></script>
-<script src="vendor/marked.min.js"></script>
-<script src="vendor/purify.min.js"></script>
-<script src="vendor/katex/katex.min.js"></script>
-<script src="terminal-context.js"></script>
-<script src="notebook-bridge.js"></script>
-<script src="library-config.js"></script>
-<script src="notebook-exercises.js"></script>
-<script src="library.js"></script>
-</body>
-</html>
+</template>

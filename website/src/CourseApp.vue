@@ -1,20 +1,13 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CAS Computational Form-finding</title>
-<script src="gate.js"></script>
-<meta name="description" content="CAS ETH in Computational Form-finding: LLM, COMPAS, structural design and an individual built project.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="notebook-submissions.css">
-</head>
-<body>
-<div id="app" v-cloak>
+<script setup>
+import Spine from './Spine.vue';
+import { useCourse } from './useCourse';
 
+const {
+  cas, chapters, teaching, project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments, mapEl, mapLines, iconBox, inRing
+} = useCourse();
+</script>
+
+<template>
   <aside class="menu" :class="{ open: menuOpen, onhero: active === 'top' }" aria-label="Course sections">
     <button class="menu-toggle" type="button" :aria-expanded="String(menuOpen)" aria-controls="menu-list" @click="menuOpen = !menuOpen">
       <span aria-hidden="true">{{ menuOpen ? '✕' : '☰' }}</span><span class="sr">{{ menuOpen ? 'Close menu' : 'Open menu' }}</span>
@@ -199,12 +192,4 @@
     <span>{{ cas.org }}</span>
     <span>Working draft · <a href="library.html">Library</a> · <a href="library.html#/notebook">Notebook</a> · <a href="../CAS%20Computational%20Form-Finding.pptx">Download the slides (PowerPoint)</a></span>
   </footer>
-</div>
-
-<script src="vendor/vue.global.prod.js"></script>
-<script src="notebook-exercises.js"></script>
-<script src="data.js"></script>
-<script src="icon-sizes.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
+</template>

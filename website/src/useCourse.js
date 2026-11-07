@@ -1,18 +1,6 @@
-// Minimal Vue 3 app, no build step: Vue is vendored in vendor/, content is in data.js.
-const { createApp, ref, onMounted, onBeforeUnmount } = Vue;
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-// The progress bar that opens every chapter: seven equal segments, the first `fill` coloured.
-const Spine = {
-  props: { fill: { type: Number, default: 7 }, dark: Boolean },
-  template: `<div class="spine" :class="{ dark }" aria-hidden="true">
-    <i v-for="c in chapters" :key="c.n" :style="c.n <= fill ? { background: c.color } : null"></i>
-  </div>`,
-  setup() { return { chapters: window.CAS.chapters }; },
-};
-
-createApp({
-  components: { Spine },
-  setup() {
+export function useCourse() {
     const cas = window.CAS;
     const chapters = cas.chapters;
     const project = chapters[6];
@@ -94,5 +82,4 @@ createApp({
     onBeforeUnmount(() => { io && io.disconnect(); mapRo && mapRo.disconnect(); removeEventListener('keydown', onKey); document.removeEventListener('click', onLink); });
 
     return { cas, chapters, teaching: chapters.slice(0, 6), project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments, mapEl, mapLines, iconBox, inRing };
-  },
-}).mount('#app');
+}

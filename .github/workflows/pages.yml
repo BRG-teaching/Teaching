@@ -39,6 +39,14 @@ jobs:
           sparse-checkout: |
             /2_computational_form_finding/Equilibrium/drawings/web/
             /2_computational_form_finding/Equilibrium/drawings/python/
+      - name: Set up Node for the Vue website
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - name: Install the Vue website dependencies
+        run: npm ci --prefix website
       - name: Assemble the docs deployment
         run: |
           python3 tools/build_site.py --equilibrium .equilibrium-source
@@ -57,16 +65,10 @@ jobs:
         # New commit-specific URLs prevent cached website files, Jupyter HTML, or theme CSS from mixing versions.
         run: |
           v=${GITHUB_SHA::7}
-          sed -i -E 's#(src|href)="((gate|library-config|notebook-bridge|notebook-exercises|library|terminal-context)\.js|(style|library)\.css)"#\1="\2?v='"$v"'"#g' docs/CAS/website/library.html
-          sed -i "s#src: 'vendor/brg-claude.js'#src: 'vendor/brg-claude.js?v=$v'#; s#src: 'brg-gemini.js'#src: 'brg-gemini.js?v=$v'#; s#src: 'brg-kimi.js'#src: 'brg-kimi.js?v=$v'#" docs/CAS/website/library.js
-          grep -F "src: 'vendor/brg-claude.js?v=$v'" docs/CAS/website/library.js
-          grep -F "src: 'brg-gemini.js?v=$v'" docs/CAS/website/library.js
-          grep -F "src: 'brg-kimi.js?v=$v'" docs/CAS/website/library.js
-          sed -i "s#jupyter/lab/index.html#&?v=$v#" docs/CAS/website/library.js
-          sed -i "s#new URL('notebook-theme.css', location.href).href#& + '?v=$v'#" docs/CAS/website/library.js
-          grep -c "?v=$v" docs/CAS/website/library.html docs/CAS/website/library.js
-          grep -F "const notebookSrc = 'jupyter/lab/index.html?v=$v';" docs/CAS/website/library.js
-          grep -F "new URL('notebook-theme.css', location.href).href + '?v=$v'" docs/CAS/website/library.js
+          sed -i -E 's#(src|href)="(\./)?((gate|library-config|notebook-bridge|notebook-exercises|library|terminal-context)\.js|(style|library)\.css)"#\1="\2\3?v='"$v"'"#g' docs/CAS/website/index.html docs/CAS/website/library.html
+          grep -c "?v=$v" docs/CAS/website/index.html docs/CAS/website/library.html
+          grep -F "terminal-context.js?v=$v" docs/CAS/website/library.html
+          grep -F "notebook-bridge.js?v=$v" docs/CAS/website/library.html
       - name: Copy the CAS library markdown from R2
         run: python3 CAS/website/tools/mirror_books.py docs/CAS/website/books
       - name: Setup Pages
