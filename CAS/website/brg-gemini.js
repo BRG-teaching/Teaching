@@ -7,7 +7,7 @@
     if (!value || typeof value !== 'object') return value;
     const out = {};
     for (const [key, item] of Object.entries(value)) {
-      if (key === '$schema' || (key === 'default' && item === null)) continue;
+      if (key === '$schema' || key === 'additionalProperties' || (key === 'default' && item === null)) continue;
       out[key] = schema(item);
     }
     if (Array.isArray(out.anyOf)) {
