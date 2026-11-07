@@ -189,6 +189,32 @@ body.term-full .lib-main { flex: 1; min-height: 0; }
 .term-input span { color: #dc4b8d; font-weight: 600; }
 .term-input input { flex: 1; min-width: 0; font: inherit; color: #fff; background: transparent; border: 0; outline: 0; caret-color: #dc4b8d; }
 .term-input input::placeholder { color: #666; }
+.ai-picker { position: relative; flex: none; border-top: 1px solid #262626; font: var(--nav-font); }
+.ai-status { display: flex; align-items: center; justify-content: space-between; min-height: 28px; padding: 0 8px; }
+.ai-status button, .ai-provider-choice, .ai-key-footer button { color: #a6a6a6; background: transparent; border: 0; font: inherit; cursor: pointer; }
+.ai-provider-button { display: flex; align-items: center; gap: 6px; padding: 4px 0; }
+.ai-provider-button i { width: 5px; height: 5px; border-radius: 50%; background: var(--pink); }
+.ai-provider-button span { color: #666; }
+.ai-key-edit { padding: 4px 0 4px 8px; }
+.ai-status button:hover, .ai-provider-choice:hover, .ai-key-footer button:hover { color: #fff; }
+.ai-popover { position: absolute; z-index: 30; left: 8px; bottom: calc(100% + 4px); width: min(280px, calc(100vw - 16px)); background: #101010; border: 1px solid #262626; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
+.ai-provider-option { display: flex; align-items: center; min-height: 34px; }
+.ai-provider-option.active { box-shadow: inset 1px 0 var(--pink); }
+.ai-provider-choice { display: flex; flex: 1; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; padding: 8px 10px; text-align: left; }
+.ai-provider-choice:hover { background: #1a1a1a; }
+.ai-provider-choice small { color: #858585; font: inherit; }
+.ai-provider-option > a { padding: 6px 10px; color: #9fb6ff; text-decoration: none; }
+.ai-key-form { padding: 10px; border-top: 1px solid #262626; background: #141414; }
+.ai-key-heading, .ai-key-row, .ai-key-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ai-key-heading { margin-bottom: 8px; }
+.ai-key-heading b { font-weight: 400; }
+.ai-key-heading a { color: #9fb6ff; text-decoration: none; }
+.ai-key-row input { flex: 1; min-width: 0; padding: 5px 7px; color: #e5e5e5; background: #000; border: 1px solid #383838; outline: 0; font: 12px var(--mono); }
+.ai-key-row input:focus { border-color: #9fb6ff; }
+.ai-key-row button { padding: 5px 8px; color: #e5e5e5; background: transparent; border: 1px solid #383838; font: inherit; cursor: pointer; }
+.ai-key-row button:disabled { opacity: 0.4; cursor: default; }
+.ai-key-footer { margin-top: 8px; color: #858585; font-size: 12px; }
+.ai-key-footer button:only-child { margin-left: auto; }
 @media (max-width: 600px) { .term { font-size: 13px; } .pixel { --px: 4px; } .term-banner { padding: 10px 12px; } }
 
 /* Books in several parts: one card on the shelf (a stack of covers), parts side by side in reading order */

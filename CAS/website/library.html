@@ -242,6 +242,41 @@
           <input id="term-prompt" ref="prompt" v-model="input" autocomplete="off" spellcheck="false"
                  placeholder="Ask, or type / for commands" @keydown="onKey">
         </form>
+        <div class="ai-picker" ref="providerMenuEl" @click.stop @keydown.esc="closeProviderMenu">
+          <div v-if="providerMenuOpen" id="provider-menu" class="ai-popover">
+            <div class="ai-options" role="group" aria-label="AI providers">
+              <div v-for="p in providerItems" :key="p.id" class="ai-provider-option" :class="{ active: p.active }">
+                <button type="button" class="ai-provider-choice" :aria-pressed="String(p.active)" @click="chooseProvider(p.id)">
+                  <span>{{ p.label }}</span>
+                  <small>{{ p.active ? 'Current' : p.configured ? 'Key saved' : 'Add key' }}</small>
+                </button>
+                <a :href="p.tokenUrl" target="_blank" rel="noopener" :title="'Create ' + p.label + ' API token'" :aria-label="'Create ' + p.label + ' API token'">↗</a>
+              </div>
+            </div>
+            <form v-if="keyFormProvider" class="ai-key-form" @submit.prevent="submitProviderKey">
+              <div class="ai-key-heading">
+                <b>{{ providerInfo(keyFormProvider).label }} API key</b>
+                <a :href="providerInfo(keyFormProvider).tokenUrl" target="_blank" rel="noopener">Create token ↗</a>
+              </div>
+              <div class="ai-key-row">
+                <label for="provider-key" class="sr">{{ providerInfo(keyFormProvider).label }} API key</label>
+                <input id="provider-key" ref="keyInputEl" v-model="keyInput" type="password" autocomplete="off" spellcheck="false"
+                       :placeholder="'Paste ' + providerInfo(keyFormProvider).label + ' API key'">
+                <button type="submit" :disabled="!keyInput.trim()">Add key</button>
+              </div>
+              <div class="ai-key-footer">
+                <span v-if="providerInfo(keyFormProvider).billing">{{ providerInfo(keyFormProvider).billing }}</span>
+                <button v-if="providerHasPersonalKey(keyFormProvider)" type="button" @click="removeProviderKey(keyFormProvider)">Remove saved key</button>
+              </div>
+            </form>
+          </div>
+          <div class="ai-status">
+            <button type="button" class="ai-provider-button" aria-controls="provider-menu" :aria-expanded="String(providerMenuOpen)" @click="toggleProviderMenu">
+              <i aria-hidden="true"></i>{{ aiOn ? providerName() : 'AI provider' }} <span aria-hidden="true">⌄</span>
+            </button>
+            <button v-if="aiOn" type="button" class="ai-key-edit" @click="editProviderKey(aiProvider)">API key</button>
+          </div>
+        </div>
       </div>
     </section>
   </main>

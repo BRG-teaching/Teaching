@@ -58,9 +58,10 @@ jobs:
         run: |
           v=${GITHUB_SHA::7}
           sed -i -E 's#(src|href)="((gate|library-config|notebook-exercises|library|terminal-context)\.js|(style|library)\.css)"#\1="\2?v='"$v"'"#g' docs/CAS/website/library.html
-          sed -i "s#src: 'vendor/brg-claude.js'#src: 'vendor/brg-claude.js?v=$v'#; s#src: 'brg-gemini.js'#src: 'brg-gemini.js?v=$v'#" docs/CAS/website/library.js
+          sed -i "s#src: 'vendor/brg-claude.js'#src: 'vendor/brg-claude.js?v=$v'#; s#src: 'brg-gemini.js'#src: 'brg-gemini.js?v=$v'#; s#src: 'brg-kimi.js'#src: 'brg-kimi.js?v=$v'#" docs/CAS/website/library.js
           grep -F "src: 'vendor/brg-claude.js?v=$v'" docs/CAS/website/library.js
           grep -F "src: 'brg-gemini.js?v=$v'" docs/CAS/website/library.js
+          grep -F "src: 'brg-kimi.js?v=$v'" docs/CAS/website/library.js
           sed -i "s#jupyter/lab/index.html#&?v=$v#" docs/CAS/website/library.js
           sed -i "s#new URL('notebook-theme.css', location.href).href#& + '?v=$v'#" docs/CAS/website/library.js
           grep -c "?v=$v" docs/CAS/website/library.html docs/CAS/website/library.js

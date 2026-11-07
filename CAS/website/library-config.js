@@ -28,8 +28,10 @@ window.CAS_LIBRARY = {
   // and builds from plain words without Claude.
   chatEndpoint: '',
 
-  // The BRG MCP server used by Claude and Gemini in the terminal for the library and every BRG tool.
-  // Own-key Gemini mode calls these tools directly from this browser.
+  // The BRG MCP server used by Claude, Gemini and Kimi for the library and every BRG tool.
+  // Own-key Gemini and Kimi modes call these tools directly from this browser.
   mcpEndpoint: 'https://brg-mcp.onrender.com/mcp',
   geminiModel: 'gemini-3.8-flash',
+  kimiEndpoint: 'https://api.moonshot.ai/v1/chat/completions',
+  kimiModel: 'kimi-k2.7-code',
 };
