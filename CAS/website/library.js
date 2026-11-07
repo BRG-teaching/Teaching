@@ -679,19 +679,11 @@ createApp({
     const notebookEl = ref(null);
     const notebookFile = computed(() => notebookExercise(route.exercise)?.file || '01-basics/01-box.ipynb');
     const notebookSrc = 'jupyter/lab/index.html';
-    function fitNotebookChrome(frame, app) {
+    function fitNotebookChrome(app) {
       app.shell._leftHandler.sideBar.show();
       app.shell._rightHandler.sideBar.hide();
       for (const id of ['jp-top-panel', 'jp-bottom-panel']) app.shell.layout.widgets.find((widget) => widget.id === id)?.show();
-      if (frame.clientWidth < 700) app.shell.collapseLeft();
-      else {
-        app.shell.expandLeft();
-        app.shell.activateById('filebrowser');
-      }
-      frame.contentWindow.onresize = () => {
-        if (frame.clientWidth < 700) app.shell.collapseLeft();
-        else app.shell.expandLeft();
-      };
+      app.shell.collapseLeft();
     }
     async function openNotebook() {
       // Same-origin JupyterLab API: open another file without reloading the iframe or its kernels.
@@ -742,7 +734,7 @@ createApp({
         }
         app.shell.mode = 'multiple-document';
         app.shell.collapseRight();
-        fitNotebookChrome(frame, app);
+        fitNotebookChrome(app);
         await app.commands.execute('filebrowser:go-to-path', { path: '', dontShowBrowser: true });
         if (widget?.id) app.shell.activateById(widget.id);
         await app.commands.execute('notebook:render-all-markdown');
