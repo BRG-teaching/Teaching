@@ -226,6 +226,14 @@ window.CAS_NOTEBOOKS = [
     "section": "foundation"
   },
   {
+    "id": "session-viewer",
+    "file": "05-solvers/06-session-viewer.ipynb",
+    "title": "Solvers: Session Viewer",
+    "summary": "Solve a force-density net with NumPy and display nodes and force-scaled edges with session_viewer.",
+    "minutes": 30,
+    "section": "foundation"
+  },
+  {
     "id": "ags",
     "file": "06-structures/01-ags.ipynb",
     "title": "Graphic statics: compas_ags",
