@@ -2,7 +2,11 @@
   const DEFAULT_MODEL = 'kimi-k2.7-code';
 
   function declarations(tools) {
-    const notebook = window.BRG_TERMINAL_CONTEXT.notebookTool;
+    const context = window.BRG_TERMINAL_CONTEXT;
+    const local = [context.notebookTool, ...context.notebookTools].map((tool) => ({
+      type: 'function',
+      function: { name: tool.name, description: tool.description, parameters: tool.input_schema },
+    }));
     return tools.filter((tool) => !/_add$/.test(tool.name)).map((tool) => ({
       type: 'function',
       function: {
@@ -10,10 +14,7 @@
         description: tool.description,
         parameters: tool.inputSchema || { type: 'object', properties: {} },
       },
-    })).concat({
-      type: 'function',
-      function: { name: notebook.name, description: notebook.description, parameters: notebook.input_schema },
-    });
+    })).concat(local);
   }
 
   function completeMessage(message, finishReason, onEvent) {
@@ -80,7 +81,7 @@
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
         model,
-        messages: [{ role: 'system', content: window.BRG_TERMINAL_CONTEXT.prompt + '\n\nThis Kimi session has no code-execution tool. When numbers matter, show the calculation explicitly and do not claim to have executed Python.' }, ...contents],
+        messages: [{ role: 'system', content: window.BRG_TERMINAL_CONTEXT.prompt + '\n\nUse notebook_execute for live Python diagnostics in the open notebook. For calculations outside that kernel, show the calculation explicitly and do not claim to have executed Python.' }, ...contents],
         max_tokens: 16384,
         stream: true,
         tools: declarations(tools),
@@ -110,7 +111,7 @@
     return { file, cells };
   }
 
-  async function executeTool(call, tools, callTool, writeNotebook, signal) {
+  async function executeTool(call, tools, callTool, writeNotebook, callNotebookTool, signal) {
     try {
       const name = call.function?.name;
       const args = JSON.parse(call.function?.arguments || '{}');
@@ -118,6 +119,7 @@
         const notebook = notebookResult(args);
         return { text: await writeNotebook(notebook.file, notebook.cells), images: [] };
       }
+      if (window.BRGNotebook.isTool(name)) return { text: await callNotebookTool(name, args, signal), images: [] };
       if (!tools.some((tool) => tool.name === name)) throw new Error(`No BRG tool named ${name}.`);
       const result = await callTool(name, args, signal);
       const content = Array.isArray(result.content) ? result.content : [];
@@ -146,7 +148,7 @@
         let input = {};
         try { input = JSON.parse(call.function.arguments || '{}'); } catch { /* the tool receives the argument error instead */ }
         onEvent({ t: 'tool', name: call.function.name, input });
-        const result = await executeTool(call, tools, options.callTool, options.writeNotebook, signal);
+        const result = await executeTool(call, tools, options.callTool, options.writeNotebook, options.callNotebookTool, signal);
         responses.push({ role: 'tool', tool_call_id: call.id, name: call.function.name, content: result.text });
         images.push(...result.images);
       }

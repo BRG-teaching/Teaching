@@ -25,12 +25,17 @@
   }
 
   function declarations(tools) {
-    const notebook = window.BRG_TERMINAL_CONTEXT.notebookTool;
+    const context = window.BRG_TERMINAL_CONTEXT;
+    const local = [context.notebookTool, ...context.notebookTools].map((tool) => ({
+      name: tool.name,
+      description: tool.description,
+      parameters: schema(tool.input_schema),
+    }));
     return tools.filter((tool) => !/_add$/.test(tool.name)).map((tool) => ({
       name: tool.name,
       description: tool.description,
       parameters: schema(tool.inputSchema || { type: 'object', properties: {} }),
-    })).concat({ name: notebook.name, description: notebook.description, parameters: schema(notebook.input_schema) });
+    })).concat(local);
   }
 
   async function request({ apiKey, model, endpoint, contents, tools, signal }) {
@@ -41,7 +46,7 @@
       headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': apiKey },
       body: JSON.stringify({
         contents,
-        systemInstruction: { parts: [{ text: context.prompt + '\n\nThis Gemini session has no code-execution tool. When numbers matter, show the calculation explicitly and do not claim to have executed Python.' }] },
+        systemInstruction: { parts: [{ text: context.prompt + '\n\nUse notebook_execute for live Python diagnostics in the open notebook. For calculations outside that kernel, show the calculation explicitly and do not claim to have executed Python.' }] },
         tools: [{ functionDeclarations: declarations(tools) }],
         toolConfig: { functionCallingConfig: { mode: 'AUTO' } },
       }),
@@ -69,12 +74,16 @@
     return { file, cells };
   }
 
-  async function toolResult(call, tools, callTool, writeNotebook, signal) {
+  async function toolResult(call, tools, callTool, writeNotebook, callNotebookTool, signal) {
     const response = { name: call.name, ...(call.id ? { id: call.id } : {}) };
     try {
       if (call.name === 'notebook') {
         const notebook = notebookResult(call.args);
         response.response = { output: await writeNotebook(notebook.file, notebook.cells) };
+        return { functionResponse: response };
+      }
+      if (window.BRGNotebook.isTool(call.name)) {
+        response.response = { output: await callNotebookTool(call.name, call.args || {}, signal) };
         return { functionResponse: response };
       }
       if (!tools.some((tool) => tool.name === call.name)) throw new Error(`No BRG tool named ${call.name}.`);
@@ -109,7 +118,7 @@
       const parts = [];
       for (const call of calls) {
         onEvent({ t: 'tool', name: call.name, input: call.args || {} });
-        parts.push(await toolResult(call, tools, options.callTool, options.writeNotebook, signal));
+        parts.push(await toolResult(call, tools, options.callTool, options.writeNotebook, options.callNotebookTool, signal));
       }
       const result = { role: 'user', parts };
       contents.push(content, result);

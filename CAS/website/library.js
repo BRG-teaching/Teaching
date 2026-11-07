@@ -615,7 +615,7 @@ createApp({
       keyStores[name].set(key);
       keyRevision.value++;
       selectProvider(name);
-      say(`${info.label} connected. Your key is kept in this browser and sent only to ${info.destination}; BRG tools use the existing MCP server.`, 'dim');
+      say(`${info.label} connected. Your key stays in this browser and is sent only to ${info.destination}. Notebook tools use the live Jupyter session; BRG tools use the existing MCP server.`, 'dim');
       return true;
     }
     function removeProviderKey(name) {
@@ -917,7 +917,7 @@ createApp({
     });
     const say = (text, kind = 'out', act, href, img) => { log.value.push({ text, kind, act, href, img }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal · /help for commands.', 'dim');
-    if (aiOn.value) say(`Ask ${providerName()} for BRG sources, figures or a COMPAS notebook.`, 'dim');
+    if (aiOn.value) say(`Ask ${providerName()} about this notebook: it can read cells and errors, run Python, and make requested edits. BRG sources and figures are also available.`, 'dim');
     else say('Library tools are ready. Connect Claude with /key <Anthropic key> or Gemini with /key gemini <key>.', 'dim');
 
     // The sheet over the notebook: what it shows, with a back stack of the commands that produced it.
@@ -1018,7 +1018,7 @@ createApp({
           }
           location.hash = '/notebook/' + tutorial.id; closeSheet();
           say(`${tutorial.title} · ${tutorial.file}\n${tutorial.summary}\nChoose Run → Run All Cells, or use Shift+Enter cell by cell. Change one parameter, predict the result and run again.`, 'out');
-          say('Save with Ctrl+S; use File → Save and Export Notebook As → Notebook to keep a copy on your computer. The notebook and terminal are separate: paste code or errors here when asking for help.', 'dim');
+          say('Save with Ctrl+S; use File → Save and Export Notebook As → Notebook to keep a copy on your computer. The connected AI can inspect cells and errors, run code and edit this notebook when you ask.', 'dim');
         }
         else if (cmd === '/close') closeSheet();
         else if (cmd === '/clear') log.value = [];
@@ -1183,6 +1183,7 @@ createApp({
           apiKey: kimiKey.get(), model: cfg.kimiModel || window.BRGKimi.DEFAULT_MODEL,
           endpoint: KIMI_API, history: ai.kimiHistory, tools: ai.mcpTools,
           callTool: (name, args, signal) => mcpCall('tools/call', { name, arguments: args }, signal),
+          callNotebookTool: (name, args, signal) => window.BRGNotebook.call(notebookEl.value, name, args, signal),
           writeNotebook: async (file, cells) => {
             say(`· notebook: ${file}`, 'dim');
             return notebookForClaude(file, cells);
@@ -1216,6 +1217,7 @@ createApp({
           apiKey: geminiKey.get(), model: cfg.geminiModel || window.BRGGemini.DEFAULT_MODEL,
           endpoint: GEMINI_API, history: ai.geminiHistory, tools: ai.mcpTools,
           callTool: (name, args, signal) => mcpCall('tools/call', { name, arguments: args }, signal),
+          callNotebookTool: (name, args, signal) => window.BRGNotebook.call(notebookEl.value, name, args, signal),
           writeNotebook: async (file, cells) => {
             say(`· notebook: ${file}`, 'dim');
             return notebookForClaude(file, cells);
@@ -1307,7 +1309,8 @@ createApp({
       if (!cfg.chatEndpoint) {
         await loadClaude();
         const env = { ANTHROPIC_API_KEY: ownKey.get(), ANTHROPIC_BASE_URL: devParam('anthropic') || undefined, BROWSER: true, MODEL: window.BRGClaude.DEFAULT_MODEL, EFFORT: 'medium',
-          MCP_URL: cfg.mcpEndpoint };
+          MCP_URL: cfg.mcpEndpoint,
+          NOTEBOOK_TOOL: (name, args, toolSignal) => window.BRGNotebook.call(notebookEl.value, name, args, toolSignal) };
         try {
           const done = await window.BRGClaude.converse(env, [...ai.history], ai.container, onAIEvent, signal);
           endStream();
@@ -1359,6 +1362,12 @@ createApp({
       if (e.name === 'read_book_section') return `· reading ${i.book}/${i.section}${i.start_line > 1 ? ' from line ' + i.start_line : ''}`;
       if (e.name === 'look_at_figure') return `· looking at ${String(i.url).split('/').slice(-2).join('/')}`;
       if (e.name === 'list_books') return '· listing the library';
+      if (e.name === 'notebook_inspect') return `· reading the open notebook${i.cell ? ' · cell ' + i.cell : ''}`;
+      if (e.name === 'notebook_run') return `· ${i.all ? 'running all notebook cells' : 'running notebook cell ' + (i.cell || 'active')}`;
+      if (e.name === 'notebook_execute') return '· running Python in the notebook kernel';
+      if (e.name === 'notebook_update') return `· updating notebook cell ${i.cell || 'active'}`;
+      if (e.name === 'notebook_insert') return '· inserting a notebook cell';
+      if (e.name === 'notebook_restart') return '· restarting the notebook kernel';
       if (e.name === 'code_execution' || /code_execution/.test(e.name)) return '· computing (Python)';
       return `· BRG tool: ${e.name}`;
     };
