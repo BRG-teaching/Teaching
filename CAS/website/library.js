@@ -8,18 +8,23 @@ const notebookExercises = window.CAS_NOTEBOOKS || [];
 const notebookExercise = (id) => notebookExercises.find((tutorial) => tutorial.id === id) || notebookExercises.find((tutorial) => tutorial.id === 'box');
 // ?chat=http://localhost:8788 tries a local copy of the Claude service.
 // Only a local address: a link to another site could otherwise collect the conversation and the key.
-// ?anthropic=http://localhost:8790 points the own-key mode at a mock Claude API.
+// ?anthropic=http://localhost:8790 and ?gemini=http://localhost:8791/v1beta/models point own-key modes at local mocks.
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1):\d+\/?$/, devParam = (k) => { const v = new URLSearchParams(location.search).get(k); return v && LOCAL.test(v) ? v : ''; };
+const geminiDev = new URLSearchParams(location.search).get('gemini') || '';
+const GEMINI_API = /^http:\/\/(localhost|127\.0\.0\.1):\d+\/v1beta\/models$/.test(geminiDev) ? geminiDev : 'https://generativelanguage.googleapis.com/v1beta/models';
 if (devParam('chat')) cfg.chatEndpoint = devParam('chat');
-// The BRG MCP server, also called from this page for the notebook skills (/box, …). ?mcp=http://localhost:8000/mcp
-// tries a local server for the skills only (Claude needs a public address).
+// The BRG MCP server is called from this page for notebook skills and Gemini's tool calls.
+// ?mcp=http://localhost:8000/mcp tries a local server for the skills only (Claude needs a public address).
 const SKILLS_MCP = (() => { const v = new URLSearchParams(location.search).get('mcp'); return v && /^http:\/\/(localhost|127\.0\.0\.1):\d+\/mcp$/.test(v) ? v : cfg.mcpEndpoint; })();
 let mcpId = 0;
-async function mcpCall(method, params = {}) {
-  const res = await fetch(SKILLS_MCP, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: ++mcpId, method, params }) });
+async function mcpCall(method, params = {}, signal) {
+  const id = ++mcpId;
+  const res = await fetch(SKILLS_MCP, { method: 'POST', signal, headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' },
+    body: JSON.stringify({ jsonrpc: '2.0', id, method, params }) });
   if (!res.ok) throw new Error(`The BRG MCP server answered HTTP ${res.status}.`);
-  const reply = await res.json();
+  const contentType = res.headers.get('content-type') || '';
+  const reply = contentType.includes('text/event-stream') ? (await res.text()).split(/\r?\n/).filter((line) => line.startsWith('data:')).map((line) => JSON.parse(line.slice(5).trim())).find((message) => message.id === id) : await res.json();
+  if (!reply) throw new Error('The BRG MCP server returned no answer.');
   if (reply.error) throw new Error(reply.error.message);
   return reply.result;
 }
@@ -293,9 +298,10 @@ const COMMANDS = [
   { cmd: '/drawing', help: '<n> [step] play eQUILIBRIUM drawing n over the notebook', arg: true },
   { cmd: '/close', help: 'close the sheet and show the notebook' },
   { cmd: '/clear', help: 'clear the transcript' },
-  { cmd: '/new', help: 'start a new conversation with Claude' },
-  { cmd: '/stop', help: 'stop Claude’s answer' },
-  { cmd: '/key', help: '<key> your Anthropic API key (sk-ant-…) or the class key; /key off removes them', arg: true },
+  { cmd: '/new', help: 'start a new conversation with the selected AI' },
+  { cmd: '/stop', help: 'stop the AI’s answer' },
+  { cmd: '/key', help: '<Anthropic key>, or gemini <Google AI Studio key>; /key off removes them', arg: true },
+  { cmd: '/model', help: '[claude | gemini] show or switch the AI provider', arg: true },
   { cmd: '/usage', help: 'what Claude cost from this browser, and what is left of /budget' },
   { cmd: '/budget', help: '<dollars> the credits you loaded, to estimate what is left', arg: true },
 ];
@@ -568,13 +574,24 @@ createApp({
     const busy = ref(false);
     const history = [];
     let hpos = 0;
-    // The page keeps the Claude conversation and sends it each time,
-    // exactly as the service returned it (thinking blocks included).
-    const ai = { history: [], container: undefined, abort: null };
+    // Provider-native histories preserve Claude's thinking blocks and Gemini's thought signatures.
+    const ai = { history: [], geminiHistory: [], geminiTools: null, container: undefined, abort: null };
     const stored = (name) => ({ get: () => { try { return localStorage.getItem(name) || ''; } catch (e) { return ''; } },
       set: (k) => { try { if (k) localStorage.setItem(name, k); else localStorage.removeItem(name); } catch (e) { /* private window */ } } });
-    // the class's key for the BRG terminal service; or the visitor's own Anthropic API key, used from this browser
+    // The class key and personal API keys stay in this browser's local storage.
     const keyStore = stored('brg-terminal-key'), ownKey = stored('brg-anthropic-key');
+    const geminiKey = stored('brg-gemini-key'), providerStore = stored('brg-ai-provider');
+    const aiProvider = ref(geminiKey.get() && (!ownKey.get() || providerStore.get() === 'gemini') ? 'gemini' : 'claude');
+    const providerName = () => aiProvider.value === 'gemini' ? 'Gemini' : 'Claude';
+    function selectProvider(name) {
+      if (ai.abort) { say(`${providerName()} is still answering; wait, or /stop.`, 'err'); return false; }
+      if (name === 'gemini' ? !geminiKey.get() : !(ownKey.get() || cfg.chatEndpoint)) return false;
+      aiProvider.value = name;
+      providerStore.set(name);
+      aiOn.value = true;
+      ai.history = []; ai.geminiHistory = []; ai.container = undefined;
+      return true;
+    }
     // What Claude cost from this browser: [{at, cost}], and the credits loaded, kept locally. The API key cannot
     // read the account's balance; the Claude Console's Billing and Cost pages have the exact figures.
     const spentLog = { all: () => { try { return JSON.parse(localStorage.getItem('brg-spent') || '[]'); } catch (e) { return []; } },
@@ -652,8 +669,8 @@ createApp({
     onMounted(() => addEventListener('resize', updateSplitOrientation));
     onBeforeUnmount(() => removeEventListener('resize', updateSplitOrientation));
     watch(() => route.workspace, () => { if (collapsedPane.value === 'workspace') collapsedPane.value = ''; });
-    const claudeOn = ref(!!(cfg.chatEndpoint || ownKey.get()));
-    const claudeLabel = computed(() => (cfg.chatEndpoint ? 'Claude' : claudeOn.value ? 'Claude, your key' : ''));
+    const aiOn = ref(!!(cfg.chatEndpoint || ownKey.get() || geminiKey.get()));
+    const aiLabel = computed(() => !aiOn.value ? '' : aiProvider.value === 'gemini' ? 'Gemini, your key' : cfg.chatEndpoint ? 'Claude' : 'Claude, your key');
     const menuIndex = ref(0);
     const logEl = ref(null);
     const prompt = ref(null);
@@ -731,9 +748,8 @@ createApp({
         await app.commands.execute('notebook:render-all-markdown');
       } catch (e) { console.warn('Could not open the exercise in Jupyter.', e); }
     }
-    // Claude's notebook tool: write the cells (from a BRG notebook tool of the MCP server) as a notebook in
-    // JupyterLite's browser storage and open it in the notebook pane, for the student to run.
-    // A notebook skill: call its MCP tool from this page, no Claude, and open the notebook it returns.
+    // The shared AI notebook tool writes MCP-generated cells into JupyterLite and opens them on the left.
+    // A notebook skill calls its MCP tool directly, without an AI provider, and opens the notebook it returns.
     async function runSkill(skill, words) {
       const args = skillArguments(skill, words);
       say(`· BRG tool: ${skill.tool}${Object.keys(args).length ? ' ' + JSON.stringify(args) : ''}`, 'dim');
@@ -833,8 +849,8 @@ createApp({
     });
     const say = (text, kind = 'out', act, href, img) => { log.value.push({ text, kind, act, href, img }); nextTick(() => { if (logEl.value) logEl.value.scrollTop = logEl.value.scrollHeight; }); };
     say('BRG terminal · /help for commands.', 'dim');
-    if (claudeOn.value) say('Ask for BRG sources, figures or a COMPAS notebook.', 'dim');
-    else say('Library tools are ready. Connect Claude with /key <Anthropic API key>.', 'dim');
+    if (aiOn.value) say(`Ask ${providerName()} for BRG sources, figures or a COMPAS notebook.`, 'dim');
+    else say('Library tools are ready. Connect Claude with /key <Anthropic key> or Gemini with /key gemini <key>.', 'dim');
 
     // The sheet over the notebook: what it shows, with a back stack of the commands that produced it.
     const view = reactive({ kind: 'welcome', title: '', open: '', html: '', items: [], src: '', error: '', showBook: false });
@@ -910,7 +926,7 @@ createApp({
       line = line.trim();
       if (!line) return;
       if (!opts.quiet) {
-        const shown = line.replace(/^(\/key\s+)(\S{6})\S+/, '$1$2••••'); // a key is never shown or kept in the history
+        const shown = line.replace(/^(\/key\s+(?:(?:gemini|claude)\s+)?)(\S{6})\S+/, '$1$2••••'); // the full key is masked and omitted from history
         if (shown === line) { history.push(line); hpos = history.length; }
         say('> ' + shown, 'cmd');
       }
@@ -922,7 +938,7 @@ createApp({
         if (cmd === '/help' || cmd === '?') {
           COMMANDS.forEach((c) => say(`${c.cmd.padEnd(10)} ${c.help}`));
           if (skills.value.length) say('Notebook skills (/skills): ' + skills.value.map((k) => k.cmd).join(' · '), 'dim');
-          say('Anything else goes to Claude when it is connected (/key), else it searches the library.', 'dim');
+          say('Anything else goes to the selected AI when it is connected (/key), else it searches the library.', 'dim');
         }
         else if (cmd === '/notebook') {
           const id = arg.toLowerCase() || 'box';
@@ -939,6 +955,7 @@ createApp({
         else if (cmd === '/close') closeSheet();
         else if (cmd === '/clear') log.value = [];
         else if (cmd === '/usage') {
+          if (aiProvider.value === 'gemini') say('Gemini usage and quotas are in Google AI Studio. The cost estimate below is for Claude only.', 'dim');
           const all = spentLog.all(), sum = (l) => l.reduce((t, x) => t + x.cost, 0), day = Date.now() - 864e5, month = Date.now() - 30 * 864e5;
           const f = (v) => '$' + v.toFixed(2);
           say(`Claude from this browser: ${all.length} answers, ${f(sum(all))} in all · ${f(sum(all.filter((x) => x.at > month)))} in 30 days · ${f(sum(all.filter((x) => x.at > day)))} today`, 'out');
@@ -954,22 +971,68 @@ createApp({
           budget.set(String(v)); spentLog.all().length && say('Counting from the answers already made in this browser; to start the count from now, type /budget reset first.', 'dim');
           say(`Budget $${v.toFixed(2)} kept in this browser. /usage shows what is left.`, 'dim');
         }
-        else if (cmd === '/new') { ai.history = []; ai.container = undefined; say('New conversation with Claude.', 'dim'); }
-        else if (cmd === '/stop') { if (ai.abort) ai.abort.abort(); else say('Claude is not working on anything.', 'dim'); }
+        else if (cmd === '/new') { ai.history = []; ai.geminiHistory = []; ai.container = undefined; say(`New conversation with ${providerName()}.`, 'dim'); }
+        else if (cmd === '/stop') { if (ai.abort) ai.abort.abort(); else say(`${providerName()} is not working on anything.`, 'dim'); }
+        else if (cmd === '/model') {
+          const name = arg.toLowerCase();
+          if (!name) {
+            say(`Using ${providerName()}${aiProvider.value === 'gemini' ? ' · ' + cfg.geminiModel : ''}. Switch with /model claude or /model gemini.`, 'out');
+            say(`Claude: ${ownKey.get() || cfg.chatEndpoint ? 'configured' : 'no key'} · Gemini: ${geminiKey.get() ? 'configured' : 'no key'}`, 'dim');
+          } else if (!['claude', 'gemini'].includes(name)) say('Usage: /model claude or /model gemini.', 'err');
+          else if (!selectProvider(name)) say(name === 'gemini' ? 'Add a key first: /key gemini <Google AI Studio key>.' : 'Add a key first: /key <Anthropic API key>.', 'err');
+          else say(`Now using ${providerName()}${name === 'gemini' ? ' · ' + cfg.geminiModel : ''}. New conversation.`, 'dim');
+        }
         else if (cmd === '/key') {
           const k = arg.trim();
-          if (/^sk-ant-/.test(k)) {
-            ownKey.set(k); claudeOn.value = true;
+          const saveGemini = (key) => {
+            if (!/^[\w-]{20,200}$/.test(key)) { say('Paste the complete Google AI Studio API key after /key gemini. Nothing was stored.', 'err'); return; }
+            geminiKey.set(key); selectProvider('gemini');
+            say('Gemini is on in this browser. Your key is kept in local storage and sent only to Google; tool calls go directly to the BRG MCP server. /key gemini off removes it.', 'dim');
+          };
+          const saveClaude = (key) => {
+            ownKey.set(key); selectProvider('claude');
             say('Claude is on in this browser, with your API key. It is kept in this browser only and sent only to Anthropic; /key off removes it.', 'dim');
-          } else if (!k) {
-            say('Paste your key after /key on the same line: /key sk-ant-…   (/key off removes it)', 'dim');
+          };
+          const geminiCommand = k.match(/^gemini(?:\s+(.*))?$/i);
+          const claudeCommand = k.match(/^claude(?:\s+(.*))?$/i);
+          if (geminiCommand) {
+            const key = (geminiCommand[1] || '').trim();
+            if (key === 'off') {
+              geminiKey.set('');
+              if (aiProvider.value === 'gemini') selectProvider('claude');
+              aiOn.value = !!(ownKey.get() || cfg.chatEndpoint);
+              say('Gemini key removed from this browser.', 'dim');
+            } else if (key) saveGemini(key);
+            else if (geminiKey.get() && selectProvider('gemini')) say('Using your saved Gemini key.', 'dim');
+            else {
+              say('Create a Gemini key in Google AI Studio, then type /key gemini <key>. Google manages API access and quotas separately from this website.', 'dim');
+              say('https://aistudio.google.com/apikey', 'link', null, 'https://aistudio.google.com/apikey');
+              input.value = '/key gemini ';
+              nextTick(() => prompt.value && prompt.value.focus());
+            }
+          } else if (claudeCommand) {
+            const key = (claudeCommand[1] || '').trim();
+            if (key === 'off') {
+              ownKey.set('');
+              if (aiProvider.value === 'claude') selectProvider('gemini');
+              aiOn.value = !!(geminiKey.get() || cfg.chatEndpoint);
+              say('Claude key removed from this browser.', 'dim');
+            } else if (/^sk-ant-/.test(key)) saveClaude(key);
+            else if (!key && ownKey.get() && selectProvider('claude')) say('Using your saved Claude key.', 'dim');
+            else { say('Paste your whole Anthropic key: /key sk-ant-…', 'dim'); input.value = '/key '; }
+          } else if (/^sk-ant-/.test(k)) saveClaude(k);
+          else if (/^AIza[\w-]{20,}$/.test(k)) saveGemini(k);
+          else if (!k) {
+            say('Use /key <Anthropic key> or /key gemini <Google AI Studio key>. /key off removes both.', 'dim');
             input.value = '/key ';
             nextTick(() => prompt.value && prompt.value.focus());
           } else if (k === 'off') {
-            ownKey.set(''); keyStore.set(''); claudeOn.value = !!cfg.chatEndpoint;
-            say('Keys removed from this browser.', 'dim');
-          } else if (cfg.chatEndpoint) { keyStore.set(k); say('Class key kept in this browser.', 'dim'); }
-          else say('That is not an Anthropic API key, so nothing was stored: they start with sk-ant-api03-. Copy the whole key when you create it in the Claude Console.', 'err');
+            ownKey.set(''); geminiKey.set(''); keyStore.set(''); providerStore.set('');
+            aiProvider.value = 'claude'; aiOn.value = !!cfg.chatEndpoint;
+            ai.history = []; ai.geminiHistory = []; ai.container = undefined;
+            say('API keys removed from this browser.', 'dim');
+          } else if (cfg.chatEndpoint) { keyStore.set(k); selectProvider('claude'); say('Class key kept in this browser.', 'dim'); }
+          else say('Key not recognised. Use an Anthropic key (sk-ant-…) or /key gemini followed by your Google AI Studio key. Nothing was stored.', 'err');
         }
         else if (cmd === '/books') {
           if (!ready()) return;
@@ -1048,16 +1111,54 @@ createApp({
               say(title + ':', 'dim');
               group.forEach((k) => say(`${k.cmd.padEnd(16)} ${k.help}`, 'out', k.cmd));
             }
-            say('Arguments in order or as name=value, e.g. ' + list[0].cmd + (list[0].args.length ? ' ' + list[0].args[0] + '=3' : '') + '. Or ask Claude in words.', 'dim');
+            say('Arguments in order or as name=value, e.g. ' + list[0].cmd + (list[0].args.length ? ' ' + list[0].args[0] + '=3' : '') + '. Or ask the selected AI in words.', 'dim');
           }
         } else if (skills.value.some((k) => k.cmd === cmd.toLowerCase())) await runSkill(skills.value.find((k) => k.cmd === cmd.toLowerCase()), args);
         else if (cmd.startsWith('/')) say('Unknown command. Type /help.', 'err');
-        else if (claudeOn.value) await askClaude(line);
+        else if (aiOn.value) await askAI(line);
         else if (ready() && showHits(line, search(line, allSections.value))) keep();
       } catch (e) {
         say(e instanceof TypeError ? 'Could not reach the library (network or CORS).' : e.message, 'err');
         if (view.kind === 'loading') setView({ kind: 'error', title: 'Error', error: e.message });
       } finally { busy.value = false; }
+    }
+    async function askAI(line) {
+      if (aiProvider.value === 'gemini') return askGemini(line);
+      return askClaude(line);
+    }
+    async function askGemini(line) {
+      if (ai.abort) { say('Gemini is still answering; wait, or /stop.', 'err'); return; }
+      const mark = ai.geminiHistory.length;
+      ai.geminiHistory.push({ role: 'user', parts: [{ text: line }] });
+      ai.abort = new AbortController();
+      try {
+        await loadGemini();
+        if (!ai.geminiTools) ai.geminiTools = (await mcpCall('tools/list', {}, ai.abort.signal)).tools || [];
+        const done = await window.BRGGemini.converse({
+          apiKey: geminiKey.get(), model: cfg.geminiModel || window.BRGGemini.DEFAULT_MODEL,
+          endpoint: GEMINI_API, history: ai.geminiHistory, tools: ai.geminiTools,
+          callTool: (name, args, signal) => mcpCall('tools/call', { name, arguments: args }, signal),
+          writeNotebook: async (file, cells) => {
+            say(`· notebook: ${file}`, 'dim');
+            return notebookForClaude(file, cells);
+          },
+          onEvent: onAIEvent, signal: ai.abort.signal,
+        });
+        ai.geminiHistory.push(...done.messages);
+        if (done.stop === 'MAX_TOKENS') say('The answer was cut off (too long). Ask for less at once.', 'err');
+        else if (done.stop === 'rounds') say('Gemini took many steps without finishing; ask it to continue.', 'dim');
+      } catch (e) {
+        ai.geminiHistory.length = mark;
+        if (e.name === 'AbortError') say('Stopped.', 'err');
+        else if (e instanceof TypeError) say('Could not reach Gemini or the BRG MCP server (network or CORS).', 'err');
+        else if (e.status === 400 && /api.key|key.invalid/i.test(e.message)) say('Gemini refused this API key. Replace it with /key gemini <key>.', 'err');
+        else if (e.status === 401 || e.status === 403) say('Gemini refused access to this key. Check its restrictions and Generative Language API access in Google AI Studio.', 'err');
+        else if (e.status === 429) say('Gemini’s usage limit is reached. Check the quota for your key in Google AI Studio or try again later.', 'err');
+        else say(e.message, 'err');
+      } finally {
+        endStream();
+        ai.abort = null;
+      }
     }
     // One question to Claude: send the conversation, show what streams back, write the notebooks it asks
     // for on the left and send it what happened, until it has answered. A failed turn is dropped
@@ -1101,18 +1202,22 @@ createApp({
       }
     }
     let lastUsage = null;
-    let claudeScript = null;
+    let claudeScript = null, geminiScript = null;
     const loadClaude = () => claudeScript || (claudeScript = new Promise((done, fail) => {
       const tag = Object.assign(document.createElement('script'), { src: 'vendor/brg-claude.js', onload: done, onerror: () => { claudeScript = null; fail(new Error('Could not load the Claude client.')); } });
       document.head.append(tag);
     }));
-    function onClaudeEvent(e) {
+    const loadGemini = () => geminiScript || (geminiScript = new Promise((done, fail) => {
+      const tag = Object.assign(document.createElement('script'), { src: 'brg-gemini.js', onload: done, onerror: () => { geminiScript = null; fail(new Error('Could not load the Gemini client.')); } });
+      document.head.append(tag);
+    }));
+    function onAIEvent(e) {
       if (e.t === 'thinking' || e.t === 'text') streamInto(e.t, e.d);
       else if (e.t === 'tool') {
         endStream(); say(toolLine(e), 'dim');
         if (e.name === 'look_at_figure' && e.input && e.input.url) {
           const src = /^https:\/\//.test(e.input.url) ? e.input.url : fileUrl(e.input.url);
-          say('Claude is looking at ' + src.split('/').slice(-3).join('/'), 'fig', null, src, src);
+          say(`${providerName()} is looking at ${src.split('/').slice(-3).join('/')}`, 'fig', null, src, src);
         }
       }
     }
@@ -1122,7 +1227,7 @@ createApp({
         const env = { ANTHROPIC_API_KEY: ownKey.get(), ANTHROPIC_BASE_URL: devParam('anthropic') || undefined, BROWSER: true, MODEL: window.BRGClaude.DEFAULT_MODEL, EFFORT: 'medium',
           MCP_URL: cfg.mcpEndpoint };
         try {
-          const done = await window.BRGClaude.converse(env, [...ai.history], ai.container, onClaudeEvent, signal);
+          const done = await window.BRGClaude.converse(env, [...ai.history], ai.container, onAIEvent, signal);
           endStream();
           return done;
         } catch (err) {
@@ -1159,7 +1264,7 @@ createApp({
           if (!text.trim()) continue;
           const e = JSON.parse(text);
           if (e.t === 'error') throw new Error(e.error);
-          if (e.t === 'done') done = e; else onClaudeEvent(e);
+          if (e.t === 'done') done = e; else onAIEvent(e);
         }
       }
       endStream();
@@ -1214,7 +1319,7 @@ createApp({
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years, coverImg,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
       splitEl, splitRatio, collapsedPane, splitDragging, splitStacked, beginSplitDrag, dragSplit, endSplitDrag, splitKey, toggleTerminal,
-      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, closeSheet, claudeLabel, notebookSrc, notebookOpened, notebookEl, notebookFile, openNotebook,
+      view, viewStack, viewBack, viewerEl, onViewerClick, run, drawingIds, closeSheet, aiLabel, notebookSrc, notebookOpened, notebookEl, notebookFile, openNotebook,
     };
   },
 }).mount('#app');

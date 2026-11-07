@@ -5,5 +5,5 @@
 - Build JupyterLite into `docs/CAS/website/jupyter/` and upload only `docs/` to GitHub Pages.
 - The notebook starts with the file browser visible and the terminal hidden. Keep full Jupyter functionality with the black theme, and preserve both sessions when toggling the terminal; do not remount the iframe or clear the conversation.
 - Use the shared `--nav-font` token for navigation: 13px Open Sans with compact spacing.
-- Preserve the Claude/Anthropic instructions and the existing BRG MCP connection. No Gemini provider integration is present.
+- Preserve the shared Claude/Gemini instructions in `CAS/website/terminal-context.js` and the existing BRG MCP connection. Gemini uses `/key gemini <key>` and `/model gemini`; personal keys remain browser-local.
 - Verify changes with the docs build, JupyterLite build, and headless Chrome at desktop and mobile sizes.

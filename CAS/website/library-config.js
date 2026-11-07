@@ -28,7 +28,8 @@ window.CAS_LIBRARY = {
   // and builds from plain words without Claude.
   chatEndpoint: '',
 
-  // The BRG MCP server that Claude in the terminal uses for the library and every BRG tool, in both the
-  // Worker and the own-key mode: mcp-server-brg on Render (its deploy/README.md).
+  // The BRG MCP server used by Claude and Gemini in the terminal for the library and every BRG tool.
+  // Own-key Gemini mode calls these tools directly from this browser.
   mcpEndpoint: 'https://brg-mcp.onrender.com/mcp',
+  geminiModel: 'gemini-3.8-flash',
 };
