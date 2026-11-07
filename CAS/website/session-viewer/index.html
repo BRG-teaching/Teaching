@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session Viewer · COMPAS</title>
+<link rel="icon" href="data:,">
+<script src="diagnostics.js" defer></script>
+<script src="bridge.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overscroll-behavior: none; }
+  body { background: #f0f0f0; overflow: hidden; }
+  canvas { display: block; width: 100vw; height: 100vh; height: 100dvh; touch-action: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+  canvas:focus, canvas:focus-visible { outline: none; }
+  #viewer-docs { position: fixed; bottom: 0; right: 0; z-index: 10; display: block; width: 0; height: 0; border-bottom: 20px solid #111; border-left: 20px solid transparent; }
+  #viewer-docs:hover, #viewer-docs:focus-visible { border-bottom-width: 26px; border-left-width: 26px; outline: none; }
+  #viewer-status:empty { display: none; }
+  #viewer-error:not([hidden]), #no-webgpu { position: fixed; inset: 0; z-index: 20; background: #111; color: #eee; padding: 25vh 12vw; font: 14px/1.6 system-ui; }
+  #viewer-error button { padding: 8px 16px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div id="viewer-error" role="alert" hidden><p id="viewer-error-message"></p><button type="button" onclick="location.reload()">Reload viewer</button></div>
+<canvas id="canvas" tabindex="0" role="application" aria-label="3D viewer. Click selects, Shift-click adds to selection, right drag orbits. Type Layers On in the command line to show layers. Enter executes and Escape cancels."></canvas>
+<input id="command-agent" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" tabindex="-1" aria-hidden="true" style="position: fixed; bottom: 0; left: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; font-size: 16px; pointer-events: none;">
+<a id="viewer-docs" href="https://github.com/petrasvestartas/session/tree/main/session_viewer" target="_blank" rel="noopener" title="Session Viewer source" aria-label="Open Session Viewer source"></a>
+<div id="viewer-status" role="status" aria-live="polite" style="position: fixed; bottom: 12px; left: 12px; color: #fff; background: #222b; font: 14px system-ui; padding: 4px 8px; pointer-events: none;"></div>
+<script type="module">
+  import init, * as bindings from './session_viewer-b6cfe03c21f32e16.js';
+  window.wasmBindings = bindings;
+  const wasm = await init({ module_or_path: './session_viewer-b6cfe03c21f32e16_bg.wasm' });
+  dispatchEvent(new CustomEvent('TrunkApplicationStarted', { detail: { wasm } }));
+</script>
+<script>
+  const canvas = document.getElementById('canvas');
+  canvas.addEventListener('contextmenu', (event) => event.preventDefault());
+  if (!navigator.gpu) {
+    document.body.insertAdjacentHTML('beforeend', '<div id="no-webgpu">Session Viewer needs WebGPU. Open this notebook in a WebGPU-enabled browser over HTTPS or localhost.</div>');
+  }
+</script>
+</body>
+</html>
