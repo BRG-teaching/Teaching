@@ -59,10 +59,10 @@ jobs:
           v=${GITHUB_SHA::7}
           sed -i -E 's#(src|href)="((gate|library-config|notebook-exercises|library)\.js|(style|library)\.css)"#\1="\2?v='"$v"'"#g' docs/CAS/website/library.html
           sed -i "s#src: 'vendor/brg-claude.js'#src: 'vendor/brg-claude.js?v=$v'#" docs/CAS/website/library.js
-          sed -i "s#jupyter/lab/index.html?path=#jupyter/lab/index.html?v=$v\\&path=#" docs/CAS/website/library.js
+          sed -i "s#jupyter/lab/index.html#&?v=$v#" docs/CAS/website/library.js
           sed -i "s#new URL('notebook-theme.css', location.href).href#& + '?v=$v'#" docs/CAS/website/library.js
           grep -c "?v=$v" docs/CAS/website/library.html docs/CAS/website/library.js
-          grep -F "jupyter/lab/index.html?v=$v&path=" docs/CAS/website/library.js
+          grep -F "const notebookSrc = 'jupyter/lab/index.html?v=$v';" docs/CAS/website/library.js
           grep -F "new URL('notebook-theme.css', location.href).href + '?v=$v'" docs/CAS/website/library.js
       - name: Copy the CAS library markdown from R2
         run: python3 CAS/website/tools/mirror_books.py docs/CAS/website/books

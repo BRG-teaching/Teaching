@@ -661,7 +661,7 @@ createApp({
     const drawingIds = ref([]);
     const notebookEl = ref(null);
     const notebookFile = computed(() => notebookExercise(route.exercise)?.file || '01-basics/01-box.ipynb');
-    const notebookSrc = 'jupyter/lab/index.html?path=' + notebookFile.value;
+    const notebookSrc = 'jupyter/lab/index.html';
     function fitNotebookChrome(frame, app) {
       app.shell._leftHandler.sideBar.show();
       app.shell._rightHandler.sideBar.hide();
@@ -702,12 +702,27 @@ createApp({
       try {
         await app.restored;
         await app.serviceManager.ready;
+        while (frame === notebookEl.value && frame.contentDocument.visibilityState === 'hidden') {
+          await new Promise((done) => frame.contentDocument.addEventListener('visibilitychange', done, { once: true }));
+        }
+        if (frame !== notebookEl.value) return;
+        for (const id of ['@jupyterlite/pyodide-kernel-extension:kernel', 'jupyter.extensions.jupyter-threejs']) {
+          const deadline = Date.now() + 30000;
+          while (frame === notebookEl.value && !app.hasPlugin(id) && Date.now() < deadline) await new Promise((done) => setTimeout(done, 100));
+          if (frame !== notebookEl.value) return;
+          if (!app.hasPlugin(id)) throw new Error(`The Jupyter plugin did not load: ${id}`);
+          await app.activatePlugin(id);
+        }
+        await app.serviceManager.kernelspecs.refreshSpecs();
         const widget = await app.commands.execute('docmanager:open', {
           path: notebookFile.value, factory: 'Notebook',
           kernel: { name: app.serviceManager.kernelspecs.specs.default },
           kernelPreference: { language: 'python', autoStartDefault: true },
         });
         await widget?.context.ready;
+        if (widget && !widget.sessionContext.session?.kernel) {
+          await widget.sessionContext.changeKernel({ name: app.serviceManager.kernelspecs.specs.default || 'python' });
+        }
         app.shell.mode = 'multiple-document';
         app.shell.collapseRight();
         fitNotebookChrome(frame, app);
