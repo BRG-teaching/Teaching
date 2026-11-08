@@ -19,6 +19,16 @@ from urllib.parse import quote
 
 BASE = "https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev"
 EXTRAS = ["README.md", "INDEX.md", "GLOSSARY.md", "FIGURES.md", "SCANS.md", "GRAPHIC-STATICS-NOTATION.md"]
+CATALOG_RECOVERY = {
+    "force-density-linkwitz": (
+        "Force Density Method · Klaus Linkwitz · Chapter 6 of Shell Structures for Architecture, 2014",
+        [
+            ("01-force-density-method.md", "Chapter 6 — Force density method: design of a timber shell", "pp. 58–69 · equations (6.1)–(6.37)", "The printed chapter, transcribed and checked against the complete scan."),
+            ("02-study-matrix-formulation.md", "Study notes — the matrix formulation in numbers", "added notes · parts A–G", "Every matrix equation followed numerically, including the Jacobian, general solver and 36-node grid."),
+            ("03-reading-notes.md", "Reading notes", "added notes · 3 handwritten pages", "Force density, matrix formulations, and the split into unknown and fixed points."),
+        ],
+    ),
+}
 LIMIT = 2_000_000  # same per-file cap as the MCP server
 
 
@@ -45,7 +55,6 @@ def main(out: Path, base: str = BASE) -> int:
     if library is None:
         print(f"mirror: could not read {base}/LIBRARY.md; the page will try R2 directly")
         return 0
-    (out / "LIBRARY.md").write_bytes(library)
     books, current = {}, None
     for line in library.decode("utf-8", "replace").splitlines():
         head = re.match(r"^## `([a-zA-Z0-9_-]+)/` — (.+)$", line)
@@ -56,6 +65,18 @@ def main(out: Path, base: str = BASE) -> int:
         entry = re.match(r"^\s+- `([^`]+\.md)` \*\*(.*?)\*\*(.*)$", line)
         if current and entry and safe(entry.group(1)):
             books[current].append(entry.group(1))
+    additions = []
+    for book, (title, sections) in CATALOG_RECOVERY.items():
+        if book in books:
+            continue
+        books[book] = [name for name, _, _, _ in sections]
+        lines = [f"## `{book}/` — {title}"]
+        for name, section_title, metadata, gist in sections:
+            lines.append(f"  - `{name}` **{section_title}** ({metadata}) — {gist}")
+        additions.append("\n".join(lines))
+    if additions:
+        library = library.rstrip(b"\n") + b"\n\n" + "\n\n".join(additions).encode("utf-8") + b"\n"
+    (out / "LIBRARY.md").write_bytes(library)
     copied = missing = 0
     for book, sections in books.items():
         for name in sections + EXTRAS:
