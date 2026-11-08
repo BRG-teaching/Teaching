@@ -69,6 +69,7 @@
         if (query.presentation !== undefined) {
           manifest = query.presentation.indexOf(".") >= 0 ? query.presentation : query.presentation + ".yaml";
           base = manifest.slice(0, manifest.lastIndexOf("/") + 1);
+          whole = true;
         } else if (live !== "off" && live !== "0" && (live !== undefined || scene === "view_live" || (!scene && !local))) {
           manifest = live && (/^https:\/\//.test(live) || LOCAL_URL.test(live)) ? live : BUCKET + "scenes/view_live.yaml";
           whole = true;
