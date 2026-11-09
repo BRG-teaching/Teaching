@@ -13,6 +13,8 @@ The complete working example is [`05-solvers/06-session-viewer.ipynb`](../notebo
 5. [Inspect the internals](05-internals.md): follow the exact URL and fetch flow when debugging.
 6. [Troubleshoot](06-troubleshooting.md): fix missing output, WebGPU, caching, and version problems.
 
+For a standalone presentation rather than a notebook scene, follow [Create one presentation slide](one-slide.md). It includes a complete Python example, the one-protobuf export layout, and the public static link.
+
 ## Short version
 
 The notebook installs `session_py` from a wheel hosted beside the static viewer. Python creates a `Session` and calls:

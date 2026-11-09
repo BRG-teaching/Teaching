@@ -53,3 +53,9 @@ Open `http://localhost:8000/CAS/website/` or `http://localhost:8000/CAS/website/
 - `docs/` contains only the assembled public website, generated JupyterLite application, gallery, and mirrored library.
 
 The GitHub Pages workflow builds and uploads only `docs/`; it never uploads the repository root. A main-branch push, the daily scheduled build, or a manual workflow run updates the deployment. Push `equilibrium` before `main` so the workflow can fetch the drawings.
+
+## Session Viewer slides
+
+The [Session Viewer README](CAS/website/session-viewer/README.md) documents the published force-density deck, its camera-aligned closed force polygon, pink free-node styling, protobuf layout, and book recovery.
+
+To create **one single slide**, follow [Create one presentation slide](CAS/website/session-viewer-guide/one-slide.md). The guide includes the complete [`one_slide.py`](CAS/website/session-viewer-guide/one_slide.py): one `Session` inside `deck = [[scene]]`, one exported `steps/00_00.pb`, local Chrome playback, and static Teaching publication. No second renderer or browser-side Python is required for playback.

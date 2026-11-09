@@ -46,7 +46,7 @@ Check the browser console and the nested `/session-viewer/` iframe separately fr
 
 ## Presentation decks raise `NotImplementedError`
 
-This is expected in the browser-only integration. Presentation playback currently needs ordinary local Python and the loopback viewer server; a single `Session` works in JupyterLite.
+This is expected in the browser-only integration. A single `Session` works in JupyterLite. For presentation playback, use ordinary local Python and `serve(deck, ...)`, or host the exported protobuf deck as static files; see [Create one presentation slide](one-slide.md).
 
 ## A useful diagnostic sequence
 

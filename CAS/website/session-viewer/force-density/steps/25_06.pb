@@ -3,48 +3,48 @@ h32 Three coordinate systems
 The same A acts independently on x, y, and z; their right-hand sides differ.±9
 
 my_objectsÇ£
-Matrix$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512	net-rhs-x"Á{"cell": 58, "cols": 1, "data": [16.0, 0.0, 0.0, 32.0, 16.0], "linecolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "74255d43-9880-4346-bb32-bdd5b5a86b85", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "maxcolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "0e621705-5e24-45c6-8f30-90701763bd45", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "mincolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "01a72510-ee22-4823-8351-b875bb6e0fef", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "rows": 5, "textcolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "c07e324b-4dee-42d5-bf4d-67c5776ccb7f", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "zerocolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "a590d37b-a8e0-47ac-87f8-0065c48d2208", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}}Çõ
-Text$fdc1ea1e-3c24-40c2-b5ad-c3ce162bb227net-rhs-x-title"€{"at": {"guid": "1d7a677c-48f6-47e3-9dae-231525e9d47e", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "a926c1e5-2701-4b38-85d6-5294424deb02", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 990.0, "y": 119.0, "z": 0.0}, "color": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "7e28b131-a62c-40d8-8bb3-a24d4e8aa7c7", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "height": 28.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{b}_x"}Ç£
-Matrix$78b09f91-0445-47f9-b7a7-05297b7dc05b	net-rhs-y"Á{"cell": 58, "cols": 1, "data": [0.0, 16.0, 0.0, 16.0, 32.0], "linecolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "4f288d01-f83b-4d8b-bc03-672a4f1c85ca", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "maxcolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "e3ea2bfc-9280-4718-82b1-4740e84a888b", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "mincolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "4b2d18d6-4a9c-4b7a-90bf-3ff3d8a3f449", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "rows": 5, "textcolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "e625e6c1-148a-4694-877d-97cf9731361f", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "zerocolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "74cbfb09-6978-44fc-acbf-3f27b41fff56", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}}Çú
-Text$b362ae90-0468-4459-bd67-de8434457993net-rhs-y-title"‹{"at": {"guid": "85edd0dc-f821-4254-b1cf-38f24fd52b7b", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "1b78de1b-4749-4646-a497-e92fb5ff16d3", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1143.0, "y": 119.0, "z": 0.0}, "color": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "d2133df2-8bda-4b9e-9e3b-2fbb39fb34a3", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "height": 28.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{b}_y"}ÇŸ
-Matrix$16967774-0f0c-40d0-9b90-392fd60a3fc5	net-rhs-z"ù{"cell": 58, "cols": 1, "data": [9.299999999999999, 9.299999999999999, -0.3, 9.299999999999999, 9.299999999999999], "linecolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "71aed56b-ccb0-4aef-ae88-637f7f6d7fe1", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "maxcolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "36f5a2f6-692f-4880-8049-f55841130690", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "mincolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "98ca8a69-be97-4f26-9bbc-87a3f5a4b557", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "rows": 5, "textcolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "3492409b-5909-4cca-a7a2-8620a242aab4", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "zerocolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "22690fcd-45aa-4106-a2c9-175d3818bc7b", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}}Çú
-Text$71f22770-a71c-443c-ba19-713f8ed40c88net-rhs-z-title"‹{"at": {"guid": "3afcd78e-03b9-47ea-b9a8-5b7be61b2f95", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "eafc8f0f-30e2-4548-9b81-d375f7a593bd", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1296.0, "y": 119.0, "z": 0.0}, "color": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "d4de04cb-76b1-4186-83eb-df77cac71cb4", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "height": 28.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{b}_z"}Ç±
-Text$ee7fb460-a3af-4a26-a672-0fdc1d5018adnet-system-x"Ù{"at": {"guid": "c63a9731-5800-4b37-9cec-08022618acfc", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "6098bf11-2101-4321-8a1f-90e4a3a2b645", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1240, "y": 500, "z": 0.0}, "color": {"a": 1.0, "b": 0.43921568989753723, "g": 0.46666666865348816, "guid": "68257ee1-ff12-48aa-a7f7-b8e86fcad9cc", "name": "my_color", "r": 0.9372549057006836, "type": "Color"}, "height": 34.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{A}\\mathbf{x}_N=\\mathbf{b}_x"}ÇØ
-Text$0acb769b-60ce-4364-8c75-1d74f4a068ecnet-system-y"Ú{"at": {"guid": "e3e5e6d5-3c5e-44cb-b84f-939ecb8bc138", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "ad575d54-6956-44f3-b637-8f97be29c89c", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1240, "y": 570, "z": 0.0}, "color": {"a": 1.0, "b": 0.48627451062202454, "g": 0.800000011920929, "guid": "ef377ef2-275c-470e-b98f-95046f103ff6", "name": "my_color", "r": 0.3843137323856354, "type": "Color"}, "height": 34.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{A}\\mathbf{y}_N=\\mathbf{b}_y"}ÇØ
-Text$5ff06c24-2a5c-41e5-b3e6-26fbc08dbe15net-system-z"Ú{"at": {"guid": "23df91e8-7278-454c-9786-046fad48933e", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "f4b3e35c-8445-472a-ab03-6a614a82c885", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1240, "y": 640, "z": 0.0}, "color": {"a": 1.0, "b": 0.9372549057006836, "g": 0.6431372761726379, "guid": "974154dc-fb53-44a0-a936-4cbc895f2be6", "name": "my_color", "r": 0.4470588266849518, "type": "Color"}, "height": 34.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{A}\\mathbf{z}_N=\\mathbf{b}_z"}"¿m32 Three coordinate systems
+Matrix$dc4c78cd-3410-4570-a72f-befc76bb029b	net-rhs-x"Á{"cell": 58, "cols": 1, "data": [16.0, 0.0, 0.0, 32.0, 16.0], "linecolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "4c83ceb3-76b0-458f-97b2-4e68ecd3bce5", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "maxcolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "7387bf9b-1089-4a6b-9ea1-e9b4cb813822", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "mincolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "07bc7b4f-9fc5-4b84-92f4-68b5d997f5d4", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "rows": 5, "textcolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "9dccac22-16a0-4f9f-8167-10047af83b8c", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "zerocolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "f2dbeb70-50ac-4edb-adac-e24373ca15c0", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}}Çõ
+Text$8f7fa5af-8046-4524-90de-1c3952f37186net-rhs-x-title"€{"at": {"guid": "e9604466-4b35-4fc4-9f4d-2718b6c4fc5d", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "9501b28a-d597-464f-9da5-2db25a542901", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 990.0, "y": 119.0, "z": 0.0}, "color": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "f93af011-379c-4be7-868d-9bfdf6c00f20", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "height": 28.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{b}_x"}Ç£
+Matrix$8e358ec6-e253-4431-9339-f8a04fff9ed7	net-rhs-y"Á{"cell": 58, "cols": 1, "data": [0.0, 16.0, 0.0, 16.0, 32.0], "linecolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "bce4daeb-f45f-420c-b3d9-909144931792", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "maxcolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "fa12ee58-bb4f-4fd7-a0c1-214e93ed5b74", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "mincolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "fd0ea560-7ae5-4ac8-b86a-1109aba39fe6", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "rows": 5, "textcolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "f9f579de-6f77-4d93-9b0c-d1f1c4415f24", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "zerocolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "939ad5ad-4f17-4cb1-8931-04d80b55221c", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}}Çú
+Text$19748cfc-000c-43d4-9bf6-fde8fbecca6enet-rhs-y-title"‹{"at": {"guid": "ecee5a5a-0200-46a1-9c3b-676986921853", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "0f91d342-745e-4980-b087-358fb1af525e", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1143.0, "y": 119.0, "z": 0.0}, "color": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "3ee0d0aa-308a-4e53-8342-b2fec7fdd644", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "height": 28.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{b}_y"}ÇŸ
+Matrix$de82f2cf-fa6c-47f6-85bd-f053d793a076	net-rhs-z"ù{"cell": 58, "cols": 1, "data": [9.299999999999999, 9.299999999999999, -0.3, 9.299999999999999, 9.299999999999999], "linecolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "3e367652-afe5-4106-b563-bb324b3eecc4", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "maxcolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "baa6b74e-38d3-4652-a998-24aae9b87588", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "mincolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "923a00ed-9d15-457d-80c4-7647cc768670", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}, "rows": 5, "textcolor": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "eae8077d-35c8-45b5-9b8b-8386fbc8ba35", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "zerocolor": {"a": 1.0, "b": 0.2078431397676468, "g": 0.16862745583057404, "guid": "0f8378cd-8f87-4883-bce9-7c8c4e803c5d", "name": "my_color", "r": 0.14509804546833038, "type": "Color"}}Çú
+Text$b7b60631-f1a1-411b-858f-36828c939d62net-rhs-z-title"‹{"at": {"guid": "5741e805-c1fd-465a-952a-81d3edb69fc7", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "2ca11e9d-e143-475d-93cd-23a8c61d7b92", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1296.0, "y": 119.0, "z": 0.0}, "color": {"a": 1.0, "b": 0.9529411792755127, "g": 0.929411768913269, "guid": "de837fe9-faf3-418f-8a5e-41363925e048", "name": "my_color", "r": 0.9098039269447327, "type": "Color"}, "height": 28.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{b}_z"}Ç±
+Text$15019c9a-07f2-40c5-ad82-ed0a91928457net-system-x"Ù{"at": {"guid": "3485d1c3-6854-43ba-9af3-16624efe4b8e", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "33d94278-4b25-4b0b-bd55-0060e8e1fe09", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1240, "y": 500, "z": 0.0}, "color": {"a": 1.0, "b": 0.43921568989753723, "g": 0.46666666865348816, "guid": "6a4f44b0-304a-44fd-b682-86bc8e8eaa1a", "name": "my_color", "r": 0.9372549057006836, "type": "Color"}, "height": 34.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{A}\\mathbf{x}_N=\\mathbf{b}_x"}ÇØ
+Text$9789df41-1d64-488a-b014-dfc2dceb9fe3net-system-y"Ú{"at": {"guid": "3ec3564d-21ff-4c94-b92b-91a50735a50f", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "0c6b87db-cf90-4dc0-b7fc-949ffc477ebc", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1240, "y": 570, "z": 0.0}, "color": {"a": 1.0, "b": 0.48627451062202454, "g": 0.800000011920929, "guid": "b2af7434-93d2-4187-985b-0a6f7ae1baff", "name": "my_color", "r": 0.3843137323856354, "type": "Color"}, "height": 34.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{A}\\mathbf{y}_N=\\mathbf{b}_y"}ÇØ
+Text$d207bb0e-7d6b-4132-a752-71a1df0bbe14net-system-z"Ú{"at": {"guid": "bde3aaeb-eff7-4264-ad21-3985b5cd10a3", "is_locked": false, "is_visible": true, "name": "my_point", "pointcolor": {"a": 1.0, "b": 0.0, "g": 0.0, "guid": "f3deb770-8072-4d4f-ac6b-95cbe93ebbed", "name": "black", "r": 0.0, "type": "Color"}, "type": "Point", "width": 1.0, "x": 1240, "y": 640, "z": 0.0}, "color": {"a": 1.0, "b": 0.9372549057006836, "g": 0.6431372761726379, "guid": "55e4080f-9922-4e02-8bd0-928920fbe461", "name": "my_color", "r": 0.4470588266849518, "type": "Color"}, "height": 34.0, "math": true, "outline": 0.0, "serif": true, "spatial": false, "text": "\\mathbf{A}\\mathbf{z}_N=\\mathbf{b}_z"}"¿m32 Three coordinate systems
 The same A acts independently on x, y, and z; their right-hand sides differ._treeŒ
-$cf4f611a-56e6-4fd8-a797-cf32d7cbd4f5h32 Three coordinate systems
+$17fa1008-90aa-4bbf-9996-674a4804ecb7h32 Three coordinate systems
 The same A acts independently on x, y, and z; their right-hand sides differ."L
-$0604ec51-fc1b-4674-9035-632fd493eec0$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512"L
-$da2d8a37-04dc-48cd-a8b9-1c32c564a3b1$fdc1ea1e-3c24-40c2-b5ad-c3ce162bb227"L
-$0ee916ad-c7a2-4d6d-a6e5-9540aee346c4$78b09f91-0445-47f9-b7a7-05297b7dc05b"L
-$62b56f9a-04d5-4e99-aa1a-f72fc4703e9b$b362ae90-0468-4459-bd67-de8434457993"L
-$02a95b56-ea1b-41b5-9236-049d197de5d9$16967774-0f0c-40d0-9b90-392fd60a3fc5"L
-$bcb24a3c-b63d-48fc-8338-aa5a18f58a54$71f22770-a71c-443c-ba19-713f8ed40c88"L
-$5f1ebce7-9f1a-437e-8196-81991c488721$ee7fb460-a3af-4a26-a672-0fdc1d5018ad"L
-$270c72df-4630-4cc7-9008-a3b6d7db42f4$0acb769b-60ce-4364-8c75-1d74f4a068ec"L
-$5671d005-39ab-4f9b-9b1f-ab3b029dd026$5ff06c24-2a5c-41e5-b3e6-26fbc08dbe15*Ó
+$87d2b11e-5ca1-403a-8f61-a8bd15bf8028$dc4c78cd-3410-4570-a72f-befc76bb029b"L
+$15d864de-b124-4d6d-aff1-0e58f21603b7$8f7fa5af-8046-4524-90de-1c3952f37186"L
+$0964a98c-0a18-486c-bcf5-45640cb1ed2f$8e358ec6-e253-4431-9339-f8a04fff9ed7"L
+$8ca29c66-b3fa-4e35-8378-e311a318836d$19748cfc-000c-43d4-9bf6-fde8fbecca6e"L
+$5089310a-0734-40fe-8d7c-3c32195cdbcd$de82f2cf-fa6c-47f6-85bd-f053d793a076"L
+$306eba9d-8b79-4252-8b9e-181c4e1527da$b7b60631-f1a1-411b-858f-36828c939d62"L
+$f65ef353-7182-44a5-a573-c7f366dc5899$15019c9a-07f2-40c5-ad82-ed0a91928457"L
+$f7565460-2b82-4c63-bcfb-3f8f339a5515$9789df41-1d64-488a-b014-dfc2dceb9fe3"L
+$5a3b29e6-00b9-4401-b0d2-a6503017eefe$d207bb0e-7d6b-4132-a752-71a1df0bbe14*Ó
 n32 Three coordinate systems
 The same A acts independently on x, y, and z; their right-hand sides differ._graphh
-$0acb769b-60ce-4364-8c75-1d74f4a068ec@
-$0acb769b-60ce-4364-8c75-1d74f4a068eccomponent_net-system-y e
-$16967774-0f0c-40d0-9b90-392fd60a3fc5=
-$16967774-0f0c-40d0-9b90-392fd60a3fc5component_net-rhs-z 	h
-$5ff06c24-2a5c-41e5-b3e6-26fbc08dbe15@
-$5ff06c24-2a5c-41e5-b3e6-26fbc08dbe15component_net-system-z k
-$71f22770-a71c-443c-ba19-713f8ed40c88C
-$71f22770-a71c-443c-ba19-713f8ed40c88component_net-rhs-z-title 
-e
-$78b09f91-0445-47f9-b7a7-05297b7dc05b=
-$78b09f91-0445-47f9-b7a7-05297b7dc05bcomponent_net-rhs-y c
-$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512;
-$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512component_net-rhs-xk
-$b362ae90-0468-4459-bd67-de8434457993C
-$b362ae90-0468-4459-bd67-de8434457993component_net-rhs-y-title h
-$ee7fb460-a3af-4a26-a672-0fdc1d5018ad@
-$ee7fb460-a3af-4a26-a672-0fdc1d5018adcomponent_net-system-x k
-$fdc1ea1e-3c24-40c2-b5ad-c3ce162bb227C
-$fdc1ea1e-3c24-40c2-b5ad-c3ce162bb227component_net-rhs-x-title 
+$15019c9a-07f2-40c5-ad82-ed0a91928457@
+$15019c9a-07f2-40c5-ad82-ed0a91928457component_net-system-x k
+$19748cfc-000c-43d4-9bf6-fde8fbecca6eC
+$19748cfc-000c-43d4-9bf6-fde8fbecca6ecomponent_net-rhs-y-title e
+$8e358ec6-e253-4431-9339-f8a04fff9ed7=
+$8e358ec6-e253-4431-9339-f8a04fff9ed7component_net-rhs-y k
+$8f7fa5af-8046-4524-90de-1c3952f37186C
+$8f7fa5af-8046-4524-90de-1c3952f37186component_net-rhs-x-title h
+$9789df41-1d64-488a-b014-dfc2dceb9fe3@
+$9789df41-1d64-488a-b014-dfc2dceb9fe3component_net-system-y k
+$b7b60631-f1a1-411b-858f-36828c939d62C
+$b7b60631-f1a1-411b-858f-36828c939d62component_net-rhs-z-title 
+h
+$d207bb0e-7d6b-4132-a752-71a1df0bbe14@
+$d207bb0e-7d6b-4132-a752-71a1df0bbe14component_net-system-z c
+$dc4c78cd-3410-4570-a72f-befc76bb029b;
+$dc4c78cd-3410-4570-a72f-befc76bb029bcomponent_net-rhs-xe
+$de82f2cf-fa6c-47f6-85bd-f053d793a076=
+$de82f2cf-fa6c-47f6-85bd-f053d793a076component_net-rhs-z 	
 
 net-node-1
 
@@ -65,37 +65,37 @@ net-node-5 
 net-node-7
 
 net-node-7 "p
-$b4ce5b39-9887-4ef6-94e7-d88184343054my_edge
-net-node-1"$16967774-0f0c-40d0-9b90-392fd60a3fc5*highlight:00
+$48773aec-1627-4a64-8901-f1b96cc76f23my_edge
+net-node-1"$8e358ec6-e253-4431-9339-f8a04fff9ed7*highlight:00"p
+$9c13c39e-bc8e-45a2-8355-a8bf2f41ac67my_edge
+net-node-3"$8e358ec6-e253-4431-9339-f8a04fff9ed7*highlight:10"p
+$3d309026-cd61-488e-9765-14d8cb2284a1my_edge
+net-node-4"$8e358ec6-e253-4431-9339-f8a04fff9ed7*highlight:20"p
+$ddf88dbe-2621-466e-9b59-539dbec58b09my_edge
+net-node-5"$8e358ec6-e253-4431-9339-f8a04fff9ed7*highlight:30"p
+$76c33255-40b5-4b17-877d-9e7055d4cc60my_edge
+net-node-7"$8e358ec6-e253-4431-9339-f8a04fff9ed7*highlight:40	"n
+$a2ee3482-47ad-4e61-965f-f618e505640fmy_edge
+net-node-1"$dc4c78cd-3410-4570-a72f-befc76bb029b*highlight:0"p
+$72797c0c-9692-4c4d-9987-c53570c9af67my_edge
+net-node-3"$dc4c78cd-3410-4570-a72f-befc76bb029b*highlight:10"p
+$57fb10a7-b0ba-4e9d-b1f2-fa0a750a2660my_edge
+net-node-4"$dc4c78cd-3410-4570-a72f-befc76bb029b*highlight:20"p
+$08b32354-f3e8-46ef-aa66-1f6e9024b855my_edge
+net-node-5"$dc4c78cd-3410-4570-a72f-befc76bb029b*highlight:30"p
+$da498ab8-6686-405b-b3e9-bd044681976cmy_edge
+net-node-7"$dc4c78cd-3410-4570-a72f-befc76bb029b*highlight:40"p
+$700075ad-0313-4956-8dd9-51bd2f1c73b2my_edge
+net-node-1"$de82f2cf-fa6c-47f6-85bd-f053d793a076*highlight:00
 "p
-$789d9ee3-850d-4519-a15a-2d7a82465fc7my_edge
-net-node-3"$16967774-0f0c-40d0-9b90-392fd60a3fc5*highlight:10"p
-$305ba70a-3375-4ec3-a844-02fda69e7188my_edge
-net-node-4"$16967774-0f0c-40d0-9b90-392fd60a3fc5*highlight:20"p
-$37f093d1-1b20-43cd-9799-9a67d2127256my_edge
-net-node-5"$16967774-0f0c-40d0-9b90-392fd60a3fc5*highlight:30"p
-$f9c21cb3-1fa8-453c-93ba-675b65da85cemy_edge
-net-node-7"$16967774-0f0c-40d0-9b90-392fd60a3fc5*highlight:40"p
-$daed4449-e017-4417-bdb7-7eb2d31b4d60my_edge
-net-node-1"$78b09f91-0445-47f9-b7a7-05297b7dc05b*highlight:00"p
-$8ac5cdc3-3ece-4c10-92f6-799b3f580d41my_edge
-net-node-3"$78b09f91-0445-47f9-b7a7-05297b7dc05b*highlight:10"p
-$7eada260-73ca-4199-9f1b-9ea9c6075cd2my_edge
-net-node-4"$78b09f91-0445-47f9-b7a7-05297b7dc05b*highlight:20"p
-$f7806577-ed9d-42e0-97d7-f6e63f87fb60my_edge
-net-node-5"$78b09f91-0445-47f9-b7a7-05297b7dc05b*highlight:30"p
-$6d38839b-b553-4681-b153-32803194bf4bmy_edge
-net-node-7"$78b09f91-0445-47f9-b7a7-05297b7dc05b*highlight:40	"n
-$f91f05e9-fbc2-4313-a7f3-0f1fe3c140a2my_edge
-net-node-1"$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512*highlight:0"p
-$16ea5f86-df5c-4cc2-90f1-2a5aeaef734bmy_edge
-net-node-3"$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512*highlight:10"p
-$0927ad13-d196-4910-8c37-ba09dc59bd50my_edge
-net-node-4"$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512*highlight:20"p
-$e4f40b7d-d3d4-4ddb-adb4-7e505bbcea04my_edge
-net-node-5"$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512*highlight:30"p
-$2fb601fe-d449-452f-8291-32342357786dmy_edge
-net-node-7"$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512*highlight:40(0:∂
-$16967774-0f0c-40d0-9b90-392fd60a3fc5çmy_xformÄ      ?                                      ø                                      ?             @î@      Ç@              ?:∂
-$78b09f91-0445-47f9-b7a7-05297b7dc05bçmy_xformÄ      ?                                      ø                                      ?             ‹ë@      Ç@              ?:∂
-$9e5ed0be-1d44-4b89-a1a3-bf9fc435e512çmy_xformÄ      ?                                      ø                                      ?             é@      Ç@              ?
+$7edd42f4-356e-4d77-838d-636725452a1emy_edge
+net-node-3"$de82f2cf-fa6c-47f6-85bd-f053d793a076*highlight:10"p
+$9792b96f-1f0c-43fc-9a8f-0c480dfdd1d4my_edge
+net-node-4"$de82f2cf-fa6c-47f6-85bd-f053d793a076*highlight:20"p
+$261a295e-b48e-4226-bec3-73570d81c0aemy_edge
+net-node-5"$de82f2cf-fa6c-47f6-85bd-f053d793a076*highlight:30"p
+$17e2ef22-270c-457c-98d2-4cc88269998fmy_edge
+net-node-7"$de82f2cf-fa6c-47f6-85bd-f053d793a076*highlight:40(0:∂
+$8e358ec6-e253-4431-9339-f8a04fff9ed7çmy_xformÄ      ?                                      ø                                      ?             ‹ë@      Ç@              ?:∂
+$dc4c78cd-3410-4570-a72f-befc76bb029bçmy_xformÄ      ?                                      ø                                      ?             é@      Ç@              ?:∂
+$de82f2cf-fa6c-47f6-85bd-f053d793a076çmy_xformÄ      ?                                      ø                                      ?             @î@      Ç@              ?
