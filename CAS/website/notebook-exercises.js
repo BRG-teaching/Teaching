@@ -324,7 +324,7 @@ window.CAS_NOTEBOOKS = [
   {
     "id": "fd-answers-01-forces",
     "file": "fd/answers_01_forces.ipynb",
-    "title": "Exercise 01 Forces (answers)",
+    "title": "Answers 01 Forces (answers)",
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
     "source": "mcp-server-brg"
@@ -332,7 +332,7 @@ window.CAS_NOTEBOOKS = [
   {
     "id": "fd-answers-02-force-densities",
     "file": "fd/answers_02_force_densities.ipynb",
-    "title": "Exercise 02 Force densities (answers)",
+    "title": "Answers 02 Force densities (answers)",
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
     "source": "mcp-server-brg"
@@ -340,7 +340,7 @@ window.CAS_NOTEBOOKS = [
   {
     "id": "fd-answers-03-grid-matrices",
     "file": "fd/answers_03_grid_matrices.ipynb",
-    "title": "Exercise 03 Grid matrices (answers)",
+    "title": "Answers 03 Grid matrices (answers)",
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
     "source": "mcp-server-brg"
@@ -348,7 +348,7 @@ window.CAS_NOTEBOOKS = [
   {
     "id": "fd-answers-04-grid-variations",
     "file": "fd/answers_04_grid_variations.ipynb",
-    "title": "Exercise 04 Grid variations (answers)",
+    "title": "Answers 04 Grid variations (answers)",
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
     "source": "mcp-server-brg"
