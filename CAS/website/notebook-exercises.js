@@ -291,7 +291,7 @@ window.CAS_NOTEBOOKS = [
   },
   {
     "id": "fd-exercise-01-forces",
-    "file": "fd/exercises/exercise_01_forces.ipynb",
+    "file": "fd/exercise_01_forces.ipynb",
     "title": "Exercise 01 Forces (exercises)",
     "summary": "mcp_brg_fd_exercises",
     "section": "extension",
@@ -299,7 +299,7 @@ window.CAS_NOTEBOOKS = [
   },
   {
     "id": "fd-exercise-02-force-densities",
-    "file": "fd/exercises/exercise_02_force_densities.ipynb",
+    "file": "fd/exercise_02_force_densities.ipynb",
     "title": "Exercise 02 Force densities (exercises)",
     "summary": "mcp_brg_fd_exercises",
     "section": "extension",
@@ -307,7 +307,7 @@ window.CAS_NOTEBOOKS = [
   },
   {
     "id": "fd-exercise-03-grid-matrices",
-    "file": "fd/exercises/exercise_03_grid_matrices.ipynb",
+    "file": "fd/exercise_03_grid_matrices.ipynb",
     "title": "Exercise 03 Grid matrices (exercises)",
     "summary": "mcp_brg_fd_exercises",
     "section": "extension",
@@ -315,7 +315,7 @@ window.CAS_NOTEBOOKS = [
   },
   {
     "id": "fd-exercise-04-grid-variations",
-    "file": "fd/exercises/exercise_04_grid_variations.ipynb",
+    "file": "fd/exercise_04_grid_variations.ipynb",
     "title": "Exercise 04 Grid variations (exercises)",
     "summary": "mcp_brg_fd_exercises",
     "section": "extension",
@@ -323,7 +323,7 @@ window.CAS_NOTEBOOKS = [
   },
   {
     "id": "fd-answers-01-forces",
-    "file": "fd/answers/answers_01_forces.ipynb",
+    "file": "fd/answers_01_forces.ipynb",
     "title": "Exercise 01 Forces (answers)",
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
@@ -331,7 +331,7 @@ window.CAS_NOTEBOOKS = [
   },
   {
     "id": "fd-answers-02-force-densities",
-    "file": "fd/answers/answers_02_force_densities.ipynb",
+    "file": "fd/answers_02_force_densities.ipynb",
     "title": "Exercise 02 Force densities (answers)",
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
@@ -339,7 +339,7 @@ window.CAS_NOTEBOOKS = [
   },
   {
     "id": "fd-answers-03-grid-matrices",
-    "file": "fd/answers/answers_03_grid_matrices.ipynb",
+    "file": "fd/answers_03_grid_matrices.ipynb",
     "title": "Exercise 03 Grid matrices (answers)",
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
@@ -347,7 +347,7 @@ window.CAS_NOTEBOOKS = [
   },
   {
     "id": "fd-answers-04-grid-variations",
-    "file": "fd/answers/answers_04_grid_variations.ipynb",
+    "file": "fd/answers_04_grid_variations.ipynb",
     "title": "Exercise 04 Grid variations (answers)",
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
