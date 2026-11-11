@@ -1,5 +1,5 @@
-// Generated from knowledge/02_computational_design/tutorials.json.
-// Edit the source course and run publish_notebooks.py.
+// The notebooks of the website, edited here. Entries with "source": "mcp-server-brg" are written by the GitHub Action
+// of BRG-research/mcp-server-brg on every push: edit those notebooks there, a copy here is overwritten.
 window.CAS_NOTEBOOKS = [
   {
     "id": "box",
@@ -288,5 +288,69 @@ window.CAS_NOTEBOOKS = [
     "summary": "Rigid-block equilibrium with friction solved as a linear program.",
     "minutes": 60,
     "section": "extension"
+  },
+  {
+    "id": "fd-exercise-01-forces",
+    "file": "fd/exercises/exercise_01_forces.ipynb",
+    "title": "Exercise 01 Forces (exercises)",
+    "summary": "mcp_brg_fd_exercises",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-exercise-02-force-densities",
+    "file": "fd/exercises/exercise_02_force_densities.ipynb",
+    "title": "Exercise 02 Force densities (exercises)",
+    "summary": "mcp_brg_fd_exercises",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-exercise-03-grid-matrices",
+    "file": "fd/exercises/exercise_03_grid_matrices.ipynb",
+    "title": "Exercise 03 Grid matrices (exercises)",
+    "summary": "mcp_brg_fd_exercises",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-exercise-04-grid-variations",
+    "file": "fd/exercises/exercise_04_grid_variations.ipynb",
+    "title": "Exercise 04 Grid variations (exercises)",
+    "summary": "mcp_brg_fd_exercises",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-answers-01-forces",
+    "file": "fd/answers/answers_01_forces.ipynb",
+    "title": "Exercise 01 Forces (answers)",
+    "summary": "mcp_brg_fd_answers",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-answers-02-force-densities",
+    "file": "fd/answers/answers_02_force_densities.ipynb",
+    "title": "Exercise 02 Force densities (answers)",
+    "summary": "mcp_brg_fd_answers",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-answers-03-grid-matrices",
+    "file": "fd/answers/answers_03_grid_matrices.ipynb",
+    "title": "Exercise 03 Grid matrices (answers)",
+    "summary": "mcp_brg_fd_answers",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-answers-04-grid-variations",
+    "file": "fd/answers/answers_04_grid_variations.ipynb",
+    "title": "Exercise 04 Grid variations (answers)",
+    "summary": "mcp_brg_fd_answers",
+    "section": "extension",
+    "source": "mcp-server-brg"
   }
 ];
