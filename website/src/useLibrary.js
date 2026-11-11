@@ -115,7 +115,7 @@ function renderMarkdown(text, docPath, bookIds) {
   const here = new URL(fileUrl(docPath));
   tpl.content.querySelectorAll('img[src]').forEach((img) => {
     const u = new URL(img.getAttribute('src'), here);
-    if (u.pathname.endsWith('.svg')) u.searchParams.set('v', 'cad7');
+    if (u.pathname.endsWith('.svg')) u.searchParams.set('v', 'cad8');
     img.src = u.href; img.loading = 'lazy';
   });
   tpl.content.querySelectorAll('a[href]').forEach((a) => {
@@ -126,7 +126,7 @@ function renderMarkdown(text, docPath, bookIds) {
       const parts = decodeURIComponent(u.pathname).replace(/^\//, '').split('/');
       if (bookIds.has(parts[0])) { a.setAttribute('href', `#/b/${parts[0]}/${encodeURIComponent(parts.slice(1).join('/'))}${u.hash}`); return; }
     }
-    if (u.pathname.endsWith('.svg')) u.searchParams.set('v', 'cad7');
+    if (u.pathname.endsWith('.svg')) u.searchParams.set('v', 'cad8');
     a.href = u.href; a.target = '_blank'; a.rel = 'noopener';
   });
   return tpl.innerHTML;
