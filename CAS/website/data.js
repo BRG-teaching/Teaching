@@ -26,7 +26,7 @@ window.CAS = {
           label: 'Presentation',
           slides: [
             { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
-            { src: 'presentations/mcp/slide-2.jpg', alt: 'Structural design books, a laptop with a study notebook, and a tablet with graphic statics notes.' },
+            { src: 'presentations/mcp/slide-2.png', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
             { src: 'presentations/mcp/slide-3.png', alt: 'BRG MCP workflow connecting context, parsing, storage, indexing, MCP, an LLM account, and scripts.' },
           ],
         },

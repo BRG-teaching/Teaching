@@ -475,23 +475,38 @@ export function useLibrary() {
       if (!root) return;
       root.querySelectorAll('img[src]').forEach((img) => {
         if (img.closest('.fig-compare') || img.closest('a')) return;
-        const fn = decodeURIComponent((img.getAttribute('src') || '').split('?')[0].split('#')[0]).split('/').pop() || '';
+        const srcPath = decodeURIComponent((img.getAttribute('src') || '').split('?')[0].split('#')[0]);
+        if (/(^|\/)figures\/steps\//i.test(srcPath)) return;
+        const fn = srcPath.split('/').pop() || '';
         const stem = fn.replace(/\.[^.]+$/, '').toLowerCase();
         const origUrl = m.get(stem);
         if (!origUrl) return;
         const cadUrl = img.src;
         const wrap = document.createElement('span');
         wrap.className = 'fig-compare';
-        wrap.setAttribute('role', 'button');
-        wrap.setAttribute('tabindex', '0');
-        wrap.setAttribute('aria-pressed', 'false');
-        wrap.title = 'Click to switch between 2D CAD redraw and original book image';
-        const badge = document.createElement('span');
-        badge.className = 'fig-compare-badge';
-        badge.textContent = 'CAD · click for original';
+        const modeToggle = document.createElement('button');
+        modeToggle.type = 'button';
+        modeToggle.className = 'fig-compare-toggle';
+        modeToggle.setAttribute('aria-pressed', 'false');
+        const current = document.createElement('span');
+        current.className = 'fig-compare-current';
+        current.textContent = 'Digital';
+        const separator = document.createElement('span');
+        separator.setAttribute('aria-hidden', 'true');
+        separator.textContent = '·';
+        const action = document.createElement('span');
+        action.className = 'fig-compare-action';
+        action.textContent = 'Show original';
+        modeToggle.append(current, separator, action);
+        const picture = document.createElement('button');
+        picture.type = 'button';
+        picture.className = 'fig-compare-image';
+        picture.setAttribute('aria-pressed', 'false');
+        picture.title = 'Show original book image';
         img.parentNode.insertBefore(wrap, img);
-        wrap.appendChild(img);
-        wrap.appendChild(badge);
+        wrap.appendChild(modeToggle);
+        wrap.appendChild(picture);
+        picture.appendChild(img);
         let preloaded = false;
         const preload = () => {
           if (preloaded) return;
@@ -499,23 +514,28 @@ export function useLibrary() {
           const pre = new Image();
           pre.src = origUrl;
         };
-        const toggle = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+        let isOrig = false;
+        const show = (toOrig, e) => {
+          if (e) { e.preventDefault(); e.stopPropagation(); }
           preload();
-          const toOrig = !wrap.classList.contains('is-orig');
+          if (toOrig === isOrig) return;
           if (toOrig && !img.getAttribute('width') && !img.closest('.v-figs') && !img.style.width) {
             const w = Math.round(img.getBoundingClientRect().width);
             if (w > 0) img.style.width = w + 'px';
           }
-          wrap.classList.toggle('is-orig', toOrig);
-          wrap.setAttribute('aria-pressed', toOrig ? 'true' : 'false');
-          img.src = toOrig ? origUrl : cadUrl;
-          badge.textContent = toOrig ? 'Original book image · click for CAD' : 'CAD · click for original';
+          isOrig = toOrig;
+          wrap.classList.toggle('is-orig', isOrig);
+          picture.setAttribute('aria-pressed', isOrig ? 'true' : 'false');
+          picture.title = isOrig ? 'Show digital redraw' : 'Show original book image';
+          modeToggle.setAttribute('aria-pressed', isOrig ? 'true' : 'false');
+          current.textContent = isOrig ? 'Original' : 'Digital';
+          action.textContent = isOrig ? 'Show digital' : 'Show original';
+          img.src = isOrig ? origUrl : cadUrl;
         };
+        modeToggle.addEventListener('click', (e) => show(!isOrig, e));
+        picture.addEventListener('click', (e) => show(!isOrig, e));
         wrap.addEventListener('pointerenter', preload, { once: true });
-        wrap.addEventListener('click', toggle);
-        wrap.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') toggle(e); });
+        wrap.addEventListener('focusin', preload, { once: true });
       });
     }
     // Scroll a rendered chapter to where printed page `page` begins, and mark it.
