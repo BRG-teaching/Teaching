@@ -392,5 +392,13 @@ window.CAS_NOTEBOOKS = [
     "summary": "mcp_brg_fd_extensions",
     "section": "extension",
     "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-extension-06-inverse-and-prestress-stiffness",
+    "file": "fd/extension_06_inverse_and_prestress_stiffness.ipynb",
+    "title": "Extension 06 Inverse and prestress stiffness (extensions)",
+    "summary": "mcp_brg_fd_extensions",
+    "section": "extension",
+    "source": "mcp-server-brg"
   }
 ];
