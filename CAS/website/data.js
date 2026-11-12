@@ -14,7 +14,7 @@ window.CAS = {
   chapters: [
     {
       n: 1, color: '#3057b1', ects: 1, hours: 30, weeks: 'Weeks 1–2',
-      title: 'MCP for BRG Framework',
+      title: 'MCP for BRG',
       logo: 'slide03-icon09.svg',
       mcp: {
         client: { title: 'LLM' },
