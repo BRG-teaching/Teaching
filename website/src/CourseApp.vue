@@ -1,5 +1,6 @@
 <script setup>
 import Spine from './Spine.vue';
+import PresentationSlideshow from './PresentationSlideshow.vue';
 import { useCourse } from './useCourse';
 
 const {
@@ -118,25 +119,10 @@ const {
 
       <figure v-if="c.mcp" class="mcp-figure">
         <div class="mcp-diagram">
-          <div class="mcp-node mcp-client">
-            <strong>{{ c.mcp.client.title }}</strong>
-            <span>{{ c.mcp.client.subtitle }}</span>
-          </div>
-          <div class="mcp-connector" aria-hidden="true"><span>tool calls</span></div>
-          <div class="mcp-node mcp-protocol">
-            <strong>{{ c.mcp.protocol.title }}</strong>
-            <span>{{ c.mcp.protocol.subtitle }}</span>
-            <small>{{ c.mcp.protocol.detail }}</small>
-          </div>
-          <div class="mcp-connector" aria-hidden="true"><span>tools · data</span></div>
-          <div class="mcp-packages">
-            <section v-for="group in c.mcp.groups" :key="group.title">
-              <strong>{{ group.title }}</strong>
-              <p>{{ group.items.join(' · ') }}</p>
-            </section>
-          </div>
+          <div class="mcp-node mcp-client"><strong>{{ c.mcp.client.title }}</strong></div>
+          <div class="mcp-connector" aria-hidden="true"></div>
+          <div class="mcp-node mcp-protocol"><strong>{{ c.mcp.protocol.title }}</strong></div>
         </div>
-        <figcaption>{{ c.mcp.caption }}</figcaption>
       </figure>
 
       <ol v-if="c.steps" class="steps">
@@ -168,6 +154,7 @@ const {
               </nav>
             </div>
             <ul class="sq">
+              <li v-if="c[k].presentation" class="presentation-item"><PresentationSlideshow v-bind="c[k].presentation" /></li>
               <li v-for="t in c[k].items" :key="t"><template v-for="(seg, i) in segments(t)" :key="i"><a v-if="seg.url" :href="seg.url" :target="seg.url.startsWith('http') ? '_blank' : null" rel="noopener">{{ seg.text }}</a><template v-else>{{ seg.text }}</template></template></li>
             </ul>
           </div>

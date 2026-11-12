@@ -14,19 +14,22 @@ window.CAS = {
   chapters: [
     {
       n: 1, color: '#3057b1', ects: 1, hours: 30, weeks: 'Weeks 1–2',
-      title: 'LLM for BRG Framework',
+      title: 'MCP for BRG Framework',
       logo: 'slide03-icon09.svg',
       mcp: {
-        client: { title: 'LLM', subtitle: 'Claude · agents' },
-        protocol: { title: 'MCP', subtitle: 'Model Context Protocol', detail: 'mcp-server-brg' },
-        groups: [
-          { title: 'BRG', items: ['Library', 'Knowledge', 'Structural workflows'] },
-          { title: 'COMPAS', items: ['compas', 'compas_ags', 'compas_fd', 'compas_dr', 'compas_tna', 'compas_tno', 'compas_dem', 'compas_model', 'compas_ifc'] },
-        ],
-        caption: 'One interface to BRG knowledge, COMPAS packages and reproducible notebooks.',
+        client: { title: 'LLM' },
+        protocol: { title: 'MCP' },
       },
       contents: {
         lead: 'A practical LLM layer over BRG knowledge and the COMPAS ecosystem.',
+        presentation: {
+          label: 'Presentation',
+          slides: [
+            { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
+            { src: 'presentations/mcp/slide-2.jpg', alt: 'Structural design books, a laptop with a study notebook, and a tablet with graphic statics notes.' },
+            { src: 'presentations/mcp/slide-3.png', alt: 'BRG MCP workflow connecting context, parsing, storage, indexing, MCP, an LLM account, and scripts.' },
+          ],
+        },
         items: [
           'LLM fundamentals: prompts, context, tools and agents',
           'Model Context Protocol (MCP): clients, tools and resources',
