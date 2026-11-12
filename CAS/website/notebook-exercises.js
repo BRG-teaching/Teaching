@@ -352,5 +352,45 @@ window.CAS_NOTEBOOKS = [
     "summary": "mcp_brg_fd_answers",
     "section": "extension",
     "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-extension-01-geometric-constraints",
+    "file": "fd/extension_01_geometric_constraints.ipynb",
+    "title": "Extension 01 Geometric constraints (extensions)",
+    "summary": "mcp_brg_fd_extensions",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-extension-02-compression-and-tensegrity",
+    "file": "fd/extension_02_compression_and_tensegrity.ipynb",
+    "title": "Extension 02 Compression and tensegrity (extensions)",
+    "summary": "mcp_brg_fd_extensions",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-extension-03-minimal-and-pneumatic-surfaces",
+    "file": "fd/extension_03_minimal_and_pneumatic_surfaces.ipynb",
+    "title": "Extension 03 Minimal and pneumatic surfaces (extensions)",
+    "summary": "mcp_brg_fd_extensions",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-extension-04-differentiable-goal-optimisation",
+    "file": "fd/extension_04_differentiable_goal_optimisation.ipynb",
+    "title": "Extension 04 Differentiable goal optimisation (extensions)",
+    "summary": "mcp_brg_fd_extensions",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-extension-05-elastic-and-wrinkling-nets",
+    "file": "fd/extension_05_elastic_and_wrinkling_nets.ipynb",
+    "title": "Extension 05 Elastic and wrinkling nets (extensions)",
+    "summary": "mcp_brg_fd_extensions",
+    "section": "extension",
+    "source": "mcp-server-brg"
   }
 ];
