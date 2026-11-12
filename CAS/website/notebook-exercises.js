@@ -370,33 +370,33 @@ window.CAS_NOTEBOOKS = [
     "source": "mcp-server-brg"
   },
   {
-    "id": "fd-extension-03-minimal-and-pneumatic-surfaces",
-    "file": "fd/extension_03_minimal_and_pneumatic_surfaces.ipynb",
-    "title": "Extension 03 Minimal and pneumatic surfaces (extensions)",
+    "id": "fd-extension-03-minimal-surfaces",
+    "file": "fd/extension_03_minimal_surfaces.ipynb",
+    "title": "Extension 03 Minimal surfaces (extensions)",
     "summary": "mcp_brg_fd_extensions",
     "section": "extension",
     "source": "mcp-server-brg"
   },
   {
-    "id": "fd-extension-04-differentiable-goal-optimisation",
-    "file": "fd/extension_04_differentiable_goal_optimisation.ipynb",
-    "title": "Extension 04 Differentiable goal optimisation (extensions)",
+    "id": "fd-extension-04-inflatable-structures",
+    "file": "fd/extension_04_inflatable_structures.ipynb",
+    "title": "Extension 04 Inflatable structures (extensions)",
     "summary": "mcp_brg_fd_extensions",
     "section": "extension",
     "source": "mcp-server-brg"
   },
   {
-    "id": "fd-extension-05-elastic-and-wrinkling-nets",
-    "file": "fd/extension_05_elastic_and_wrinkling_nets.ipynb",
-    "title": "Extension 05 Elastic and wrinkling nets (extensions)",
+    "id": "fd-extension-05-differentiable-optimisation",
+    "file": "fd/extension_05_differentiable_optimisation.ipynb",
+    "title": "Extension 05 Differentiable optimisation (extensions)",
     "summary": "mcp_brg_fd_extensions",
     "section": "extension",
     "source": "mcp-server-brg"
   },
   {
-    "id": "fd-extension-06-inverse-and-prestress-stiffness",
-    "file": "fd/extension_06_inverse_and_prestress_stiffness.ipynb",
-    "title": "Extension 06 Inverse and prestress stiffness (extensions)",
+    "id": "fd-extension-06-inverse-form-finding",
+    "file": "fd/extension_06_inverse_form_finding.ipynb",
+    "title": "Extension 06 Inverse form finding (extensions)",
     "summary": "mcp_brg_fd_extensions",
     "section": "extension",
     "source": "mcp-server-brg"
