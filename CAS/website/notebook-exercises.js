@@ -290,6 +290,38 @@ window.CAS_NOTEBOOKS = [
     "section": "extension"
   },
   {
+    "id": "fd-answers-01-forces",
+    "file": "fd/answers_01_forces.ipynb",
+    "title": "Answers 01 Forces (exercises)",
+    "summary": "mcp_brg_fd_exercises",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-answers-02-force-densities",
+    "file": "fd/answers_02_force_densities.ipynb",
+    "title": "Answers 02 Force densities (exercises)",
+    "summary": "mcp_brg_fd_exercises",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-answers-03-grid-matrices",
+    "file": "fd/answers_03_grid_matrices.ipynb",
+    "title": "Answers 03 Grid matrices (exercises)",
+    "summary": "mcp_brg_fd_exercises",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
+    "id": "fd-answers-04-grid-variations",
+    "file": "fd/answers_04_grid_variations.ipynb",
+    "title": "Answers 04 Grid variations (exercises)",
+    "summary": "mcp_brg_fd_exercises",
+    "section": "extension",
+    "source": "mcp-server-brg"
+  },
+  {
     "id": "fd-exercise-01-forces",
     "file": "fd/exercise_01_forces.ipynb",
     "title": "Exercise 01 Forces (exercises)",
@@ -318,38 +350,6 @@ window.CAS_NOTEBOOKS = [
     "file": "fd/exercise_04_grid_variations.ipynb",
     "title": "Exercise 04 Grid variations (exercises)",
     "summary": "mcp_brg_fd_exercises",
-    "section": "extension",
-    "source": "mcp-server-brg"
-  },
-  {
-    "id": "fd-answers-01-forces",
-    "file": "fd/answers_01_forces.ipynb",
-    "title": "Answers 01 Forces (answers)",
-    "summary": "mcp_brg_fd_answers",
-    "section": "extension",
-    "source": "mcp-server-brg"
-  },
-  {
-    "id": "fd-answers-02-force-densities",
-    "file": "fd/answers_02_force_densities.ipynb",
-    "title": "Answers 02 Force densities (answers)",
-    "summary": "mcp_brg_fd_answers",
-    "section": "extension",
-    "source": "mcp-server-brg"
-  },
-  {
-    "id": "fd-answers-03-grid-matrices",
-    "file": "fd/answers_03_grid_matrices.ipynb",
-    "title": "Answers 03 Grid matrices (answers)",
-    "summary": "mcp_brg_fd_answers",
-    "section": "extension",
-    "source": "mcp-server-brg"
-  },
-  {
-    "id": "fd-answers-04-grid-variations",
-    "file": "fd/answers_04_grid_variations.ipynb",
-    "title": "Answers 04 Grid variations (answers)",
-    "summary": "mcp_brg_fd_answers",
     "section": "extension",
     "source": "mcp-server-brg"
   },
