@@ -425,29 +425,37 @@ export function useLibrary() {
       section.className = 'book-method method-play';
       section.setAttribute('aria-label', method.title);
       section.innerHTML = `
-        <div class="method-section-heading"><h3></h3><p>Interactive reconstruction · §23 · new numerical example</p></div>
-        <p class="method-lead">Two auxiliary planes locate the resultants. A skew force quadrilateral closes the equilibrium.</p>
+        <div class="method-section-heading"><h3></h3><p>Interactive step-by-step reconstruction · §23 · added integer example</p></div>
+        <p class="method-lead">Follow Föppl’s §23 construction step by step: ground traces locate the plane intersection <i>d</i> (Fig. 2), two hinged triangles close the skew force polygon (Fig. 2a), and repeating the rule solves a six-bar space truss.</p>
         <div class="session-embed"><iframe class="session-frame" loading="eager" allow="webgpu"></iframe></div>
         <div class="deck-controls" aria-label="Slide controls">
           <button type="button" data-deck-key="ArrowLeft" disabled>← Previous</button>
+          <span class="deck-status" aria-live="polite">Loading slides…</span>
           <button type="button" data-deck-key="ArrowRight" disabled>Next →</button>
         </div>
-        <p class="method-help">Use the buttons or left / right arrows to change slides. Right-drag to orbit and use the wheel to zoom. Phones use a portrait deck.</p>
+        <p class="method-help">Use Previous / Next or Left / Right Arrow keys to step through the 12 slides. Drag to orbit the 3D model and scroll to zoom.</p>
         <details class="method-details">
-          <summary>NumPy + COMPAS reconstruction</summary>
-          <p>Unit bar directions point away from the joint; tension is positive. These are new numerical values, not dimensions recovered from the historical figure.</p>
-          <pre><code>n_ab = a × b
-n_cP = c × P
-d = n_ab × n_cP
-forces = numpy.linalg.solve([a b c], -P)</code></pre>
-          <p class="extras"><a class="method-script" download>Python template</a><a class="deck-source" download>Deck source</a><a class="method-notes">Method notes</a></p>
+          <summary>From Fig. 2 / 2a to Python (NumPy + COMPAS)</summary>
+          <p>Unit bar directions point away from joint <i>O</i>; tension is positive (+) and compression negative (−). Coordinates and forces are added integer values, not dimensions measured from the 1892 print and not Thrust Network Analysis (TNA).</p>
+          <pre><code>O = np.array([0.0, 0.0, 2.0])
+anchors = np.array([[2.0, 1.0, 0.0], [-1.0, -2.0, 0.0], [-2.0, 1.0, 0.0]])
+P = np.array([5.0, -1.0, -4.0])
+
+dirs = (anchors - O) / np.linalg.norm(anchors - O, axis=1, keepdims=True)
+d = np.cross(np.cross(dirs[0], dirs[1]), np.cross(dirs[2], P))  # along OT = (1, 0, -2)
+forces = np.linalg.solve(dirs.T, -P)                            # [-6, -3, +3]</code></pre>
+          <p class="extras"><a class="method-script" download>Python template</a><a class="deck-source" download>Presentation script</a><a class="method-notes">Method notes</a></p>
         </details>`;
       section.querySelector('h3').textContent = method.title;
       const frame = section.querySelector('iframe');
       const embed = section.querySelector('.session-embed');
-      // Keep the player usable even when an older library.css is still cached.
-      Object.assign(embed.style, { width: '100%', aspectRatio: '1600 / 760', overflow: 'hidden', border: '1px solid var(--rule)', background: '#fff' });
-      Object.assign(frame.style, { display: 'block', width: '100%', height: '100%', border: '0', background: '#fff' });
+      const controlsBar = section.querySelector('.deck-controls');
+      const statusLabel = section.querySelector('.deck-status');
+      // Keep critical sizing independent of cached CSS (prevents 300×150 default iframe fallback).
+      Object.assign(embed.style, { width: '100%', minHeight: '340px', aspectRatio: '1600 / 760', overflow: 'hidden', border: '1px solid var(--rule)', background: '#000' });
+      Object.assign(frame.style, { display: 'block', width: '100%', height: '100%', border: '0', background: '#000' });
+      Object.assign(controlsBar.style, { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginTop: '10px', flexWrap: 'wrap' });
+      Object.assign(statusLabel.style, { fontSize: '13px', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums', textAlign: 'center', flex: '1 1 auto' });
       frame.title = method.title + ' · interactive Session Viewer presentation';
       section.querySelector('.method-script').href = method.script;
       section.querySelector('.deck-source').href = method.deckSource;
@@ -456,44 +464,109 @@ forces = numpy.linalg.solve([a b c], -P)</code></pre>
       anchor.after(section);
 
       const compact = window.matchMedia('(max-width: 760px)');
-      const buttons = section.querySelectorAll('[data-deck-key]');
-      buttons.forEach((button) => { button.style.minHeight = '40px'; button.style.minWidth = '112px'; });
+      const prevBtn = section.querySelector('[data-deck-key="ArrowLeft"]');
+      const nextBtn = section.querySelector('[data-deck-key="ArrowRight"]');
+      const buttons = [prevBtn, nextBtn];
+      buttons.forEach((button) => { button.style.minHeight = '42px'; button.style.minWidth = '112px'; });
+
+      let topicTitles = [];
+      function syncControls() {
+        if (!section.isConnected) return false;
+        const canvas = frame.contentDocument?.querySelector('canvas');
+        if (canvas?.dataset.presentationReady !== 'true') return false;
+        const stepRaw = canvas.dataset.presentationStep || '';
+        const topicRaw = canvas.dataset.presentationTopic || '';
+        const slashParts = stepRaw.split('/').map((s) => parseInt(s.trim(), 10));
+        if (slashParts.length === 2 && !Number.isNaN(slashParts[0]) && !Number.isNaN(slashParts[1])) {
+          const cur = slashParts[0], tot = slashParts[1];
+          const title = (topicTitles[cur - 1] || topicRaw).replace(/^\d+\s*[·.]?\s*/, '');
+          prevBtn.disabled = cur <= 1;
+          nextBtn.disabled = cur >= tot;
+          statusLabel.textContent = title ? `${cur} / ${tot} · ${title}` : `${cur} / ${tot}`;
+          return true;
+        }
+        const idx = parseInt(topicRaw !== '' ? topicRaw : stepRaw, 10);
+        const tot = topicTitles.length;
+        if (!Number.isNaN(idx) && tot > 0) {
+          const cur = Math.min(Math.max(idx + 1, 1), tot);
+          const title = (topicTitles[cur - 1] || '').replace(/^\d+\s*[·.]?\s*/, '');
+          prevBtn.disabled = cur <= 1;
+          nextBtn.disabled = cur >= tot;
+          statusLabel.textContent = title ? `${cur} / ${tot} · ${title}` : `${cur} / ${tot}`;
+        } else if (!Number.isNaN(idx)) {
+          prevBtn.disabled = idx <= 0;
+          nextBtn.disabled = false;
+          statusLabel.textContent = `Slide ${idx + 1}`;
+        } else {
+          prevBtn.disabled = false;
+          nextBtn.disabled = false;
+          statusLabel.textContent = 'Ready';
+        }
+        return true;
+      }
+
+      let observer = null;
+      function attachCanvasObserver() {
+        if (!section.isConnected) return;
+        const canvas = frame.contentDocument?.querySelector('canvas');
+        if (!canvas || canvas.dataset.presentationReady !== 'true') {
+          requestAnimationFrame(attachCanvasObserver);
+          return;
+        }
+        syncControls();
+        if (observer) observer.disconnect();
+        observer = new MutationObserver(() => syncControls());
+        observer.observe(canvas, { attributes: true, attributeFilter: ['data-presentation-step', 'data-presentation-topic', 'data-presentation-ready'] });
+      }
+
       function selectDeck() {
-        if (!section.isConnected) { compact.removeEventListener('change', selectDeck); return; }
-        embed.style.height = compact.matches ? '680px' : '';
+        if (!section.isConnected) {
+          compact.removeEventListener('change', selectDeck);
+          if (observer) observer.disconnect();
+          return;
+        }
+        embed.style.height = compact.matches ? '640px' : '';
         embed.style.aspectRatio = compact.matches ? 'auto' : '1600 / 760';
-        const path = 'session-viewer/?presentation=' + (compact.matches ? method.mobilePresentation : method.presentation);
+        statusLabel.style.order = compact.matches ? '-1' : '';
+        statusLabel.style.flex = compact.matches ? '1 1 100%' : '1 1 auto';
+        buttons.forEach((button) => { button.style.flex = compact.matches ? '1 1 44%' : ''; });
+        const deckRel = compact.matches ? method.mobilePresentation : method.presentation;
+        const path = 'session-viewer/?presentation=' + deckRel;
         if (frame.getAttribute('src') !== path) {
           buttons.forEach((button) => { button.disabled = true; });
+          statusLabel.textContent = 'Loading slides…';
+          fetch('session-viewer/' + deckRel)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((manifest) => {
+              if (Array.isArray(manifest?.topics)) {
+                topicTitles = manifest.topics.map((t) => String(t.title || ''));
+                syncControls();
+              }
+            })
+            .catch(() => {});
           frame.src = path;
         }
       }
-      function enableControls() {
-        if (!section.isConnected) return;
-        const canvas = frame.contentDocument?.querySelector('canvas');
-        if (canvas?.dataset.presentationReady === 'true') {
-          buttons.forEach((button) => { button.disabled = false; });
-          return;
-        }
-        requestAnimationFrame(enableControls);
-      }
+
       buttons.forEach((button) => {
         button.addEventListener('click', () => {
-          const canvas = frame.contentDocument.querySelector('canvas');
+          const canvas = frame.contentDocument?.querySelector('canvas');
+          if (!canvas) return;
           const key = button.dataset.deckKey;
           const code = key === 'ArrowRight' ? 39 : 37;
           const init = { key, code: key, keyCode: code, which: code, bubbles: true, cancelable: true };
-          canvas.focus();
+          canvas.focus({ preventScroll: true });
           canvas.dispatchEvent(new frame.contentWindow.KeyboardEvent('keydown', init));
           frame.contentWindow.requestAnimationFrame(() => {
             canvas.dispatchEvent(new frame.contentWindow.KeyboardEvent('keyup', init));
+            syncControls();
           });
         });
       });
-      frame.addEventListener('load', enableControls);
+      frame.addEventListener('load', attachCanvasObserver);
       compact.addEventListener('change', selectDeck);
       selectDeck();
-      enableControls();
+      attachCanvasObserver();
     }
 
     async function loadDoc() {

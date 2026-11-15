@@ -23,7 +23,7 @@ The second example builds a simple space truss with two free joints and six bars
 ## Files
 
 - `spatial_joint.py` — numerical reconstruction, COMPAS scene, projections, diagram, and embedded checks.
-- `foeppl_presentation.py` — authors four slides with the Session `Presentation` API.
+- `foeppl_presentation.py` — authors twelve step-by-step slides in the Session Viewer Force-Density style.
 - `../../session-viewer/methods/space-trusses-foeppl/presentation.yaml` and `steps/*.pb` — the playable desktop deck served by the existing Teaching viewer.
 - `../../session-viewer/methods/space-trusses-foeppl/mobile/presentation.yaml` and `mobile/steps/*.pb` — the portrait deck selected for narrow screens.
 - `method-diagram.svg` and `method-diagram.png` — the simplified geometric reconstruction.
@@ -50,13 +50,13 @@ The first command runs all checks and writes the COMPAS captures, projections, a
 python foeppl_presentation.py
 ```
 
-The four slides are: three bars and a load; two auxiliary planes; the skew force polygon; and a six-bar simple space truss. `python foeppl_presentation.py --serve` opens the deck in the existing Teaching viewer on localhost. Alternatively, serve `CAS/website` with `python -m http.server 8000 --directory CAS/website` from the Teaching root and open:
+The twelve step-by-step slides follow the same pedagogical progression as the Session Viewer Force-Density presentation: (1) spatial polygon equilibrium, (2) given anchor coordinates and unknowns, (3) bar direction cosines (§20 eq. 9), (4) pairing the four forces into two opposite resultants (§23), (5) plane $\Pi_{ab}$ and ground trace $ab$ (Fig. 2), (6) plane $\Pi_{cP}$, trace intersection $T$, and line $d = OT$ (Fig. 2), (7) first planar force triangle $(\mathbf{P}, \mathbf{F}_c, \mathbf{R}_{cP})$, (8) second planar force triangle $(\mathbf{R}_{ab}, \mathbf{F}_b, \mathbf{F}_a)$ completing the hinged skew quadrilateral (Fig. 2a), (9) Monge elevation/plan projector alignment and true 3D lengths, (10) $3\times 3$ direction-cosine matrix check, (11) sequential joint-by-joint solution of a six-bar simple space truss ($E \to D$), and (12) agreement with the $6\times 6$ global equilibrium matrix (§§20–21). `python foeppl_presentation.py --serve` opens the deck in the existing Teaching viewer on localhost. Alternatively, serve `CAS/website` with `python -m http.server 8000 --directory CAS/website` from the Teaching root and open:
 
 ```text
 http://localhost:8000/methods/space-trusses-foeppl/spatial-joint/
 ```
 
-The deck's four topics each contain one step. Previous/Next buttons forward the viewer's normal arrow-key navigation; right-drag orbits and scrolling zooms. Spatial text heights are CSS pixels. Below 760 px, `mobile/presentation.yaml` provides shorter captions and a portrait equation layout, and the controls accept taps.
+Each topic contains one focused reveal. Previous/Next buttons forward the viewer's normal arrow-key navigation and display the active slide counter; drag orbits and scrolling zooms. Spatial text heights are CSS pixels. Below 760 px, `mobile/presentation.yaml` uses a full-width portrait 3D viewport with non-overlapping top and bottom equation bands, and the controls accept taps.
 
 The shelf card opens printed page 36 of `05-chapter-05.md` in the original book reader. `useLibrary.js` inserts the interactive reconstruction and these controls immediately after `txt-fig002a.svg`, so the book's text and original figures remain in place. `index.html` redirects to that book page; the standalone presentation is also available from the Session Viewer README.
 
