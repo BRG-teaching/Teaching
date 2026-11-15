@@ -1,0 +1,1400 @@
+{
+  "name": "Föppl · Spatial joint equilibrium",
+  "width": 1600.0,
+  "height": 760.0,
+  "dark": false,
+  "stroke_scale": 1.0,
+  "head_scale": 0.85,
+  "spatial_split": 0.56,
+  "spatial": [
+    "joint-O",
+    "label-O",
+    "bar-A",
+    "anchor-A",
+    "label-A",
+    "bar-B",
+    "anchor-B",
+    "label-B",
+    "bar-C",
+    "anchor-C",
+    "label-C",
+    "external-load",
+    "load-label",
+    "joint-O",
+    "label-O",
+    "bar-A",
+    "anchor-A",
+    "label-A",
+    "bar-B",
+    "anchor-B",
+    "label-B",
+    "bar-C",
+    "anchor-C",
+    "label-C",
+    "external-load",
+    "load-label",
+    "plane-ab",
+    "outline-ab",
+    "plane-label-ab",
+    "plane-cp",
+    "outline-cp",
+    "plane-label-cp",
+    "plane-intersection",
+    "intersection-label",
+    "force-P",
+    "force-label-P",
+    "force-C",
+    "force-label-C",
+    "force-B",
+    "force-label-B",
+    "force-A",
+    "force-label-A",
+    "resultant-CP",
+    "resultant-label-CP",
+    "resultant-AB",
+    "resultant-label-AB",
+    "member-AD",
+    "member-BD",
+    "member-CD",
+    "member-AE",
+    "member-BE",
+    "member-DE",
+    "truss-node-A",
+    "truss-label-A",
+    "truss-node-B",
+    "truss-label-B",
+    "truss-node-C",
+    "truss-label-C",
+    "truss-node-D",
+    "truss-label-D",
+    "truss-node-E",
+    "truss-label-E",
+    "truss-load-D",
+    "truss-load-E"
+  ],
+  "topics": [
+    {
+      "title": "1 · Three bars and a load",
+      "steps": [
+        {
+          "name": "A spatial joint",
+          "caption": "Three non-coplanar bars meet one external force. Drag to orbit; use the arrow keys to change slides.",
+          "items": [
+            {
+              "file": "steps/00_00_00_a-spatial-joint.pb",
+              "name": "A spatial joint"
+            },
+            {
+              "file": "steps/00_00_01_a-spatial-joint.pb",
+              "name": "A spatial joint"
+            },
+            {
+              "file": "steps/00_00_02_a-spatial-joint.pb",
+              "name": "A spatial joint"
+            },
+            {
+              "file": "steps/00_00_03_a-spatial-joint.pb",
+              "name": "A spatial joint"
+            },
+            {
+              "file": "steps/00_00_04_a-spatial-joint.pb",
+              "name": "A spatial joint"
+            },
+            {
+              "file": "steps/00_00_05_a-spatial-joint.pb",
+              "name": "A spatial joint"
+            },
+            {
+              "file": "steps/00_00_06_a-spatial-joint.pb",
+              "name": "A spatial joint"
+            },
+            {
+              "file": "steps/00_00_07_a-spatial-joint.pb",
+              "name": "A spatial joint"
+            }
+          ],
+          "texts": [
+            {
+              "name": "label-O",
+              "text": "O",
+              "at": [
+                0.08,
+                -0.1,
+                0.2
+              ],
+              "height": 28.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "label-A",
+              "text": "a",
+              "at": [
+                1.6758430714121177,
+                0.0,
+                1.6758430714121177
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "label-B",
+              "text": "b",
+              "at": [
+                0.0,
+                2.0322582339387303,
+                1.2193549403632382
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "label-C",
+              "text": "c",
+              "at": [
+                -1.4627957576406316,
+                0.3656989394101579,
+                1.8284946970507892
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "load-label",
+              "text": "\\mathbf{P}",
+              "at": [
+                0.5491251783869153,
+                -0.3922322702763681,
+                -2.132714897326567
+              ],
+              "height": 30.0,
+              "color": [
+                39,
+                150,
+                90,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "equilibrium",
+              "text": "A\\mathbf{a}+B\\mathbf{b}+C\\mathbf{c}+\\mathbf{P}=\\mathbf{0}",
+              "at": [
+                960.0,
+                570.0,
+                0.0
+              ],
+              "height": 36.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "known",
+              "text": "Known: bar directions a, b, c and load P.",
+              "at": [
+                960.0,
+                470.0,
+                0.0
+              ],
+              "height": 27.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0
+            },
+            {
+              "name": "unknown",
+              "text": "Unknown: signed bar forces A, B, C.",
+              "at": [
+                960.0,
+                420.0,
+                0.0
+              ],
+              "height": 27.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0
+            },
+            {
+              "name": "source-note",
+              "text": "Föppl §23 · added numerical example",
+              "at": [
+                960.0,
+                90.0,
+                0.0
+              ],
+              "height": 22.0,
+              "color": [
+                137,
+                148,
+                159,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0
+            }
+          ],
+          "effects": [
+            {
+              "name": "external-load",
+              "kind": "grow",
+              "duration_ms": 650.0
+            }
+          ],
+          "highlight": []
+        }
+      ]
+    },
+    {
+      "title": "2 · Two auxiliary planes",
+      "steps": [
+        {
+          "name": "Auxiliary planes",
+          "caption": "One plane contains a and b; the other contains c and P. Their intersection carries both resultants.",
+          "items": [
+            {
+              "file": "steps/01_00_00_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_01_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_02_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_03_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_04_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_05_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_06_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_07_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_08_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_09_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_10_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_11_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            },
+            {
+              "file": "steps/01_00_12_auxiliary-planes.pb",
+              "name": "Auxiliary planes"
+            }
+          ],
+          "texts": [
+            {
+              "name": "label-O",
+              "text": "O",
+              "at": [
+                0.08,
+                -0.1,
+                0.2
+              ],
+              "height": 28.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "label-A",
+              "text": "a",
+              "at": [
+                1.6758430714121177,
+                0.0,
+                1.6758430714121177
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "label-B",
+              "text": "b",
+              "at": [
+                0.0,
+                2.0322582339387303,
+                1.2193549403632382
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "label-C",
+              "text": "c",
+              "at": [
+                -1.4627957576406316,
+                0.3656989394101579,
+                1.8284946970507892
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "load-label",
+              "text": "\\mathbf{P}",
+              "at": [
+                0.5491251783869153,
+                -0.3922322702763681,
+                -2.132714897326567
+              ],
+              "height": 30.0,
+              "color": [
+                39,
+                150,
+                90,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "plane-label-ab",
+              "text": "\\Pi_{ab}",
+              "at": [
+                1.3689845759568788,
+                1.5649768504271497,
+                2.3079706862131686
+              ],
+              "height": 26.0,
+              "color": [
+                137,
+                148,
+                159,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "plane-label-cp",
+              "text": "\\Pi_{cP}",
+              "at": [
+                -2.9420300092668104,
+                0.1614884436414385,
+                0.9840634670303501
+              ],
+              "height": 26.0,
+              "color": [
+                137,
+                148,
+                159,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "intersection-label",
+              "text": "d",
+              "at": [
+                1.0628645419256202,
+                0.27970119524358417,
+                1.4106852590717704
+              ],
+              "height": 28.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "normal-ab",
+              "text": "\\mathbf{n}_{ab}=\\mathbf{a}\\times\\mathbf{b}",
+              "at": [
+                960.0,
+                590.0,
+                0.0
+              ],
+              "height": 34.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "normal-cp",
+              "text": "\\mathbf{n}_{cP}=\\mathbf{c}\\times\\mathbf{P}",
+              "at": [
+                960.0,
+                525.0,
+                0.0
+              ],
+              "height": 34.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "intersection",
+              "text": "\\mathbf{d}=\\mathbf{n}_{ab}\\times\\mathbf{n}_{cP}",
+              "at": [
+                960.0,
+                440.0,
+                0.0
+              ],
+              "height": 34.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "resultants",
+              "text": "Both resultants are parallel to d.",
+              "at": [
+                960.0,
+                340.0,
+                0.0
+              ],
+              "height": 27.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0
+            },
+            {
+              "name": "source-note",
+              "text": "Föppl §23 · added numerical example",
+              "at": [
+                960.0,
+                90.0,
+                0.0
+              ],
+              "height": 22.0,
+              "color": [
+                137,
+                148,
+                159,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0
+            }
+          ],
+          "effects": [],
+          "highlight": []
+        }
+      ]
+    },
+    {
+      "title": "3 · Close the force polygon",
+      "steps": [
+        {
+          "name": "Skew force quadrilateral",
+          "caption": "The four force vectors close in space. The two diagonals are the opposite resultants.",
+          "items": [
+            {
+              "file": "steps/02_00_00_skew-force-quadrilateral.pb",
+              "name": "Skew force quadrilateral"
+            },
+            {
+              "file": "steps/02_00_01_skew-force-quadrilateral.pb",
+              "name": "Skew force quadrilateral"
+            },
+            {
+              "file": "steps/02_00_02_skew-force-quadrilateral.pb",
+              "name": "Skew force quadrilateral"
+            },
+            {
+              "file": "steps/02_00_03_skew-force-quadrilateral.pb",
+              "name": "Skew force quadrilateral"
+            },
+            {
+              "file": "steps/02_00_04_skew-force-quadrilateral.pb",
+              "name": "Skew force quadrilateral"
+            },
+            {
+              "file": "steps/02_00_05_skew-force-quadrilateral.pb",
+              "name": "Skew force quadrilateral"
+            }
+          ],
+          "texts": [
+            {
+              "name": "force-label-P",
+              "text": "\\mathbf{P}",
+              "at": [
+                0.4201243629762791,
+                -0.16654650219936934,
+                -0.7287941568180449
+              ],
+              "height": 28.0,
+              "color": [
+                39,
+                150,
+                90,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "force-label-C",
+              "text": "\\mathbf{C}",
+              "at": [
+                0.08979058853409055,
+                -0.23630849701659423,
+                -1.0444901971455616
+              ],
+              "height": 28.0,
+              "color": [
+                206,
+                64,
+                149,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "force-label-B",
+              "text": "\\mathbf{B}",
+              "at": [
+                -0.5617910296429459,
+                -0.00012016446729731789,
+                -0.21287250984862158
+              ],
+              "height": 28.0,
+              "color": [
+                206,
+                64,
+                149,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "force-label-A",
+              "text": "\\mathbf{A}",
+              "at": [
+                -0.23145725520075733,
+                0.06964183034992755,
+                0.1028235304788952
+              ],
+              "height": 28.0,
+              "color": [
+                206,
+                64,
+                149,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "resultant-label-CP",
+              "text": "\\mathbf{R}_{CP}",
+              "at": [
+                -0.15833333333333338,
+                -0.04166666666666666,
+                0.03666666666666671
+              ],
+              "height": 22.0,
+              "color": [
+                137,
+                148,
+                159,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "resultant-label-AB",
+              "text": "\\mathbf{R}_{AB}",
+              "at": [
+                -0.15833333333333338,
+                -0.04166666666666666,
+                0.03666666666666679
+              ],
+              "height": 22.0,
+              "color": [
+                137,
+                148,
+                159,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "closure",
+              "text": "\\mathbf{P}+\\mathbf{C}+\\mathbf{B}+\\mathbf{A}=\\mathbf{0}",
+              "at": [
+                960.0,
+                600.0,
+                0.0
+              ],
+              "height": 36.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "resultants-equal",
+              "text": "\\mathbf{R}_{AB}+\\mathbf{R}_{CP}=\\mathbf{0}",
+              "at": [
+                960.0,
+                530.0,
+                0.0
+              ],
+              "height": 32.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "value-A",
+              "text": "A=0.4478",
+              "at": [
+                960.0,
+                430.0,
+                0.0
+              ],
+              "height": 32.0,
+              "color": [
+                206,
+                64,
+                149,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "value-B",
+              "text": "B=0.0972",
+              "at": [
+                960.0,
+                365.0,
+                0.0
+              ],
+              "height": 32.0,
+              "color": [
+                206,
+                64,
+                149,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "value-C",
+              "text": "C=1.0801",
+              "at": [
+                960.0,
+                300.0,
+                0.0
+              ],
+              "height": 32.0,
+              "color": [
+                206,
+                64,
+                149,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "source-note",
+              "text": "Tension positive · true 3D lengths, not projected lengths",
+              "at": [
+                960.0,
+                90.0,
+                0.0
+              ],
+              "height": 22.0,
+              "color": [
+                137,
+                148,
+                159,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0
+            }
+          ],
+          "effects": [],
+          "highlight": []
+        }
+      ]
+    },
+    {
+      "title": "4 · A simple space truss",
+      "steps": [
+        {
+          "name": "Two free joints and six bars",
+          "caption": "Each new joint has three non-coplanar bars. Local joint solutions agree with the global equilibrium matrix.",
+          "items": [
+            {
+              "file": "steps/03_00_00_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_01_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_02_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_03_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_04_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_05_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_06_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_07_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_08_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_09_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_10_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_11_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            },
+            {
+              "file": "steps/03_00_12_two-free-joints-and-six-bars.pb",
+              "name": "Two free joints and six bars"
+            }
+          ],
+          "texts": [
+            {
+              "name": "truss-label-A",
+              "text": "A",
+              "at": [
+                -0.35,
+                0.0,
+                0.45
+              ],
+              "height": 28.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "truss-label-B",
+              "text": "B",
+              "at": [
+                2.1,
+                0.0,
+                0.2
+              ],
+              "height": 28.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "truss-label-C",
+              "text": "C",
+              "at": [
+                0.1,
+                2.0,
+                0.2
+              ],
+              "height": 28.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "truss-label-D",
+              "text": "D",
+              "at": [
+                0.30000000000000004,
+                0.3,
+                1.7
+              ],
+              "height": 28.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "truss-label-E",
+              "text": "E",
+              "at": [
+                0.6,
+                0.4,
+                2.9000000000000004
+              ],
+              "height": 28.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": -1.5,
+              "math": true,
+              "center": true,
+              "center_ink": true,
+              "fixed": true,
+              "max_width": 0.0,
+              "camera_facing": true,
+              "spatial": true
+            },
+            {
+              "name": "truss-count",
+              "text": "m=3n_f=6",
+              "at": [
+                960.0,
+                590.0,
+                0.0
+              ],
+              "height": 38.0,
+              "color": [
+                38,
+                49,
+                61,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "truss-value-AD",
+              "text": "AD=-0.5638",
+              "at": [
+                960.0,
+                490.0,
+                0.0
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "truss-value-BD",
+              "text": "BD=+0.0354",
+              "at": [
+                960.0,
+                438.0,
+                0.0
+              ],
+              "height": 28.0,
+              "color": [
+                206,
+                64,
+                149,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "truss-value-CD",
+              "text": "CD=-0.2428",
+              "at": [
+                960.0,
+                386.0,
+                0.0
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "truss-value-AE",
+              "text": "AE=-0.0892",
+              "at": [
+                960.0,
+                334.0,
+                0.0
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "truss-value-BE",
+              "text": "BE=-0.4931",
+              "at": [
+                960.0,
+                282.0,
+                0.0
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "truss-value-DE",
+              "text": "DE=-0.2955",
+              "at": [
+                960.0,
+                230.0,
+                0.0
+              ],
+              "height": 28.0,
+              "color": [
+                26,
+                30,
+                178,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0,
+              "math": true,
+              "center": false,
+              "center_ink": false,
+              "fixed": false,
+              "max_width": 0.0
+            },
+            {
+              "name": "source-note",
+              "text": "Local = global · equilibrium residual 6.94 × 10⁻¹⁷",
+              "at": [
+                960.0,
+                90.0,
+                0.0
+              ],
+              "height": 22.0,
+              "color": [
+                137,
+                148,
+                159,
+                255
+              ],
+              "plate": false,
+              "outline": 0.0
+            }
+          ],
+          "effects": [],
+          "highlight": []
+        }
+      ]
+    }
+  ],
+  "links": [],
+  "gradients": {},
+  "colored": {}
+}

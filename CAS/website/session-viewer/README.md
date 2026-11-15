@@ -4,6 +4,7 @@ Static Rust/WebAssembly and WGSL viewer for Session kernel scenes and protobuf p
 
 ## Open
 
+- [Föppl: Spatial joint equilibrium](https://brg-teaching.github.io/Teaching/CAS/website/session-viewer/?presentation=methods/space-trusses-foeppl/presentation.yaml) — four slides: the spatial joint, auxiliary planes, skew force polygon, and six-bar simple truss. Authored by `methods/space-trusses-foeppl/spatial-joint/foeppl_presentation.py`; its protobuf files are in `methods/space-trusses-foeppl/`.
 - [Linkwitz: Force density method](https://brg-teaching.github.io/Teaching/CAS/website/session-viewer/?presentation=force-density/presentation.yaml) — 36 protobuf reveals, with a closed first-slide force polygon. Free nodes, solution annotations, and positive presentation-matrix cells are pink (`#dc4b8d`).
 - [Create one slide](https://brg-teaching.github.io/Teaching/CAS/website/session-viewer/?presentation=one-slide/presentation.yaml) — one protobuf session with an animated matrix multiplication and pink positive cells.
 - [One-slide authoring guide](../session-viewer-guide/one-slide.md) — complete Python source, export layout, local server, and publication instructions.
@@ -21,7 +22,7 @@ Text-and-matrix-only presentations also start their effects without waiting for 
 
 `index.html` imports the matching hashed JavaScript/WASM runtime. Keep `bridge.js` and its script tag for ordinary notebook scenes, along with the fonts, snippets, diagnostics, and compatible `session_py` wheel.
 
-`force-density/presentation.yaml` and `one-slide/presentation.yaml` each resolve their own `steps/` directory. There are exactly 36 referenced force-density protobufs and one referenced one-slide protobuf. Do not copy an extra `generated` directory into these URLs.
+`force-density/presentation.yaml` and `one-slide/presentation.yaml` each resolve their own `steps/` directory. There are exactly 36 referenced force-density protobufs and one referenced one-slide protobuf. Do not copy an extra `generated` directory into these URLs. The Föppl deck has `methods/space-trusses-foeppl/presentation.yaml` and a portrait `methods/space-trusses-foeppl/mobile/presentation.yaml`, each resolving its own `steps/` directory.
 
 The Python source and full authoring documentation live in `session/session_viewer/examples/linkwitz/` in the Session workspace; `one_slide.py` is also included beside the Teaching guide for convenience. Teaching contains the deployable runtime and protobuf artifacts, not a second renderer.
 

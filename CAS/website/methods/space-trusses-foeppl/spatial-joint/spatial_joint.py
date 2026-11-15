@@ -17,11 +17,10 @@ from compas.geometry import Line, Point
 from compas_viewer import Viewer
 from compas_viewer.commands import clear_scene
 from compas_viewer.scene.tagobject import Tag, TagObject
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib import font_manager
 from matplotlib.patches import ConnectionPatch
 
 ROOT = Path(__file__).resolve().parent
@@ -362,21 +361,47 @@ def render_projections(solution):
     plt.close(fig)
 
 
-def make_thumbnail():
-    viewer_image = ImageOps.contain(Image.open(ROOT / "viewer.png").convert("RGB"), (900, 900))
-    projections = ImageOps.contain(Image.open(ROOT / "projections.png").convert("RGB"), (900, 900))
-    thumbnail = Image.new("RGB", (1800, 950), "white")
-    thumbnail.paste(viewer_image, ((900 - viewer_image.width) // 2, 50 + (900 - viewer_image.height) // 2))
-    thumbnail.paste(projections, (900 + (900 - projections.width) // 2, 50 + (900 - projections.height) // 2))
-    draw = ImageDraw.Draw(thumbnail)
-    try:
-        title_font = ImageFont.truetype(font_manager.findfont("DejaVu Sans:weight=bold"), 28)
-        subtitle_font = ImageFont.truetype(font_manager.findfont("DejaVu Sans"), 20)
-    except OSError:
-        title_font = subtitle_font = ImageFont.load_default()
-    draw.text((24, 12), "FÖPPL · SPATIAL JOINT EQUILIBRIUM", fill=DARK, font=title_font)
-    draw.text((920, 18), "Skew force quadrilateral · elevation + plan", fill="#666666", font=subtitle_font)
-    thumbnail.save(ROOT / "thumbnail.webp", quality=92)
+def render_method_diagram(solution):
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+    background = "#f1f1f1"
+    fig = plt.figure(figsize=(16, 10), facecolor=background)
+    joint_axis = fig.add_axes([0.0, 0.02, 0.58, 0.96], projection="3d", facecolor=background)
+    force_axis = fig.add_axes([0.57, 0.08, 0.41, 0.84], projection="3d", facecolor=background)
+    for axis in (joint_axis, force_axis):
+        axis.set_proj_type("ortho")
+        axis.view_init(elev=22, azim=-55)
+        axis.set_box_aspect((1, 1, 1))
+        axis.dist = 7.5
+        axis.set_axis_off()
+    origin = np.zeros(3)
+    label_offsets = {"A": [0.1, 0.0, -0.3], "B": [0.0, 0.0, 0.65], "C": [0.0, 0.0, 0.1]}
+    for name, direction in zip("ABC", solution.directions):
+        end = 2.2 * direction
+        joint_axis.plot(*zip(origin, end), color="#4e565e", linewidth=5)
+        joint_axis.scatter(*end, s=45, color="#4e565e")
+        joint_axis.text(*(end + label_offsets[name]), f" {name}", fontsize=40, color=DARK)
+    load_end = 2.0 * unit(solution.load)
+    joint_axis.quiver(*origin, *load_end, color=GREEN, linewidth=5, arrow_length_ratio=0.16)
+    joint_axis.text(*load_end, " P", fontsize=42, color=GREEN)
+    for first, second in ((solution.directions[0], solution.directions[1]), (solution.directions[2], solution.load)):
+        u = unit(first)
+        v = unit(second - np.dot(second, u) * u)
+        corners = np.array([2.5 * u + 1.6 * v, -1.3 * u + 1.6 * v, -1.3 * u - 1.6 * v, 2.5 * u - 1.6 * v])
+        joint_axis.add_collection3d(Poly3DCollection([corners], facecolor="#cbd6e8", edgecolor="#b1b8bf", alpha=0.18, linewidth=1.4))
+    direction = solution.intersection
+    joint_axis.plot(*zip(-3.2 * direction, 3.2 * direction), color=DARK, linewidth=2, linestyle=(0, (5, 4)))
+    points = solution.polygon
+    for index, (name, color) in enumerate(zip("PCBA", [GREEN, PINK, PINK, PINK])):
+        start, end = points[index], points[index + 1]
+        force_axis.quiver(*start, *(end - start), color=color, linewidth=5, arrow_length_ratio=0.15)
+        force_axis.text(*(start + end) / 2, f" {name}", fontsize=40, color=color)
+    for start, end in ((points[0], points[2]), (points[2], points[4])):
+        force_axis.plot(*zip(start, end), color=GREY, linewidth=2, linestyle=(0, (4, 3)))
+    fig.savefig(ROOT / "method-diagram.svg", facecolor=background)
+    fig.savefig(ROOT / "method-diagram.png", dpi=100, facecolor=background)
+    plt.close(fig)
+    Image.open(ROOT / "method-diagram.png").convert("RGB").save(ROOT / "thumbnail.webp", quality=94)
 
 
 def print_report(baseline, example, truss, zero_demo):
@@ -444,8 +469,8 @@ def main(interactive=False):
     clear_scene(viewer)
     add_spatial_scene(viewer, example)
     render_projections(example)
-    make_thumbnail()
-    print("\nWrote viewer.png, simple-truss.png, projections.svg, projections.png, thumbnail.webp")
+    render_method_diagram(example)
+    print("\nWrote viewer.png, simple-truss.png, projections.svg, projections.png, method-diagram.svg, method-diagram.png, thumbnail.webp")
     if interactive:
         initialize_tags(viewer)
         viewer.show()

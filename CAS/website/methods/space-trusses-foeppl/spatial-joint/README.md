@@ -22,34 +22,41 @@ The second example builds a simple space truss with two free joints and six bars
 
 ## Files
 
-- `spatial_joint.py` — executable reconstruction and all embedded numerical checks.
-- `viewer.png` — session-viewer presentation of the COMPAS reconstruction: bars, external force, auxiliary planes, intersection, and force polygon.
-- `simple-truss.png` — session-viewer presentation of the six-bar simple truss.
-- `index.yaml`, `01-spatial-joint.yaml`, `02-simple-truss.yaml`, `img/projections.png` — session-viewer deck and its image dependency; preserve this folder structure when loading it locally.
-- `projections.svg` — elevation and plan of the skew force quadrilateral.
-- `projections.png` — raster version used for display.
-- `thumbnail.webp` — combined library thumbnail.
-- `method.json` — proposed library-card metadata.
+- `spatial_joint.py` — numerical reconstruction, COMPAS scene, projections, diagram, and embedded checks.
+- `foeppl_presentation.py` — authors four slides with the Session `Presentation` API.
+- `../../session-viewer/methods/space-trusses-foeppl/presentation.yaml` and `steps/*.pb` — the playable desktop deck served by the existing Teaching viewer.
+- `../../session-viewer/methods/space-trusses-foeppl/mobile/presentation.yaml` and `mobile/steps/*.pb` — the portrait deck selected for narrow screens.
+- `method-diagram.svg` and `method-diagram.png` — the simplified geometric reconstruction.
+- `thumbnail.webp` — the library-card image derived from that diagram.
+- `projections.svg` and `projections.png` — elevation and plan of the skew force quadrilateral.
+- `method.json` — library-card and presentation metadata.
 
-## Run
+## Numerical template
 
 The example was developed with NumPy, COMPAS 2.15.1, compas_viewer 2.0.2, Matplotlib, and Pillow. It does not require `compas_tna`.
 
 ```bash
 python spatial_joint.py
-```
-
-This runs all checks and writes the script's COMPAS scene captures and projection figures. The packaged `viewer.png`, `simple-truss.png`, and `thumbnail.webp` are separately captured session-viewer presentations of the same examples. To open the interactive COMPAS viewer after generating the script's figures:
-
-```bash
 python spatial_joint.py --interactive
 ```
 
-For the script's COMPAS captures, the verified image-capture path is the normal desktop Qt renderer. On this machine `QT_QPA_PLATFORM=offscreen` returns an empty framebuffer, so it is not used for the generated images.
+The first command runs all checks and writes the COMPAS captures, projections, and simplified diagram. The second also opens the interactive COMPAS viewer. For the COMPAS captures, use the normal desktop Qt renderer: on this machine `QT_QPA_PLATFORM=offscreen` returns an empty framebuffer.
 
-## Session viewer
+## Interactive presentation
 
-Place the three YAML files and `img/projections.png` in `session_viewer/examples/stage/foppl-spatial-joint/`, preserving the `img/` path. Run `NO_COLOR=false trunk serve` in `session_viewer`, then open `http://127.0.0.1:8080/?stage=decks/foppl-spatial-joint/index.yaml&data=off`. Trunk may use a different port if 8080 is occupied.
+`foeppl_presentation.py` reuses the numerical example and imports `session_py` from the matching wheel bundled in `CAS/website/session-viewer/`. Its protobuf output requires no Rust/WASM rebuild and no external upload. Install the wheel's `protobuf>=7.35.1,<8` requirement in the local Python environment, then run:
+
+```bash
+python foeppl_presentation.py
+```
+
+The four slides are: three bars and a load; two auxiliary planes; the skew force polygon; and a six-bar simple space truss. `python foeppl_presentation.py --serve` opens the deck in the existing Teaching viewer on localhost. Alternatively, serve `CAS/website` with `python -m http.server 8000 --directory CAS/website` from the Teaching root and open:
+
+```text
+http://localhost:8000/methods/space-trusses-foeppl/spatial-joint/
+```
+
+The deck's four topics each contain one step. Previous/Next buttons forward the viewer's normal arrow-key navigation; right-drag orbits and scrolling zooms. Spatial text heights are CSS pixels. Below 760 px, the page selects `mobile/presentation.yaml`, with shorter captions and a portrait equation layout, and the controls accept taps.
 
 ## Embedded checks
 

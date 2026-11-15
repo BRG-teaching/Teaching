@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <title>Spatial joint equilibrium · Föppl · CAS Library</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,95 +19,125 @@
     <a class="on" href="./">Spatial joint equilibrium</a>
   </nav>
 </header>
-<main class="wrap block doc md">
+<main class="wrap block doc md method-doc">
   <p class="crumbs"><a href="../../../library.html">Books</a> / <a href="../../../library.html#/b/space-trusses-foeppl">August Föppl · The Space Truss</a></p>
 
-  <section class="method-hero">
-    <div>
-      <h1>Spatial joint equilibrium</h1>
-      <p class="by">Skew force quadrilateral in elevation and plan · August Föppl, 1892</p>
-      <p>Three non-coplanar bars meet an external force at one joint. Two auxiliary planes provide the line shared by their resultants; the force sides then form a closed skew quadrilateral. This page reconstructs that construction with NumPy and COMPAS, rather than treating it as Thrust Network Analysis.</p>
-      <p class="extras">
-        <a href="spatial_joint.py" download>Python template</a>
-        <a href="index.yaml">Session-viewer deck</a>
-        <a href="https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev/space-trusses-foeppl/05-chapter-05.md" target="_blank" rel="noopener">Original chapter</a>
-      </p>
-    </div>
-    <img class="method-hero-image" src="thumbnail.webp" alt="Session-viewer reconstruction of the spatial joint, auxiliary planes and skew force quadrilateral">
-  </section>
-
-  <section>
-    <h2>1 · Read the original figures and text</h2>
-    <p>Part I, Chapter 5, §23, printed pp. 34–36. The construction begins on p. 35; Figs. 2 and 2a appear on p. 36. Föppl requires three bars that are <strong>not all in one plane</strong>. The two projections must be completed independently, after which corresponding corners align vertically.</p>
-    <div class="method-grid two">
-      <figure><img src="original-fig002.png" alt="Föppl Fig. 2: three-bar spatial joint in elevation and plan"><figcaption>Fig. 2 · Auxiliary planes through <em>a,b</em> and through <em>c,P</em>.</figcaption></figure>
-      <figure><img src="original-fig002a.png" alt="Föppl Fig. 2a: skew force quadrilateral in elevation and plan"><figcaption>Fig. 2a · The two force triangles sharing their resultant.</figcaption></figure>
-    </div>
-    <blockquote>The resultant of A and B must be equal and opposite to that of C and P. Each of these two resultants must therefore fall on the line of intersection of the two planes.</blockquote>
-    <p><strong>Assumptions:</strong> pin-jointed spatial joint, axial member forces, known bar directions and external load. Tension is positive and compression negative. The original drawing supplies topology and construction rules, not unique coordinates or force values, so the examples here are explicitly new numerical examples.</p>
-  </section>
-
-  <section>
-    <h2>2 · Reconstruct the auxiliary planes and force polygon</h2>
-    <p>The unit bar directions point away from the joint. With external force <strong>P</strong>, equilibrium is:</p>
-    <pre><code>A a + B b + C c + P = 0</code></pre>
-    <ol>
-      <li>Form the plane normals <code>n_ab = a × b</code> and <code>n_cP = c × P</code>.</li>
-      <li>Compute their intersection direction <code>d = n_ab × n_cP</code>.</li>
-      <li>Find the signed forces with <code>numpy.linalg.solve([a b c], -P)</code>.</li>
-      <li>Assemble the polygon in the order <code>P, C, B, A</code>; its diagonals are <code>R_AB</code> and <code>R_CP</code>.</li>
-      <li>Check the 3D geometry and derive elevation and plan from that same geometry.</li>
-    </ol>
-    <figure class="method-figure"><img src="viewer.png" alt="Session-viewer scene of the auxiliary planes, spatial joint and force polygon"><figcaption>The session-viewer presentation uses the same computed geometry as the Python template.</figcaption></figure>
-    <p>Main example: <code>A = 0.44783429</code>, <code>B = 0.09718253</code>, <code>C = 1.08012345</code>, all in tension. The direction matrix has determinant <code>0.78590525</code> and condition number <code>2.04586681</code>.</p>
-    <figure class="method-figure"><img src="projections.png" alt="Elevation and plan of the closed skew force quadrilateral"><figcaption>Elevation and plan reproduce Föppl’s alignment check; true force magnitudes come from the 3D sides, not projected lengths.</figcaption></figure>
-  </section>
-
-  <section>
-    <h2>3 · Extend to a simple space truss</h2>
-    <p>Following §13, a simple truss grows by adding three non-coplanar bars per new joint. The second example has two free joints and six bars. The joint-by-joint solution is compared with one global equilibrium-matrix solution.</p>
-    <figure class="method-figure"><img src="simple-truss.png" alt="Session-viewer scene of the six-bar simple space truss"><figcaption>Simple truss with two free joints and six bars.</figcaption></figure>
-    <pre><code>AD = -0.56382921    BD = +0.03543304    CD = -0.24276921
-AE = -0.08919281    BE = -0.49312636    DE = -0.29546842</code></pre>
-    <p>Local and global forces agree with residual <code>6.94 × 10⁻¹⁷</code>. A separate §24 example identifies the fourth, out-of-plane bar as unstressed.</p>
-  </section>
-
-  <section>
-    <h2>4 · Validation, not just a plausible drawing</h2>
-    <ul>
-      <li>Orthogonal baseline and zero-load solution.</li>
-      <li>Determinant and condition number of the direction matrix.</li>
-      <li>Equilibrium residual and polygon closure.</li>
-      <li>Both resultants parallel to the auxiliary-plane intersection.</li>
-      <li>Independent augmented-matrix SVD/nullspace agreement.</li>
-      <li>Superposition of independent load cases.</li>
-      <li>Elevation/plan projector alignment.</li>
-      <li>Local-versus-global simple-truss forces.</li>
-      <li>Zero-force example, coplanar-geometry rejection, and undefined auxiliary-plane rejection.</li>
-    </ul>
-    <p>The main joint residual is <code>2.22 × 10⁻¹⁶</code>. The augmented-matrix SVD gives the same forces as the direct NumPy solve.</p>
-  </section>
-
-  <section>
-    <h2>5 · Use the template</h2>
+  <header class="method-heading">
+    <p class="method-kicker">August Föppl · 1892 · §23</p>
+    <h1>Spatial joint equilibrium</h1>
+    <p class="method-lead">Three non-coplanar bars meet one force. Two auxiliary planes locate the resultants; a skew force quadrilateral closes the equilibrium.</p>
     <p class="extras">
-      <a href="spatial_joint.py" download>spatial_joint.py</a>
-      <a href="README.md">Method notes</a>
-      <a href="method.json">Card metadata</a>
-      <a href="projections.svg">Vector projections</a>
-      <a href="01-spatial-joint.yaml">Joint deck</a>
-      <a href="02-simple-truss.yaml">Simple-truss deck</a>
+      <a href="../../../session-viewer/?presentation=methods/space-trusses-foeppl/presentation.yaml">Open interactive deck</a>
+      <a href="spatial_joint.py" download>Python template</a>
+      <a href="../../../library.html#/b/space-trusses-foeppl">Original book</a>
     </p>
-    <pre><code>python spatial_joint.py
-python spatial_joint.py --interactive</code></pre>
-    <p>Dependencies: NumPy, COMPAS, compas_viewer, Matplotlib, and Pillow. No <code>compas_tna</code> dependency is required.</p>
-    <p>The page images are session-viewer captures of the same computed examples. To run that deck locally, keep the three YAML files and <a href="img/projections.png" download>img/projections.png</a> in <code>session_viewer/examples/stage/foppl-spatial-joint/</code>, then open <code>?stage=decks/foppl-spatial-joint/index.yaml&amp;data=off</code> in the viewer served by Trunk.</p>
+  </header>
+
+  <section class="method-play" aria-labelledby="play-title">
+    <div class="method-section-heading">
+      <h2 id="play-title">Interactive construction</h2>
+      <p>Four slides · geometry from the Python example</p>
+    </div>
+    <div class="session-embed">
+      <iframe class="session-frame" src="../../../session-viewer/?presentation=methods/space-trusses-foeppl/presentation.yaml" title="Four interactive slides reconstructing Föppl's spatial joint, auxiliary planes, force polygon, and simple space truss" loading="eager" allow="webgpu"></iframe>
+    </div>
+    <div class="deck-controls" aria-label="Slide controls">
+      <button type="button" data-deck-key="ArrowLeft" disabled>← Previous</button>
+      <button type="button" data-deck-key="ArrowRight" disabled>Next →</button>
+    </div>
+    <p class="method-help">Use the <strong>buttons</strong> or <strong>left / right arrows</strong> to change slides. <strong>Right-drag</strong> to orbit and use the wheel to zoom. Phones use a portrait deck. <a href="../../../session-viewer/?presentation=methods/space-trusses-foeppl/presentation.yaml">Open full screen</a>.</p>
+    <noscript><img src="method-diagram.png" alt="Spatial joint and closed force polygon reconstructed with NumPy"></noscript>
   </section>
 
-  <section>
-    <h2>Boundaries</h2>
-    <p>This is not a compression-only form-finding method or a TNA implementation. It does not include joint bending stiffness, slack-member activation, masonry envelopes, reciprocal primal/dual grids, or optimization. Block’s 2009 MIT dissertation reproduces Föppl’s Plate II as three-dimensional graphic statics, but TNA adds different unknowns, constraints, and a search for admissible equilibrium networks.</p>
+  <section class="method-reading" aria-labelledby="original-title">
+    <div class="method-section-heading">
+      <h2 id="original-title">From the original drawing</h2>
+      <p>Part I, Chapter 5, §23 · pp. 34–36</p>
+    </div>
+    <div class="method-grid two">
+      <figure><img src="original-fig002.png" alt="Föppl Fig. 2: three-bar spatial joint in elevation and plan"><figcaption><strong>Fig. 2</strong> · One auxiliary plane contains <em>a,b</em>; the other contains <em>c,P</em>.</figcaption></figure>
+      <figure><img src="original-fig002a.png" alt="Föppl Fig. 2a: skew force quadrilateral in elevation and plan"><figcaption><strong>Fig. 2a</strong> · Two force triangles share the resultant on the plane intersection.</figcaption></figure>
+    </div>
+    <p class="method-caption">The construction begins on printed p. 35; both figures appear on p. 36. Föppl supplies geometry and construction rules, not unique numerical dimensions. The coordinates and forces in the interactive example are new.</p>
   </section>
+
+  <section aria-labelledby="code-title">
+    <div class="method-section-heading">
+      <h2 id="code-title">Turn the construction into code</h2>
+      <p>NumPy + COMPAS</p>
+    </div>
+    <div class="method-steps">
+      <article><span>01</span><h3>Construct the planes</h3><code>n_ab = a × b<br>n_cP = c × P</code><p>Unit bar directions point away from the joint. Cross products define the two auxiliary planes.</p></article>
+      <article><span>02</span><h3>Find their intersection</h3><code>d = n_ab × n_cP</code><p>The resultants of A,B and of C,P must both lie on this line.</p></article>
+      <article><span>03</span><h3>Close the polygon</h3><code>numpy.linalg.solve([a b c], -P)</code><p>Solve signed forces, assemble P,C,B,A, and check equilibrium and polygon closure. Tension is positive.</p></article>
+    </div>
+    <p class="extras method-downloads">
+      <a href="spatial_joint.py" download>Python template</a>
+      <a href="foeppl_presentation.py" download>Deck source</a>
+      <a href="README.md">Method notes</a>
+    </p>
+  </section>
+
+  <details class="method-details">
+    <summary>Elevation, plan, and numerical checks</summary>
+    <div class="method-checks">
+      <figure><img src="projections.png" alt="Elevation and plan of the closed skew force quadrilateral"><figcaption>Corresponding corners align between elevation and plan. Force magnitudes come from the 3D sides.</figcaption></figure>
+      <div>
+        <h3>Independent checks</h3>
+        <ul>
+          <li>Joint equilibrium residual: <code>2.22 × 10⁻¹⁶</code>.</li>
+          <li>Direction-matrix determinant: <code>0.78590525</code>; condition number: <code>2.04586681</code>.</li>
+          <li>Both resultants are parallel to the plane intersection.</li>
+          <li>NumPy and an independent SVD/nullspace solution agree.</li>
+          <li>The six-bar truss agrees locally and globally: residual <code>6.94 × 10⁻¹⁷</code>.</li>
+          <li>Zero load, superposition, zero-force members, and coplanar-geometry rejection are checked.</li>
+        </ul>
+      </div>
+    </div>
+  </details>
+
+  <p class="method-boundary"><strong>Method boundary.</strong> This is a determinate spatial bar-joint reconstruction, not compression-only form finding or Thrust Network Analysis. It does not include bending stiffness, masonry envelopes, reciprocal grids, or optimization.</p>
 </main>
+<script>
+(() => {
+  const compact = window.matchMedia('(max-width: 760px)');
+  const frame = document.querySelector('.session-frame');
+  const links = document.querySelectorAll('a[href*="session-viewer"]');
+  const buttons = document.querySelectorAll('[data-deck-key]');
+  function selectDeck() {
+    const path = '../../../session-viewer/?presentation=methods/space-trusses-foeppl/' + (compact.matches ? 'mobile/' : '') + 'presentation.yaml';
+    if (frame.getAttribute('src') !== path) {
+      buttons.forEach((button) => { button.disabled = true; });
+      frame.src = path;
+    }
+    links.forEach((link) => { link.href = path; });
+  }
+  function enableControls() {
+    const canvas = frame.contentDocument?.querySelector('canvas');
+    if (canvas?.dataset.presentationReady === 'true') {
+      buttons.forEach((button) => { button.disabled = false; });
+      return;
+    }
+    requestAnimationFrame(enableControls);
+  }
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const canvas = frame.contentDocument.querySelector('canvas');
+      const key = button.dataset.deckKey;
+      const code = key === 'ArrowRight' ? 39 : 37;
+      const init = { key, code: key, keyCode: code, which: code, bubbles: true, cancelable: true };
+      canvas.focus();
+      canvas.dispatchEvent(new frame.contentWindow.KeyboardEvent('keydown', init));
+      frame.contentWindow.requestAnimationFrame(() => {
+        canvas.dispatchEvent(new frame.contentWindow.KeyboardEvent('keyup', init));
+      });
+    });
+  });
+  frame.addEventListener('load', enableControls);
+  compact.addEventListener('change', selectDeck);
+  selectDeck();
+  enableControls();
+})();
+</script>
 </body>
 </html>
