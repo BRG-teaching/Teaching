@@ -4,7 +4,7 @@ Static Rust/WebAssembly and WGSL viewer for Session kernel scenes and protobuf p
 
 ## Open
 
-- [Föppl: Spatial joint equilibrium](https://brg-teaching.github.io/Teaching/CAS/website/session-viewer/?presentation=methods/space-trusses-foeppl/presentation.yaml) — four slides: the spatial joint, auxiliary planes, skew force polygon, and six-bar simple truss. Authored by `methods/space-trusses-foeppl/spatial-joint/foeppl_presentation.py`; its protobuf files are in `methods/space-trusses-foeppl/`.
+- [Föppl: Spatial joint equilibrium](https://brg-teaching.github.io/Teaching/CAS/website/session-viewer/?presentation=methods/space-trusses-foeppl/presentation.yaml) — four slides: the spatial joint, auxiliary planes, skew force polygon, and six-bar simple truss. Authored by `methods/space-trusses-foeppl/spatial-joint/foeppl_presentation.py`; its protobuf files are in `methods/space-trusses-foeppl/`. The library’s Föppl card opens this deck embedded after Fig. 2a in the original book chapter.
 - [Linkwitz: Force density method](https://brg-teaching.github.io/Teaching/CAS/website/session-viewer/?presentation=force-density/presentation.yaml) — 36 protobuf reveals, with a closed first-slide force polygon. Free nodes, solution annotations, and positive presentation-matrix cells are pink (`#dc4b8d`).
 - [Create one slide](https://brg-teaching.github.io/Teaching/CAS/website/session-viewer/?presentation=one-slide/presentation.yaml) — one protobuf session with an animated matrix multiplication and pink positive cells.
 - [One-slide authoring guide](../session-viewer-guide/one-slide.md) — complete Python source, export layout, local server, and publication instructions.

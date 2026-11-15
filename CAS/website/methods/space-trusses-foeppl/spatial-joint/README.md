@@ -56,7 +56,9 @@ The four slides are: three bars and a load; two auxiliary planes; the skew force
 http://localhost:8000/methods/space-trusses-foeppl/spatial-joint/
 ```
 
-The deck's four topics each contain one step. Previous/Next buttons forward the viewer's normal arrow-key navigation; right-drag orbits and scrolling zooms. Spatial text heights are CSS pixels. Below 760 px, the page selects `mobile/presentation.yaml`, with shorter captions and a portrait equation layout, and the controls accept taps.
+The deck's four topics each contain one step. Previous/Next buttons forward the viewer's normal arrow-key navigation; right-drag orbits and scrolling zooms. Spatial text heights are CSS pixels. Below 760 px, `mobile/presentation.yaml` provides shorter captions and a portrait equation layout, and the controls accept taps.
+
+The shelf card opens printed page 36 of `05-chapter-05.md` in the original book reader. `useLibrary.js` inserts the interactive reconstruction and these controls immediately after `txt-fig002a.svg`, so the book's text and original figures remain in place. `index.html` redirects to that book page; the standalone presentation is also available from the Session Viewer README.
 
 ## Embedded checks
 

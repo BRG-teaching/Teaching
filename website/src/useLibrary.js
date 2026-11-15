@@ -328,7 +328,7 @@ export function useLibrary() {
       const method = cfg.methods?.[b.id];
       const cover = method ? { short: method.title, subject: subjectOf(method.title + ' ' + method.subtitle) } : coverOf(b);
       return { key: b.id, id: b.id, title: b.title, name: i.name, byline: [i.author, i.year].filter(Boolean).join(' · '), ...cover,
-        href: method ? method.page : '#/b/' + b.id,
+        href: method ? readerHref(b.id, method.chapter, method.page) : '#/b/' + b.id,
         img: method ? method.thumbnail : (classify(b) === 'books' ? coverImg(b.id) : ''),
         meta: method ? method.subtitle : plural(b.sections.length, 'chapter'),
         method: method ? method.id : '', processed: b.processed };
@@ -415,6 +415,87 @@ export function useLibrary() {
       return t;
     }
 
+    function embedBookMethod() {
+      const method = cfg.methods?.[route.book];
+      if (!method || method.chapter !== route.section) return;
+      const root = document.querySelector('.doc .md');
+      const figure = root?.querySelector('img[src*="txt-fig002a.svg"]');
+      if (!figure || root.querySelector('.book-method')) return;
+      const section = document.createElement('section');
+      section.className = 'book-method method-play';
+      section.setAttribute('aria-label', method.title);
+      section.innerHTML = `
+        <div class="method-section-heading"><h3></h3><p>Interactive reconstruction · §23 · new numerical example</p></div>
+        <p class="method-lead">Two auxiliary planes locate the resultants. A skew force quadrilateral closes the equilibrium.</p>
+        <div class="session-embed"><iframe class="session-frame" loading="eager" allow="webgpu"></iframe></div>
+        <div class="deck-controls" aria-label="Slide controls">
+          <button type="button" data-deck-key="ArrowLeft" disabled>← Previous</button>
+          <button type="button" data-deck-key="ArrowRight" disabled>Next →</button>
+        </div>
+        <p class="method-help">Use the buttons or left / right arrows to change slides. Right-drag to orbit and use the wheel to zoom. Phones use a portrait deck.</p>
+        <details class="method-details">
+          <summary>NumPy + COMPAS reconstruction</summary>
+          <p>Unit bar directions point away from the joint; tension is positive. These are new numerical values, not dimensions recovered from the historical figure.</p>
+          <pre><code>n_ab = a × b
+n_cP = c × P
+d = n_ab × n_cP
+forces = numpy.linalg.solve([a b c], -P)</code></pre>
+          <p class="extras"><a class="method-script" download>Python template</a><a class="deck-source" download>Deck source</a><a class="method-notes">Method notes</a></p>
+        </details>`;
+      section.querySelector('h3').textContent = method.title;
+      const frame = section.querySelector('iframe');
+      const embed = section.querySelector('.session-embed');
+      // Keep the player usable even when an older library.css is still cached.
+      Object.assign(embed.style, { width: '100%', aspectRatio: '1600 / 760', overflow: 'hidden', border: '1px solid var(--rule)', background: '#fff' });
+      Object.assign(frame.style, { display: 'block', width: '100%', height: '100%', border: '0', background: '#fff' });
+      frame.title = method.title + ' · interactive Session Viewer presentation';
+      section.querySelector('.method-script').href = method.script;
+      section.querySelector('.deck-source').href = method.deckSource;
+      section.querySelector('.method-notes').href = method.notes;
+      const anchor = figure.closest('p, .fig-compare, figure') || figure;
+      anchor.after(section);
+
+      const compact = window.matchMedia('(max-width: 760px)');
+      const buttons = section.querySelectorAll('[data-deck-key]');
+      buttons.forEach((button) => { button.style.minHeight = '40px'; button.style.minWidth = '112px'; });
+      function selectDeck() {
+        if (!section.isConnected) { compact.removeEventListener('change', selectDeck); return; }
+        embed.style.height = compact.matches ? '680px' : '';
+        embed.style.aspectRatio = compact.matches ? 'auto' : '1600 / 760';
+        const path = 'session-viewer/?presentation=' + (compact.matches ? method.mobilePresentation : method.presentation);
+        if (frame.getAttribute('src') !== path) {
+          buttons.forEach((button) => { button.disabled = true; });
+          frame.src = path;
+        }
+      }
+      function enableControls() {
+        if (!section.isConnected) return;
+        const canvas = frame.contentDocument?.querySelector('canvas');
+        if (canvas?.dataset.presentationReady === 'true') {
+          buttons.forEach((button) => { button.disabled = false; });
+          return;
+        }
+        requestAnimationFrame(enableControls);
+      }
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const canvas = frame.contentDocument.querySelector('canvas');
+          const key = button.dataset.deckKey;
+          const code = key === 'ArrowRight' ? 39 : 37;
+          const init = { key, code: key, keyCode: code, which: code, bubbles: true, cancelable: true };
+          canvas.focus();
+          canvas.dispatchEvent(new frame.contentWindow.KeyboardEvent('keydown', init));
+          frame.contentWindow.requestAnimationFrame(() => {
+            canvas.dispatchEvent(new frame.contentWindow.KeyboardEvent('keyup', init));
+          });
+        });
+      });
+      frame.addEventListener('load', enableControls);
+      compact.addEventListener('change', selectDeck);
+      selectDeck();
+      enableControls();
+    }
+
     async function loadDoc() {
       if (route.view !== 'read') return;
       const path = `${route.book}/${route.section}`;
@@ -423,7 +504,10 @@ export function useLibrary() {
         const t = await getText(path);
         if (doc.path !== path) return;
         Object.assign(doc, { state: 'ready', html: renderMarkdown(t, path, bookIds.value) });
-        if (route.page) nextTick(() => toPage(document.querySelector('.doc .md'), t, route.page));
+        nextTick(() => {
+          embedBookMethod();
+          if (route.page) toPage(document.querySelector('.doc .md'), t, route.page);
+        });
         linkScans(route.book, path);
         linkOrigFigures(route.book, () => doc.path === path, () => document.querySelector('.doc .md'));
       } catch (e) {
