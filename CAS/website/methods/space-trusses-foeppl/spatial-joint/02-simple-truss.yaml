@@ -1,0 +1,34 @@
+title: Simple space truss
+camera: {fit: [A, B, C, D, E], yaw: -50, pitch: 25}
+points:
+  A: [0, 0, 0]
+  B: [2, 0, 0]
+  C: [0, 2, 0]
+  D: [0.2, 0.3, 1.5]
+  E: [0.5, 0.4, 2.7]
+slides:
+  - title: Build a simple truss
+    steps:
+      - say: 'A simple space truss grows joint by joint with three non-coplanar bars at each new joint.'
+        add:
+          - {id: A, point: A, color: fixed, label: 'A'}
+          - {id: B, point: B, color: fixed, label: 'B'}
+          - {id: C, point: C, color: fixed, label: 'C'}
+          - {id: D, point: D, color: free, label: 'D'}
+          - {id: E, point: E, color: free, label: 'E'}
+          - {id: AD, line: [A, D], color: neg, width: 3.6, label: 'AD'}
+          - {id: BD, line: [B, D], color: pos, width: 3.6, label: 'BD'}
+          - {id: CD, line: [C, D], color: neg, width: 3.6, label: 'CD'}
+          - {id: AE, line: [A, E], color: neg, width: 3.6, label: 'AE'}
+          - {id: BE, line: [B, E], color: neg, width: 3.6, label: 'BE'}
+          - {id: DE, line: [D, E], color: neg, width: 3.6, label: 'DE'}
+        eq: 'n_f = 2, \qquad m = 3n_f = 6'
+      - say: 'Each new three-bar joint can be solved before passing its known forces to the next joint.'
+        text: 'The sign convention is the same as for the single spatial joint: directions point away from each joint and tension is positive.'
+  - title: Local and global equilibrium
+    steps:
+      - say: 'The joint-by-joint solution agrees with one global equilibrium-matrix solution.'
+        eq: '\mathbf{f}_{local} = \mathbf{f}_{global}, \qquad \|\mathbf{r}\| = 6.94\times10^{-17}'
+        text: 'AD −0.56382921 · BD +0.03543304 · CD −0.24276921 · AE −0.08919281 · BE −0.49312636 · DE −0.29546842'
+      - say: 'Zero force, superposition and coplanar-geometry failures are checked separately, not inferred from a plausible drawing.'
+        text: '**Back to:** the spatial joint and its auxiliary planes, force quadrilateral and two projections.'

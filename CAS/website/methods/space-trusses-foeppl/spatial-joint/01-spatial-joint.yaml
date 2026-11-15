@@ -1,0 +1,76 @@
+title: Spatial joint equilibrium
+camera: {fit: [O, A, B, C, LP, Q0, Q1, Q2, Q3], yaw: -50, pitch: 25}
+points:
+  O: [0, 0, 0]
+  A: [1.555635, 0, 1.555635]
+  B: [0, 1.886484, 1.131891]
+  C: [-1.357869, 0.339467, 1.697337]
+  LP: [0.549125, -0.392232, -1.882715]
+  D0: [-1.932481, -0.508548, -2.237610]
+  D1: [1.932481, 0.508548, 2.237610]
+  Pab0: [2.145352, -1.045169, 1.518251]
+  Pab1: [0.087369, 2.384802, 1.518251]
+  Pab2: [-2.145352, 1.045169, -1.518251]
+  Pab3: [-0.087369, -2.384802, -1.518251]
+  Pcp0: [1.992899, 0.449541, 1.956084]
+  Pcp1: [-2.006563, 0.383976, 1.956084]
+  Pcp2: [-1.992899, -0.449541, -1.956084]
+  Pcp3: [2.006563, -0.383976, -1.956084]
+  Q0: [3, 0, 0]
+  Q1: [3.63, -0.45, -2.16]
+  Q2: [2.43, -0.15, -0.66]
+  Q3: [2.43, 0, -0.57]
+slides:
+  - title: Three bars and an external force
+    steps:
+      - say: 'Föppl starts with three non-coplanar bars and an external force at one joint.'
+        add:
+          - {id: O, point: O, color: free, label: 'O'}
+          - {id: A, point: A, color: fixed, label: 'A'}
+          - {id: B, point: B, color: fixed, label: 'B'}
+          - {id: C, point: C, color: fixed, label: 'C'}
+          - {id: a, line: [O, A], color: accent, width: 3.6, label: 'a'}
+          - {id: b, line: [O, B], color: accent, width: 3.6, label: 'b'}
+          - {id: c, line: [O, C], color: accent, width: 3.6, label: 'c'}
+          - {id: P, arrow: [O, LP], color: load, width: 3.6, label: 'P'}
+        eq: 'A\,\mathbf{a} + B\,\mathbf{b} + C\,\mathbf{c} + \mathbf{P} = \mathbf{0}'
+      - say: 'The direction vectors point away from the joint; tension is positive and compression negative.'
+        text: 'This example uses new numerical values, because the original figures give no unique dimensions or force scale.'
+
+  - title: Two auxiliary planes
+    steps:
+      - say: 'One plane contains bars $a,b$; the other contains bar $c$ and load $P$.'
+        add:
+          - {id: plane_ab, polygon: [Pab0, Pab1, Pab2, Pab3, Pab0], color: dim, width: 2, opacity: 0.45}
+          - {id: plane_cp, polygon: [Pcp0, Pcp1, Pcp2, Pcp3, Pcp0], color: faint, width: 2, opacity: 0.45}
+          - {id: plane_ab_label, label: 'mid(Pab0, Pab1)', tex: '\Pi_{ab}', color: dim}
+          - {id: plane_cp_label, label: 'mid(Pcp0, Pcp1)', tex: '\Pi_{cP}', color: faint}
+        eq: '\mathbf{n}_{ab} = \mathbf{a}\times\mathbf{b}, \qquad \mathbf{n}_{cP} = \mathbf{c}\times\mathbf{P}'
+      - say: 'Their intersection carries both resultants: $R_{AB}$ and $R_{CP}$.'
+        add:
+          - {id: intersection, line: [D0, D1], color: ink, width: 2.4, dash: true, label: 'intersection'}
+        eq: '\mathbf{d} = \mathbf{n}_{ab}\times\mathbf{n}_{cP}'
+
+  - title: The skew force quadrilateral
+    steps:
+      - say: 'The force polygon follows $P,C,B,A$ and closes; its two diagonals are the opposite resultants.'
+        add:
+          - {id: force_P, arrow: [Q0, Q1], color: load, width: 3.6, label: 'P'}
+          - {id: force_C, arrow: [Q1, Q2], color: accent, width: 3.6, label: 'C'}
+          - {id: force_B, arrow: [Q2, Q3], color: accent, width: 3.6, label: 'B'}
+          - {id: force_A, arrow: [Q3, Q0], color: accent, width: 3.6, label: 'A'}
+          - {id: resultant_ab, line: [Q2, Q0], color: dim, width: 1.8, dash: true, label: 'R_{AB}'}
+          - {id: resultant_cp, line: [Q0, Q2], color: dim, width: 1.8, dash: true, label: 'R_{CP}'}
+        eq: '\mathbf{R}_{AB} + \mathbf{R}_{CP} = \mathbf{0}'
+      - say: 'NumPy gives all three forces in tension; the true 3D side lengths, not their projections, give their magnitudes.'
+        eq: 'A = 0.44783429, \qquad B = 0.09718253, \qquad C = 1.08012345'
+        text: 'Tension is pink in these added numerical examples; compression would be navy and external loads green.'
+
+  - title: Independent checks
+    steps:
+      - say: 'Equilibrium, closure and the auxiliary-plane intersection all pass within numerical tolerance.'
+        eq: '\det[\mathbf{a}\ \mathbf{b}\ \mathbf{c}] = 0.78590525, \qquad \operatorname{cond} = 2.04586681'
+        text: 'Residual: $2.22\times10^{-16}$. An augmented-matrix SVD gives the same forces.'
+      - say: 'Elevation and plan reproduce Föppl’s alignment check; the simple six-bar example also matches a global equilibrium solve.'
+        image: {src: img/projections.png, height: 10}
+        text: '**Next:** a simple space truss with two free joints and six bars.'

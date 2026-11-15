@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spatial joint equilibrium · Föppl · CAS Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../style.css">
+<link rel="stylesheet" href="../../../library.css">
+</head>
+<body class="lib">
+<header class="lib-top">
+  <a class="back" href="../../../library.html">← Library</a>
+  <nav class="lib-tabs" aria-label="Method">
+    <a href="../../../library.html#/b/space-trusses-foeppl">The Space Truss</a>
+    <a class="on" href="./">Spatial joint equilibrium</a>
+  </nav>
+</header>
+<main class="wrap block doc md">
+  <p class="crumbs"><a href="../../../library.html">Books</a> / <a href="../../../library.html#/b/space-trusses-foeppl">August Föppl · The Space Truss</a></p>
+
+  <section class="method-hero">
+    <div>
+      <h1>Spatial joint equilibrium</h1>
+      <p class="by">Skew force quadrilateral in elevation and plan · August Föppl, 1892</p>
+      <p>Three non-coplanar bars meet an external force at one joint. Two auxiliary planes provide the line shared by their resultants; the force sides then form a closed skew quadrilateral. This page reconstructs that construction with NumPy and COMPAS, rather than treating it as Thrust Network Analysis.</p>
+      <p class="extras">
+        <a href="spatial_joint.py" download>Python template</a>
+        <a href="index.yaml">Session-viewer deck</a>
+        <a href="https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev/space-trusses-foeppl/05-chapter-05.md" target="_blank" rel="noopener">Original chapter</a>
+      </p>
+    </div>
+    <img class="method-hero-image" src="thumbnail.webp" alt="Session-viewer reconstruction of the spatial joint, auxiliary planes and skew force quadrilateral">
+  </section>
+
+  <section>
+    <h2>1 · Read the original figures and text</h2>
+    <p>Part I, Chapter 5, §23, printed pp. 34–36. The construction begins on p. 35; Figs. 2 and 2a appear on p. 36. Föppl requires three bars that are <strong>not all in one plane</strong>. The two projections must be completed independently, after which corresponding corners align vertically.</p>
+    <div class="method-grid two">
+      <figure><img src="original-fig002.png" alt="Föppl Fig. 2: three-bar spatial joint in elevation and plan"><figcaption>Fig. 2 · Auxiliary planes through <em>a,b</em> and through <em>c,P</em>.</figcaption></figure>
+      <figure><img src="original-fig002a.png" alt="Föppl Fig. 2a: skew force quadrilateral in elevation and plan"><figcaption>Fig. 2a · The two force triangles sharing their resultant.</figcaption></figure>
+    </div>
+    <blockquote>The resultant of A and B must be equal and opposite to that of C and P. Each of these two resultants must therefore fall on the line of intersection of the two planes.</blockquote>
+    <p><strong>Assumptions:</strong> pin-jointed spatial joint, axial member forces, known bar directions and external load. Tension is positive and compression negative. The original drawing supplies topology and construction rules, not unique coordinates or force values, so the examples here are explicitly new numerical examples.</p>
+  </section>
+
+  <section>
+    <h2>2 · Reconstruct the auxiliary planes and force polygon</h2>
+    <p>The unit bar directions point away from the joint. With external force <strong>P</strong>, equilibrium is:</p>
+    <pre><code>A a + B b + C c + P = 0</code></pre>
+    <ol>
+      <li>Form the plane normals <code>n_ab = a × b</code> and <code>n_cP = c × P</code>.</li>
+      <li>Compute their intersection direction <code>d = n_ab × n_cP</code>.</li>
+      <li>Find the signed forces with <code>numpy.linalg.solve([a b c], -P)</code>.</li>
+      <li>Assemble the polygon in the order <code>P, C, B, A</code>; its diagonals are <code>R_AB</code> and <code>R_CP</code>.</li>
+      <li>Check the 3D geometry and derive elevation and plan from that same geometry.</li>
+    </ol>
+    <figure class="method-figure"><img src="viewer.png" alt="Session-viewer scene of the auxiliary planes, spatial joint and force polygon"><figcaption>The session-viewer presentation uses the same computed geometry as the Python template.</figcaption></figure>
+    <p>Main example: <code>A = 0.44783429</code>, <code>B = 0.09718253</code>, <code>C = 1.08012345</code>, all in tension. The direction matrix has determinant <code>0.78590525</code> and condition number <code>2.04586681</code>.</p>
+    <figure class="method-figure"><img src="projections.png" alt="Elevation and plan of the closed skew force quadrilateral"><figcaption>Elevation and plan reproduce Föppl’s alignment check; true force magnitudes come from the 3D sides, not projected lengths.</figcaption></figure>
+  </section>
+
+  <section>
+    <h2>3 · Extend to a simple space truss</h2>
+    <p>Following §13, a simple truss grows by adding three non-coplanar bars per new joint. The second example has two free joints and six bars. The joint-by-joint solution is compared with one global equilibrium-matrix solution.</p>
+    <figure class="method-figure"><img src="simple-truss.png" alt="Session-viewer scene of the six-bar simple space truss"><figcaption>Simple truss with two free joints and six bars.</figcaption></figure>
+    <pre><code>AD = -0.56382921    BD = +0.03543304    CD = -0.24276921
+AE = -0.08919281    BE = -0.49312636    DE = -0.29546842</code></pre>
+    <p>Local and global forces agree with residual <code>6.94 × 10⁻¹⁷</code>. A separate §24 example identifies the fourth, out-of-plane bar as unstressed.</p>
+  </section>
+
+  <section>
+    <h2>4 · Validation, not just a plausible drawing</h2>
+    <ul>
+      <li>Orthogonal baseline and zero-load solution.</li>
+      <li>Determinant and condition number of the direction matrix.</li>
+      <li>Equilibrium residual and polygon closure.</li>
+      <li>Both resultants parallel to the auxiliary-plane intersection.</li>
+      <li>Independent augmented-matrix SVD/nullspace agreement.</li>
+      <li>Superposition of independent load cases.</li>
+      <li>Elevation/plan projector alignment.</li>
+      <li>Local-versus-global simple-truss forces.</li>
+      <li>Zero-force example, coplanar-geometry rejection, and undefined auxiliary-plane rejection.</li>
+    </ul>
+    <p>The main joint residual is <code>2.22 × 10⁻¹⁶</code>. The augmented-matrix SVD gives the same forces as the direct NumPy solve.</p>
+  </section>
+
+  <section>
+    <h2>5 · Use the template</h2>
+    <p class="extras">
+      <a href="spatial_joint.py" download>spatial_joint.py</a>
+      <a href="README.md">Method notes</a>
+      <a href="method.json">Card metadata</a>
+      <a href="projections.svg">Vector projections</a>
+      <a href="01-spatial-joint.yaml">Joint deck</a>
+      <a href="02-simple-truss.yaml">Simple-truss deck</a>
+    </p>
+    <pre><code>python spatial_joint.py
+python spatial_joint.py --interactive</code></pre>
+    <p>Dependencies: NumPy, COMPAS, compas_viewer, Matplotlib, and Pillow. No <code>compas_tna</code> dependency is required.</p>
+    <p>The page images are session-viewer captures of the same computed examples. To run that deck locally, keep the three YAML files and <a href="img/projections.png" download>img/projections.png</a> in <code>session_viewer/examples/stage/foppl-spatial-joint/</code>, then open <code>?stage=decks/foppl-spatial-joint/index.yaml&amp;data=off</code> in the viewer served by Trunk.</p>
+  </section>
+
+  <section>
+    <h2>Boundaries</h2>
+    <p>This is not a compression-only form-finding method or a TNA implementation. It does not include joint bending stiffness, slack-member activation, masonry envelopes, reciprocal primal/dual grids, or optimization. Block’s 2009 MIT dissertation reproduces Föppl’s Plate II as three-dimensional graphic statics, but TNA adds different unknowns, constraints, and a search for admissible equilibrium networks.</p>
+  </section>
+</main>
+</body>
+</html>

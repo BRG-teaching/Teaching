@@ -20,6 +20,17 @@ window.CAS_LIBRARY = {
   // e.g. 'rippmann-2016-phd': 'theses', 'block-2009-tna-paper': 'papers'
   groupOf: {},
 
+  // Reviewed computational methods; all other books keep their bibliographic covers.
+  methods: {
+    'space-trusses-foeppl': {
+      id: 'spatial-joint-equilibrium',
+      title: 'Spatial joint equilibrium',
+      subtitle: 'Skew force quadrilateral · NumPy + COMPAS',
+      thumbnail: 'methods/space-trusses-foeppl/spatial-joint/thumbnail.webp',
+      page: 'methods/space-trusses-foeppl/spatial-joint/index.html',
+    },
+  },
+
   // Extra pages a book folder may contain, shown on its book page when present.
   extras: ['README.md', 'INDEX.md', 'GLOSSARY.md', 'FIGURES.md', 'SCANS.md', 'GRAPHIC-STATICS-NOTATION.md'],
 

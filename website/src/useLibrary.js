@@ -325,8 +325,13 @@ export function useLibrary() {
     };
     const bookItem = (b) => {
       const i = bookInfo(b.title);
-      return { key: b.id, id: b.id, title: b.title, name: i.name, byline: [i.author, i.year].filter(Boolean).join(' · '), ...coverOf(b),
-        href: '#/b/' + b.id, img: classify(b) === 'books' ? coverImg(b.id) : '', meta: plural(b.sections.length, 'chapter'), processed: b.processed };
+      const method = cfg.methods?.[b.id];
+      const cover = method ? { short: method.title, subject: subjectOf(method.title + ' ' + method.subtitle) } : coverOf(b);
+      return { key: b.id, id: b.id, title: b.title, name: i.name, byline: [i.author, i.year].filter(Boolean).join(' · '), ...cover,
+        href: method ? method.page : '#/b/' + b.id,
+        img: method ? method.thumbnail : (classify(b) === 'books' ? coverImg(b.id) : ''),
+        meta: method ? method.subtitle : plural(b.sections.length, 'chapter'),
+        method: method ? method.id : '', processed: b.processed };
     };
     const shelfAll = computed(() => Object.fromEntries(cfg.groups.map((g) => [g.id, books.value.filter((b) => classify(b) === g.id).flatMap((b) => {
       if (isCollection(b) && g.id !== 'books')
