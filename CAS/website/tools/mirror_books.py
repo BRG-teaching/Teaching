@@ -25,7 +25,7 @@ CATALOG_RECOVERY = {
         [
             ("01-force-density-method.md", "Chapter 6 — Force density method: design of a timber shell", "pp. 58–69 · equations (6.1)–(6.37)", "The printed chapter, transcribed and checked against the complete scan, with Python + NumPy implementation."),
             ("04-thrust-network-analysis.md", "Chapter 7 — Thrust network analysis: design of a cut-stone masonry vault", "pp. 71–87 · equations (7.1a)–(7.15)", "Thrust network analysis for compression-only masonry vaults, with reciprocal diagrams, Texas pavilion design, and Python + NumPy implementation."),
-            ("05-study-thrust-network-analysis.md", "Study notes — Thrust Network Analysis in numbers", "added notes · parts A–G", "Every TNA equation built step by step in one Python program, with 36-node grid vaults and compas_tna."),
+            ("05-study-thrust-network-analysis.md", "Python + session_viewer guide — Thrust Network Analysis", "added notes · 6 sections", "Complete runnable pure-NumPy and compas_tna scripts with session_viewer on a white background."),
         ],
     ),
 }
