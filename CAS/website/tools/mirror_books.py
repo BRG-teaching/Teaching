@@ -21,11 +21,13 @@ BASE = "https://pub-c082064d3c234b25bcb6abd4240e637c.r2.dev"
 EXTRAS = ["README.md", "INDEX.md", "GLOSSARY.md", "FIGURES.md", "SCANS.md", "GRAPHIC-STATICS-NOTATION.md"]
 CATALOG_RECOVERY = {
     "force-density-linkwitz": (
-        "Force Density Method · Klaus Linkwitz · Chapter 6 of Shell Structures for Architecture, 2014",
+        "Shell Structures for Architecture · Chapters 6 & 7 — Force density method · Thrust network analysis · Klaus Linkwitz · Philippe Block · Lorenz Lachauer · Matthias Rippmann · Routledge, 2014, pp. 58–87",
         [
             ("01-force-density-method.md", "Chapter 6 — Force density method: design of a timber shell", "pp. 58–69 · equations (6.1)–(6.37)", "The printed chapter, transcribed and checked against the complete scan."),
+            ("04-thrust-network-analysis.md", "Chapter 7 — Thrust network analysis: design of a cut-stone masonry vault", "pp. 71–87 · equations (7.1a)–(7.15)", "Thrust network analysis for compression-only masonry vaults, with reciprocal diagrams and Texas pavilion design."),
             ("02-study-matrix-formulation.md", "Study notes — the matrix formulation in numbers", "added notes · parts A–G", "Every matrix equation followed numerically, including the Jacobian, general solver and 36-node grid."),
             ("03-reading-notes.md", "Reading notes", "added notes · 3 handwritten pages", "Force density, matrix formulations, and the split into unknown and fixed points."),
+            ("05-study-thrust-network-analysis.md", "Study notes — Thrust Network Analysis in numbers and compas_tna", "added notes · parts A–G", "Numerical verification of C, C*, TNA height solve, depth LP, force flow, and symbol mapping to compas_tna."),
         ],
     ),
 }
