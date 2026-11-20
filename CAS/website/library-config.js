@@ -21,21 +21,7 @@ window.CAS_LIBRARY = {
   groupOf: {},
 
   // Reviewed computational methods; all other books keep their bibliographic covers.
-  methods: {
-    'space-trusses-foeppl': {
-      id: 'spatial-joint-equilibrium',
-      title: 'Spatial joint equilibrium',
-      subtitle: 'Skew force quadrilateral · NumPy + COMPAS',
-      thumbnail: 'methods/space-trusses-foeppl/spatial-joint/thumbnail.webp',
-      chapter: '05-chapter-05.md',
-      page: 36,
-      presentation: 'methods/space-trusses-foeppl/presentation.yaml',
-      mobilePresentation: 'methods/space-trusses-foeppl/mobile/presentation.yaml',
-      script: 'methods/space-trusses-foeppl/spatial-joint/spatial_joint.py',
-      deckSource: 'methods/space-trusses-foeppl/spatial-joint/foeppl_presentation.py',
-      notes: 'methods/space-trusses-foeppl/spatial-joint/README.md',
-    },
-  },
+  methods: {},
 
   // Extra pages a book folder may contain, shown on its book page when present.
   extras: ['README.md', 'INDEX.md', 'GLOSSARY.md', 'FIGURES.md', 'SCANS.md', 'GRAPHIC-STATICS-NOTATION.md'],
