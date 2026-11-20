@@ -71,9 +71,14 @@ const {
           </li>
         </ol>
       </template>
-      <ol v-else class="title-list">
-        <li v-for="b in shelf[route.group]" :key="b.key"><a :href="b.href">{{ b.name }}</a></li>
-      </ol>
+      <template v-else>
+        <section v-for="g in shelfGroups" :key="g.id" class="subject-group">
+          <h2 class="subject-head" :style="{ '--cc': g.color }"><i></i>{{ g.label }} <span>{{ g.items.length }}</span></h2>
+          <ol class="title-list">
+            <li v-for="b in g.items" :key="b.key"><a :href="b.href">{{ b.name }}</a></li>
+          </ol>
+        </section>
+      </template>
     </section>
 
     <!-- a book in several parts: the parts side by side, read left to right -->

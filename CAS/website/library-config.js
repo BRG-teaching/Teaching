@@ -20,6 +20,29 @@ window.CAS_LIBRARY = {
   // e.g. 'rippmann-2016-phd': 'theses', 'block-2009-tna-paper': 'papers'
   groupOf: {},
 
+  // Subject of each book, set by hand (ids: gs, ff, tna, mat, math, comp, sd); books not listed are classified
+  // from their text. Keep this list complete for books.
+  subjects: {
+    'cremona-graphical-calculus': 'gs',
+    'graphic-statics-framed-structures': 'gs',
+    'graphic-statics-henneberg': 'gs',
+    'graphic-statics-levy': 'gs', 'graphic-statics-levy-part-2': 'gs', 'graphic-statics-levy-part-3': 'gs', 'graphic-statics-levy-part-4': 'gs',
+    'graphical-analysis-wolfe': 'gs',
+    'graphostatics-trefftz': 'gs',
+    'graphic-statics-foeppl': 'gs',
+    'space-trusses-foeppl': 'gs',
+    'force-density-linkwitz': 'ff',
+    'stability-of-revetments-poncelet': 'tna',
+    'stability-of-vaults-poncelet': 'tna',
+    'joinery-compendium-bauer-pauli': 'mat',
+    'differential-integral-calculus-doelp-netto': 'math',
+    'mathematics-formulary-wetzel': 'math',
+    'faustformel-tragwerksentwurf': 'sd',
+    'framed-structures-bow': 'sd',
+    'graphic-statics-student-course': 'sd',
+    'statics-zillich-stiegler-part-3': 'sd',
+  },
+
   // Reviewed computational methods; all other books keep their bibliographic covers.
   methods: {},
 

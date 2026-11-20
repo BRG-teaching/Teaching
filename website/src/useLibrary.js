@@ -301,7 +301,9 @@ export function useLibrary() {
     // Shelf items per tab: whole books, or one item per file for collections of theses/papers.
     // Subject and cover of a whole entry, or of one item of a collection.
     const bookText = (b) => [b.title, ...b.sections.map((x) => x.title + ' ' + x.summary)].join(' ');
-    const coverOf = (b) => ({ short: shortTitle(bookInfo(b.title).name, b.id), subject: subjectOf(bookText(b)) });
+    // Subject: set by hand in library-config.js (subjects: { '<book id>': '<subject id>' }), else guessed from the text.
+    const subjectFor = (b) => SUBJECTS.find((x) => x.id === (cfg.subjects || {})[b.id]) || subjectOf(bookText(b));
+    const coverOf = (b) => ({ short: shortTitle(bookInfo(b.title).name, b.id), subject: subjectFor(b) });
     const subject = ref('');
     // Shelf items per tab: whole books, or one item per file for collections of theses/papers.
     // Series: books in several parts, keyed by the first part's ID, parts in reading order.
@@ -344,6 +346,8 @@ export function useLibrary() {
     // The open book as a part of its series: "Part II — Plane bending …", with the series around it.
     const partInfo = (b) => { const i = bookInfo(b.title); return { ...i, label: i.part || 'Part ' + (ROMAN[partNo(b.id)] || partNo(b.id)), partTitle: i.partTitle || (i.part ? '' : i.name) }; };
     const shelf = computed(() => Object.fromEntries(Object.entries(shelfAll.value).map(([g, items]) => [g, subject.value ? items.filter((i) => i.subject.id === subject.value) : items])));
+    // The open tab's entries under their subject headings, in the order of SUBJECTS.
+    const shelfGroups = computed(() => SUBJECTS.map((x) => ({ ...x, items: (shelf.value[route.group] || []).filter((i) => i.subject.id === x.id) })).filter((x) => x.items.length));
     // Subject chips for the open tab, with counts.
     const subjectsHere = computed(() => SUBJECTS.map((x) => ({ ...x, n: (shelfAll.value[route.group] || []).filter((i) => i.subject.id === x.id).length })).filter((x) => x.n));
     const groupLabel = (g) => (cfg.groups.find((x) => x.id === g) || cfg.groups[0]).label;
@@ -1557,7 +1561,7 @@ forces = np.linalg.solve(dirs.T, -P)                            # [-6, -3, +3]</
     }, { immediate: true });
 
     return {
-      cfg, state, error, books, query, route, shelf, shelfAll, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
+      cfg, state, error, books, query, route, shelf, shelfAll, shelfGroups, subject, subjectsHere, coverOf, doc, libraryUrl, host, grouped, book, bookTitle, sectionCount, hits,
       prev, next, sectionTitle, readerHref, docUrl, groupOf, groupLabel, series, partsOf, partInfo, bookInfo, seriesKey, plural, years, coverImg,
       pixel: PIXEL, pixelCols: PIXEL_COLS, log, input, busy, menuItems, menuIndex, takeMenu, onKey, submit, focusPrompt, prompt, logEl,
       splitEl, splitRatio, collapsedPane, splitDragging, splitStacked, beginSplitDrag, dragSplit, endSplitDrag, splitKey, toggleTerminal,
