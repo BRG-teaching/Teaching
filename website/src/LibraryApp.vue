@@ -71,18 +71,9 @@ const {
           </li>
         </ol>
       </template>
-      <ul v-else class="shelf" :class="{ 'shelf-row': route.group === 'books' }">
-        <li v-for="b in shelf[route.group]" :key="b.key">
-          <a :href="b.href" class="book-card">
-            <book-cover :title="b.short" :color="b.subject.color" :img="b.img" :class="{ stack: b.series, method: b.method }"></book-cover>
-            <b>{{ b.name }}</b>
-            <span class="method-name" v-if="b.method">{{ b.short }}</span>
-            <span class="by" v-if="b.byline">{{ b.byline }}</span>
-            <span class="meta"><span class="subj" :style="{ color: b.subject.color }">{{ b.subject.label }}</span> · {{ b.meta }}</span>
-            <span class="when" v-if="b.processed">Processed {{ b.processed }}</span>
-          </a>
-        </li>
-      </ul>
+      <ol v-else class="title-list">
+        <li v-for="b in shelf[route.group]" :key="b.key"><a :href="b.href">{{ b.name }}</a></li>
+      </ol>
     </section>
 
     <!-- a book in several parts: the parts side by side, read left to right -->
