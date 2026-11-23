@@ -183,7 +183,7 @@ slides:
                 url: 'library.html#/notebook',
               },
             },
-            { src: 'presentations/mcp/slide-12.png?v=6', alt: 'Connect (BRG MCP in Chatbot, Terminal, VS Code, Browser) → Ground (Theory, BRG books & papers, derivations, step-by-step explanations, examples) → Reproduce (COMPAS code implementations, connection with your own workflow, learning using Jupyter notebooks, Chatbot, Terminal, VS Code).' },
+            { src: 'presentations/mcp/slide-12.png?v=7', alt: 'Connect (App, Terminal, VS Code) → Ground (brg_papers, brg_theory, brg_framework, brg_presentation) → Reproduce (COMPAS code implementations, connection with your own workflow, learning using Jupyter notebooks, new research lines).' },
           ],
         },
         items: [
