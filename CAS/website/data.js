@@ -26,7 +26,7 @@ window.CAS = {
           label: 'Presentation',
           slides: [
             { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
-            { src: 'presentations/mcp/slide-2.png', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
+            { src: 'presentations/mcp/slide-2.png?v=2', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
             {
               key: 'applications',
               alt: 'BRG applications: brg_papers, brg_theory, brg_framework and brg_presentation, with brg_framework showcased across Chatbot, Terminal and VS Code.',
