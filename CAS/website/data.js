@@ -39,7 +39,7 @@ window.CAS = {
                 ],
                 laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 singleLaptop: {
-                  screen: 'presentations/mcp/brg-web-chatbot.jpg?v=4',
+                  screen: 'presentations/mcp/brg-web-chatbot.jpg?v=5',
                   url: 'library.html#/papers',
                   title: 'Open BRG Papers & PhD Theses in Library',
                 },
@@ -108,8 +108,8 @@ window.CAS = {
                 },
               },
             },
-            { src: 'presentations/mcp/slide-4.png?v=2', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
-            { src: 'presentations/mcp/slide-5.png?v=2', alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).' },
+            { src: 'presentations/mcp/slide-4.png?v=3', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
+            { src: 'presentations/mcp/slide-5.png?v=3', alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).' },
             { src: 'presentations/mcp/slide-6.png?v=4', alt: 'Folder structure of brg_framework MCP for the Force Density (FD) method.' },
             {
               key: 'interactive-drawing-fd',
@@ -181,7 +181,7 @@ slides:
                 url: 'library.html#/notebook',
               },
             },
-            { src: 'presentations/mcp/slide-12.png?v=5', alt: 'Connect (BRG MCP in Chatbot, Terminal, VS Code, Browser) → Ground (Theory, BRG books & papers, derivations, step-by-step explanations, examples) → Reproduce (COMPAS code implementations, connection with your own workflow, learning using Jupyter notebooks, Chatbot, Terminal, VS Code).' },
+            { src: 'presentations/mcp/slide-12.png?v=6', alt: 'Connect (BRG MCP in Chatbot, Terminal, VS Code, Browser) → Ground (Theory, BRG books & papers, derivations, step-by-step explanations, examples) → Reproduce (COMPAS code implementations, connection with your own workflow, learning using Jupyter notebooks, Chatbot, Terminal, VS Code).' },
           ],
         },
         items: [
