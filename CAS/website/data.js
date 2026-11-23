@@ -77,11 +77,12 @@ topics:
               alt: 'Compact Graphic Statics books with original covers turned into a digital MCP resource via scanning, OCR & LaTeX, translation, Cloudflare R2 storage and MCP.',
               booksResource: {
                 books: [
-                  { author: 'Bow', year: '1873', short: 'Framed Structures', cover: 'presentations/mcp/gs-books/bow-1873.jpg', href: 'library.html#/b/framed-structures-bow' },
-                  { author: 'Cremona', year: '1874', short: 'Calcolo grafico', cover: 'presentations/mcp/gs-books/cremona-1874.jpg', href: 'library.html#/b/cremona-graphical-calculus' },
+                  { author: 'Bow', year: '1873', short: 'Diagrams of Forces', cover: 'presentations/mcp/gs-books/bow-1873.jpg', href: 'library.html#/b/framed-structures-bow' },
+                  { author: 'Cremona', year: '1879', short: 'Reciprocal Figures', cover: 'presentations/mcp/gs-books/cremona-1879.jpg', href: 'library.html#/b/cremona-graphical-calculus-part-2' },
+                  { author: 'Henneberg', year: '1911', short: 'Graphische Statik', cover: 'presentations/mcp/gs-books/henneberg-1911.jpg', href: 'library.html#/b/graphic-statics-henneberg' },
+                  { ellipsis: true },
                   { author: 'Föppl', year: '1920', short: 'Graphische Statik', cover: 'presentations/mcp/gs-books/foeppl-1920.jpg', href: 'library.html#/b/graphic-statics-foeppl' },
                   { author: 'Trefftz', year: '1936', short: 'Graphostatik', cover: 'presentations/mcp/gs-books/trefftz-1936.jpg', href: 'library.html#/b/graphostatics-trefftz' },
-                  { author: 'Zillich–Stiegler', year: '1949', short: 'Statik III', cover: 'presentations/mcp/gs-books/zillich-1949.jpg', href: 'library.html#/b/statics-zillich-stiegler-part-3' },
                 ],
                 pipeline: [
                   { title: 'Scans', sub: 'PDFs & plates' },

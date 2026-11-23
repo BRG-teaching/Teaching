@@ -84,17 +84,19 @@ const onKeydown = (event) => {
           </a>
         </div>
 
-        <!-- Slide 8: Smaller Graphic Statics Books -> Digital MCP Resource -->
+        <!-- Slide 8: Canonical Graphic Statics Books (with ... in between) -> Digital MCP Resource -->
         <div v-else-if="slides[current].booksResource" class="books-slide" :aria-label="slides[current].alt">
           <div class="books-shelf">
-            <a v-for="book in slides[current].booksResource.books" :key="book.href"
-               class="books-card" :href="book.href" target="_blank" rel="noopener">
-              <div class="books-cover-wrap">
-                <img :src="book.cover" :alt="`${book.author} (${book.year})`">
-              </div>
-              <strong>{{ book.author }}</strong>
-              <span>{{ book.year }} · {{ book.short }}</span>
-            </a>
+            <template v-for="(book, idx) in slides[current].booksResource.books" :key="book.href || idx">
+              <div v-if="book.ellipsis" class="books-ellipsis" aria-label="More graphic statics books">· · ·</div>
+              <a v-else class="books-card" :href="book.href" target="_blank" rel="noopener">
+                <div class="books-cover-wrap">
+                  <img :src="book.cover" :alt="`${book.author} (${book.year})`">
+                </div>
+                <strong>{{ book.author }}</strong>
+                <span>{{ book.year }} · {{ book.short }}</span>
+              </a>
+            </template>
           </div>
           <div class="books-pipe">
             <template v-for="(step, idx) in slides[current].booksResource.pipeline" :key="step.title">
