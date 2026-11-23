@@ -28,8 +28,55 @@ window.CAS = {
             { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
             { src: 'presentations/mcp/slide-2.png?v=2', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
             {
-              key: 'applications',
-              alt: 'BRG applications: brg_papers, brg_theory, brg_framework and brg_presentation, with brg_framework showcased across Chatbot, Terminal and VS Code.',
+              key: 'applications-papers',
+              alt: 'brg_papers highlighted among the four BRG pillars, showcasing the BRG publications website chatbot querying 154 papers and PhD theses.',
+              applications: {
+                groups: [
+                  { title: 'brg_papers', emphasis: true },
+                  { title: 'brg_theory' },
+                  { title: 'brg_framework' },
+                  { title: 'brg_presentation' },
+                ],
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
+                singleLaptop: {
+                  screen: 'presentations/mcp/brg-web-chatbot.jpg?v=3',
+                  url: 'library.html#/papers',
+                  title: 'Open BRG Papers & PhD Theses in Library',
+                },
+              },
+            },
+            {
+              key: 'applications-theory',
+              alt: 'brg_theory highlighted among the four BRG pillars, showing historical Graphic Statics books turned into a searchable MCP resource.',
+              applications: {
+                groups: [
+                  { title: 'brg_papers' },
+                  { title: 'brg_theory', emphasis: true },
+                  { title: 'brg_framework' },
+                  { title: 'brg_presentation' },
+                ],
+                booksResource: {
+                  books: [
+                    { author: 'Bow', year: '1873', short: 'Diagrams of Forces', cover: 'presentations/mcp/gs-books/bow-1873.jpg', href: 'library.html#/b/framed-structures-bow' },
+                    { author: 'Cremona', year: '1879', short: 'Reciprocal Figures', cover: 'presentations/mcp/gs-books/cremona-1879.jpg', href: 'library.html#/b/cremona-graphical-calculus-part-2' },
+                    { author: 'Henneberg', year: '1911', short: 'Graphische Statik', cover: 'presentations/mcp/gs-books/henneberg-1911.jpg', href: 'library.html#/b/graphic-statics-henneberg' },
+                    { ellipsis: true },
+                    { author: 'Föppl', year: '1920', short: 'Graphische Statik', cover: 'presentations/mcp/gs-books/foeppl-1920.jpg', href: 'library.html#/b/graphic-statics-foeppl' },
+                    { author: 'Trefftz', year: '1936', short: 'Graphostatik', cover: 'presentations/mcp/gs-books/trefftz-1936.jpg', href: 'library.html#/b/graphostatics-trefftz' },
+                  ],
+                  pipeline: [
+                    { title: 'Scans', sub: 'PDFs & plates' },
+                    { title: 'OCR & LaTeX', sub: 'Equations & layout' },
+                    { title: 'Translation', sub: 'Proofread Markdown & figures' },
+                    { title: 'Cloudflare R2', sub: 'LIBRARY.md & chapters' },
+                    { title: 'MCP', sub: 'books-mcp resource', emphasis: true },
+                  ],
+                },
+              },
+            },
+            {
+              key: 'applications-framework',
+              alt: 'brg_framework highlighted among the four BRG pillars, showcased across Chatbot, Terminal and VS Code.',
               applications: {
                 groups: [
                   { title: 'brg_papers' },
@@ -45,12 +92,28 @@ window.CAS = {
                 ],
               },
             },
+            {
+              key: 'applications-presentation',
+              alt: 'brg_presentation highlighted among the four BRG pillars, showing PR3D in 3D slides (Closed joint and Open source workflow) inside the laptop.',
+              applications: {
+                groups: [
+                  { title: 'brg_papers' },
+                  { title: 'brg_theory' },
+                  { title: 'brg_framework' },
+                  { title: 'brg_presentation', emphasis: true },
+                ],
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
+                singleLaptop: {
+                  screen: 'presentations/mcp/brg-presentation.gif?v=1',
+                },
+              },
+            },
             { src: 'presentations/mcp/slide-4.png?v=1', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
             { src: 'presentations/mcp/slide-5.png?v=1', alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).' },
             { src: 'presentations/mcp/slide-6.png?v=2', alt: 'Folder structure of brg_framework MCP for the Force Density (FD) method.' },
             {
               key: 'interactive-drawing-fd',
-              alt: 'Interactive Force Density presentations (5 clickable decks) and presentation.yaml internals, displayed beside a large clickable laptop.',
+              alt: 'Interactive Force Density presentations (5 clickable decks) and 02-question.yaml stage format, displayed beside a large clickable laptop.',
               interactiveDrawing: {
                 methodTitle: 'FD · Interactive Drawings',
                 methodSub: '5 decks',
@@ -61,16 +124,19 @@ window.CAS = {
                   { title: 'Jacobian & Matrix Derivation', url: 'https://petrasvestartas.github.io/session/?stage=force-density-derivation' },
                   { title: 'Materialization & Cut Lengths', url: 'https://petrasvestartas.github.io/session/?stage=force-density-materialization' },
                 ],
-                specTitle: 'presentation.yaml',
-                yaml: `name: Force Density
-spatial_split: 0.56
-topics:
-  - title: 1 Equilibrium
+                specTitle: '02-question.yaml',
+                yaml: `title: QUESTION
+camera: { yaw: -58, pitch: 26 }
+net:
+  fixed: { n1: [0,0,0], n2: [5,0,3] }
+  free: { n0: [3.6, 3.4, 1.9] }
+  cables: { e0: [n0, n1], e1: [n0, n2] }
+  q: 1
+slides:
+  - title: POSITION OF FREE NODE n0
     steps:
-      - file: steps/00_00.pb
-        effects:
-          - { name: poly-0, kind: morph }
-          - { name: eq-sum, kind: grow }`,
+      - say: 'Four fixed nodes...'
+        show: net`,
                 laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 gif: 'presentations/mcp/fd-interactive.gif?v=1',
                 url: 'https://petrasvestartas.github.io/session/?stage=force-density',
@@ -107,57 +173,15 @@ slides:
               },
             },
             {
-              key: 'books-resource',
-              alt: 'Compact Graphic Statics books with original covers turned into a digital MCP resource via scanning, OCR & LaTeX, translation, Cloudflare R2 storage and MCP.',
-              booksResource: {
-                lead: 'LLMs are built for text — turning historical books into searchable digital resources.',
-                books: [
-                  { author: 'Bow', year: '1873', short: 'Diagrams of Forces', cover: 'presentations/mcp/gs-books/bow-1873.jpg', href: 'library.html#/b/framed-structures-bow' },
-                  { author: 'Cremona', year: '1879', short: 'Reciprocal Figures', cover: 'presentations/mcp/gs-books/cremona-1879.jpg', href: 'library.html#/b/cremona-graphical-calculus-part-2' },
-                  { author: 'Henneberg', year: '1911', short: 'Graphische Statik', cover: 'presentations/mcp/gs-books/henneberg-1911.jpg', href: 'library.html#/b/graphic-statics-henneberg' },
-                  { ellipsis: true },
-                  { author: 'Föppl', year: '1920', short: 'Graphische Statik', cover: 'presentations/mcp/gs-books/foeppl-1920.jpg', href: 'library.html#/b/graphic-statics-foeppl' },
-                  { author: 'Trefftz', year: '1936', short: 'Graphostatik', cover: 'presentations/mcp/gs-books/trefftz-1936.jpg', href: 'library.html#/b/graphostatics-trefftz' },
-                ],
-                pipeline: [
-                  { title: 'Scans', sub: 'PDFs & plates' },
-                  { title: 'OCR & LaTeX', sub: 'Equations & layout' },
-                  { title: 'Translation', sub: 'Proofread Markdown & figures' },
-                  { title: 'Cloudflare R2', sub: 'LIBRARY.md & chapters' },
-                  { title: 'MCP', sub: 'books-mcp resource', emphasis: true },
-                ],
-              },
-            },
-            {
-              key: 'papers-resource',
-              alt: 'brg_papers and PhD theses (154 papers, 2006–2024) powering traceable citations, research-gap mapping, and a chatbot on the BRG publications website.',
-              papersResource: {
-                title: 'brg_papers',
-                count: '154 papers · PhD theses · 2006–2024',
-                subjects: 'TNA & Masonry · Materialization · Graphic Statics · Form Finding',
-                uses: [
-                  { title: 'Traceable Citations', sub: 'Exact paper, figure & page URL' },
-                  { title: 'Research-Gap Mapping', sub: 'Covered vs. missing lines' },
-                ],
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
-                screen: 'presentations/mcp/brg-web-chatbot.jpg?v=3',
-                url: 'library.html#/papers',
-                hint: 'Open BRG papers & theses in Library ↗',
-              },
-            },
-            { src: 'presentations/mcp/slide-10.png?v=2', alt: 'LLMs propose, solvers verify: LLM parses text and writes COMPAS script, COMPAS Solver computes exact equilibrium (residual = 0), and Verified Model / Plot returns errors and residuals to the LLM.' },
-            {
               key: 'workspace-slide',
               alt: 'Zero-install browser workspace combining the BRG Library, BRG Terminal, and JupyterLite in one screen with Claude, Gemini, and Kimi support.',
               workspaceSlide: {
-                lead: 'Zero-install Day-1 workspace — Library, BRG Terminal & JupyterLite in one browser tab.',
                 laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 screen: 'presentations/mcp/workspace-screen.jpg?v=2',
                 url: 'library.html#/notebook',
-                hint: 'Open browser workspace (Claude · Gemini · Kimi) ↗',
               },
             },
-            { src: 'presentations/mcp/slide-12.png?v=2', alt: 'One Setup to Chapter 1 Deliverable (Weeks 1–2): 01 Connect MCP, 02 Ground an answer with page-level BRG book & paper citations, 03 Reproduce a verified COMPAS structure in a Jupyter notebook.' },
+            { src: 'presentations/mcp/slide-12.png?v=3', alt: '01 Connect MCP in Chatbot, Terminal, VS Code, or Browser; 02 Ground a question with BRG book & paper citations; 03 Reproduce a COMPAS example in Chatbot, Terminal, VS Code, or Jupyter Notebook.' },
           ],
         },
         items: [

@@ -19,6 +19,10 @@ const open = async () => {
 const close = () => dialog.value.close();
 const previous = () => { current.value = (current.value + props.slides.length - 1) % props.slides.length; };
 const next = () => { current.value = (current.value + 1) % props.slides.length; };
+const jumpToGroup = (title) => {
+  const idx = props.slides.findIndex((s) => s.applications?.groups?.some((g) => g.title === title && g.emphasis));
+  if (idx >= 0) current.value = idx;
+};
 const onKeydown = (event) => {
   if (event.key === 'ArrowLeft') {
     event.preventDefault();
@@ -46,23 +50,66 @@ const onKeydown = (event) => {
         <button ref="closeButton" type="button" class="presentation-close" aria-label="Close presentation" @click="close">×</button>
       </header>
       <div class="presentation-stage">
-        <!-- Slide 3: Triangle-tiled large GIF laptops + vertical BRG stack + borderless labels -->
+        <!-- Slides 3–6: Central 4 BRG pillars stepping highlight across brg_papers, brg_theory, brg_framework, brg_presentation -->
         <div v-if="slides[current].applications" class="apps-triangle-slide" :aria-label="slides[current].alt">
           <div class="apps-top-center">
-            <div v-for="item in slides[current].applications.groups" :key="item.title"
-                 class="apps-node" :class="{ emphasis: item.emphasis }">
+            <button v-for="item in slides[current].applications.groups" :key="item.title" type="button"
+                    class="apps-node" :class="{ emphasis: item.emphasis }" :aria-pressed="item.emphasis ? 'true' : 'false'"
+                    @click="jumpToGroup(item.title)">
               <strong>{{ item.title }}</strong>
-            </div>
+            </button>
           </div>
-          <a v-for="(demo, idx) in slides[current].applications.demos" :key="demo.title"
-             class="apps-demo" :class="`pos-${idx}`" :href="demo.url" target="_blank" rel="noopener"
-             :title="`Watch ${demo.title} video on YouTube`">
-            <strong class="apps-demo-label">{{ demo.title }}</strong>
+
+          <template v-if="slides[current].applications.demos">
+            <a v-for="(demo, idx) in slides[current].applications.demos" :key="demo.title"
+               class="apps-demo" :class="`pos-${idx}`" :href="demo.url" target="_blank" rel="noopener"
+               :title="`Watch ${demo.title} video on YouTube`">
+              <strong class="apps-demo-label">{{ demo.title }}</strong>
+              <div class="apps-laptop">
+                <img class="apps-laptop-frame" :src="slides[current].applications.laptopFrame" alt="">
+                <img class="apps-laptop-screen" :src="demo.gif" :alt="`${demo.title} showcase`">
+              </div>
+            </a>
+          </template>
+
+          <component :is="slides[current].applications.singleLaptop.url ? 'a' : 'div'"
+                     v-else-if="slides[current].applications.singleLaptop"
+                     class="apps-single-laptop"
+                     :href="slides[current].applications.singleLaptop.url || undefined"
+                     :target="slides[current].applications.singleLaptop.url ? '_blank' : undefined"
+                     :rel="slides[current].applications.singleLaptop.url ? 'noopener' : undefined"
+                     :title="slides[current].applications.singleLaptop.title || undefined">
             <div class="apps-laptop">
               <img class="apps-laptop-frame" :src="slides[current].applications.laptopFrame" alt="">
-              <img class="apps-laptop-screen" :src="demo.gif" :alt="`${demo.title} showcase`">
+              <img class="apps-laptop-screen" :src="slides[current].applications.singleLaptop.screen" :alt="slides[current].alt">
             </div>
-          </a>
+          </component>
+
+          <div v-else-if="slides[current].applications.booksResource" class="apps-books-body">
+            <div class="books-shelf">
+              <template v-for="(book, idx) in slides[current].applications.booksResource.books" :key="book.href || idx">
+                <div v-if="book.ellipsis" class="books-ellipsis" aria-label="More graphic statics books">· · ·</div>
+                <a v-else class="books-card" :href="book.href" target="_blank" rel="noopener">
+                  <div class="books-cover-wrap">
+                    <img :src="book.cover" :alt="`${book.author} (${book.year})`">
+                  </div>
+                  <strong>{{ book.author }}</strong>
+                  <span>{{ book.year }} · {{ book.short }}</span>
+                </a>
+              </template>
+            </div>
+            <div class="books-pipe">
+              <template v-for="(step, idx) in slides[current].applications.booksResource.pipeline" :key="step.title">
+                <div class="books-pipe-step">
+                  <div class="books-pipe-box" :class="{ emphasis: step.emphasis }">
+                    <strong>{{ step.title }}</strong>
+                  </div>
+                  <span>{{ step.sub }}</span>
+                </div>
+                <div v-if="idx < slides[current].applications.booksResource.pipeline.length - 1" class="books-pipe-arrow" aria-hidden="true"><i></i></div>
+              </template>
+            </div>
+          </div>
         </div>
 
         <!-- Slides 7 & 8: Interactive Drawings (FD and TNA clickable lists + YAML internals -> Large Clickable Laptop GIF) -->
@@ -153,7 +200,7 @@ const onKeydown = (event) => {
           </a>
         </div>
 
-        <!-- Slide 12: Zero-install Student Browser Workspace -->
+        <!-- Slide 11: Zero-install Student Browser Workspace -->
         <div v-else-if="slides[current].workspaceSlide" class="workspace-slide" :aria-label="slides[current].alt">
           <p v-if="slides[current].workspaceSlide.lead" class="books-lead">{{ slides[current].workspaceSlide.lead }}</p>
           <a class="workspace-laptop-link" :href="slides[current].workspaceSlide.url" target="_blank" rel="noopener">
