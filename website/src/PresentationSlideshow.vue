@@ -46,6 +46,7 @@ const onKeydown = (event) => {
         <button ref="closeButton" type="button" class="presentation-close" aria-label="Close presentation" @click="close">×</button>
       </header>
       <div class="presentation-stage">
+        <!-- Slide 3: BRG Applications + 3 GIF laptops -->
         <div v-if="slides[current].applications" class="apps-slide" :aria-label="slides[current].alt">
           <div class="apps-top">
             <div v-for="item in slides[current].applications.groups" :key="item.title"
@@ -71,6 +72,57 @@ const onKeydown = (event) => {
             </div>
           </div>
         </div>
+
+        <!-- Slide 7: Interactive Drawings (YAML -> Clickable Laptop GIF -> Stages) -->
+        <div v-else-if="slides[current].interactiveDrawing" class="idraw-slide" :aria-label="slides[current].alt">
+          <div class="idraw-spec">
+            <strong>{{ slides[current].interactiveDrawing.specTitle }}</strong>
+            <span>{{ slides[current].interactiveDrawing.specSub }}</span>
+          </div>
+          <div class="slide-arrow" aria-hidden="true"><i></i></div>
+          <a class="idraw-laptop-link" :href="slides[current].interactiveDrawing.url" target="_blank" rel="noopener"
+             title="Open live interactive Force Density presentation">
+            <div class="apps-laptop">
+              <img class="apps-laptop-frame" :src="slides[current].interactiveDrawing.laptopFrame" alt="">
+              <img class="apps-laptop-screen" :src="slides[current].interactiveDrawing.gif" alt="Interactive Force Density presentation">
+            </div>
+            <span class="idraw-click-hint">Click to open interactive viewer ↗</span>
+          </a>
+          <div class="slide-arrow" aria-hidden="true"><i></i></div>
+          <nav class="idraw-stages" aria-label="Interactive Force Density stages">
+            <a v-for="st in slides[current].interactiveDrawing.stages" :key="st.url"
+               class="idraw-stage-btn" :class="{ emphasis: st.emphasis }"
+               :href="st.url" target="_blank" rel="noopener">
+              <strong>{{ st.title }}</strong>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Slide 8: Graphic Statics Books -> Digital MCP Resource -->
+        <div v-else-if="slides[current].booksResource" class="books-slide" :aria-label="slides[current].alt">
+          <div class="books-shelf">
+            <a v-for="book in slides[current].booksResource.books" :key="book.href"
+               class="books-card" :href="book.href" target="_blank" rel="noopener">
+              <div class="books-cover-wrap">
+                <img :src="book.cover" :alt="`${book.author} (${book.year})`">
+              </div>
+              <strong>{{ book.author }}</strong>
+              <span>{{ book.year }} · {{ book.short }}</span>
+            </a>
+          </div>
+          <div class="books-pipe">
+            <template v-for="(step, idx) in slides[current].booksResource.pipeline" :key="step.title">
+              <div class="books-pipe-step">
+                <div class="books-pipe-box" :class="{ emphasis: step.emphasis }">
+                  <strong>{{ step.title }}</strong>
+                </div>
+                <span>{{ step.sub }}</span>
+              </div>
+              <div v-if="idx < slides[current].booksResource.pipeline.length - 1" class="books-pipe-arrow" aria-hidden="true"><i></i></div>
+            </template>
+          </div>
+        </div>
+
         <img v-else :src="slides[current].src" :alt="slides[current].alt">
       </div>
       <footer class="presentation-controls">

@@ -46,6 +46,47 @@ window.CAS = {
               },
             },
             { src: 'presentations/mcp/slide-4.png?v=1', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
+            { src: 'presentations/mcp/slide-5.png?v=1', alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).' },
+            { src: 'presentations/mcp/slide-6.png?v=1', alt: 'Contents of brg_framework MCP for the Force Density (FD) method: Explain Method, Interactive Presentations, Exercises, Related Papers and Extensions & COMPAS.' },
+            {
+              key: 'interactive-drawing',
+              alt: 'Interactive Force Density drawings driven by YAML and protobuf steps, displayed inside a clickable laptop alongside the five interactive stages.',
+              interactiveDrawing: {
+                specTitle: 'YAML Format',
+                specSub: 'presentation.yaml · steps',
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=1',
+                gif: 'presentations/mcp/fd-interactive.gif?v=1',
+                url: 'https://petrasvestartas.github.io/session/?stage=force-density',
+                stages: [
+                  { title: 'Static Equilibrium · Cosines', url: 'https://petrasvestartas.github.io/session/?stage=equilibrium' },
+                  { title: 'Single Node Equilibrium', url: 'https://petrasvestartas.github.io/session/?stage=force-density', emphasis: true },
+                  { title: 'Force Density Matrices', url: 'https://petrasvestartas.github.io/session/?stage=force-density-matrices' },
+                  { title: 'Jacobian & Derivation', url: 'https://petrasvestartas.github.io/session/?stage=force-density-derivation' },
+                  { title: 'Unstretched Lengths', url: 'https://petrasvestartas.github.io/session/?stage=force-density-materialization' },
+                ],
+              },
+            },
+            {
+              key: 'books-resource',
+              alt: 'Foundational Graphic Statics books turned into a digital MCP resource via scanning, OCR & LaTeX, translation & figures, Cloudflare R2 storage and MCP.',
+              booksResource: {
+                books: [
+                  { author: 'Cremona', year: '1874', short: 'Graphical Calculus', cover: 'presentations/mcp/books/cremona-1874.jpg', href: 'library.html#/b/cremona-graphical-calculus' },
+                  { author: 'Lévy', year: '1886', short: 'Statique graphique', cover: 'presentations/mcp/books/levy-1886.jpg', href: 'library.html#/b/graphic-statics-levy' },
+                  { author: 'Föppl', year: '1892', short: 'Space Trusses', cover: 'presentations/mcp/books/foeppl-1892.jpg', href: 'library.html#/b/space-trusses-foeppl' },
+                  { author: 'Henneberg', year: '1911', short: 'Rigid Systems', cover: 'presentations/mcp/books/henneberg-1911.jpg', href: 'library.html#/b/graphic-statics-henneberg' },
+                  { author: 'Wolfe', year: '1921', short: 'Graphical Analysis', cover: 'presentations/mcp/books/wolfe-1921.jpg', href: 'library.html#/b/graphical-analysis-wolfe' },
+                  { author: 'Trefftz', year: '1936', short: 'Graphostatik', cover: 'presentations/mcp/books/trefftz-1936.jpg', href: 'library.html#/b/graphostatics-trefftz' },
+                ],
+                pipeline: [
+                  { title: 'Scans', sub: 'PDFs & plates' },
+                  { title: 'OCR & LaTeX', sub: 'Equations & layout' },
+                  { title: 'Translation', sub: 'Proofread Markdown & figures' },
+                  { title: 'Cloudflare R2', sub: 'LIBRARY.md & chapters' },
+                  { title: 'MCP', sub: 'books-mcp resource', emphasis: true },
+                ],
+              },
+            },
           ],
         },
         items: [
