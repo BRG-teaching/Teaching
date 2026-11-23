@@ -26,7 +26,7 @@ window.CAS = {
           label: 'Presentation',
           slides: [
             { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
-            { src: 'presentations/mcp/slide-2.png?v=2', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
+            { src: 'presentations/mcp/slide-2.png?v=3', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
             {
               key: 'applications-papers',
               alt: 'brg_papers highlighted among the four BRG pillars, showcasing the BRG publications website chatbot querying 154 papers and PhD theses.',
