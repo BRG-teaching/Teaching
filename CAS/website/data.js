@@ -108,7 +108,7 @@ window.CAS = {
                 },
               },
             },
-            { src: 'presentations/mcp/slide-4.png?v=3', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
+            { src: 'presentations/mcp/slide-4.png?v=4', alt: 'LLM for BRG architecture: Context layers (MCP and Memory first, followed by Hooks, Skills, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
             { src: 'presentations/mcp/slide-5.png?v=3', alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).' },
             { src: 'presentations/mcp/slide-6.png?v=4', alt: 'Folder structure of brg_framework MCP for the Force Density (FD) method.' },
             {
@@ -143,6 +143,8 @@ slides:
                 hint: 'Click to open FD interactive viewer ↗',
               },
             },
+            { src: 'presentations/mcp/slide-5-tna.png?v=1', alt: 'Method focus across four subjects: FD (Force Density), DR (Dynamic Relaxation), TNA (Thrust Network Analysis, highlighted) and AGS (Algebraic Graphic Statics).' },
+            { src: 'presentations/mcp/slide-6-tna.png?v=1', alt: 'Folder structure of brg_framework MCP for the Thrust Network Analysis (TNA) method.' },
             {
               key: 'interactive-drawing-tna',
               alt: 'Interactive Thrust Network Analysis presentations (5 clickable decks) and YAML stage format, displayed beside a large clickable laptop.',
