@@ -227,47 +227,40 @@ details[open] > summary .pm::after { transform: rotate(0deg); }
 .presentation-close { justify-self: end; width: 40px; height: 40px; padding: 0; border: 0; background: none; color: var(--ink); font-size: 32px; line-height: 1; cursor: pointer; }
 .presentation-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .presentation-stage > img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.apps-slide { width: min(100%, calc((100svh - 108px) * 16 / 9)); max-width: 1720px; max-height: 100%; padding: clamp(12px, 2.2vh, 32px) clamp(12px, 2vw, 32px); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; }
-.apps-top { width: 44%; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px, 1.4vh, 16px) 4.5455%; }
-.apps-node { min-height: clamp(50px, 7.6vh, 80px); padding: 10px 14px; border: 2px solid var(--rule); background: var(--paper); display: flex; align-items: center; justify-content: center; text-align: center; }
-.apps-node strong { font-size: clamp(14px, 2.1vh, 23px); font-weight: 600; letter-spacing: -.015em; color: var(--c); line-height: 1.1; }
+.apps-slide { width: min(100vw, 1900px); max-height: 100%; padding: clamp(8px, 1.4vh, 18px) clamp(8px, 1.2vw, 20px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(12px, 2.2vh, 24px); overflow-y: auto; }
+.apps-top { width: min(92%, 680px); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 1.1vh, 12px) 16px; }
+.apps-node { min-height: clamp(42px, 6vh, 64px); padding: 8px 14px; border: 2px solid var(--rule); background: var(--paper); display: flex; align-items: center; justify-content: center; text-align: center; }
+.apps-node strong { font-size: clamp(14px, 1.95vh, 21px); font-weight: 600; letter-spacing: -.015em; color: var(--c); line-height: 1.1; }
 .apps-node.emphasis { border-color: var(--c); background: var(--c); }
 .apps-node.emphasis strong { color: #fff; }
-.apps-expand-wrap { width: 92%; display: flex; flex-direction: column; }
-.apps-expand-lines { display: block; width: 100%; height: clamp(24px, 4.2vh, 46px); color: var(--c); flex: none; }
-.apps-showcase { border: 2px solid var(--c); border-top: 0; background: var(--paper); padding: clamp(8px, 1.4vh, 20px) clamp(12px, 1.8vw, 28px) clamp(14px, 2.2vh, 28px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 32px); align-items: start; }
-.apps-demo { display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.4vh, 16px); text-decoration: none; color: inherit; min-width: 0; }
-.apps-demo-tab { min-width: 56%; padding: clamp(6px, 1vh, 11px) clamp(14px, 1.6vw, 24px); border: 2px solid var(--rule); background: var(--paper); text-align: center; transition: border-color .2s; }
-.apps-demo-tab strong { font-size: clamp(13px, 1.9vh, 21px); font-weight: 600; letter-spacing: -.01em; color: var(--c); }
+.apps-showcase { width: 100%; background: var(--paper); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(6px, 0.9vw, 14px); align-items: start; }
+.apps-demo { display: flex; flex-direction: column; align-items: center; gap: clamp(6px, 1.1vh, 12px); text-decoration: none; color: inherit; min-width: 0; }
+.apps-demo-tab { min-width: 44%; padding: clamp(5px, 0.8vh, 9px) clamp(12px, 1.4vw, 20px); border: 2px solid var(--rule); background: var(--paper); text-align: center; transition: border-color .2s; }
+.apps-demo-tab strong { font-size: clamp(13px, 1.8vh, 19px); font-weight: 600; letter-spacing: -.01em; color: var(--c); }
 .apps-demo:hover .apps-demo-tab { border-color: var(--c); }
 .apps-laptop { position: relative; width: 100%; }
 .apps-laptop-frame { display: block; width: 100%; height: auto; }
-.apps-laptop-screen { position: absolute; left: 15.2%; top: 4.55%; width: 69.61%; height: 70.9%; object-fit: cover; border-radius: 1.3% 1.3% 0 0; }
-.idraw-slide { width: min(100%, 1680px); max-height: 100%; padding: clamp(16px, 3vh, 40px) clamp(16px, 3vw, 48px); display: grid; grid-template-columns: minmax(170px, 240px) 48px minmax(360px, 760px) 48px minmax(210px, 300px); align-items: center; justify-content: center; gap: 12px; overflow-y: auto; }
-.idraw-spec { min-height: clamp(140px, 20vh, 210px); padding: 20px 18px; border: 2px solid var(--rule); background: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; }
-.idraw-spec strong { font-size: clamp(18px, 2.5vh, 26px); font-weight: 600; color: var(--c); letter-spacing: -.015em; }
-.idraw-spec span { font-size: clamp(13px, 1.6vh, 15px); color: var(--muted); line-height: 1.35; }
+.apps-laptop-screen { position: absolute; left: 11.402%; top: 3.771%; width: 76.515%; height: 72.114%; object-fit: cover; border-radius: 1.3% 1.3% 0 0; }
+.idraw-slide { width: min(98vw, 1780px); max-height: 100%; padding: clamp(12px, 2vh, 28px) clamp(12px, 2vw, 32px); display: grid; grid-template-columns: minmax(280px, 430px) 48px minmax(480px, 1140px); align-items: center; justify-content: center; gap: 12px; overflow-y: auto; }
+.idraw-yaml { border: 2px solid var(--rule); background: var(--paper); display: flex; flex-direction: column; }
+.idraw-yaml-head { padding: 10px 18px; border-bottom: 1px solid var(--rule); }
+.idraw-yaml-head strong { font-size: clamp(15px, 2vh, 20px); font-weight: 600; color: var(--c); }
+.idraw-yaml-code { margin: 0; padding: clamp(14px, 2vh, 22px) 20px; font: 400 clamp(12px, 1.55vh, 16px)/1.55 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; color: var(--ink); overflow-x: auto; }
 .slide-arrow { display: flex; align-items: center; justify-content: center; }
 .slide-arrow i { position: relative; display: block; width: 34px; height: 2px; background: var(--c); }
 .slide-arrow i::after { content: ""; position: absolute; right: -1px; top: 50%; margin-top: -5px; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid var(--c); }
-.idraw-laptop-link { display: flex; flex-direction: column; align-items: center; gap: 10px; text-decoration: none; color: inherit; transition: transform .2s; }
-.idraw-laptop-link:hover { transform: scale(1.015); }
-.idraw-click-hint { font-size: clamp(13px, 1.6vh, 15px); font-weight: 600; color: var(--c); }
-.idraw-stages { display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 14px); }
-.idraw-stage-btn { padding: clamp(10px, 1.4vh, 15px) 16px; border: 2px solid var(--rule); background: var(--paper); text-decoration: none; text-align: center; transition: border-color .2s; }
-.idraw-stage-btn strong { font-size: clamp(13px, 1.75vh, 17px); font-weight: 600; color: var(--c); }
-.idraw-stage-btn:hover { border-color: var(--c); }
-.idraw-stage-btn.emphasis { border-color: var(--c); background: var(--c); }
-.idraw-stage-btn.emphasis strong { color: #fff; }
-.books-slide { width: min(100%, 1680px); max-height: 100%; padding: clamp(16px, 3vh, 40px) clamp(16px, 3vw, 48px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(28px, 5.5vh, 64px); overflow-y: auto; }
-.books-shelf { width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: clamp(14px, 2vw, 32px); align-items: end; }
+.idraw-laptop-link { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: inherit; transition: transform .2s; }
+.idraw-laptop-link:hover { transform: scale(1.01); }
+.idraw-click-hint { font-size: clamp(13px, 1.65vh, 16px); font-weight: 600; color: var(--c); }
+.books-slide { width: min(96vw, 1640px); max-height: 100%; padding: clamp(16px, 2.5vh, 36px) clamp(16px, 2.5vw, 40px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(28px, 5vh, 56px); overflow-y: auto; }
+.books-shelf { width: 100%; max-width: 1460px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 38px); align-items: end; }
 .books-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; text-decoration: none; color: inherit; min-width: 0; }
-.books-cover-wrap { height: clamp(150px, 30vh, 290px); display: flex; align-items: flex-end; justify-content: center; transition: transform .2s; }
-.books-cover-wrap img { max-height: 100%; width: auto; border: 1px solid var(--rule); box-shadow: 0 8px 22px rgba(20, 27, 61, .12); }
+.books-cover-wrap { height: clamp(170px, 34vh, 330px); display: flex; align-items: flex-end; justify-content: center; transition: transform .2s; }
+.books-cover-wrap img { max-height: 100%; width: auto; border: 1px solid var(--rule); box-shadow: 0 10px 26px rgba(20, 27, 61, .16); }
 .books-card:hover .books-cover-wrap { transform: translateY(-4px); }
-.books-card strong { font-size: clamp(14px, 1.9vh, 19px); font-weight: 600; color: var(--ink); line-height: 1.2; margin-top: 4px; }
-.books-card span { font-size: clamp(12px, 1.5vh, 14.5px); color: var(--muted); line-height: 1.3; }
-.books-pipe { width: 100%; max-width: 1480px; display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr 40px 1fr; align-items: start; }
+.books-card strong { font-size: clamp(15px, 2vh, 20px); font-weight: 600; color: var(--ink); line-height: 1.2; margin-top: 4px; }
+.books-card span { font-size: clamp(12.5px, 1.55vh, 15px); color: var(--muted); line-height: 1.3; }
+.books-pipe { width: 100%; max-width: 1460px; display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr 40px 1fr; align-items: start; }
 .books-pipe-step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
 .books-pipe-box { width: 100%; min-height: clamp(58px, 8.6vh, 84px); padding: 12px 10px; border: 2px solid var(--rule); background: var(--paper); display: flex; align-items: center; justify-content: center; }
 .books-pipe-box strong { font-size: clamp(15px, 2.1vh, 22px); font-weight: 600; color: var(--c); letter-spacing: -.015em; line-height: 1.15; }
@@ -278,9 +271,9 @@ details[open] > summary .pm::after { transform: rotate(0deg); }
 .books-pipe-arrow i { position: relative; display: block; width: 26px; height: 2px; background: var(--c); }
 .books-pipe-arrow i::after { content: ""; position: absolute; right: -1px; top: 50%; margin-top: -5px; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid var(--c); }
 @media (max-width: 960px) {
+  .apps-showcase { grid-template-columns: 1fr; max-width: 560px; }
   .idraw-slide { grid-template-columns: 1fr; justify-items: center; }
   .slide-arrow { display: none; }
-  .idraw-stages { width: 100%; max-width: 420px; }
   .books-shelf { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .books-pipe { grid-template-columns: 1fr; gap: 10px; }
   .books-pipe-arrow { display: none; }

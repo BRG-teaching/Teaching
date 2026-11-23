@@ -46,7 +46,7 @@ const onKeydown = (event) => {
         <button ref="closeButton" type="button" class="presentation-close" aria-label="Close presentation" @click="close">×</button>
       </header>
       <div class="presentation-stage">
-        <!-- Slide 3: BRG Applications + 3 GIF laptops -->
+        <!-- Slide 3: BRG Applications + 3 large GIF laptops (no blue outlines) -->
         <div v-if="slides[current].applications" class="apps-slide" :aria-label="slides[current].alt">
           <div class="apps-top">
             <div v-for="item in slides[current].applications.groups" :key="item.title"
@@ -54,30 +54,24 @@ const onKeydown = (event) => {
               <strong>{{ item.title }}</strong>
             </div>
           </div>
-          <div class="apps-expand-wrap">
-            <svg class="apps-expand-lines" viewBox="0 0 1000 52" preserveAspectRatio="none" aria-hidden="true">
-              <path d="M 260.9 0 V 26 H 1 V 52" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
-              <path d="M 489.1 0 V 26 H 999 V 52" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
-            </svg>
-            <div class="apps-showcase">
-              <a v-for="demo in slides[current].applications.demos" :key="demo.title"
-                 class="apps-demo" :href="demo.url" target="_blank" rel="noopener"
-                 :title="`Watch ${demo.title} video on YouTube`">
-                <div class="apps-demo-tab"><strong>{{ demo.title }}</strong></div>
-                <div class="apps-laptop">
-                  <img class="apps-laptop-frame" :src="slides[current].applications.laptopFrame" alt="">
-                  <img class="apps-laptop-screen" :src="demo.gif" :alt="`${demo.title} showcase`">
-                </div>
-              </a>
-            </div>
+          <div class="apps-showcase">
+            <a v-for="demo in slides[current].applications.demos" :key="demo.title"
+               class="apps-demo" :href="demo.url" target="_blank" rel="noopener"
+               :title="`Watch ${demo.title} video on YouTube`">
+              <div class="apps-demo-tab"><strong>{{ demo.title }}</strong></div>
+              <div class="apps-laptop">
+                <img class="apps-laptop-frame" :src="slides[current].applications.laptopFrame" alt="">
+                <img class="apps-laptop-screen" :src="demo.gif" :alt="`${demo.title} showcase`">
+              </div>
+            </a>
           </div>
         </div>
 
-        <!-- Slide 7: Interactive Drawings (YAML -> Clickable Laptop GIF -> Stages) -->
+        <!-- Slide 7: Interactive Drawings (YAML internals -> Large Clickable Laptop GIF) -->
         <div v-else-if="slides[current].interactiveDrawing" class="idraw-slide" :aria-label="slides[current].alt">
-          <div class="idraw-spec">
-            <strong>{{ slides[current].interactiveDrawing.specTitle }}</strong>
-            <span>{{ slides[current].interactiveDrawing.specSub }}</span>
+          <div class="idraw-yaml">
+            <div class="idraw-yaml-head"><strong>{{ slides[current].interactiveDrawing.specTitle }}</strong></div>
+            <pre class="idraw-yaml-code">{{ slides[current].interactiveDrawing.yaml }}</pre>
           </div>
           <div class="slide-arrow" aria-hidden="true"><i></i></div>
           <a class="idraw-laptop-link" :href="slides[current].interactiveDrawing.url" target="_blank" rel="noopener"
@@ -88,17 +82,9 @@ const onKeydown = (event) => {
             </div>
             <span class="idraw-click-hint">Click to open interactive viewer ↗</span>
           </a>
-          <div class="slide-arrow" aria-hidden="true"><i></i></div>
-          <nav class="idraw-stages" aria-label="Interactive Force Density stages">
-            <a v-for="st in slides[current].interactiveDrawing.stages" :key="st.url"
-               class="idraw-stage-btn" :class="{ emphasis: st.emphasis }"
-               :href="st.url" target="_blank" rel="noopener">
-              <strong>{{ st.title }}</strong>
-            </a>
-          </nav>
         </div>
 
-        <!-- Slide 8: Graphic Statics Books -> Digital MCP Resource -->
+        <!-- Slide 8: Smaller Graphic Statics Books -> Digital MCP Resource -->
         <div v-else-if="slides[current].booksResource" class="books-slide" :aria-label="slides[current].alt">
           <div class="books-shelf">
             <a v-for="book in slides[current].booksResource.books" :key="book.href"

@@ -37,46 +37,51 @@ window.CAS = {
                   { title: 'brg_framework', emphasis: true },
                   { title: 'brg_presentation' },
                 ],
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=1',
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=2',
                 demos: [
-                  { title: 'Chatbot', gif: 'presentations/mcp/chatbot.gif?v=1', url: 'https://www.youtube.com/watch?v=rVgoINY87DU' },
-                  { title: 'Terminal', gif: 'presentations/mcp/terminal.gif?v=1', url: 'https://www.youtube.com/watch?v=yalyvv4nIP0' },
-                  { title: 'VS Code', gif: 'presentations/mcp/vscode.gif?v=1', url: 'https://www.youtube.com/watch?v=qY66eiRa6Og' },
+                  { title: 'Chatbot', gif: 'presentations/mcp/chatbot.gif?v=2', url: 'https://www.youtube.com/watch?v=rVgoINY87DU' },
+                  { title: 'Terminal', gif: 'presentations/mcp/terminal.gif?v=2', url: 'https://www.youtube.com/watch?v=yalyvv4nIP0' },
+                  { title: 'VS Code', gif: 'presentations/mcp/vscode.gif?v=2', url: 'https://www.youtube.com/watch?v=qY66eiRa6Og' },
                 ],
               },
             },
             { src: 'presentations/mcp/slide-4.png?v=1', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
             { src: 'presentations/mcp/slide-5.png?v=1', alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).' },
-            { src: 'presentations/mcp/slide-6.png?v=1', alt: 'Contents of brg_framework MCP for the Force Density (FD) method: Explain Method, Interactive Presentations, Exercises, Related Papers and Extensions & COMPAS.' },
+            { src: 'presentations/mcp/slide-6.png?v=2', alt: 'Folder structure of brg_framework MCP for the Force Density (FD) method.' },
             {
               key: 'interactive-drawing',
-              alt: 'Interactive Force Density drawings driven by YAML and protobuf steps, displayed inside a clickable laptop alongside the five interactive stages.',
+              alt: 'Interactive Force Density drawings driven by presentation.yaml and protobuf steps, displayed inside a large clickable laptop.',
               interactiveDrawing: {
-                specTitle: 'YAML Format',
-                specSub: 'presentation.yaml · steps',
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=1',
+                specTitle: 'presentation.yaml',
+                yaml: `name: Force Density
+width: 1600
+height: 760
+spatial_split: 0.56
+topics:
+  - title: 1 Equilibrium
+    steps:
+      - file: steps/00_00.pb
+        effects:
+          - name: polygon-0
+            from: e0
+            kind: morph
+          - name: equilibrium-sum
+            kind: grow`,
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=2',
                 gif: 'presentations/mcp/fd-interactive.gif?v=1',
                 url: 'https://petrasvestartas.github.io/session/?stage=force-density',
-                stages: [
-                  { title: 'Static Equilibrium · Cosines', url: 'https://petrasvestartas.github.io/session/?stage=equilibrium' },
-                  { title: 'Single Node Equilibrium', url: 'https://petrasvestartas.github.io/session/?stage=force-density', emphasis: true },
-                  { title: 'Force Density Matrices', url: 'https://petrasvestartas.github.io/session/?stage=force-density-matrices' },
-                  { title: 'Jacobian & Derivation', url: 'https://petrasvestartas.github.io/session/?stage=force-density-derivation' },
-                  { title: 'Unstretched Lengths', url: 'https://petrasvestartas.github.io/session/?stage=force-density-materialization' },
-                ],
               },
             },
             {
               key: 'books-resource',
-              alt: 'Foundational Graphic Statics books turned into a digital MCP resource via scanning, OCR & LaTeX, translation & figures, Cloudflare R2 storage and MCP.',
+              alt: 'Compact Graphic Statics books with original covers turned into a digital MCP resource via scanning, OCR & LaTeX, translation, Cloudflare R2 storage and MCP.',
               booksResource: {
                 books: [
-                  { author: 'Cremona', year: '1874', short: 'Graphical Calculus', cover: 'presentations/mcp/gs-books/cremona-1874.jpg', href: 'library.html#/b/cremona-graphical-calculus' },
-                  { author: 'Lévy', year: '1886', short: 'Statique graphique', cover: 'presentations/mcp/gs-books/levy-1886.jpg', href: 'library.html#/b/graphic-statics-levy' },
-                  { author: 'Föppl', year: '1892', short: 'Space Trusses', cover: 'presentations/mcp/gs-books/foeppl-1892.jpg', href: 'library.html#/b/space-trusses-foeppl' },
-                  { author: 'Henneberg', year: '1911', short: 'Rigid Systems', cover: 'presentations/mcp/gs-books/henneberg-1911.jpg', href: 'library.html#/b/graphic-statics-henneberg' },
-                  { author: 'Wolfe', year: '1921', short: 'Graphical Analysis', cover: 'presentations/mcp/gs-books/wolfe-1921.jpg', href: 'library.html#/b/graphical-analysis-wolfe' },
+                  { author: 'Bow', year: '1873', short: 'Framed Structures', cover: 'presentations/mcp/gs-books/bow-1873.jpg', href: 'library.html#/b/framed-structures-bow' },
+                  { author: 'Cremona', year: '1874', short: 'Calcolo grafico', cover: 'presentations/mcp/gs-books/cremona-1874.jpg', href: 'library.html#/b/cremona-graphical-calculus' },
+                  { author: 'Föppl', year: '1920', short: 'Graphische Statik', cover: 'presentations/mcp/gs-books/foeppl-1920.jpg', href: 'library.html#/b/graphic-statics-foeppl' },
                   { author: 'Trefftz', year: '1936', short: 'Graphostatik', cover: 'presentations/mcp/gs-books/trefftz-1936.jpg', href: 'library.html#/b/graphostatics-trefftz' },
+                  { author: 'Zillich–Stiegler', year: '1949', short: 'Statik III', cover: 'presentations/mcp/gs-books/zillich-1949.jpg', href: 'library.html#/b/statics-zillich-stiegler-part-3' },
                 ],
                 pipeline: [
                   { title: 'Scans', sub: 'PDFs & plates' },
