@@ -37,7 +37,7 @@ window.CAS = {
                   { title: 'brg_framework', emphasis: true },
                   { title: 'brg_presentation' },
                 ],
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=3',
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 demos: [
                   { title: 'Chatbot', gif: 'presentations/mcp/chatbot.gif?v=2', url: 'https://www.youtube.com/watch?v=rVgoINY87DU' },
                   { title: 'Terminal', gif: 'presentations/mcp/terminal.gif?v=2', url: 'https://www.youtube.com/watch?v=yalyvv4nIP0' },
@@ -49,27 +49,61 @@ window.CAS = {
             { src: 'presentations/mcp/slide-5.png?v=1', alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).' },
             { src: 'presentations/mcp/slide-6.png?v=2', alt: 'Folder structure of brg_framework MCP for the Force Density (FD) method.' },
             {
-              key: 'interactive-drawing',
-              alt: 'Interactive Force Density drawings driven by presentation.yaml and protobuf steps, displayed inside a large clickable laptop.',
+              key: 'interactive-drawing-fd',
+              alt: 'Interactive Force Density presentations (5 clickable decks) and presentation.yaml internals, displayed beside a large clickable laptop.',
               interactiveDrawing: {
+                methodTitle: 'FD · Interactive Drawings',
+                methodSub: '5 decks',
+                presentations: [
+                  { title: 'Static Equilibrium (Cosines)', url: 'https://petrasvestartas.github.io/session/?stage=equilibrium' },
+                  { title: 'Single-Node & 5-Node Equations', url: 'https://petrasvestartas.github.io/session/?stage=force-density', active: true },
+                  { title: 'Force Density Matrices', url: 'https://petrasvestartas.github.io/session/?stage=force-density-matrices' },
+                  { title: 'Jacobian & Matrix Derivation', url: 'https://petrasvestartas.github.io/session/?stage=force-density-derivation' },
+                  { title: 'Materialization & Cut Lengths', url: 'https://petrasvestartas.github.io/session/?stage=force-density-materialization' },
+                ],
                 specTitle: 'presentation.yaml',
                 yaml: `name: Force Density
-width: 1600
-height: 760
 spatial_split: 0.56
 topics:
   - title: 1 Equilibrium
     steps:
       - file: steps/00_00.pb
         effects:
-          - name: polygon-0
-            from: e0
-            kind: morph
-          - name: equilibrium-sum
-            kind: grow`,
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=3',
+          - { name: poly-0, kind: morph }
+          - { name: eq-sum, kind: grow }`,
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 gif: 'presentations/mcp/fd-interactive.gif?v=1',
                 url: 'https://petrasvestartas.github.io/session/?stage=force-density',
+                hint: 'Click to open FD interactive viewer ↗',
+              },
+            },
+            {
+              key: 'interactive-drawing-tna',
+              alt: 'Interactive Thrust Network Analysis presentations (5 clickable decks) and YAML stage format, displayed beside a large clickable laptop.',
+              interactiveDrawing: {
+                methodTitle: 'TNA · Interactive Drawings',
+                methodSub: '5 decks',
+                presentations: [
+                  { title: 'Single-Node Thrust Equilibrium', url: 'https://petrasvestartas.github.io/session/?stage=thrust-network_analysis_one_node' },
+                  { title: 'Horizontal Equilibrium (Γ & Γ*)', url: 'https://petrasvestartas.github.io/session/?stage=thrust-network_analysis_horizontal_equilibrium', active: true },
+                  { title: 'Five Horizontal Equilibrium Methods', url: 'https://petrasvestartas.github.io/session/?stage=thrust-network_analysis_horizontal_methods' },
+                  { title: 'Vertical Equilibrium & Heights', url: 'https://petrasvestartas.github.io/session/?stage=thrust-network_analysis_vertical_equilibrium' },
+                  { title: 'Compression Plans & 3D Vaults', url: 'https://petrasvestartas.github.io/session/?stage=thrust-network_analysis_geometries' },
+                ],
+                specTitle: '01-force-diagram.yaml',
+                yaml: `title: THE FORCE DIAGRAM
+split: 0.5
+camera: { view: top, fit: [LO, HI] }
+slides:
+  - title: NODES CLOSE POLYGONS
+    steps:
+      - say: 'Four bars push on node 1.'
+        do:
+          - add: [{ id: b0, line: [s1, n1] }]`,
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
+                gif: 'presentations/mcp/tna-interactive.gif?v=1',
+                url: 'https://petrasvestartas.github.io/session/?stage=thrust-network_analysis_horizontal_equilibrium',
+                hint: 'Click to open TNA interactive viewer ↗',
               },
             },
             {
@@ -94,6 +128,36 @@ topics:
                 ],
               },
             },
+            {
+              key: 'papers-resource',
+              alt: 'brg_papers and PhD theses (154 papers, 2006–2024) powering traceable citations, research-gap mapping, and a chatbot on the BRG publications website.',
+              papersResource: {
+                title: 'brg_papers',
+                count: '154 papers · PhD theses · 2006–2024',
+                subjects: 'TNA & Masonry · Materialization · Graphic Statics · Form Finding',
+                uses: [
+                  { title: 'Traceable Citations', sub: 'Exact paper, figure & page URL' },
+                  { title: 'Research-Gap Mapping', sub: 'Covered vs. missing lines' },
+                ],
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
+                screen: 'presentations/mcp/brg-web-chatbot.jpg?v=3',
+                url: 'library.html#/papers',
+                hint: 'Open BRG papers & theses in Library ↗',
+              },
+            },
+            { src: 'presentations/mcp/slide-10.png?v=2', alt: 'LLMs propose, solvers verify: LLM parses text and writes COMPAS script, COMPAS Solver computes exact equilibrium (residual = 0), and Verified Model / Plot returns errors and residuals to the LLM.' },
+            {
+              key: 'workspace-slide',
+              alt: 'Zero-install browser workspace combining the BRG Library, BRG Terminal, and JupyterLite in one screen with Claude, Gemini, and Kimi support.',
+              workspaceSlide: {
+                lead: 'Zero-install Day-1 workspace — Library, BRG Terminal & JupyterLite in one browser tab.',
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
+                screen: 'presentations/mcp/workspace-screen.jpg?v=2',
+                url: 'library.html#/notebook',
+                hint: 'Open browser workspace (Claude · Gemini · Kimi) ↗',
+              },
+            },
+            { src: 'presentations/mcp/slide-12.png?v=2', alt: 'One Setup to Chapter 1 Deliverable (Weeks 1–2): 01 Connect MCP, 02 Ground an answer with page-level BRG book & paper citations, 03 Reproduce a verified COMPAS structure in a Jupyter notebook.' },
           ],
         },
         items: [
