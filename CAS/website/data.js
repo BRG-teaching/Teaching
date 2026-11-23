@@ -181,7 +181,7 @@ slides:
                 url: 'library.html#/notebook',
               },
             },
-            { src: 'presentations/mcp/slide-12.png?v=3', alt: '01 Connect MCP in Chatbot, Terminal, VS Code, or Browser; 02 Ground a question with BRG book & paper citations; 03 Reproduce a COMPAS example in Chatbot, Terminal, VS Code, or Jupyter Notebook.' },
+            { src: 'presentations/mcp/slide-12.png?v=4', alt: 'Connect (BRG MCP in Chatbot, Terminal, VS Code, Browser) → Ground (Theory, BRG books & papers, derivations, step-by-step explanations, examples) → Reproduce (COMPAS code implementations, connection with your own workflow, learning using Jupyter notebooks, Chatbot, Terminal, VS Code).' },
           ],
         },
         items: [
