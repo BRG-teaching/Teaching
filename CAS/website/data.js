@@ -94,7 +94,7 @@ window.CAS = {
             },
             {
               key: 'applications-presentation',
-              alt: 'brg_presentation highlighted among the four BRG pillars, showing PR3D in 3D slides (Closed joint and Open source workflow) inside the laptop.',
+              alt: 'brg_presentation highlighted among the four BRG pillars, showing closed-joint kinematics and the compas_pr3d open-source workflow inside the laptop.',
               applications: {
                 groups: [
                   { title: 'brg_papers' },
@@ -104,7 +104,7 @@ window.CAS = {
                 ],
                 laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 singleLaptop: {
-                  screen: 'presentations/mcp/brg-presentation.gif?v=1',
+                  screen: 'presentations/mcp/brg-presentation.gif?v=2',
                 },
               },
             },
