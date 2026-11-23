@@ -27,7 +27,25 @@ window.CAS = {
           slides: [
             { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
             { src: 'presentations/mcp/slide-2.png', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
-            { src: 'presentations/mcp/slide-3.png?v=2', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing, LLM and Scripts pipeline.' },
+            {
+              key: 'applications',
+              alt: 'BRG applications: brg_papers, brg_theory, brg_framework and brg_presentation, with brg_framework showcased across Chatbot, Terminal and VS Code.',
+              applications: {
+                groups: [
+                  { title: 'brg_papers' },
+                  { title: 'brg_theory' },
+                  { title: 'brg_framework', emphasis: true },
+                  { title: 'brg_presentation' },
+                ],
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=1',
+                demos: [
+                  { title: 'Chatbot', gif: 'presentations/mcp/chatbot.gif?v=1', url: 'https://www.youtube.com/watch?v=rVgoINY87DU' },
+                  { title: 'Terminal', gif: 'presentations/mcp/terminal.gif?v=1', url: 'https://www.youtube.com/watch?v=yalyvv4nIP0' },
+                  { title: 'VS Code', gif: 'presentations/mcp/vscode.gif?v=1', url: 'https://www.youtube.com/watch?v=qY66eiRa6Og' },
+                ],
+              },
+            },
+            { src: 'presentations/mcp/slide-4.png?v=1', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
           ],
         },
         items: [
