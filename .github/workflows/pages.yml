@@ -65,7 +65,7 @@ jobs:
         # New commit-specific URLs prevent cached website files, Jupyter HTML, or theme CSS from mixing versions.
         run: |
           v=${GITHUB_SHA::7}
-          sed -i -E 's#(src|href)="(\./)?((gate|library-config|notebook-bridge|notebook-exercises|library|terminal-context)\.js|(style|library)\.css)"#\1="\2\3?v='"$v"'"#g' docs/CAS/website/index.html docs/CAS/website/library.html
+          sed -i -E 's#(src|href)="(\./)?((gate|data|icon-sizes|library-config|notebook-bridge|notebook-exercises|library|terminal-context)\.js|(style|library|notebook-submissions)\.css)"#\1="\2\3?v='"$v"'"#g' docs/CAS/website/index.html docs/CAS/website/library.html
           grep -c "?v=$v" docs/CAS/website/index.html docs/CAS/website/library.html
           grep -F "terminal-context.js?v=$v" docs/CAS/website/library.html
           grep -F "notebook-bridge.js?v=$v" docs/CAS/website/library.html

@@ -27,7 +27,7 @@ window.CAS = {
           slides: [
             { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
             { src: 'presentations/mcp/slide-2.png', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
-            { src: 'presentations/mcp/slide-3.png', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing, LLM and Scripts pipeline.' },
+            { src: 'presentations/mcp/slide-3.png?v=2', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing, LLM and Scripts pipeline.' },
           ],
         },
         items: [
