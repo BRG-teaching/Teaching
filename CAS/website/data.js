@@ -37,7 +37,7 @@ window.CAS = {
                   { title: 'brg_framework', emphasis: true },
                   { title: 'brg_presentation' },
                 ],
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=2',
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=3',
                 demos: [
                   { title: 'Chatbot', gif: 'presentations/mcp/chatbot.gif?v=2', url: 'https://www.youtube.com/watch?v=rVgoINY87DU' },
                   { title: 'Terminal', gif: 'presentations/mcp/terminal.gif?v=2', url: 'https://www.youtube.com/watch?v=yalyvv4nIP0' },
@@ -67,7 +67,7 @@ topics:
             kind: morph
           - name: equilibrium-sum
             kind: grow`,
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=2',
+                laptopFrame: 'presentations/mcp/laptop-frame.png?v=3',
                 gif: 'presentations/mcp/fd-interactive.gif?v=1',
                 url: 'https://petrasvestartas.github.io/session/?stage=force-density',
               },
@@ -76,6 +76,7 @@ topics:
               key: 'books-resource',
               alt: 'Compact Graphic Statics books with original covers turned into a digital MCP resource via scanning, OCR & LaTeX, translation, Cloudflare R2 storage and MCP.',
               booksResource: {
+                lead: 'LLMs are built for text — turning historical books into searchable digital resources.',
                 books: [
                   { author: 'Bow', year: '1873', short: 'Diagrams of Forces', cover: 'presentations/mcp/gs-books/bow-1873.jpg', href: 'library.html#/b/framed-structures-bow' },
                   { author: 'Cremona', year: '1879', short: 'Reciprocal Figures', cover: 'presentations/mcp/gs-books/cremona-1879.jpg', href: 'library.html#/b/cremona-graphical-calculus-part-2' },

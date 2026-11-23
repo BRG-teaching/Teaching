@@ -46,25 +46,23 @@ const onKeydown = (event) => {
         <button ref="closeButton" type="button" class="presentation-close" aria-label="Close presentation" @click="close">×</button>
       </header>
       <div class="presentation-stage">
-        <!-- Slide 3: BRG Applications + 3 large GIF laptops (no blue outlines) -->
-        <div v-if="slides[current].applications" class="apps-slide" :aria-label="slides[current].alt">
-          <div class="apps-top">
+        <!-- Slide 3: Triangle-tiled large GIF laptops + 2x2 BRG boxes -->
+        <div v-if="slides[current].applications" class="apps-triangle-slide" :aria-label="slides[current].alt">
+          <div class="apps-top-center">
             <div v-for="item in slides[current].applications.groups" :key="item.title"
                  class="apps-node" :class="{ emphasis: item.emphasis }">
               <strong>{{ item.title }}</strong>
             </div>
           </div>
-          <div class="apps-showcase">
-            <a v-for="demo in slides[current].applications.demos" :key="demo.title"
-               class="apps-demo" :href="demo.url" target="_blank" rel="noopener"
-               :title="`Watch ${demo.title} video on YouTube`">
-              <div class="apps-demo-tab"><strong>{{ demo.title }}</strong></div>
-              <div class="apps-laptop">
-                <img class="apps-laptop-frame" :src="slides[current].applications.laptopFrame" alt="">
-                <img class="apps-laptop-screen" :src="demo.gif" :alt="`${demo.title} showcase`">
-              </div>
-            </a>
-          </div>
+          <a v-for="(demo, idx) in slides[current].applications.demos" :key="demo.title"
+             class="apps-demo" :class="`pos-${idx}`" :href="demo.url" target="_blank" rel="noopener"
+             :title="`Watch ${demo.title} video on YouTube`">
+            <div class="apps-demo-tab"><strong>{{ demo.title }}</strong></div>
+            <div class="apps-laptop">
+              <img class="apps-laptop-frame" :src="slides[current].applications.laptopFrame" alt="">
+              <img class="apps-laptop-screen" :src="demo.gif" :alt="`${demo.title} showcase`">
+            </div>
+          </a>
         </div>
 
         <!-- Slide 7: Interactive Drawings (YAML internals -> Large Clickable Laptop GIF) -->
@@ -86,6 +84,7 @@ const onKeydown = (event) => {
 
         <!-- Slide 8: Canonical Graphic Statics Books (with ... in between) -> Digital MCP Resource -->
         <div v-else-if="slides[current].booksResource" class="books-slide" :aria-label="slides[current].alt">
+          <p v-if="slides[current].booksResource.lead" class="books-lead">{{ slides[current].booksResource.lead }}</p>
           <div class="books-shelf">
             <template v-for="(book, idx) in slides[current].booksResource.books" :key="book.href || idx">
               <div v-if="book.ellipsis" class="books-ellipsis" aria-label="More graphic statics books">· · ·</div>
