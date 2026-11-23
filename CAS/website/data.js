@@ -14,11 +14,11 @@ window.CAS = {
   chapters: [
     {
       n: 1, color: '#3057b1', ects: 1, hours: 30, weeks: 'Weeks 1–2',
-      title: 'MCP for BRG',
+      title: 'LLM for BRG',
       logo: 'slide03-icon09.svg',
       mcp: {
         client: { title: 'LLM' },
-        protocol: { title: 'MCP' },
+        protocol: { title: 'BRG' },
       },
       contents: {
         lead: 'A practical LLM layer over BRG knowledge and the COMPAS ecosystem.',
@@ -27,7 +27,7 @@ window.CAS = {
           slides: [
             { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
             { src: 'presentations/mcp/slide-2.png', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
-            { src: 'presentations/mcp/slide-3.png', alt: 'BRG MCP workflow connecting context, parsing, storage, indexing, MCP, an LLM account, and scripts.' },
+            { src: 'presentations/mcp/slide-3.png', alt: 'LLM for BRG architecture: Context layers (MCP, Skills, Hooks, Memory, Agents) connected to BRG and the Context, Parsing, Storage, Indexing, LLM and Scripts pipeline.' },
           ],
         },
         items: [
@@ -334,7 +334,7 @@ window.CAS = {
   },
 
   grading: [
-    { ch: 1, weight: 'ungraded', what: 'MCP workflow, one evaluation' },
+    { ch: 1, weight: 'ungraded', what: 'LLM workflow, one evaluation' },
     { ch: 2, weight: '10 %', what: 'Notebooks, truss module' },
     { ch: 3, weight: '10 %', what: 'Three views in code' },
     { ch: 4, weight: '10 %', what: 'Net and canopy, FD vs DR' },
