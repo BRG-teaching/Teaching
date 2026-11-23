@@ -71,12 +71,12 @@ window.CAS = {
               alt: 'Foundational Graphic Statics books turned into a digital MCP resource via scanning, OCR & LaTeX, translation & figures, Cloudflare R2 storage and MCP.',
               booksResource: {
                 books: [
-                  { author: 'Cremona', year: '1874', short: 'Graphical Calculus', cover: 'presentations/mcp/books/cremona-1874.jpg', href: 'library.html#/b/cremona-graphical-calculus' },
-                  { author: 'Lévy', year: '1886', short: 'Statique graphique', cover: 'presentations/mcp/books/levy-1886.jpg', href: 'library.html#/b/graphic-statics-levy' },
-                  { author: 'Föppl', year: '1892', short: 'Space Trusses', cover: 'presentations/mcp/books/foeppl-1892.jpg', href: 'library.html#/b/space-trusses-foeppl' },
-                  { author: 'Henneberg', year: '1911', short: 'Rigid Systems', cover: 'presentations/mcp/books/henneberg-1911.jpg', href: 'library.html#/b/graphic-statics-henneberg' },
-                  { author: 'Wolfe', year: '1921', short: 'Graphical Analysis', cover: 'presentations/mcp/books/wolfe-1921.jpg', href: 'library.html#/b/graphical-analysis-wolfe' },
-                  { author: 'Trefftz', year: '1936', short: 'Graphostatik', cover: 'presentations/mcp/books/trefftz-1936.jpg', href: 'library.html#/b/graphostatics-trefftz' },
+                  { author: 'Cremona', year: '1874', short: 'Graphical Calculus', cover: 'presentations/mcp/gs-books/cremona-1874.jpg', href: 'library.html#/b/cremona-graphical-calculus' },
+                  { author: 'Lévy', year: '1886', short: 'Statique graphique', cover: 'presentations/mcp/gs-books/levy-1886.jpg', href: 'library.html#/b/graphic-statics-levy' },
+                  { author: 'Föppl', year: '1892', short: 'Space Trusses', cover: 'presentations/mcp/gs-books/foeppl-1892.jpg', href: 'library.html#/b/space-trusses-foeppl' },
+                  { author: 'Henneberg', year: '1911', short: 'Rigid Systems', cover: 'presentations/mcp/gs-books/henneberg-1911.jpg', href: 'library.html#/b/graphic-statics-henneberg' },
+                  { author: 'Wolfe', year: '1921', short: 'Graphical Analysis', cover: 'presentations/mcp/gs-books/wolfe-1921.jpg', href: 'library.html#/b/graphical-analysis-wolfe' },
+                  { author: 'Trefftz', year: '1936', short: 'Graphostatik', cover: 'presentations/mcp/gs-books/trefftz-1936.jpg', href: 'library.html#/b/graphostatics-trefftz' },
                 ],
                 pipeline: [
                   { title: 'Scans', sub: 'PDFs & plates' },
