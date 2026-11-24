@@ -1,9 +1,5 @@
 <script setup>
-import { computed, nextTick, ref } from 'vue';
-import ContextStack from './ContextStack.vue';
-import LaptopFrame from './LaptopFrame.vue';
-import MethodIcon from './MethodIcon.vue';
-import './presentation.css';
+import { nextTick, ref } from 'vue';
 
 const props = defineProps({
   label: { type: String, default: 'Presentation' },
@@ -13,14 +9,6 @@ const props = defineProps({
 const dialog = ref(null);
 const closeButton = ref(null);
 const current = ref(0);
-const slide = computed(() => props.slides[current.value]);
-const number = (value) => String(value).padStart(2, '0');
-
-// a YAML line as its indent and dash, its key and the rest
-const yamlLines = (text) => text.split('\n').map((line) => {
-  const [, lead, key, rest] = line.match(/^(\s*(?:- )?)([\w-]+:)?(.*)$/);
-  return { lead, key, rest };
-});
 
 const open = async () => {
   current.value = 0;
@@ -35,8 +23,6 @@ const jumpToGroup = (title) => {
   const idx = props.slides.findIndex((s) => s.applications?.groups?.some((g) => g.title === title && g.emphasis));
   if (idx >= 0) current.value = idx;
 };
-// the focused link or button leaves with its slide: the dialog takes the focus back, so the arrow keys go on working
-const keepFocus = () => { if (!dialog.value.contains(document.activeElement)) dialog.value.focus(); };
 const onKeydown = (event) => {
   if (event.key === 'ArrowLeft') {
     event.preventDefault();
@@ -57,166 +43,181 @@ const onKeydown = (event) => {
 <template>
   <button type="button" class="presentation-link" @click="open">{{ label }}</button>
   <Teleport to="body">
-    <dialog ref="dialog" class="deck" tabindex="-1" :aria-label="label" @close="current = 0" @keydown="onKeydown">
-      <header class="deck-header">
+    <dialog ref="dialog" class="presentation-dialog" :aria-label="label" @close="current = 0" @keydown="onKeydown">
+      <header class="presentation-header">
         <strong>{{ label }}</strong>
-        <span class="deck-count" aria-live="polite" :aria-label="`Slide ${current + 1} of ${slides.length}`"><b>{{ number(current + 1) }}</b> / {{ number(slides.length) }}</span>
-        <button ref="closeButton" type="button" class="deck-close" aria-label="Close presentation" @click="close">×</button>
+        <span aria-live="polite">{{ current + 1 }} / {{ slides.length }}</span>
+        <button ref="closeButton" type="button" class="presentation-close" aria-label="Close presentation" @click="close">×</button>
       </header>
+      <div class="presentation-stage">
+        <!-- Slides 3–6: Central 4 BRG pillars stepping highlight across brg_papers, brg_theory, brg_framework, brg_presentation -->
+        <div v-if="slides[current].applications" class="apps-triangle-slide" :aria-label="slides[current].alt">
+          <div class="apps-top-center">
+            <button v-for="item in slides[current].applications.groups" :key="item.title" type="button"
+                    class="apps-node" :class="{ emphasis: item.emphasis }" :aria-pressed="item.emphasis ? 'true' : 'false'"
+                    @click="jumpToGroup(item.title)">
+              <strong>{{ item.title }}</strong>
+            </button>
+          </div>
 
-      <div class="deck-stage">
-        <Transition name="deck-slide" mode="out-in" @after-leave="keepFocus">
-          <section :key="current" class="deck-slide" :aria-label="slide.alt">
+          <template v-if="slides[current].applications.demos">
+            <a v-for="(demo, idx) in slides[current].applications.demos" :key="demo.title"
+               class="apps-demo" :class="`pos-${idx}`" :href="demo.url" target="_blank" rel="noopener"
+               :title="`Watch ${demo.title} video on YouTube`">
+              <strong class="apps-demo-label">{{ demo.title }}</strong>
+              <div class="apps-laptop">
+                <img class="apps-laptop-frame" :src="slides[current].applications.laptopFrame" alt="">
+                <img class="apps-laptop-screen" :src="demo.gif" :alt="`${demo.title} showcase`">
+              </div>
+            </a>
+          </template>
 
-            <!-- one laptop -->
-            <div v-if="slide.opening" class="slide-center">
-              <LaptopFrame class="laptop-large"><img :src="slide.opening.screen" :alt="slide.alt"></LaptopFrame>
+          <component :is="slides[current].applications.singleLaptop.url ? 'a' : 'div'"
+                     v-else-if="slides[current].applications.singleLaptop"
+                     class="apps-single-laptop"
+                     :href="slides[current].applications.singleLaptop.url || undefined"
+                     :target="slides[current].applications.singleLaptop.url ? '_blank' : undefined"
+                     :rel="slides[current].applications.singleLaptop.url ? 'noopener' : undefined"
+                     :title="slides[current].applications.singleLaptop.title || undefined">
+            <div class="apps-laptop">
+              <img class="apps-laptop-frame" :src="slides[current].applications.laptopFrame" alt="">
+              <img class="apps-laptop-screen" :src="slides[current].applications.singleLaptop.screen" :alt="slides[current].alt">
             </div>
+          </component>
 
-            <!-- books, the laptop with scripts and LLM, the tablet, and what it is used for -->
-            <div v-else-if="slide.sources" class="slide-sources">
-              <figure class="sources-books">
-                <figcaption><span v-for="language in slide.sources.languages" :key="language">{{ language }}</span></figcaption>
-                <img :src="slide.sources.books" alt="">
-              </figure>
-              <i class="dotted-arrow" aria-hidden="true"></i>
-              <figure class="sources-laptop">
-                <figcaption><span v-for="part in slide.sources.parts" :key="part">{{ part }}</span></figcaption>
-                <LaptopFrame><img :src="slide.sources.screen" :alt="slide.alt"></LaptopFrame>
-              </figure>
-              <i class="dotted-arrow" aria-hidden="true"></i>
-              <div class="tablet"><img :src="slide.sources.tablet" alt=""></div>
-              <ul class="sources-uses"><li v-for="use in slide.sources.uses" :key="use">{{ use }}</li></ul>
+          <div v-else-if="slides[current].applications.booksResource" class="apps-books-body">
+            <div class="books-shelf">
+              <template v-for="(book, idx) in slides[current].applications.booksResource.books" :key="book.href || idx">
+                <div v-if="book.ellipsis" class="books-ellipsis" aria-label="More graphic statics books">· · ·</div>
+                <a v-else class="books-card" :href="book.href" target="_blank" rel="noopener">
+                  <div class="books-cover-wrap">
+                    <img :src="book.cover" :alt="`${book.author} (${book.year})`">
+                  </div>
+                  <strong>{{ book.author }}</strong>
+                  <span>{{ book.year }} · {{ book.short }}</span>
+                </a>
+              </template>
             </div>
+            <div class="books-pipe">
+              <template v-for="(step, idx) in slides[current].applications.booksResource.pipeline" :key="step.title">
+                <div class="books-pipe-step">
+                  <div class="books-pipe-box" :class="{ emphasis: step.emphasis }">
+                    <strong>{{ step.title }}</strong>
+                  </div>
+                  <span>{{ step.sub }}</span>
+                </div>
+                <div v-if="idx < slides[current].applications.booksResource.pipeline.length - 1" class="books-pipe-arrow" aria-hidden="true"><i></i></div>
+              </template>
+            </div>
+          </div>
+        </div>
 
-            <!-- the four BRG pillars, the highlight stepping through them -->
-            <div v-else-if="slide.applications" class="slide-pillars">
-              <nav class="pillars" aria-label="BRG pillars">
-                <button v-for="item in slide.applications.groups" :key="item.title" type="button" class="pillar"
-                        :class="{ hot: item.emphasis }" :aria-pressed="item.emphasis ? 'true' : 'false'" @click="jumpToGroup(item.title)">
-                  {{ item.title }}
-                </button>
+        <!-- Slides 7 & 8: Interactive Drawings (FD and TNA clickable lists + YAML internals -> Large Clickable Laptop GIF) -->
+        <div v-else-if="slides[current].interactiveDrawing" class="idraw-slide" :aria-label="slides[current].alt">
+          <div class="idraw-left">
+            <div v-if="slides[current].interactiveDrawing.presentations?.length" class="idraw-list-box">
+              <div class="idraw-list-head">
+                <strong>{{ slides[current].interactiveDrawing.methodTitle }}</strong>
+                <span v-if="slides[current].interactiveDrawing.methodSub">{{ slides[current].interactiveDrawing.methodSub }}</span>
+              </div>
+              <nav class="idraw-list" :aria-label="`${slides[current].interactiveDrawing.methodTitle} presentations`">
+                <a v-for="(pres, pIdx) in slides[current].interactiveDrawing.presentations" :key="pres.url"
+                   class="idraw-item" :class="{ active: pres.active }" :href="pres.url" target="_blank" rel="noopener">
+                  <span class="idraw-item-num">{{ String(pIdx + 1).padStart(2, '0') }}</span>
+                  <span class="idraw-item-title">{{ pres.title }}</span>
+                  <span class="idraw-item-ext" aria-hidden="true">↗</span>
+                </a>
               </nav>
+            </div>
+            <div class="idraw-yaml">
+              <div class="idraw-yaml-head"><strong>{{ slides[current].interactiveDrawing.specTitle }}</strong></div>
+              <pre class="idraw-yaml-code">{{ slides[current].interactiveDrawing.yaml }}</pre>
+            </div>
+          </div>
+          <div class="slide-arrow" aria-hidden="true"><i></i></div>
+          <a class="idraw-laptop-link" :href="slides[current].interactiveDrawing.url" target="_blank" rel="noopener"
+             :title="`Open live interactive ${slides[current].interactiveDrawing.methodTitle || ''} presentation`">
+            <div class="apps-laptop">
+              <img class="apps-laptop-frame" :src="slides[current].interactiveDrawing.laptopFrame" alt="">
+              <img class="apps-laptop-screen" :src="slides[current].interactiveDrawing.gif" :alt="slides[current].alt">
+            </div>
+            <span class="idraw-click-hint">{{ slides[current].interactiveDrawing.hint || 'Click to open interactive viewer ↗' }}</span>
+          </a>
+        </div>
 
-              <div v-if="slide.applications.demos" class="demos">
-                <figure v-for="demo in slide.applications.demos" :key="demo.title" class="demo">
-                  <LaptopFrame :url="demo.url" :title="`Watch ${demo.title} video on YouTube`"><img :src="demo.gif" :alt="`${demo.title} showcase`"></LaptopFrame>
-                  <figcaption>{{ demo.title }}</figcaption>
-                </figure>
-              </div>
-
-              <LaptopFrame v-else-if="slide.applications.singleLaptop" class="laptop-pillar" :url="slide.applications.singleLaptop.url"
-                           :title="slide.applications.singleLaptop.title">
-                <img :src="slide.applications.singleLaptop.screen" :alt="slide.alt">
-              </LaptopFrame>
-
-              <div v-else-if="slide.applications.booksResource" class="books">
-                <div class="books-shelf">
-                  <template v-for="(book, i) in slide.applications.booksResource.books" :key="book.href || i">
-                    <div v-if="book.ellipsis" class="books-more" aria-label="More graphic statics books">···</div>
-                    <a v-else class="book" :href="book.href" target="_blank" rel="noopener">
-                      <img :src="book.cover" :alt="`${book.author} (${book.year})`">
-                      <strong>{{ book.author }}</strong>
-                      <span><b>{{ book.year }}</b> {{ book.short }}</span>
-                    </a>
-                  </template>
+        <!-- Slide 9: Canonical Graphic Statics Books (with ... in between) -> Digital MCP Resource -->
+        <div v-else-if="slides[current].booksResource" class="books-slide" :aria-label="slides[current].alt">
+          <p v-if="slides[current].booksResource.lead" class="books-lead">{{ slides[current].booksResource.lead }}</p>
+          <div class="books-shelf">
+            <template v-for="(book, idx) in slides[current].booksResource.books" :key="book.href || idx">
+              <div v-if="book.ellipsis" class="books-ellipsis" aria-label="More graphic statics books">· · ·</div>
+              <a v-else class="books-card" :href="book.href" target="_blank" rel="noopener">
+                <div class="books-cover-wrap">
+                  <img :src="book.cover" :alt="`${book.author} (${book.year})`">
                 </div>
-                <ol class="pipeline">
-                  <li v-for="step in slide.applications.booksResource.pipeline" :key="step.title" :class="{ hot: step.emphasis }">
-                    <strong>{{ step.title }}</strong><span>{{ step.sub }}</span>
-                  </li>
-                </ol>
-              </div>
-            </div>
-
-            <!-- context layers connected to BRG, over the pipeline that feeds them -->
-            <div v-else-if="slide.architecture" class="slide-architecture">
-              <ContextStack v-bind="slide.architecture.stack" />
-              <ol class="pipeline">
-                <li v-for="(step, i) in slide.architecture.pipeline" :key="step.title" :class="{ hot: i === slide.architecture.pipeline.length - 1 }">
-                  <strong>{{ step.title }}</strong><span>{{ step.sub }}</span>
-                </li>
-              </ol>
-            </div>
-
-            <!-- the four methods, one of them in focus -->
-            <div v-else-if="slide.methods" class="slide-methods">
-              <div v-for="method in slide.methods" :key="method.title" class="method" :class="{ hot: method.emphasis }">
-                <MethodIcon :method="method.title" />
-                <strong>{{ method.title }}</strong>
-                <span>{{ method.sub }}</span>
-              </div>
-            </div>
-
-            <!-- the folder of a method -->
-            <div v-else-if="slide.folder" class="slide-folder">
-              <div class="method hot">
-                <MethodIcon :method="slide.folder.title" />
-                <strong>{{ slide.folder.title }}</strong>
-                <span>{{ slide.folder.sub }}</span>
-              </div>
-              <i class="dotted-arrow" aria-hidden="true"></i>
-              <div class="window">
-                <div class="window-head"><i class="icon-folder" aria-hidden="true"></i>{{ slide.folder.root }}</div>
-                <ol class="tree">
-                  <li v-for="entry in slide.folder.entries" :key="entry" :class="{ folder: entry.endsWith('/') }">
-                    <i :class="entry.endsWith('/') ? 'icon-folder' : 'icon-file'" aria-hidden="true"></i>{{ entry }}
-                  </li>
-                </ol>
-              </div>
-            </div>
-
-            <!-- interactive drawings: the decks and their YAML beside a live laptop -->
-            <div v-else-if="slide.interactiveDrawing" class="slide-drawing">
-              <div class="drawing-left">
-                <div class="window">
-                  <div class="window-head"><strong>{{ slide.interactiveDrawing.methodTitle }}</strong><span>{{ slide.interactiveDrawing.methodSub }}</span></div>
-                  <nav class="drawing-list" :aria-label="`${slide.interactiveDrawing.methodTitle} presentations`">
-                    <a v-for="(deck, i) in slide.interactiveDrawing.presentations" :key="deck.url" :class="{ hot: deck.active }"
-                       :href="deck.url" target="_blank" rel="noopener">
-                      <b>{{ number(i + 1) }}</b><span>{{ deck.title }}</span><i aria-hidden="true">↗</i>
-                    </a>
-                  </nav>
+                <strong>{{ book.author }}</strong>
+                <span>{{ book.year }} · {{ book.short }}</span>
+              </a>
+            </template>
+          </div>
+          <div class="books-pipe">
+            <template v-for="(step, idx) in slides[current].booksResource.pipeline" :key="step.title">
+              <div class="books-pipe-step">
+                <div class="books-pipe-box" :class="{ emphasis: step.emphasis }">
+                  <strong>{{ step.title }}</strong>
                 </div>
-                <div class="window">
-                  <div class="window-head"><i class="icon-file" aria-hidden="true"></i>{{ slide.interactiveDrawing.specTitle }}</div>
-                  <ol class="yaml">
-                    <li v-for="(line, i) in yamlLines(slide.interactiveDrawing.yaml)" :key="i"><code>{{ line.lead }}<b>{{ line.key }}</b>{{ line.rest }}</code></li>
-                  </ol>
-                </div>
+                <span>{{ step.sub }}</span>
               </div>
-              <i class="dotted-arrow" aria-hidden="true"></i>
-              <div class="drawing-right">
-                <LaptopFrame :url="slide.interactiveDrawing.url" :title="`Open live interactive ${slide.interactiveDrawing.methodTitle || ''} presentation`">
-                  <img :src="slide.interactiveDrawing.gif" :alt="slide.alt">
-                </LaptopFrame>
-                <span class="hint">{{ slide.interactiveDrawing.hint || 'Click to open interactive viewer ↗' }}</span>
-              </div>
-            </div>
+              <div v-if="idx < slides[current].booksResource.pipeline.length - 1" class="books-pipe-arrow" aria-hidden="true"><i></i></div>
+            </template>
+          </div>
+        </div>
 
-            <!-- the browser workspace -->
-            <div v-else-if="slide.workspaceSlide" class="slide-center">
-              <LaptopFrame class="laptop-large" :url="slide.workspaceSlide.url"><img :src="slide.workspaceSlide.screen" :alt="slide.alt"></LaptopFrame>
+        <!-- Slide 10: brg_papers + PhD Theses -> BRG Website Chatbot -->
+        <div v-else-if="slides[current].papersResource" class="papers-slide" :aria-label="slides[current].alt">
+          <div class="papers-col">
+            <div class="papers-pill emphasis">
+              <strong>{{ slides[current].papersResource.title }}</strong>
+              <span>{{ slides[current].papersResource.count }}</span>
             </div>
-
-            <!-- three steps -->
-            <div v-else-if="slide.steps" class="slide-steps">
-              <div v-for="(step, i) in slide.steps" :key="step.title" class="step">
-                <b>{{ number(i + 1) }}</b>
-                <strong>{{ step.title }}</strong>
-                <ul><li v-for="item in step.items" :key="item">{{ item }}</li></ul>
-              </div>
+            <div class="papers-pill">
+              <strong>Subjects</strong>
+              <span>{{ slides[current].papersResource.subjects }}</span>
             </div>
+            <div v-for="use in slides[current].papersResource.uses" :key="use.title" class="papers-pill">
+              <strong>{{ use.title }}</strong>
+              <span>{{ use.sub }}</span>
+            </div>
+          </div>
+          <div class="slide-arrow" aria-hidden="true"><i></i></div>
+          <a class="idraw-laptop-link" :href="slides[current].papersResource.url" target="_blank" rel="noopener"
+             title="Open BRG Papers & PhD Theses in Library">
+            <div class="apps-laptop">
+              <img class="apps-laptop-frame" :src="slides[current].papersResource.laptopFrame" alt="">
+              <img class="apps-laptop-screen" :src="slides[current].papersResource.screen" :alt="slides[current].alt">
+            </div>
+            <span class="idraw-click-hint">{{ slides[current].papersResource.hint || 'Open BRG papers & theses in Library ↗' }}</span>
+          </a>
+        </div>
 
-            <img v-else class="slide-picture" :src="slide.src" :alt="slide.alt">
-          </section>
-        </Transition>
+        <!-- Slide 11: Zero-install Student Browser Workspace -->
+        <div v-else-if="slides[current].workspaceSlide" class="workspace-slide" :aria-label="slides[current].alt">
+          <p v-if="slides[current].workspaceSlide.lead" class="books-lead">{{ slides[current].workspaceSlide.lead }}</p>
+          <a class="workspace-laptop-link" :href="slides[current].workspaceSlide.url" target="_blank" rel="noopener">
+            <div class="apps-laptop">
+              <img class="apps-laptop-frame" :src="slides[current].workspaceSlide.laptopFrame" alt="">
+              <img class="apps-laptop-screen" :src="slides[current].workspaceSlide.screen" :alt="slides[current].alt">
+            </div>
+            <span v-if="slides[current].workspaceSlide.hint" class="idraw-click-hint">{{ slides[current].workspaceSlide.hint }}</span>
+          </a>
+        </div>
+
+        <img v-else :src="slides[current].src" :alt="slides[current].alt">
       </div>
-
-      <footer class="deck-controls">
+      <footer class="presentation-controls">
         <button type="button" aria-label="Previous slide" @click="previous">← <span>Previous</span></button>
-        <div class="deck-progress" aria-label="Choose slide">
-          <button v-for="(item, index) in slides" :key="item.src || item.key || index" type="button" :class="{ active: current === index, done: index < current }"
+        <div class="presentation-dots" aria-label="Choose slide">
+          <button v-for="(slide, index) in slides" :key="slide.src || slide.key || index" type="button" :class="{ active: current === index }"
                   :aria-label="`Go to slide ${index + 1}`" :aria-current="current === index ? 'true' : undefined" @click="current = index"></button>
         </div>
         <button type="button" aria-label="Next slide" @click="next"><span>Next</span> →</button>
