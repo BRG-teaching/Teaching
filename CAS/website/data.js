@@ -25,8 +25,23 @@ window.CAS = {
         presentation: {
           label: 'Presentation',
           slides: [
-            { src: 'presentations/mcp/slide-1.png', alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.' },
-            { src: 'presentations/mcp/slide-2.png?v=3', alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.' },
+            {
+              key: 'opening',
+              alt: 'Laptop showing structural form and force diagrams beside a source-grounded study notebook chat.',
+              opening: { screen: 'presentations/mcp/opening-screen.webp' },
+            },
+            {
+              key: 'sources',
+              alt: 'Books in German, French and English, a laptop showing scripts and an LLM study notebook, and a tablet with graphic statics notes.',
+              sources: {
+                languages: ['DE', 'FR', 'EN'],
+                books: 'presentations/mcp/books.webp',
+                parts: ['Scripts', 'LLM'],
+                screen: 'presentations/mcp/opening-screen.webp',
+                tablet: 'presentations/mcp/tablet-screen.webp',
+                uses: ['Equation Derivations', 'Interactive Drawings', 'Summary', 'Search', 'Personalized Learning', '...'],
+              },
+            },
             {
               key: 'applications-papers',
               alt: 'brg_papers highlighted among the four BRG pillars, showcasing the BRG publications website chatbot querying 154 papers and PhD theses.',
@@ -37,7 +52,6 @@ window.CAS = {
                   { title: 'brg_framework' },
                   { title: 'brg_presentation' },
                 ],
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 singleLaptop: {
                   screen: 'presentations/mcp/brg-web-chatbot.jpg?v=5',
                   url: 'library.html#/papers',
@@ -84,7 +98,6 @@ window.CAS = {
                   { title: 'brg_framework', emphasis: true },
                   { title: 'brg_presentation' },
                 ],
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 demos: [
                   { title: 'Chatbot', gif: 'presentations/mcp/chatbot.gif?v=2', url: 'https://www.youtube.com/watch?v=rVgoINY87DU' },
                   { title: 'Terminal', gif: 'presentations/mcp/terminal.gif?v=2', url: 'https://www.youtube.com/watch?v=yalyvv4nIP0' },
@@ -102,15 +115,59 @@ window.CAS = {
                   { title: 'brg_framework' },
                   { title: 'brg_presentation', emphasis: true },
                 ],
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 singleLaptop: {
                   screen: 'presentations/mcp/brg-presentation.gif?v=2',
                 },
               },
             },
-            { src: 'presentations/mcp/slide-4.png?v=4', alt: 'LLM for BRG architecture: Context layers (MCP and Memory first, followed by Hooks, Skills, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.' },
-            { src: 'presentations/mcp/slide-5.png?v=3', alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).' },
-            { src: 'presentations/mcp/slide-6.png?v=5', alt: 'Folder structure of brg_framework MCP for the Force Density (FD) method.' },
+            {
+              key: 'architecture',
+              alt: 'LLM for BRG architecture: Context layers (MCP and Memory first, followed by Hooks, Skills, Agents) connected to BRG and the Context, Parsing, Storage, Indexing and LLM pipeline.',
+              architecture: {
+                stack: {
+                  title: 'CONTEXT',
+                  layers: [
+                    { title: 'MCP', emphasis: true },
+                    { title: 'MEMORY', emphasis: true },
+                    { title: 'HOOKS' },
+                    { title: 'SKILLS' },
+                    { title: 'AGENTS' },
+                    { title: '...' },
+                  ],
+                  target: 'BRG',
+                },
+                pipeline: [
+                  { title: 'Context', sub: 'Papers, theses, books, codebases' },
+                  { title: 'Parsing', sub: 'OCR, LaTeX, figures' },
+                  { title: 'Storage', sub: 'Markdown, figures, metadata' },
+                  { title: 'Indexing', sub: 'Chunks, embeddings, search' },
+                  { title: 'LLM', sub: 'Gemini, Claude, Codex, Kimi' },
+                ],
+              },
+            },
+            {
+              key: 'methods-fd',
+              alt: 'Method focus across four subjects: FD (Force Density, highlighted), DR (Dynamic Relaxation), TNA (Thrust Network Analysis) and AGS (Algebraic Graphic Statics).',
+              methods: [
+                { title: 'FD', sub: 'Force Density', emphasis: true },
+                { title: 'DR', sub: 'Dynamic Relaxation' },
+                { title: 'TNA', sub: 'Thrust Network Analysis' },
+                { title: 'AGS', sub: 'Algebraic Graphic Statics' },
+              ],
+            },
+            {
+              key: 'folder-fd',
+              alt: 'Folder structure of brg_framework MCP for the Force Density (FD) method.',
+              folder: {
+                title: 'FD',
+                sub: 'Force Density',
+                root: 'fd/',
+                entries: [
+                  'readme.md', '01_algorithm.md', '02_applications.md', '03_keywords.md', '04_references.md', '05_references/', '06_presentations.md',
+                  '07_exercises.md', '08_exercises/', '09_extensions.md', '10_extensions/', '11_compas.md', '12_compas/',
+                ],
+              },
+            },
             {
               key: 'interactive-drawing-fd',
               alt: 'Interactive Force Density presentations (5 clickable decks) and 02-question.yaml stage format, displayed beside a large clickable laptop.',
@@ -137,14 +194,34 @@ slides:
     steps:
       - say: 'Four fixed nodes...'
         show: net`,
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 gif: 'presentations/mcp/fd-interactive.gif?v=1',
                 url: 'https://petrasvestartas.github.io/session/?stage=force-density',
                 hint: 'Click to open FD interactive viewer ↗',
               },
             },
-            { src: 'presentations/mcp/slide-5-tna.png?v=1', alt: 'Method focus across four subjects: FD (Force Density), DR (Dynamic Relaxation), TNA (Thrust Network Analysis, highlighted) and AGS (Algebraic Graphic Statics).' },
-            { src: 'presentations/mcp/slide-6-tna.png?v=2', alt: 'Folder structure of brg_framework MCP for the Thrust Network Analysis (TNA) method.' },
+            {
+              key: 'methods-tna',
+              alt: 'Method focus across four subjects: FD (Force Density), DR (Dynamic Relaxation), TNA (Thrust Network Analysis, highlighted) and AGS (Algebraic Graphic Statics).',
+              methods: [
+                { title: 'FD', sub: 'Force Density' },
+                { title: 'DR', sub: 'Dynamic Relaxation' },
+                { title: 'TNA', sub: 'Thrust Network Analysis', emphasis: true },
+                { title: 'AGS', sub: 'Algebraic Graphic Statics' },
+              ],
+            },
+            {
+              key: 'folder-tna',
+              alt: 'Folder structure of brg_framework MCP for the Thrust Network Analysis (TNA) method.',
+              folder: {
+                title: 'TNA',
+                sub: 'Thrust Network Analysis',
+                root: 'tna/',
+                entries: [
+                  'readme.md', '01_algorithm.md', '02_applications.md', '03_keywords.md', '04_references.md', '05_references/', '06_presentations.md',
+                  '07_exercises.md', '08_exercises/', '09_extensions.md', '10_extensions/', '11_compas.md', '12_compas/',
+                ],
+              },
+            },
             {
               key: 'interactive-drawing-tna',
               alt: 'Interactive Thrust Network Analysis presentations (5 clickable decks) and YAML stage format, displayed beside a large clickable laptop.',
@@ -168,7 +245,6 @@ slides:
       - say: 'Four bars push on node 1.'
         do:
           - add: [{ id: b0, line: [s1, n1] }]`,
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 gif: 'presentations/mcp/tna-interactive.gif?v=1',
                 url: 'https://petrasvestartas.github.io/session/?stage=thrust-network_analysis_horizontal_equilibrium',
                 hint: 'Click to open TNA interactive viewer ↗',
@@ -178,12 +254,19 @@ slides:
               key: 'workspace-slide',
               alt: 'Zero-install browser workspace combining the BRG Library, BRG Terminal, and JupyterLite in one screen with Claude, Gemini, and Kimi support.',
               workspaceSlide: {
-                laptopFrame: 'presentations/mcp/laptop-frame.png?v=6',
                 screen: 'presentations/mcp/workspace-screen.jpg?v=2',
                 url: 'library.html#/notebook',
               },
             },
-            { src: 'presentations/mcp/slide-12.png?v=7', alt: 'Connect (App, Terminal, VS Code) → Ground (brg_papers, brg_theory, brg_framework, brg_presentation) → Reproduce (COMPAS code implementations, connection with your own workflow, learning using Jupyter notebooks, new research lines).' },
+            {
+              key: 'closing',
+              alt: 'Connect (App, Terminal, VS Code) → Ground (brg_papers, brg_theory, brg_framework, brg_presentation) → Reproduce (COMPAS code implementations, connection with your own workflow, learning using Jupyter notebooks, new research lines).',
+              steps: [
+                { title: 'Connect', items: ['App', 'Terminal', 'VS Code'] },
+                { title: 'Ground', items: ['brg_papers', 'brg_theory', 'brg_framework', 'brg_presentation'] },
+                { title: 'Reproduce', items: ['COMPAS code implementations', 'Connection with your own workflow', 'Learning using Jupyter notebooks', 'New research lines', '...'] },
+              ],
+            },
           ],
         },
         items: [
