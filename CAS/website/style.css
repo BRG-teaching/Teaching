@@ -399,4 +399,8 @@ a.apps-single-laptop:hover { transform: translateX(-50%) scale(1.008); }
   .grading li { font-size: clamp(14px, 1.8vh, 19px); }
   .grading .w { font-size: clamp(13px, 1.7vh, 18px); }
 }
-.eth-cas { font-size: 17px; max-width: 70ch; }
+.eth-row { display: grid; grid-template-columns: minmax(120px, 200px) 1fr; gap: 8px 16px; align-items: baseline; }
+.eth-bar { grid-column: 1 / -1; height: 10px; background: var(--c); }
+.eth-row .toc-t { font-size: 20px; }
+.eth-v { color: var(--muted); font-size: 16px; line-height: 1.4; }
+@media (max-width: 600px) { .eth-row { grid-template-columns: 1fr; } }
