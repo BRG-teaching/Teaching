@@ -6,6 +6,18 @@ import { useCourse } from './useCourse';
 const {
   cas, chapters, teaching, project, active, menuOpen, menu, logo, logos, stepAt, cardKeys, cardTitle, segments, mapEl, mapLines, iconBox, inRing
 } = useCourse();
+
+const ethCas = [
+  ['Credits', '12 ECTS is the most common (11 of 17); the range is 10–15'],
+  ['Cost', 'about CHF 8,000–9,700 (range CHF 7,000–11,500), plus a CHF 50–150 application fee'],
+  ['Duration', 'one semester, 3–6 months, part-time'],
+  ['Schedule', 'a 3–5-day teaching block about once a month'],
+  ['Workload', 'about 150 contact hours, about 300 hours in total'],
+  ['Structure', '4–7 themed modules in a fixed order'],
+  ['Deliverable', 'a final applied project (group or individual), presented at the end; no thesis'],
+  ['Admission', 'a master\'s degree, often 2–3 years of work experience, a CV and motivation letter, and English or German at C1'],
+  ['Intake', 'once a year, with applications about 3–6 months before the start'],
+];
 </script>
 
 <template>
@@ -37,6 +49,14 @@ const {
   </section>
 
   <main class="main">
+  <section id="eth-cas" class="wrap block">
+    <h2>Typical ETH CAS</h2>
+    <p class="note">Based on the 17 CAS in the ETH SCE Environment, Infrastructure &amp; Architecture cluster</p>
+    <ul class="sq eth-cas">
+      <li v-for="f in ethCas" :key="f[0]"><b>{{ f[0] }}:</b> {{ f[1] }}</li>
+    </ul>
+  </section>
+
   <section id="contents" class="wrap block">
     <h2>Contents</h2>
     <ol class="toc">

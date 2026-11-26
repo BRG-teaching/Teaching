@@ -9,6 +9,7 @@ export function useCourse() {
 
     // Side menu: every section of the page, chapters in their ramp colour.
     const menu = [
+      { id: 'eth-cas', label: 'Typical ETH CAS' },
       { id: 'contents', label: 'Contents' },
       { id: 'map', label: 'Course map' },
       { id: 'timeline', label: 'Course timeline' },
