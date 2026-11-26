@@ -51,7 +51,7 @@ const ethCas = [
   <main class="main">
   <section id="eth-cas" class="wrap block">
     <h2>Typical ETH CAS</h2>
-    <p class="note">Based on the 17 CAS in the ETH SCE Environment, Infrastructure &amp; Architecture cluster</p>
+    <p class="note">Based on the 17 CAS in the ETH SCE Environment, Infrastructure &amp; Architecture cluster · <a href="https://sce.ethz.ch/en/programmes-and-courses/search-current-courses.html?cluster=EIA" target="_blank" rel="noopener">See all current CAS</a></p>
     <ul class="sq eth-cas">
       <li v-for="f in ethCas" :key="f[0]"><b>{{ f[0] }}:</b> {{ f[1] }}</li>
     </ul>
